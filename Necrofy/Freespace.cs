@@ -34,6 +34,7 @@ namespace Necrofy
             }
             FreeBlock block = new FreeBlock(start, end);
             blocks.Insert(0, block);
+            // Merge any blocks that intersect
             for (int i = 1; i < blocks.Count; i++) {
                 FreeBlock b = blocks[i];
                 if (b.IntersectsWith(block)) {
@@ -75,6 +76,25 @@ namespace Necrofy
                 if (bestBlock.Size == 0)
                     blocks.Remove(bestBlock);
                 return address;
+            }
+        }
+
+        /// <summary>Reserves the specified block so that it can't be claimed.</summary>
+        /// <param name="start">The start of the block</param>
+        /// <param name="size">The size of the block</param>
+        public void Reserve(int start, int size) {
+            FreeBlock block = new FreeBlock(start, start + size);
+            for (int i = 0; i < blocks.Count; i++) {
+                FreeBlock b = blocks[i];
+                if (b.IntersectsWith(block)) {
+                    FreeBlock splitBlock = b.Subtract(block);
+                    if (splitBlock != null)
+                        blocks.Add(splitBlock);
+                    if (b.Size <= 0) {
+                        blocks.RemoveAt(i);
+                        i--;
+                    }
+                }
             }
         }
 
@@ -135,6 +155,26 @@ namespace Necrofy
             /// <param name="size">The number of bytes to remove</param>
             public void Subtract(int size) {
                 Start += size;
+            }
+
+            /// <summary>Removes the specified block from this block. Assumes the blocks intersect.</summary>
+            /// <param name="block">The block to subtract</param>
+            /// <returns>A new block if subtracting the block split this block in half, null otherwise</returns>
+            public FreeBlock Subtract(FreeBlock block) {
+                // The block is inside of this block, so we need to split it into two
+                if (block.Start > Start && block.End < End) {
+                    End = block.Start;
+                    return new FreeBlock(block.End, End);
+                }
+                // The block intersects the front of this block
+                if (block.End > Start) {
+                    Start = block.End;
+                }
+                // The block intersects the end of this block
+                if (block.Start < End) {
+                    End = block.Start;
+                }
+                return null;
             }
 
             public override string ToString() {

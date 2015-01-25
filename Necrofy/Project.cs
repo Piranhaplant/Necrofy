@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace Necrofy
 {
@@ -16,7 +17,10 @@ namespace Necrofy
         /// <param name="projectPath">The path to a directory in which all of thr project files will be placed.</param>
         /// <param name="extractLevels">Sets whether the levels will be extracted from the base ROM.</param>
         public Project(string baseROM, string projectPath, bool extractLevels) {
-
+            FileStream s = new FileStream(baseROM, FileMode.Open, FileAccess.Read, FileShare.Read);
+            ROMInfo info = new ROMInfo(s);
+            // Extract all files from the ROM needed for a project
+            
         }
 
         /// <summary>Loads an existing project from the given directory.</summary>

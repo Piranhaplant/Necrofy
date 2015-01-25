@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Necrofy")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Zombies Ate My Neighbors level editor")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("HP")]
+[assembly: AssemblyCompany("Piranhaplant")]
 [assembly: AssemblyProduct("Necrofy")]
-[assembly: AssemblyCopyright("Copyright © HP 2014")]
+[assembly: AssemblyCopyright("Copyright © Piranhaplant 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
