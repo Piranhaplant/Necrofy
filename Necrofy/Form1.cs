@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace Necrofy
 {
@@ -19,13 +20,19 @@ namespace Necrofy
 
         private void button1_Click(object sender, EventArgs e) {
             OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "SNES ROMs (*.sfc; *.smc)|*.sfc;*.smc|All Files (*.*)|*.*";
-            if (ofd.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
-            FileStream fs = new FileStream(ofd.FileName, FileMode.Open);
-            ROMInfo info = new ROMInfo(fs);
-            info.Freespace.Sort();
-            Clipboard.SetText(info.Freespace.ToString());
-            fs.Close();
+            if (ofd.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+                return;
+            new Project(ofd.FileName, Path.GetDirectoryName(ofd.FileName), true);
+        }
+
+        private void button2_Click(object sender, EventArgs e) {
+            OpenFileDialog ofd = new OpenFileDialog();
+            if (ofd.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+                return;
+            Level l = JsonConvert.DeserializeObject<Level>(File.ReadAllText(ofd.FileName), new LevelJsonConverter());
+            foreach (LevelMonster m in l.levelMonsters) {
+                Console.Out.WriteLine(m.type.ToString());
+            }
         }
     }
 }

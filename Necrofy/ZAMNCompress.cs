@@ -39,7 +39,7 @@ namespace Necrofy
                     byte temp2 = 0;
                     if (ReadNext(s, ref temp, ref bytesLeft) || ReadNext(s, ref temp2, ref bytesLeft)) break;
                     int readDictPos = temp | ((temp2 & 0xf0) << 4); // These 3 nybbles specify the position to read from the dictionary
-                    int byteCount = (temp2 & 0xf) + 2; // The last nybble is how many bytes to read, but we actually need 2 more bytes than that
+                    int byteCount = (temp2 & 0xf) + 3; // The last nybble is how many bytes to read, but we actually need 3 more bytes than that
                     // Transfer that many bytes from the dictionary to the result, also writing them in the dictionary
                     for (int i = 0; i < byteCount; i++) {
                         temp = dict[readDictPos];
@@ -77,7 +77,6 @@ namespace Necrofy
             int formatByteIndex = 2; // The first format byte will be after the file size
 
             int findDictPos, findDictLen;
-            int findRepSize, findRepLen;
 
             result.Add(0); // The final size will be put here
             result.Add(0);
@@ -85,32 +84,8 @@ namespace Necrofy
             while (dataIndex < data.Length) {
                 formatByte >>= 1;
                 formatBitCount++;
-                FindInDict(dict, data, dataIndex, out findDictPos, out findDictLen); // Search for a dictionary match
-                FindRepeat(data, dataIndex, out findRepSize, out findRepLen); // Search for a repeating pattern
-                if (findRepLen - findRepSize > findDictLen && findRepLen >= 3) { // Most efficient to insert a data repeat
-                    // Write the data to be repeated
-                    for (int i = 0; i < findRepSize; i++) {
-                        result.Add(data[dataIndex + 1]);
-                        formatByte |= 0x80; // Set the bit in the format byte
-                        if (formatBitCount == 8) { // If the format byte is full
-                            result[formatByteIndex] = formatByte;
-                            formatByte = 0;
-                            formatBitCount = 0;
-                            formatByteIndex = result.Count;
-                            result.Add(0); // Placeholder for next format byte
-                        }
-                        formatByte >>= 1;
-                        formatBitCount++;
-                    }
-                    // Tell it to repeat
-                    result.Add((byte)(dictIndex & 0xff)); // Write the dictionary position
-                    result.Add((byte)(((dictIndex & 0xf00) >> 4) | (findRepLen - 3))); // Write the rest of the position and the length
-                    for (int i = 0; i < findRepLen + findRepSize; i++) { // Insert the new data to the dictionary
-                        dict[(dictIndex + i) & 0xfff] = data[dictIndex + (i % findRepSize)];
-                    }
-                    dictIndex = (dictIndex + findRepLen + findRepSize) & 0xfff;
-                    dataIndex += findRepLen + findRepSize;
-                } else if (findDictPos > -1) { // Insert a read from the dictionary
+                FindInDict(dict, dictIndex, data, dataIndex, out findDictPos, out findDictLen); // Search for a dictionary match
+                if (findDictPos > -1) { // Insert a read from the dictionary
                     for (int i = 0; i < findDictLen; i++) { // Write the new bytes to the dictionary
                         dict[dictIndex] = dict[(findDictPos + i) & 0xfff];
                         dictIndex = (dictIndex + 1) & 0xfff;
@@ -131,6 +106,7 @@ namespace Necrofy
                     formatByte = 0;
                     formatBitCount = 0;
                     formatByteIndex = result.Count;
+					// if (dataIndex < data.Length) // I think this should be here, but it needs to be tested
                     result.Add(0); // Make a placeholder for the next one
                 }
             }
@@ -142,24 +118,37 @@ namespace Necrofy
         }
                 
         // This will find the longest match in the dictionary
-        private static void FindInDict(byte[] dict, byte[] data, int index, out int pos, out int len) {
-            int maxMatchCount = 0;
+        private static void FindInDict(byte[] dict, int dictWriteIndex, byte[] data, int index, out int pos, out int len) {
+            int maxMatchCt = 0;
             int maxMatchPos = -1;
-            for (int idict = 0; idict < dict.Length; idict++) {
-                if (dict[idict] == data[index]) {
-                    int i2;
-                    for (i2 = 0; i2 < 18; i2++) {
-                        if (index + i2 >= data.Length) break;
-                        if (dict[(idict + i2) & 0xfff] != data[index + i2]) break;
-                    }
-                    if (i2 > maxMatchCount && i2 > 2) {
-                        maxMatchCount = i2;
-                        maxMatchPos = idict;
-                    }
+            for (int i = 0; i < dict.Length; i++) {
+                int curMatchCt = 0;
+                while (curMatchCt < 18 && index + curMatchCt < data.Length
+                        && GetDictByte(dict, dictWriteIndex, i, data, index, curMatchCt) == data[index + curMatchCt]) {
+                    curMatchCt++;
+                }
+                if (curMatchCt > maxMatchCt && curMatchCt >= 3) {
+                    maxMatchCt = curMatchCt;
+                    maxMatchPos = i;
                 }
             }
             pos = maxMatchPos;
-            len = maxMatchCount;
+            len = maxMatchCt;
+        }
+
+        // Gets the byte that will be in the dictionary at dictReadIndex given that matchLen bytes from data will have been written at dictWriteIndex
+        private static byte GetDictByte(byte[] dict, int dictWriteIndex, int dictReadIndex, byte[] data, int index, int matchLen) {
+            // Make dictWriteIndex larger so we can ignore the wrapping
+            if (dictWriteIndex < dictReadIndex)
+                dictWriteIndex += dict.Length;
+            // The actual position we are reading from the dictionary
+            int readIndex = dictReadIndex + matchLen;
+            // If the byte we are reading has been overwritten from data
+            if (readIndex >= dictWriteIndex && readIndex < dictWriteIndex + matchLen) {
+                int offset = readIndex - dictWriteIndex;
+                return data[index + offset];
+            }
+            return dict[dictReadIndex % dict.Length];
         }
 
         // This will find the longest repeating sequence

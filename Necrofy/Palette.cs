@@ -5,9 +5,8 @@ using System.Text;
 
 namespace Necrofy
 {
-    class Tileset
+    class Palette
     {
         public string name;
-        public Palette palette;
     }
 }
