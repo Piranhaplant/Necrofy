@@ -87,12 +87,12 @@ namespace Necrofy
         // These functions are used to convert internal pointers to human readable names that will be used in a project.
         // Default values are used when they exist, but otherwise they are just numbered.
         private string GetName(int pointer, Dictionary<int, string> nameDict, Dictionary<int, string> defaultsDict, string type) {
-            if (nameDict.ContainsKey(pointer))
-                return nameDict[pointer];
-            if (defaultsDict.ContainsKey(pointer))
-                nameDict.Add(pointer, defaultsDict[pointer]);
-            else
-                nameDict.Add(pointer, type + "_" + nameDict.Count.ToString());
+            if (!nameDict.ContainsKey(pointer)) {
+                if (defaultsDict.ContainsKey(pointer))
+                    nameDict.Add(pointer, defaultsDict[pointer]);
+                else
+                    nameDict.Add(pointer, type + "_" + nameDict.Count.ToString());
+            }
             return nameDict[pointer];
         }
 

@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Necrofy
 {
+    /// <summary>
+    /// A spawn point for respawning monsters
+    /// </summary>
     class Monster
     {
         public ushort x { get; set; }

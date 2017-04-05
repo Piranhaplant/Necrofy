@@ -33,9 +33,9 @@ namespace Necrofy
         public ushort music { get; set; }
         /// <summary>The number corresponding to which extra sounds are loaded in the level</summary>
         public ushort sounds { get; set; }
-        /// <summary>Some unknown level setting</summary>
+        /// <summary>Some unknown tileset related level setting</summary>
         public ushort unknown1 { get; set; }
-        /// <summary>Some unknown level setting</summary>
+        /// <summary>Some unknown level setting that is always the same value</summary>
         public ushort unknown2 { get; set; }
         public ushort p1startX { get; set; }
         public ushort p1startY { get; set; }

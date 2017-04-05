@@ -12,7 +12,9 @@ namespace Necrofy
     /// </summary>
     static class ROMPointers
     {
+        /// <summary>Pointer to the table of level pointers</summary>
         public const int LevelPointers = 0xf8000;
+        /// <summary>Pointer to the table that indicates which bonus level follows each level</summary>
         public const int BonusLevelNums = 0x1517e;
 
         // NOTE: in these functions I am using "address" to refer to the lower 16 bits of the full 24 bit LoROM address.
@@ -147,6 +149,9 @@ namespace Necrofy
             return value;
         }
 
+        /// <summary>Reads a 4-byte SNES LoROM pointer from the stream without advancing the position.</summary>
+        /// <param name="s">The stream</param>
+        /// <returns>The pointer as a PC address or -1 if the end of the stream was reached or there was an invalid pointer at the current position.</returns>
         public static int PeekPointer(this Stream s) {
             int value = s.ReadPointer();
             s.Seek(-4, SeekOrigin.Current);

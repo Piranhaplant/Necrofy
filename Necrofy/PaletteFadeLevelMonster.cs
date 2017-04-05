@@ -5,6 +5,10 @@ using System.Text;
 
 namespace Necrofy
 {
+    /// <summary>
+    /// Level monster that fades the level from the starting palette to a different palette (background and sprites).
+    /// Also causes tourists to turn into werewolves.
+    /// </summary>
     class PaletteFadeLevelMonster : LevelMonster
     {
         public const int Type = 0x12b95;

@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Necrofy
 {
+    /// <summary>
+    /// An item that can be picked up by the player
+    /// </summary>
     class Item
     {
         public ushort x { get; set; }

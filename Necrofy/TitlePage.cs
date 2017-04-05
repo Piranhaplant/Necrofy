@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace Necrofy
 {
+    /// <summary>
+    /// One of the two screens that are shown before a level is played
+    /// </summary>
     class TitlePage
     {
         public List<Word> words { get; set; }
@@ -20,13 +24,17 @@ namespace Necrofy
             }
         }
 
+        /// <summary>
+        /// One string of characters displayed on a TitlePage
+        /// </summary>
         public class Word
         {
             public byte x { get; set; }
             public byte y { get; set; }
             public byte palette { get; set; }
             public List<byte> chars { get; set; }
-            public bool last { get; set; }
+            [JsonIgnore]
+            public bool last { get; private set; }
 
             public Word() { }
 

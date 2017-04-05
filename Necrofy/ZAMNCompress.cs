@@ -150,24 +150,5 @@ namespace Necrofy
             }
             return dict[dictReadIndex % dict.Length];
         }
-
-        // This will find the longest repeating sequence
-        private static void FindRepeat(byte[] data, int index, out int dataSize, out int totalSize) {
-            int maxSize = 1;
-            int maxDataSize = 0;
-            for (int dsize = 1; dsize < 9; dsize++) {
-                int tsize;
-                for (tsize = dsize; tsize < dsize + 18; tsize++) {
-                    if (index + tsize >= data.Length) break;
-                    if (data[index + tsize] != data[index + (tsize % dsize)]) break;
-                }
-                if (tsize - dsize > maxDataSize) {
-                    maxDataSize = tsize - dsize;
-                }
-                maxSize = dsize;
-            }
-            dataSize = maxSize;
-            totalSize = maxDataSize;
-        }
     }
 }

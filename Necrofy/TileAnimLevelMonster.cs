@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Necrofy
 {
+    /// <summary>
+    /// Level monster that animates certain tiles in the level background
+    /// </summary>
     class TileAnimLevelMonster : LevelMonster
     {
         public const int Type = 0x157cf;

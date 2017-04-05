@@ -83,11 +83,11 @@ namespace Necrofy
         /// <param name="start">The start of the block</param>
         /// <param name="size">The size of the block</param>
         public void Reserve(int start, int size) {
-            FreeBlock block = new FreeBlock(start, start + size);
+            FreeBlock reservedBlock = new FreeBlock(start, start + size);
             for (int i = 0; i < blocks.Count; i++) {
                 FreeBlock b = blocks[i];
-                if (b.IntersectsWith(block)) {
-                    FreeBlock splitBlock = b.Subtract(block);
+                if (b.IntersectsWith(reservedBlock)) {
+                    FreeBlock splitBlock = b.Subtract(reservedBlock);
                     if (splitBlock != null)
                         blocks.Add(splitBlock);
                     if (b.Size <= 0) {
@@ -163,8 +163,9 @@ namespace Necrofy
             public FreeBlock Subtract(FreeBlock block) {
                 // The block is inside of this block, so we need to split it into two
                 if (block.Start > Start && block.End < End) {
+                    int originalEnd = End;
                     End = block.Start;
-                    return new FreeBlock(block.End, End);
+                    return new FreeBlock(block.End, originalEnd);
                 }
                 // The block intersects the front of this block
                 if (block.End > Start) {
@@ -182,6 +183,9 @@ namespace Necrofy
             }
 
             public int CompareTo(FreeBlock other) {
+                if (Start == other.Start) {
+                    return End.CompareTo(other.End);
+                }
                 return Start.CompareTo(other.Start);
             }
         }

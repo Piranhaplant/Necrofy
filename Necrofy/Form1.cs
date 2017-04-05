@@ -31,7 +31,7 @@ namespace Necrofy
                 return;
             Level l = JsonConvert.DeserializeObject<Level>(File.ReadAllText(ofd.FileName), new LevelJsonConverter());
             foreach (LevelMonster m in l.levelMonsters) {
-                Console.Out.WriteLine(m.type.ToString());
+                Console.Out.WriteLine(m.GetType().ToString());
             }
         }
     }
