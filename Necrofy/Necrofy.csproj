@@ -75,6 +75,8 @@
     <Compile Include="LevelJsonConverter.cs" />
     <Compile Include="Level.cs" />
     <Compile Include="LevelMonster.cs" />
+    <Compile Include="LevelObject.cs" />
+    <Compile Include="MovableData.cs" />
     <Compile Include="PaletteFadeLevelMonster.cs" />
     <Compile Include="PositionLevelMonster.cs" />
     <Compile Include="TileAnimLevelMonster.cs" />
@@ -113,6 +115,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Tools\ROMExpand.asm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
@@ -135,6 +140,11 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Tools\xkas.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

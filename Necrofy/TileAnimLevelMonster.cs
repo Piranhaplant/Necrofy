@@ -36,6 +36,17 @@ namespace Necrofy
             }
         }
 
+        public override void Build(MovableData data, ROMInfo rom) {
+            data.data.AddPointer(type);
+            MovableData animData = new MovableData();
+            foreach (Entry entry in entries) {
+                MovableData entryData = new MovableData();
+                entry.Build(entryData);
+                animData.AddPointer(MovableData.PointerSize.TwoBytes, entryData);
+            }
+            data.AddPointer(MovableData.PointerSize.FourBytes, animData);
+        }
+
         public class Entry
         {
             public List<ushort> tiles { get; set; }
@@ -52,6 +63,17 @@ namespace Necrofy
                         return;
                     }
                     tiles.Add(value);
+                }
+            }
+
+            public void Build(MovableData data) {
+                foreach (ushort tile in tiles) {
+                    data.data.AddInt16(tile);
+                }
+                if (flag) {
+                    data.data.AddInt16(0xfffe);
+                } else {
+                    data.data.AddInt16(0xffff);
                 }
             }
         }

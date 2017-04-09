@@ -29,10 +29,8 @@ namespace Necrofy
             OpenFileDialog ofd = new OpenFileDialog();
             if (ofd.ShowDialog() != System.Windows.Forms.DialogResult.OK)
                 return;
-            Level l = JsonConvert.DeserializeObject<Level>(File.ReadAllText(ofd.FileName), new LevelJsonConverter());
-            foreach (LevelMonster m in l.levelMonsters) {
-                Console.Out.WriteLine(m.GetType().ToString());
-            }
+            string folder = Path.GetDirectoryName(ofd.FileName);
+            new Project(folder).Build(ofd.FileName, ofd.FileName + ".new.sfc");
         }
     }
 }

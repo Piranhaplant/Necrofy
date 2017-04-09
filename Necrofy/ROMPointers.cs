@@ -8,7 +8,7 @@ namespace Necrofy
 {
     /// <summary>
     /// Contains pointers to important data in the ZAMN ROM.
-    /// Also holds several extension methods for streams related to reading/writing pointers.
+    /// Also holds several helper methods related to reading/writing pointers.
     /// </summary>
     static class ROMPointers
     {
@@ -44,7 +44,6 @@ namespace Necrofy
 
         /// <summary>Moves the stream position to the address specified in the 4-byte SNES LoROM pointer at the current position.</summary>
         /// <param name="s">The stream</param>
-        /// <exception cref="System.Exception">if the end of the stream is reached while trying to read the pointer or an invalid pointer is at the current position.</exception>
         public static void GoToPointer(this Stream s) {
             int pointer = s.ReadPointer();
             if (pointer < 0)
@@ -55,7 +54,6 @@ namespace Necrofy
         /// <summary>Moves the stream position to the address specified in the 2-byte SNES LoROM pointer relative to the given bank.</summary>
         /// <param name="s">The stream</param>
         /// <param name="bank">The LoROM bank of the pointer. This should be between 0x80 and 0xff.</param>
-        /// <exception cref="System.Exception">if the end of the stream is reached while trying to read the pointer or an invalid pointer is at the current position.</exception>
         public static void GoToRelativePointer(this Stream s, int bank) {
             int pointer = s.ReadRelativePointer(bank);
             if (pointer < 0)
@@ -65,7 +63,6 @@ namespace Necrofy
 
         /// <summary>Moves the stream position to the address specified in the 2-byte SNES LoROM pointer relative to the bank the stream is positioned in.</summary>
         /// <param name="s">The stream</param>
-        /// <exception cref="System.Exception">if the end of the stream is reached while trying to read the pointer or an invalid pointer is at the current position.</exception>
         public static void GoToRelativePointer(this Stream s) {
             int bank = (int)s.Position / 0x8000 + 0x80;
             s.GoToRelativePointer(bank);
@@ -73,7 +70,6 @@ namespace Necrofy
 
         /// <summary>Moves the stream position to the address specified in the 4-byte SNES LoROM pointer at the current position and pushes the position after the pointer.</summary>
         /// <param name="s">The stream</param>
-        /// <exception cref="System.Exception">if the end of the stream is reached while trying to read the pointer or an invalid pointer is at the current position.</exception>
         public static void GoToPointerPush(this NStream s) {
             int pointer = s.ReadPointer();
             if (pointer < 0)
@@ -85,7 +81,6 @@ namespace Necrofy
         /// <summary>Moves the stream position to the address specified in the 2-byte SNES LoROM pointer relative to the given bank and pushes the position after the pointer.</summary>
         /// <param name="s">The stream</param>
         /// <param name="bank">The LoROM bank of the pointer. This should be between 0x80 and 0xff.</param>
-        /// <exception cref="System.Exception">if the end of the stream is reached while trying to read the pointer or an invalid pointer is at the current position.</exception>
         public static void GoToRelativePointerPush(this NStream s, int bank) {
             int pointer = s.ReadRelativePointer(bank);
             if (pointer < 0)
@@ -96,37 +91,84 @@ namespace Necrofy
 
         /// <summary>Moves the stream position to the address specified in the 2-byte SNES LoROM pointer relative to the bank the stream is positioned in and pushes the position after the pointer.</summary>
         /// <param name="s">The stream</param>
-        /// <exception cref="System.Exception">if the end of the stream is reached while trying to read the pointer or an invalid pointer is at the current position.</exception>
         public static void GoToRelativePointerPush(this NStream s) {
             int bank = (int)s.Position / 0x8000 + 0x80;
             s.GoToRelativePointerPush(bank);
         }
 
+        /// <summary>Adds a 4-byte SNES LoROM pointer to the list.</summary>
+        /// <param name="list">The list</param>
+        /// <param name="pointer">The PC address of the pointer to write. This should be between 0 and 0x3fffff.</param>
+        public static void AddPointer(this IList<byte> list, int pointer) {
+            byte[] pointerBytes = new byte[4];
+            WritePointer(pointerBytes, 0, pointer);
+            for (int i = 0; i < pointerBytes.Length; i++) {
+                list.Add(pointerBytes[i]);
+            }
+        }
+
         /// <summary>Writes a 4-byte SNES LoROM pointer into the stream at the current position.</summary>
         /// <param name="s">The stream</param>
         /// <param name="pointer">The PC address of the pointer to write. This should be between 0 and 0x3fffff.</param>
-        /// <exception cref="System.Exception">if the given pointer does not correspond to a valid LoROM address.</exception>
         public static void WritePointer(this Stream s, int pointer) {
-            if (pointer < 0 || pointer >= 0x400000)
+            byte[] pointerBytes = new byte[4];
+            WritePointer(pointerBytes, 0, pointer);
+            s.Write(pointerBytes, 0, pointerBytes.Length);
+        }
+
+        /// <summary>Writes a 4-byte SNES LoROM pointer into the list at the given index.</summary>
+        /// <param name="list">The list</param>
+        /// <param name="index">The index at which to write the pointer</param>
+        /// <param name="pointer">The PC address of the pointer to write. This should be between 0 and 0x3fffff.</param>
+        public static void WritePointer(this IList<byte> list, int index, int pointer) {
+            if (pointer < 0 || pointer >= 0x8000 * 0x80)
                 throw new Exception(string.Format("{0:X} is not a valid PC address", pointer));
             int address = pointer % 0x8000 + 0x8000;
             int bank = pointer / 0x8000 + 0x80;
-            s.WriteByte((byte)(address % 0x100));
-            s.WriteByte((byte)(address / 0x100));
-            s.WriteByte((byte)bank);
-            s.WriteByte((byte)0); // Pointers in ZAMN are always 4 bytes even though the fourth byte is useless.
+            list[index + 0] = (byte)(address % 0x100);
+            list[index + 1] = (byte)(address / 0x100);
+            list[index + 2] = (byte)bank;
+            list[index + 3] = (byte)0; // Pointers in ZAMN are always 4 bytes even though the fourth byte is useless.
+        }
+        
+        /// <summary>Adds a 2-byte SNES LoROM pointer to the list.</summary>
+        /// <param name="list">The list</param>
+        /// <param name="pointer">The PC address of the pointer to write. This should be between 0 and 0x3fffff.</param>
+        public static void AddRelativePointer(this IList<byte> list, int pointer) {
+            byte[] pointerBytes = new byte[2];
+            WriteRelativePointer(pointerBytes, 0, pointer);
+            for (int i = 0; i < pointerBytes.Length; i++) {
+                list.Add(pointerBytes[i]);
+            }
         }
 
         /// <summary>Writes a 2-byte SNES LoROM pointer into the stream at the current position.</summary>
         /// <param name="s">The stream</param>
         /// <param name="pointer">The PC address of the pointer to write. This should be between 0 and 0x3fffff.</param>
-        /// <exception cref="System.Exception">if the given pointer does not correspond to a valid LoROM address.</exception>
         public static void WriteRelativePointer(this Stream s, int pointer) {
-            if (pointer < 0 || pointer >= 0x400000)
+            byte[] pointerBytes = new byte[2];
+            WriteRelativePointer(pointerBytes, 0, pointer);
+            s.Write(pointerBytes, 0, pointerBytes.Length);
+        }
+
+        /// <summary>Writes a 2-byte SNES LoROM pointer into the list at the given index.</summary>
+        /// <param name="list">The list</param>
+        /// <param name="index">The index at which to write the pointer</param>
+        /// <param name="pointer">The PC address of the pointer to write. This should be between 0 and 0x3fffff.</param>
+        public static void WriteRelativePointer(this IList<byte> list, int index, int pointer) {
+            if (pointer < 0 || pointer >= 0x8000 * 0x80)
                 throw new Exception(string.Format("{0:X} is not a valid PC address", pointer));
             int address = pointer % 0x8000 + 0x8000;
-            s.WriteByte((byte)(address % 0x100));
-            s.WriteByte((byte)(address / 0x100));
+            list[index + 0] = (byte)(address % 0x100);
+            list[index + 1] = (byte)(address / 0x100);
+        }
+
+        /// <summary>Adds an unsigned little-endian 16-bit integer to the list</summary>
+        /// <param name="list">The list</param>
+        /// <param name="value">The value to add</param>
+        public static void AddInt16(this IList<byte> list, ushort value) {
+            list.Add((byte)(value & 0xff));
+            list.Add((byte)(value >> 8));
         }
 
         /// <summary>Reads an unsigned little-endian 16-bit integer from the stream.</summary>

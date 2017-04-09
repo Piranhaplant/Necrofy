@@ -24,6 +24,17 @@ namespace Necrofy
             }
         }
 
+        /// <summary>Builds the TitlePage for insterting into a ROM</summary>
+        /// <param name="data">The data to build into</param>
+        /// <param name="page">The number of the page. 0 is the first page, 1 is the second page</param>
+        public void Build(MovableData data, int page) {
+            // Page number used internally is backwards
+            byte actualPage = (byte)(page == 0 ? 1 : 0);
+            for (int i = 0; i < words.Count; i++) {
+                words[i].Build(data, actualPage, i == words.Count - 1);
+            }
+        }
+
         /// <summary>
         /// One string of characters displayed on a TitlePage
         /// </summary>
@@ -52,6 +63,17 @@ namespace Necrofy
                     }
                     chars.Add(num);
                 }
+            }
+
+            public void Build(MovableData data, byte page, bool last) {
+                data.data.Add(x);
+                data.data.Add(y);
+                data.data.Add(palette);
+                data.data.Add(page);
+                foreach (byte c in chars) {
+                    data.data.Add(c);
+                }
+                data.data.Add((byte)(last ? 0 : 0xff));
             }
         }
     }

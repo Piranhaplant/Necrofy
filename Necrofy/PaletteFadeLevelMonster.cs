@@ -33,5 +33,13 @@ namespace Necrofy
             bgPal = r.GetPaletteName(s.ReadPointer());
             spritePal = r.GetPaletteName(s.ReadPointer());
         }
+
+        public override void Build(MovableData data, ROMInfo rom) {
+            data.data.AddPointer(type);
+            MovableData paletteData = new MovableData();
+            paletteData.data.AddPointer(rom.GetPalettePointer(bgPal));
+            paletteData.data.AddPointer(rom.GetPalettePointer(spritePal));
+            data.AddPointer(MovableData.PointerSize.FourBytes, paletteData);
+        }
     }
 }

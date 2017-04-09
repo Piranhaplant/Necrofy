@@ -9,7 +9,7 @@ namespace Necrofy
     /// "Big" type monsters that are active during the entire level (big baby, UFO, etc.)
     /// Also includes special sprites that affect the level (palette fade and tile animation)
     /// </summary>
-    abstract class LevelMonster
+    abstract class LevelMonster : LevelObject
     {
         public int type { get; set; }
 
@@ -62,5 +62,10 @@ namespace Necrofy
         public LevelMonster(int type) {
             this.type = type;
         }
+
+        /// <summary>Builds the LevelMonster for inserting into a ROM.</summary>
+        /// <param name="data">The data to build into</param>
+        /// <param name="rom">The ROM used for building. This is required for the PaletteFadeLevelMonster.</param>
+        public abstract void Build(MovableData data, ROMInfo rom);
     }
 }

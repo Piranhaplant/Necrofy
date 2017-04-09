@@ -81,7 +81,7 @@ namespace Necrofy
 
         public override int Read(byte[] buffer, int offset, int count) {
             if (readBlockStart >= 0) {
-                readBlockStart = Math.Min(readBlockStart, Position + count);
+                readBlockStart = Math.Min(readBlockStart, Position);
                 readBlockEnd = Math.Max(readBlockEnd, Position + count);
             }
             return inner.Read(buffer, offset, count);
@@ -89,7 +89,7 @@ namespace Necrofy
 
         public override int ReadByte() {
             if (readBlockStart >= 0) {
-                readBlockStart = Math.Min(readBlockStart, Position + 1);
+                readBlockStart = Math.Min(readBlockStart, Position);
                 readBlockEnd = Math.Max(readBlockEnd, Position + 1);
             }
             return inner.ReadByte();

@@ -33,14 +33,13 @@ namespace Necrofy
                 start = splitPoint;
             }
             FreeBlock block = new FreeBlock(start, end);
-            blocks.Insert(0, block);
+            blocks.Add(block);
             // Merge any blocks that intersect
-            for (int i = 1; i < blocks.Count; i++) {
+            for (int i = 0; i < blocks.Count - 1; i++) {
                 FreeBlock b = blocks[i];
-                if (b.IntersectsWith(block)) {
-                    b.Merge(block);
-                    blocks.Remove(block);
-                    block = b;
+                if (block.IntersectsWith(b)) {
+                    block.Merge(b);
+                    blocks.Remove(b);
                     i--;
                 }
             }
@@ -168,11 +167,11 @@ namespace Necrofy
                     return new FreeBlock(block.End, originalEnd);
                 }
                 // The block intersects the front of this block
-                if (block.End > Start) {
+                if (block.End < End) {
                     Start = block.End;
                 }
                 // The block intersects the end of this block
-                if (block.Start < End) {
+                if (block.Start > Start) {
                     End = block.Start;
                 }
                 return null;

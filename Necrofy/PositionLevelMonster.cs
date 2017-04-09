@@ -19,5 +19,11 @@ namespace Necrofy
             this.x = s.ReadInt16();
             this.y = s.ReadInt16();
         }
+
+        public override void Build(MovableData data, ROMInfo rom) {
+            data.data.AddPointer(type);
+            data.data.AddInt16(x);
+            data.data.AddInt16(y);
+        }
     }
 }

@@ -8,7 +8,7 @@ namespace Necrofy
     /// <summary>
     /// A spawn point for respawning monsters
     /// </summary>
-    class Monster
+    class Monster : LevelObject
     {
         public ushort x { get; set; }
         public ushort y { get; set; }
@@ -24,6 +24,14 @@ namespace Necrofy
             y = s.ReadInt16();
             delay = (byte)s.ReadByte();
             type = s.ReadPointer();
+        }
+
+        public void Build(MovableData data) {
+            data.data.Add(radius);
+            data.data.AddInt16(x);
+            data.data.AddInt16(y);
+            data.data.Add(delay);
+            data.data.AddPointer(type);
         }
     }
 }

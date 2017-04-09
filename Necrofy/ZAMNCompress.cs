@@ -148,7 +148,7 @@ namespace Necrofy
                 int offset = readIndex - dictWriteIndex;
                 return data[index + offset];
             }
-            return dict[dictReadIndex % dict.Length];
+            return dict[readIndex % dict.Length];
         }
     }
 }

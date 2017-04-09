@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Necrofy
 {
-    /// <summary>Represents a ZAMN level</summary>
+    /// <summary>Stores a ZAMN level</summary>
     class Level
     {
         // The current version of the level format
@@ -16,10 +16,10 @@ namespace Necrofy
         public int version { get; set; }
         /// <summary>The loaded tileset used for this level.</summary>
         [JsonIgnore]
-        public Tileset tileset;
+        public Tileset tileset { get; private set; }
         /// <summary>The graphics loaded for items, victims, monsters, etc.</summary>
         [JsonIgnore]
-        public SpriteGFX sprites;
+        public SpriteGFX sprites { get; private set; }
         /// <summary>The background tiles making up the level</summary>
         public ushort[,] background { get; set; }
         public string tilesetTilemapName { get; set; }
@@ -73,7 +73,13 @@ namespace Necrofy
             spritePaletteName = r.GetPaletteName(s.ReadPointer());
             paletteAnimationPtr = s.ReadPointer();
 
-            AddAllObjects(s, () => monsters.Add(new Monster(s)));
+            AddAllObjects(s, () => {
+                Monster m = new Monster(s);
+                // In level 29, there are some invalid monsters, so remove them now
+                if (m.type > 0) {
+                    monsters.Add(m);
+                }
+            });
             AddAllObjects(s, () => oneTimeMonsters.Add(new OneTimeMonster(s)));
             AddAllObjects(s, () => items.Add(new Item(s)));
 
@@ -122,6 +128,77 @@ namespace Necrofy
                 add();
             }
             s.PopPosition();
+        }
+
+        /// <summary>Builds the level for inserting into a ROM.</summary>
+        /// <returns>The level data</returns>
+        public MovableData Build(ROMInfo rom) {
+            MovableData data = new MovableData();
+
+            data.data.AddPointer(rom.GetTilesetTilemapPointer(tilesetTilemapName));
+
+            MovableData backgroundData = new MovableData();
+            int width = background.GetLength(0);
+            int height = background.GetLength(1);
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    backgroundData.data.AddInt16(background[x, y]);
+                }
+            }
+            data.AddPointer(MovableData.PointerSize.FourBytes, backgroundData);
+
+            data.data.AddPointer(rom.GetTilesetCollisionPointer(tilesetCollisionName));
+            data.data.AddPointer(rom.GetTilesetGraphicsPointer(tilesetGraphicsName));
+            data.data.AddPointer(rom.GetPalettePointer(paletteName));
+            data.data.AddPointer(rom.GetPalettePointer(spritePaletteName));
+            if (paletteAnimationPtr > 0) {
+                data.data.AddPointer(paletteAnimationPtr);
+            } else {
+                data.data.AddInt16(0);
+                data.data.AddInt16(0);
+            }
+
+            BuildAll(monsters, data, (o, d) => o.Build(d));
+            BuildAll(oneTimeMonsters, data, (o, d) => o.Build(d));
+            BuildAll(items, data, (o, d) => o.Build(d));
+
+            data.data.AddInt16((ushort)background.GetLength(0));
+            data.data.AddInt16((ushort)background.GetLength(1));
+            data.data.AddInt16(unknown1);
+            data.data.AddInt16(unknown2);
+            data.data.AddInt16(p1startX);
+            data.data.AddInt16(p1startY);
+            data.data.AddInt16(p2startX);
+            data.data.AddInt16(p2startY);
+            data.data.AddInt16(music);
+            data.data.AddInt16(sounds);
+
+            MovableData title1Data = new MovableData();
+            title1.Build(title1Data, 0);
+            data.AddPointer(MovableData.PointerSize.TwoBytes, title1Data);
+
+            MovableData title2Data = new MovableData();
+            title2.Build(title2Data, 1);
+            data.AddPointer(MovableData.PointerSize.TwoBytes, title2Data);
+
+            BuildAll(bonuses, data, (o, d) => d.data.AddInt16(o));
+
+            foreach (LevelMonster levelMonster in levelMonsters) {
+                levelMonster.Build(data, rom);
+            }
+            data.data.AddInt16(0);
+            data.data.AddInt16(0);
+
+            return data;
+        }
+
+        private void BuildAll<T>(List<T> objects, MovableData data, Action<T, MovableData> build) {
+            MovableData objectData = new MovableData();
+            foreach (T obj in objects) {
+                build(obj, objectData);
+            }
+            objectData.data.AddInt16(0);
+            data.AddPointer(MovableData.PointerSize.TwoBytes, objectData);
         }
     }
 }
