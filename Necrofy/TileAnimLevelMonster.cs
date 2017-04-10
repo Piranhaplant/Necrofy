@@ -44,6 +44,7 @@ namespace Necrofy
                 entry.Build(entryData);
                 animData.AddPointer(MovableData.PointerSize.TwoBytes, entryData);
             }
+            animData.data.AddInt16(0);
             data.AddPointer(MovableData.PointerSize.FourBytes, animData);
         }
 
