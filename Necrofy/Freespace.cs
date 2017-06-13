@@ -9,7 +9,7 @@ namespace Necrofy
     class Freespace
     {
         /// <summary>The size of a bank in bytes. Blocks will not be allowed to cross banks.</summary>
-        public const int bankSize = 0x8000;
+        public const int BankSize = 0x8000;
 
         private List<FreeBlock> blocks;
         // If there isn't enough freespace in the ROM, the data will be put at the end, so we need to know how big the ROM is.
@@ -27,8 +27,8 @@ namespace Necrofy
         /// <param name="end">The exclusive end of the block</param>
         public void Add(int start, int end) {
             // If the given chunk crosses a bank boundary, split it into two.
-            if (start / bankSize != (end - 1) / bankSize) {
-                int splitPoint = (end / bankSize) * bankSize;
+            if (start / BankSize != (end - 1) / BankSize) {
+                int splitPoint = (end / BankSize) * BankSize;
                 Add(start, splitPoint);
                 start = splitPoint;
             }
@@ -56,6 +56,8 @@ namespace Necrofy
         /// <param name="size">The number of bytes required</param>
         /// <returns>The address of the claimed space</returns>
         public int Claim(int size) {
+            if (size > BankSize)
+                throw new ArgumentException("size cannot be bigger than bankSize");
             // Find the smallest block that will hold the required bytes. Hopefully this will use the freespace fairly efficiently.
             FreeBlock bestBlock = null;
             foreach (FreeBlock b in blocks) {
@@ -63,10 +65,10 @@ namespace Necrofy
                     bestBlock = b;
             }
             if (bestBlock == null) {
-                // Couldn't find a block big enough, so claim space at the end of the ROM
-                int address = romSize;
-                romSize += size;
-                return address;
+                // Couldn't find a block big enough, so add some new space at the end of the ROM
+                AddSize(romSize, BankSize);
+                romSize += BankSize;
+                return Claim(size);
             } else {
                 // Found a block, so make that block smaller and return its original start
                 int address = bestBlock.Start;
@@ -138,7 +140,7 @@ namespace Necrofy
             /// <returns>true if the blocks intersect, false if they don't</returns>
             public bool IntersectsWith(FreeBlock block) {
                 return (block.Start <= End && Start <= block.End)
-                    && (Start / bankSize == block.Start / bankSize); // Don't merge blocks across banks
+                    && (Start / BankSize == block.Start / BankSize); // Don't merge blocks across banks
             }
 
             /// <summary>Merges this block with the one specified. Assumes that the blocks intersect.</summary>

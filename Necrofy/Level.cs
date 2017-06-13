@@ -33,10 +33,10 @@ namespace Necrofy
         public ushort music { get; set; }
         /// <summary>The number corresponding to which extra sounds are loaded in the level</summary>
         public ushort sounds { get; set; }
-        /// <summary>Some unknown tileset related level setting</summary>
-        public ushort unknown1 { get; set; }
-        /// <summary>Some unknown level setting that is always the same value</summary>
-        public ushort unknown2 { get; set; }
+        /// <summary>Tiles numbered strictly less than this value will be displayed on top of sprites</summary>
+        public ushort tilePriorityEnd { get; set; }
+        /// <summary>Tiles numbered strictly greater than this value will not be displayed</summary>
+        public ushort hiddenTilesStart { get; set; }
         public ushort p1startX { get; set; }
         public ushort p1startY { get; set; }
         public ushort p2startX { get; set; }
@@ -65,12 +65,12 @@ namespace Necrofy
             levelMonsters = new List<LevelMonster>();
 
             s.StartBlock(); // Track the freespace used by the level
-            tilesetTilemapName = r.GetTilesetTilemapName(s.ReadPointer());
+            tilesetTilemapName = TilesetTilemapAsset.GetAssetName(s, r, s.ReadPointer());
             int backgroundPtr = s.ReadPointer();
-            tilesetCollisionName = r.GetTilesetCollisionName(s.ReadPointer());
-            tilesetGraphicsName = r.GetTilesetGraphicsName(s.ReadPointer());
-            paletteName = r.GetPaletteName(s.ReadPointer());
-            spritePaletteName = r.GetPaletteName(s.ReadPointer());
+            tilesetCollisionName = TilesetCollisionAsset.GetAssetName(s, r, s.ReadPointer());
+            tilesetGraphicsName = TilesetGraphicsAsset.GetAssetName(s, r, s.ReadPointer());
+            paletteName = TilesetPaletteAsset.GetAssetName(s, r, s.ReadPointer(), tilesetGraphicsName);
+            spritePaletteName = PaletteAsset.GetAssetName(s, r, s.ReadPointer());
             paletteAnimationPtr = s.ReadPointer();
 
             AddAllObjects(s, () => {
@@ -85,8 +85,8 @@ namespace Necrofy
 
             int width = s.ReadInt16();
             int height = s.ReadInt16();
-            unknown1 = s.ReadInt16();
-            unknown2 = s.ReadInt16();
+            tilePriorityEnd = s.ReadInt16();
+            hiddenTilesStart = s.ReadInt16();
             p1startX = s.ReadInt16();
             p1startY = s.ReadInt16();
             p2startX = s.ReadInt16();
@@ -135,7 +135,7 @@ namespace Necrofy
         public MovableData Build(ROMInfo rom) {
             MovableData data = new MovableData();
 
-            data.data.AddPointer(rom.GetTilesetTilemapPointer(tilesetTilemapName));
+            data.data.AddPointer(rom.GetAssetPointer(AssetCategory.Tilemap, tilesetTilemapName));
 
             MovableData backgroundData = new MovableData();
             int width = background.GetLength(0);
@@ -147,10 +147,10 @@ namespace Necrofy
             }
             data.AddPointer(MovableData.PointerSize.FourBytes, backgroundData);
 
-            data.data.AddPointer(rom.GetTilesetCollisionPointer(tilesetCollisionName));
-            data.data.AddPointer(rom.GetTilesetGraphicsPointer(tilesetGraphicsName));
-            data.data.AddPointer(rom.GetPalettePointer(paletteName));
-            data.data.AddPointer(rom.GetPalettePointer(spritePaletteName));
+            data.data.AddPointer(rom.GetAssetPointer(AssetCategory.Collision, tilesetCollisionName));
+            data.data.AddPointer(rom.GetAssetPointer(AssetCategory.Graphics, tilesetGraphicsName));
+            data.data.AddPointer(rom.GetAssetPointer(AssetCategory.Palette, paletteName));
+            data.data.AddPointer(rom.GetAssetPointer(AssetCategory.Palette, spritePaletteName));
             if (paletteAnimationPtr > 0) {
                 data.data.AddPointer(paletteAnimationPtr);
             } else {
@@ -164,8 +164,8 @@ namespace Necrofy
 
             data.data.AddInt16((ushort)background.GetLength(0));
             data.data.AddInt16((ushort)background.GetLength(1));
-            data.data.AddInt16(unknown1);
-            data.data.AddInt16(unknown2);
+            data.data.AddInt16(tilePriorityEnd);
+            data.data.AddInt16(hiddenTilesStart);
             data.data.AddInt16(p1startX);
             data.data.AddInt16(p1startY);
             data.data.AddInt16(p2startX);

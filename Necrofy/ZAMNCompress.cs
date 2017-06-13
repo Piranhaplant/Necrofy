@@ -8,7 +8,7 @@ namespace Necrofy
 {
     class ZAMNCompress
     {
-        /// <summary>Decompresses the file that the stream is positioned at</summary>
+        /// <summary>Decompresses the data that the stream is positioned at</summary>
         /// <param name="s">The stream holding the compressed data</param>
         /// <returns>The decompressed data</returns>
         public static byte[] Decompress(Stream s) {
@@ -63,6 +63,9 @@ namespace Necrofy
             return false;
         }
         
+        /// <summary>Compresses the given data</summary>
+        /// <param name="data">The data</param>
+        /// <returns>The compressed data</returns>
         public static byte[] Compress(byte[] data) {
             List<byte> result = new List<byte>(data.Length / 2); // Make the default size half that of the original data
             byte[] dict = new byte[0x1000];
@@ -149,6 +152,15 @@ namespace Necrofy
                 return data[index + offset];
             }
             return dict[readIndex % dict.Length];
+        }
+
+        /// <summary>Adds the compressed data that the stream is positioned at into the freespace</summary>
+        /// <param name="s">The stream</param>
+        /// <param name="freespace">The freespace</param>
+        public static void AddToFreespace(Stream s, Freespace freespace) {
+            int size = s.ReadInt16() + 2; // 2 bytes for the size bytes themselves
+            s.Seek(-2, SeekOrigin.Current);
+            freespace.AddSize((int)s.Position, size);
         }
     }
 }

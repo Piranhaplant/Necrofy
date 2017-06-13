@@ -64,6 +64,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Asset.cs" />
+    <Compile Include="Assets\LevelAsset.cs" />
+    <Compile Include="Assets\PaletteAsset.cs" />
+    <Compile Include="Assets\TilesetAsset.cs" />
+    <Compile Include="Assets\TilesetCollisionAsset.cs" />
+    <Compile Include="Assets\TilesetGraphicsAsset.cs" />
+    <Compile Include="Assets\TilesetPaletteAsset.cs" />
+    <Compile Include="Assets\TilesetTilemapAsset.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -22,15 +22,20 @@ namespace Necrofy
             OpenFileDialog ofd = new OpenFileDialog();
             if (ofd.ShowDialog() != System.Windows.Forms.DialogResult.OK)
                 return;
-            new Project(ofd.FileName, Path.GetDirectoryName(ofd.FileName), true);
+            string projectPath = Path.Combine(Path.GetDirectoryName(ofd.FileName), "zamn_project");
+            if (Directory.Exists(projectPath)) {
+                Directory.Delete(projectPath, true);
+            }
+            Directory.CreateDirectory(projectPath);
+            new Project(ofd.FileName, projectPath);
         }
 
         private void button2_Click(object sender, EventArgs e) {
             OpenFileDialog ofd = new OpenFileDialog();
             if (ofd.ShowDialog() != System.Windows.Forms.DialogResult.OK)
                 return;
-            string folder = Path.GetDirectoryName(ofd.FileName);
-            new Project(folder).Build(ofd.FileName, ofd.FileName + ".new.sfc");
+            string projectPath = Path.Combine(Path.GetDirectoryName(ofd.FileName), "zamn_project");
+            new Project(projectPath).Build(ofd.FileName, ofd.FileName + ".new.sfc");
         }
     }
 }

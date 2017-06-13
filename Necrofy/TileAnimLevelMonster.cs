@@ -51,7 +51,7 @@ namespace Necrofy
         public class Entry
         {
             public List<ushort> tiles { get; set; }
-            public bool flag { get; set; }
+            public bool loop { get; set; }
 
             public Entry() { }
 
@@ -60,7 +60,7 @@ namespace Necrofy
                 while (true) {
                     ushort value = s.ReadInt16();
                     if (value >= 0xfffe) {
-                        flag = value == 0xfffe;
+                        loop = value == 0xffff;
                         return;
                     }
                     tiles.Add(value);
@@ -71,10 +71,10 @@ namespace Necrofy
                 foreach (ushort tile in tiles) {
                     data.data.AddInt16(tile);
                 }
-                if (flag) {
-                    data.data.AddInt16(0xfffe);
-                } else {
+                if (loop) {
                     data.data.AddInt16(0xffff);
+                } else {
+                    data.data.AddInt16(0xfffe);
                 }
             }
         }
