@@ -28,9 +28,10 @@ namespace Necrofy
         public void Add(int start, int end) {
             // If the given chunk crosses a bank boundary, split it into two.
             if (start / BankSize != (end - 1) / BankSize) {
-                int splitPoint = (end / BankSize) * BankSize;
+                int splitPoint = (start / BankSize + 1) * BankSize;
                 Add(start, splitPoint);
                 start = splitPoint;
+                // TODO: This shouldn't ever happen, so log a warning
             }
             FreeBlock block = new FreeBlock(start, end);
             blocks.Add(block);
