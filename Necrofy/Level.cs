@@ -14,12 +14,6 @@ namespace Necrofy
         private const int curVersion = 1;
         /// <summary>The version of the level format used for loading/saving.</summary>
         public int version { get; set; }
-        /// <summary>The loaded tileset used for this level.</summary>
-        [JsonIgnore]
-        public Tileset tileset { get; private set; }
-        /// <summary>The graphics loaded for items, victims, monsters, etc.</summary>
-        [JsonIgnore]
-        public SpriteGFX sprites { get; private set; }
         /// <summary>The background tiles making up the level</summary>
         public ushort[,] background { get; set; }
         public string tilesetTilemapName { get; set; }
@@ -69,7 +63,7 @@ namespace Necrofy
             int backgroundPtr = s.ReadPointer();
             tilesetCollisionName = TilesetCollisionAsset.GetAssetName(s, r, s.ReadPointer());
             tilesetGraphicsName = TilesetGraphicsAsset.GetAssetName(s, r, s.ReadPointer());
-            paletteName = TilesetPaletteAsset.GetAssetName(s, r, s.ReadPointer(), tilesetGraphicsName);
+            paletteName = TilesetPaletteAsset.GetAssetName(s, r, s.ReadPointer());
             spritePaletteName = PaletteAsset.GetAssetName(s, r, s.ReadPointer());
             paletteAnimationPtr = s.ReadPointer();
 
@@ -122,7 +116,7 @@ namespace Necrofy
             r.Freespace.AddSize(backgroundPtr, width * height * 2);
         }
 
-        private void AddAllObjects(NStream s, Action add) {
+        private static void AddAllObjects(NStream s, Action add) {
             s.GoToRelativePointerPush();
             while (s.PeekInt16() > 0) {
                 add();
@@ -192,7 +186,7 @@ namespace Necrofy
             return data;
         }
 
-        private void BuildAll<T>(List<T> objects, MovableData data, Action<T, MovableData> build) {
+        private static void BuildAll<T>(List<T> objects, MovableData data, Action<T, MovableData> build) {
             MovableData objectData = new MovableData();
             foreach (T obj in objects) {
                 build(obj, objectData);

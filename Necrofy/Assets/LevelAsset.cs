@@ -9,67 +9,113 @@ namespace Necrofy
 {
     class LevelAsset : Asset
     {
-        private const string Folder = "Levels";
-        private const string Extension = "json";
+        private const AssetCategory AssetCat = AssetCategory.Level;
 
         public static void RegisterLoader() {
-            Asset.AddLoader(
-                (projectDir, path) => {
-                    string[] parts = path.Split(Path.DirectorySeparatorChar);
-                    if (parts.Length == 2 && parts[0] == Folder) {
-                        string[] nameParts = parts[1].Split('.');
-                        if (nameParts.Length == 2 && nameParts[1] == Extension) {
-                            int levelNum;
-                            if (int.TryParse(nameParts[0], out levelNum)) {
-                                Level level = JsonConvert.DeserializeObject<Level>(File.ReadAllText(Path.Combine(projectDir, path)), new LevelJsonConverter());
-                                return new LevelAsset(levelNum, level);
-                            }
-                        }
-                    }
-                    return null;
-                },
-                (romStream, romInfo) => { });
+            AddCreator(new LevelCreator());
         }
 
-        private int levelNum;
-        private Level level;
+        private readonly LevelNameInfo nameInfo;
+        private readonly Level level;
 
-        public LevelAsset(int levelNum, Level level) {
-            this.levelNum = levelNum;
+        public LevelAsset(int levelNum, Level level) : this(new LevelNameInfo(levelNum), level) { }
+
+        private LevelAsset(LevelNameInfo nameInfo, Level level) {
+            this.nameInfo = nameInfo;
             this.level = level;
         }
 
-        public override void WriteFile(string projectDir) {
-            string path = Path.Combine(projectDir, Folder);
-            if (!Directory.Exists(path)) {
-                Directory.CreateDirectory(path);
-            }
-            path = Path.Combine(path, levelNum.ToString() + "." + Extension);
-            File.WriteAllText(path, JsonConvert.SerializeObject(level));
-        }
-
-        private int GetPointerPosition() {
+        private static int GetPointerPosition(int levelNum) {
             return ROMPointers.LevelPointers + 2 + levelNum * 4;
         }
 
-        public override void Insert(NStream rom, ROMInfo romInfo) {
-            MovableData levelData = level.Build(romInfo);
-            int pointer = romInfo.Freespace.Claim(levelData.GetSize());
-            byte[] levelDataArray = levelData.Build(pointer);
+        public override void WriteFile(string projectDir) {
+            File.WriteAllText(nameInfo.GetFilename(projectDir), JsonConvert.SerializeObject(level));
+        }
 
-            rom.Seek(GetPointerPosition(), SeekOrigin.Begin);
-            rom.WritePointer(pointer);
-            
-            rom.Seek(pointer, SeekOrigin.Begin);
-            rom.Write(levelDataArray, 0, levelDataArray.Length);
+        protected override Inserter GetInserter(ROMInfo romInfo) {
+            return new LevelInserter(nameInfo.levelNum, level.Build(romInfo));
         }
 
         public override void ReserveSpace(Freespace freespace) {
-            freespace.Reserve(GetPointerPosition(), 4);
+            freespace.Reserve(GetPointerPosition(nameInfo.levelNum), 4);
         }
 
-        public override AssetCategory Category {
-            get { return AssetCategory.Level; }
+        protected override AssetCategory Category {
+            get { return AssetCat; }
+        }
+
+        protected override string Name {
+            get { return nameInfo.Name; }
+        }
+
+        class LevelCreator : Creator
+        {
+            public override NameInfo GetNameInfo(string path) {
+                return LevelNameInfo.FromPath(path);
+            }
+
+            public override Asset FromFile(NameInfo nameInfo, string filename) {
+                return new LevelAsset((LevelNameInfo)nameInfo, JsonConvert.DeserializeObject<Level>(File.ReadAllText(filename), new LevelJsonConverter()));
+            }
+
+            public override AssetCategory GetCategory() {
+                return AssetCat;
+            }
+        }
+
+        class LevelNameInfo : NameInfo
+        {
+            private const string Folder = "Levels";
+            private const string Extension = "json";
+
+            public readonly int levelNum;
+
+            public LevelNameInfo(int levelNum) {
+                this.levelNum = levelNum;
+            }
+
+            public override string Name {
+                get { return levelNum.ToString(); }
+            }
+
+            protected override PathParts GetPathParts() {
+                return new PathParts(Folder, null, levelNum.ToString(), Extension, null);
+            }
+
+            public static LevelNameInfo FromPath(string path) {
+                PathParts parts = NameInfo.ParsePath(path);
+                if (parts.topFolder != Folder) return null;
+                if (parts.subFolder != null) return null;
+                if (parts.fileExtension != Extension) return null;
+                if (parts.pointer != null) return null;
+                int levelNum = int.Parse(parts.name); // TODO: Handle failed parse
+                return new LevelNameInfo(levelNum);
+            }
+        }
+
+        class LevelInserter : Inserter
+        {
+            private readonly int levelNum;
+            private readonly MovableData levelData;
+
+            public LevelInserter(int levelNum, MovableData levelData) {
+                this.levelNum = levelNum;
+                this.levelData = levelData;
+            }
+
+            public override int GetSize() {
+                return levelData.GetSize();
+            }
+
+            public override byte[] GetData(int pointer) {
+                return levelData.Build(pointer);
+            }
+
+            public override void InsertExtras(int pointer, NStream romStream) {
+                romStream.Seek(GetPointerPosition(levelNum), SeekOrigin.Begin);
+                romStream.WritePointer(pointer);
+            }
         }
     }
 }

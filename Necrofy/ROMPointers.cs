@@ -182,6 +182,16 @@ namespace Necrofy
             return (ushort)(byte1 | byte2 << 8);
         }
 
+        /// <summary>Reads the specified number of bytes from the stream.</summary>
+        /// <param name="s">The stream</param>
+        /// <param name="count">The number of bytes to read</param>
+        /// <returns>The bytes</returns>
+        public static byte[] ReadBytes(this Stream s, int count) {
+            byte[] data = new byte[count];
+            s.Read(data, 0, count);
+            return data;
+        }
+
         /// <summary>Reads an unsigned little-endian 16-bit integer from the stream without advancing the position.</summary>
         /// <param name="s">The stream</param>
         /// <returns>The integer or -1 if the stream reached the end</returns>

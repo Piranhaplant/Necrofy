@@ -9,70 +9,68 @@ namespace Necrofy
     class TilesetGraphicsAsset : TilesetAsset
     {
         private const AssetCategory AssetCat = AssetCategory.Graphics;
-        private const string AssetFilename = "graphics.bin";
-        private static Dictionary<int, string> Defaults = new Dictionary<int, string>() { { 0xc8000, "Castle" }, { 0xc0000, "Grass" }, { 0xc4000, "Desert" }, { 0xd0000, "Office" }, { 0xcc000, "Mall" } };
-        
+        private const string Filename = "graphics";
+        private const string AssetExtension = "bin";
+
         public static void RegisterLoader() {
-            Asset.AddLoader(
-                (projectDir, path) => {
-                    string tilesetName;
-                    if (CheckPath(path, AssetFilename, out tilesetName)) {
-                        return new TilesetGraphicsAsset(tilesetName, File.ReadAllBytes(Path.Combine(projectDir, path)));
-                    }
-                    return null;
-                },
-                (romStream, romInfo) => {
-                    foreach (KeyValuePair<int, string> def in Defaults) {
-                        CreateAsset(romStream, romInfo, def.Key, def.Value);
-                    }
-                });
+            AddCreator(new TilesetGraphicsCreator());
         }
 
         public static string GetAssetName(NStream romStream, ROMInfo romInfo, int pointer) {
-            string name = romInfo.GetAssetName(AssetCat, pointer);
-            if (name == null) {
-                name = pointer.ToString("X6");
-                CreateAsset(romStream, romInfo, pointer, name);
-            }
-            return name;
+            return Asset.GetAssetName(romStream, romInfo, pointer, new TilesetGraphicsCreator());
         }
 
+        private TilesetFixedNameInfo nameInfo;
         private byte[] data;
 
-        public TilesetGraphicsAsset(string tilesetName, byte[] data) {
-            this.tilesetName = tilesetName;
+        private TilesetGraphicsAsset(TilesetFixedNameInfo nameInfo, byte[] data) {
+            this.nameInfo = nameInfo;
             this.data = data;
         }
 
-        private static void CreateAsset(NStream romStream, ROMInfo romInfo, int pointer, string tilesetName) {
-            romStream.PushPosition();
-
-            romStream.Seek(pointer, SeekOrigin.Begin);
-            byte[] data = new byte[0x4000];
-            romStream.Read(data, 0, data.Length);
-            romInfo.Freespace.AddSize(pointer, data.Length);
-
-            Asset asset = new TilesetGraphicsAsset(tilesetName, data);
-            romInfo.assets.Add(asset);
-            romInfo.AddAssetName(AssetCat, pointer, tilesetName);
-
-            romStream.PopPosition();
-        }
-
         public override void WriteFile(string projectDir) {
-            string filename = CreateDirectories(projectDir, AssetFilename);
-            File.WriteAllBytes(filename, data);
+            File.WriteAllBytes(nameInfo.GetFilename(projectDir), data);
         }
 
-        public override void Insert(NStream rom, ROMInfo romInfo) {
-            int pointer = romInfo.Freespace.Claim(data.Length);
-            rom.Seek(pointer, SeekOrigin.Begin);
-            rom.Write(data, 0, data.Length);
-            romInfo.AddAssetPointer(AssetCat, tilesetName, pointer);
+        protected override Asset.Inserter GetInserter(ROMInfo romInfo) {
+            return new ByteArrayInserter(data);
         }
 
-        public override AssetCategory Category {
+        protected override AssetCategory Category {
             get { return AssetCat; }
+        }
+
+        protected override string Name {
+            get { return nameInfo.Name; }
+        }
+
+        class TilesetGraphicsCreator : Creator
+        {
+            public override NameInfo GetNameInfo(string path) {
+                return TilesetFixedNameInfo.FromPath(path, Filename, AssetExtension);
+            }
+
+            public override Asset FromFile(NameInfo nameInfo, string filename) {
+                return new TilesetGraphicsAsset((TilesetFixedNameInfo)nameInfo, File.ReadAllBytes(filename));
+            }
+
+            public override AssetCategory GetCategory() {
+                return AssetCat;
+            }
+
+            public override List<DefaultParams> GetDefaults() {
+                return new TilesetFixedDefaultList(Filename, AssetExtension) {
+                    { 0xc8000, "Castle" }, { 0xc0000, "Grass" }, { 0xc4000, "Desert" }, { 0xd0000, "Office" }, { 0xcc000, "Mall" }
+                };
+            }
+
+            public override Asset FromRom(NameInfo nameInfo, NStream romStream) {
+                return new TilesetGraphicsAsset((TilesetFixedNameInfo)nameInfo, romStream.ReadBytes(0x4000));
+            }
+
+            public override NameInfo GetNameInfoForName(string name) {
+                return new TilesetFixedNameInfo(name, Filename, AssetExtension);
+            }
         }
     }
 }

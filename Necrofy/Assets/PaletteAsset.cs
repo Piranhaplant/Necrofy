@@ -9,80 +9,94 @@ namespace Necrofy
     class PaletteAsset : Asset
     {
         private const AssetCategory AssetCat = AssetCategory.Palette;
-        private const string Folder = "Palettes";
-        private const string Extension = "plt";
-
-        private static Dictionary<int, string> Defaults = new Dictionary<int, string>() { { 0xf0f76, "Sprites" } };
 
         public static void RegisterLoader() {
-            Asset.AddLoader(
-                (projectDir, path) => {
-                    string[] parts = path.Split(Path.DirectorySeparatorChar);
-                    if (parts.Length == 2 && parts[0] == Folder) {
-                        string[] nameParts = parts[1].Split('.');
-                        if (nameParts.Length == 2 && nameParts[1] == Extension) {
-                            return new PaletteAsset(nameParts[0], File.ReadAllBytes(Path.Combine(projectDir, path)));
-                        }
-                    }
-                    return null;
-                },
-                (romStream, romInfo) => {
-                    foreach (KeyValuePair<int, string> def in Defaults) {
-                        CreateAsset(romStream, romInfo, def.Key, def.Value);
-                    }
-                });
+            AddCreator(new PaletteCreator());
         }
         
         public static string GetAssetName(NStream romStream, ROMInfo romInfo, int pointer) {
-            string name = romInfo.GetAssetName(AssetCat, pointer);
-            if (name == null) {
-                name = pointer.ToString("X6");
-                CreateAsset(romStream, romInfo, pointer, name);
-            }
-            return name;
+            return Asset.GetAssetName(romStream, romInfo, pointer, new PaletteCreator());
         }
 
-        private string name;
-        private byte[] data;
+        private readonly PaletteNameInfo nameInfo;
+        private readonly byte[] data;
 
-        public PaletteAsset(string name, byte[] data) {
-            this.name = name;
+        private PaletteAsset(PaletteNameInfo nameInfo, byte[] data) {
+            this.nameInfo = nameInfo;
             this.data = data;
         }
 
-        private static void CreateAsset(NStream romStream, ROMInfo romInfo, int pointer, string name) {
-            romStream.PushPosition();
-
-            romStream.Seek(pointer, SeekOrigin.Begin);
-            byte[] data = new byte[0x100];
-            romStream.Read(data, 0, data.Length);
-            romInfo.Freespace.AddSize(pointer, data.Length);
-
-            Asset asset = new PaletteAsset(name, data);
-            romInfo.assets.Add(asset);
-            romInfo.AddAssetName(AssetCat, pointer, name);
-
-            romStream.PopPosition();
-        }
-
         public override void WriteFile(string projectDir) {
-            string path = Path.Combine(projectDir, Folder);
-            if (!Directory.Exists(path)) {
-                Directory.CreateDirectory(path);
-            }
-            path = Path.Combine(path, name + "." + Extension);
-            File.WriteAllBytes(path, data);
+            File.WriteAllBytes(nameInfo.GetFilename(projectDir), data);
         }
 
-        public override void Insert(NStream rom, ROMInfo romInfo) {
-            int pointer = romInfo.Freespace.Claim(data.Length);
-            rom.Seek(pointer, SeekOrigin.Begin);
-            rom.Write(data, 0, data.Length);
-            romInfo.AddAssetPointer(AssetCat, name, pointer);
+        protected override Inserter GetInserter(ROMInfo romInfo) {
+            return new ByteArrayInserter(data);
         }
 
-        public override AssetCategory Category {
+        protected override AssetCategory Category {
             get { return AssetCat; }
+        }
+
+        protected override string Name {
+            get { return nameInfo.Name; }
+        }
+
+        class PaletteCreator : Creator
+        {
+            public override NameInfo GetNameInfo(string path) {
+                return PaletteNameInfo.FromPath(path);
+            }
+
+            public override Asset FromFile(NameInfo nameInfo, string filename) {
+                return new PaletteAsset((PaletteNameInfo)nameInfo, File.ReadAllBytes(filename));
+            }
+
+            public override AssetCategory GetCategory() {
+                return AssetCat;
+            }
+
+            public override List<DefaultParams> GetDefaults() {
+                return new List<DefaultParams>() { new DefaultParams(0xf0f76, new PaletteNameInfo("Sprites", null)) };
+            }
+
+            public override Asset FromRom(NameInfo nameInfo, NStream romStream) {
+                return new PaletteAsset((PaletteNameInfo)nameInfo, romStream.ReadBytes(0x100));
+            }
+
+            public override NameInfo GetNameInfoForName(string name) {
+                return new PaletteNameInfo(name, null);
+            }
+        }
+
+        class PaletteNameInfo : NameInfo
+        {
+            private const string Folder = "Palettes";
+            private const string Extension = "plt";
+
+            public readonly string name;
+            public readonly int? pointer;
+
+            public PaletteNameInfo(string name, int? pointer) {
+                this.name = name;
+                this.pointer = pointer;
+            }
+
+            public override string Name {
+                get { return name; }
+            }
+
+            protected override NameInfo.PathParts GetPathParts() {
+                return new NameInfo.PathParts(Folder, null, name, Extension, pointer);
+            }
+
+            public static PaletteNameInfo FromPath(string path) {
+                PathParts parts = NameInfo.ParsePath(path);
+                if (parts.topFolder != Folder) return null;
+                if (parts.subFolder != null) return null;
+                if (parts.fileExtension != Extension) return null;
+                return new PaletteNameInfo(parts.name, parts.pointer);
+            }
         }
     }
 }

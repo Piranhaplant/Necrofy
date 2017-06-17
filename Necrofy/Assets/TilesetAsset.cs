@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -10,55 +9,93 @@ namespace Necrofy
     {
         private const string Folder = "Tilesets";
 
-        protected string tilesetName;
+        protected class TilesetNameInfo : NameInfo
+        {
+            public readonly string tilesetName;
+            public readonly string name;
+            public readonly string extension;
 
-        /// <summary>Checks that the given filename is a valid name for a TilesetAsset</summary>
-        /// <param name="path">The path to check (relative to the project)</param>
-        /// <param name="desiredFilename">The ending filename that is used for this kind of TilesetAsset</param>
-        /// <param name="tilesetName">The name of the tileset extracted from the filename</param>
-        /// <returns>Whether the path is valid</returns>
-        protected static bool CheckPath(string path, string desiredFilename, out string tilesetName) {
-            string[] parts = path.Split(Path.DirectorySeparatorChar);
-            if (parts.Length == 3 && parts[0] == Folder && parts[2] == desiredFilename) {
-                tilesetName = parts[1];
-                return true;
+            public TilesetNameInfo(string tilesetName, string name, string extension) {
+                this.tilesetName = tilesetName;
+                this.name = name;
+                this.extension = extension;
             }
-            tilesetName = null;
-            return false;
+
+            public override string Name {
+                get { return tilesetName + "/" + name; }
+            }
+
+            protected override PathParts GetPathParts() {
+                return new PathParts(Folder, tilesetName, name, extension, null);
+            }
+
+            public static TilesetNameInfo FromPath(string path, string extension) {
+                PathParts parts = NameInfo.ParsePath(path);
+                if (parts.topFolder != Folder) return null;
+                if (parts.subFolder == null) return null;
+                if (parts.fileExtension != extension) return null;
+                if (parts.pointer != null) return null;
+                return new TilesetNameInfo(parts.subFolder, parts.name, extension);
+            }
         }
 
-        /// <summary>Checks that the given filename is a valid name for a TilesetAsset</summary>
-        /// <param name="path">The path to check (relative to the project)</param>
-        /// <param name="extension">The end of the filename that is used for this kind of TilesetAsset</param>
-        /// <param name="tilesetName">The name of the tileset extracted from the filename</param>
-        /// <param name="fileName">The filename without the extension</param>
-        /// <returns>Whether the path is valid</returns>
-        protected static bool CheckPathEndsWith(string path, string extension, out string tilesetName, out string fileName) {
-            string[] parts = path.Split(Path.DirectorySeparatorChar);
-            if (parts.Length == 3 && parts[0] == Folder && parts[2].EndsWith(extension)) {
-                tilesetName = parts[1];
-                fileName = parts[2].Substring(0, parts[2].Length - extension.Length);
-                return true;
+        protected class TilesetDefaultList : List<DefaultParams>
+        {
+            private readonly string extension;
+
+            public TilesetDefaultList(string extension) {
+                this.extension = extension;
             }
-            tilesetName = null;
-            fileName = null;
-            return false;
+
+            public void Add(int pointer, string tilesetName, string name) {
+                Add(new DefaultParams(pointer, new TilesetNameInfo(tilesetName, name, extension)));
+            }
         }
 
-        /// <summary>Creates all of the directories necessary to store the TilesetAsset in the project</summary>
-        /// <param name="projectPath">The root project path</param>
-        /// <param name="filename">The ending filename of the asset</param>
-        /// <returns>The full path to the file</returns>
-        protected string CreateDirectories(string projectPath, string filename) {
-            string path = Path.Combine(projectPath, Folder);
-            if (!Directory.Exists(path)) {
-                Directory.CreateDirectory(path);
+        protected class TilesetFixedNameInfo : NameInfo
+        {
+            public readonly string tilesetName;
+            public readonly string name;
+            public readonly string extension;
+
+            public TilesetFixedNameInfo(string tilesetName, string name, string extension) {
+                this.tilesetName = tilesetName;
+                this.name = name;
+                this.extension = extension;
             }
-            path = Path.Combine(path, tilesetName);
-            if (!Directory.Exists(path)) {
-                Directory.CreateDirectory(path);
+
+            public override string Name {
+                get { return tilesetName; }
             }
-            return Path.Combine(path, filename);
+
+            protected override PathParts GetPathParts() {
+                return new PathParts(Folder, tilesetName, name, extension, null);
+            }
+
+            public static TilesetFixedNameInfo FromPath(string path, string name, string extension) {
+                PathParts parts = NameInfo.ParsePath(path);
+                if (parts.topFolder != Folder) return null;
+                if (parts.subFolder == null) return null;
+                if (parts.name != name) return null;
+                if (parts.fileExtension != extension) return null;
+                if (parts.pointer != null) return null;
+                return new TilesetFixedNameInfo(parts.subFolder, parts.name, extension);
+            }
+        }
+
+        protected class TilesetFixedDefaultList : List<DefaultParams>
+        {
+            private readonly string name;
+            private readonly string extension;
+
+            public TilesetFixedDefaultList(string name, string extension) {
+                this.name = name;
+                this.extension = extension;
+            }
+
+            public void Add(int pointer, string tilesetName) {
+                Add(new DefaultParams(pointer, new TilesetFixedNameInfo(tilesetName, name, extension)));
+            }
         }
     }
 }

@@ -25,7 +25,6 @@ namespace Necrofy
         public ROMInfo(Project project, NStream s) {
             this.project = project;
             Freespace = new Freespace((int)s.Length);
-            Asset.AddAllDefaults(s, this);
 
             // First get a list of all the level pointers
             s.Seek(ROMPointers.LevelPointers, SeekOrigin.Begin);
@@ -44,6 +43,11 @@ namespace Necrofy
             s.Seek(3, SeekOrigin.Current);
             bool fullLevelPointers = s.ReadByte() == 0;
             s.Seek(-4, SeekOrigin.Current);
+
+            // Don't try to get default assets for ROMs build with Necrofy, since everything is moved around
+            if (!fullLevelPointers) {
+                Asset.AddAllDefaults(s, this);
+            }
 
             Freespace.AddSize(ROMPointers.LevelPointers + 2, (maxBonusLevel + 1) * (fullLevelPointers ? 4 : 2));
 
