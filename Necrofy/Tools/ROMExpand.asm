@@ -443,7 +443,7 @@ c82C268: STA $0060
 ;82C26E: STA $0062
 ;82C271: LDX $10
          PHB
-         JSR loadbank82
+         JSR loadbank82_2
 c82C273: LDA $003A,X
          PLB
          CMP #$0000       ; Has to be inserted because PLB will override flags
