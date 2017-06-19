@@ -64,7 +64,7 @@ namespace Necrofy
                 };
             }
 
-            public override Asset FromRom(NameInfo nameInfo, NStream romStream) {
+            public override Asset FromRom(NameInfo nameInfo, NStream romStream, int? size) {
                 return new TilesetGraphicsAsset((TilesetFixedNameInfo)nameInfo, romStream.ReadBytes(0x4000));
             }
 

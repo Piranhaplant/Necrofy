@@ -67,6 +67,7 @@ namespace Necrofy
             }
             if (bestBlock == null) {
                 // Couldn't find a block big enough, so add some new space at the end of the ROM
+                // TODO: Add check for exceeding the maximum possible ROM size
                 AddSize(romSize, BankSize);
                 romSize += BankSize;
                 return Claim(size);

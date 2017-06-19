@@ -28,11 +28,22 @@ namespace Necrofy
         public abstract void WriteFile(string projectDir);
         /// <summary>Reserves any space that will be needed by this asset before inserting into a ROM.</summary>
         /// <param name="freespace">The freespace</param>
-        public virtual void ReserveSpace(Freespace freespace) { }
+        public virtual void ReserveSpace(Freespace freespace) {
+            if (FixedPointer != null) {
+                // This will only ever be done on assets that use a byte array inserter, so it's okay to pass null here
+                // and it's cheap to create a second inserter when we actually go to insert the asset.
+                Inserter inserter = GetInserter(null);
+                freespace.Reserve(FixedPointer.Value, inserter.GetSize());
+            }
+        }
         /// <summary>Gets the order that this asset should be inserted</summary>
         protected abstract AssetCategory Category { get; }
         /// <summary>Gets the name of this asset</summary>
         protected abstract string Name { get; }
+        /// <summary>Gets the fixed pointer at which this asset should be inserted to the ROM, if one exists</summary>
+        protected virtual int? FixedPointer {
+            get { return null; }
+        }
         /// <summary>Inserts the asset into the given ROM</summary>
         /// <param name="rom">The ROM</param>
         /// <param name="romInfo">The ROM info</param>
@@ -81,7 +92,7 @@ namespace Necrofy
         public static void AddAllDefaults(NStream romStream, ROMInfo romInfo) {
             foreach (Creator creator in creators) {
                 foreach (DefaultParams defaultParams in creator.GetDefaults()) {
-                    CreateAsset(romStream, romInfo, creator, defaultParams.nameInfo, defaultParams.pointer);
+                    CreateAsset(romStream, romInfo, creator, defaultParams.nameInfo, defaultParams.pointer, defaultParams.size);
                 }
             }
         }
@@ -97,19 +108,19 @@ namespace Necrofy
             if (name == null) {
                 string hexName = pointer.ToString("X6");
                 NameInfo nameInfo = creator.GetNameInfoForName(hexName);
-                CreateAsset(romStream, romInfo, creator, nameInfo, pointer);
+                CreateAsset(romStream, romInfo, creator, nameInfo, pointer, null);
                 name = nameInfo.Name;
             }
             return name;
         }
 
         // Creates an asset from a ROM
-        private static void CreateAsset(NStream romStream, ROMInfo romInfo, Creator creator, NameInfo nameInfo, int pointer) {
+        private static void CreateAsset(NStream romStream, ROMInfo romInfo, Creator creator, NameInfo nameInfo, int pointer, int? size) {
             romStream.PushPosition();
 
             romStream.Seek(pointer, SeekOrigin.Begin);
             long startPos = romStream.Position;
-            Asset asset = creator.FromRom(nameInfo, romStream);
+            Asset asset = creator.FromRom(nameInfo, romStream, size);
             // We can't just use data.Length here because the size itself counts towards the length for compressed data
             romInfo.Freespace.AddSize(pointer, (int)(romStream.Position - startPos));
 
@@ -236,20 +247,26 @@ namespace Necrofy
             /// <summary>Creates an asset from the given ROM</summary>
             /// <param name="nameInfo">The NameInfo for the asset. This will be the value from either GetDefaults or GetNameInfoForName</param>
             /// <param name="romStream">The rom stream, positioned at the start of the asset</param>
-            public virtual Asset FromRom(NameInfo nameInfo, NStream romStream) { return null; }
+            public virtual Asset FromRom(NameInfo nameInfo, NStream romStream, int? size) { return null; }
             /// <summary>Gets a NameInfo from the given name string. This is used to create assets that do not exist in the defaults.</summary>
             public virtual NameInfo GetNameInfoForName(string name) { return null; }
         }
 
-        /// <summary>Information about the assets that exist in a clean ROM</summary>
+        /// <summary>Information about an asset that exists in a clean ROM</summary>
         protected class DefaultParams
         {
             public readonly int pointer;
             public readonly NameInfo nameInfo;
+            public readonly int? size;
 
-            public DefaultParams(int pointer, NameInfo nameInfo) {
+            public DefaultParams(int pointer, NameInfo nameInfo, int? size) {
                 this.pointer = pointer;
                 this.nameInfo = nameInfo;
+                this.size = size;
+            }
+
+            public DefaultParams(int pointer, NameInfo nameInfo)
+                : this(pointer, nameInfo, null) {
             }
         }
 

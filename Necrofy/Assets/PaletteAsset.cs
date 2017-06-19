@@ -34,6 +34,10 @@ namespace Necrofy
             return new ByteArrayInserter(data);
         }
 
+        protected override int? FixedPointer {
+            get { return nameInfo.pointer; }
+        }
+
         protected override AssetCategory Category {
             get { return AssetCat; }
         }
@@ -57,11 +61,15 @@ namespace Necrofy
             }
 
             public override List<DefaultParams> GetDefaults() {
-                return new List<DefaultParams>() { new DefaultParams(0xf0f76, new PaletteNameInfo("Sprites", null)) };
+                return new List<DefaultParams>() {
+                    new DefaultParams(0xf0f76, new PaletteNameInfo("Sprites", 0xf0f76)),
+                    new DefaultParams(0xf0e96, new PaletteNameInfo("Copyright", 0xf0e96), 0x20)
+                };
             }
 
-            public override Asset FromRom(NameInfo nameInfo, NStream romStream) {
-                return new PaletteAsset((PaletteNameInfo)nameInfo, romStream.ReadBytes(0x100));
+            public override Asset FromRom(NameInfo nameInfo, NStream romStream, int? size) {
+                int actualSize = size ?? 0x100;
+                return new PaletteAsset((PaletteNameInfo)nameInfo, romStream.ReadBytes(actualSize));
             }
 
             public override NameInfo GetNameInfoForName(string name) {

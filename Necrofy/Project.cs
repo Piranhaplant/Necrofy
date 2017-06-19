@@ -22,6 +22,8 @@ namespace Necrofy
             foreach (Asset asset in info.assets) {
                 asset.WriteFile(path);
             }
+
+            s.Close();
         }
 
         /// <summary>Loads an existing project from the given directory.</summary>
