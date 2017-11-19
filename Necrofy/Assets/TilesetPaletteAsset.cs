@@ -45,8 +45,8 @@ namespace Necrofy
 
         class TilesetPaletteCreator : Creator
         {
-            public override NameInfo GetNameInfo(string path) {
-                return TilesetNameInfo.FromPath(path, AssetExtension);
+            public override NameInfo GetNameInfo(NameInfo.PathParts pathParts) {
+                return TilesetNameInfo.FromPath(pathParts, AssetExtension);
             }
 
             public override Asset FromFile(NameInfo nameInfo, string filename) {

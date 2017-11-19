@@ -46,8 +46,8 @@ namespace Necrofy
 
         class TilesetTilemapCreator : Creator
         {
-            public override NameInfo GetNameInfo(string path) {
-                return TilesetFixedNameInfo.FromPath(path, Filename, AssetExtension);
+            public override NameInfo GetNameInfo(NameInfo.PathParts pathParts) {
+                return TilesetFixedNameInfo.FromPath(pathParts, Filename, AssetExtension);
             }
 
             public override Asset FromFile(NameInfo nameInfo, string filename) {

@@ -51,8 +51,8 @@ namespace Necrofy
 
         class LevelCreator : Creator
         {
-            public override NameInfo GetNameInfo(string path) {
-                return LevelNameInfo.FromPath(path);
+            public override NameInfo GetNameInfo(NameInfo.PathParts pathParts) {
+                return LevelNameInfo.FromPath(pathParts);
             }
 
             public override Asset FromFile(NameInfo nameInfo, string filename) {
@@ -83,8 +83,7 @@ namespace Necrofy
                 return new PathParts(Folder, null, levelNum.ToString(), Extension, null);
             }
 
-            public static LevelNameInfo FromPath(string path) {
-                PathParts parts = NameInfo.ParsePath(path);
+            public static LevelNameInfo FromPath(NameInfo.PathParts parts) {
                 if (parts.topFolder != Folder) return null;
                 if (parts.subFolder != null) return null;
                 if (parts.fileExtension != Extension) return null;

@@ -48,8 +48,8 @@ namespace Necrofy
 
         class PaletteCreator : Creator
         {
-            public override NameInfo GetNameInfo(string path) {
-                return PaletteNameInfo.FromPath(path);
+            public override NameInfo GetNameInfo(NameInfo.PathParts pathParts) {
+                return PaletteNameInfo.FromPath(pathParts);
             }
 
             public override Asset FromFile(NameInfo nameInfo, string filename) {
@@ -98,8 +98,7 @@ namespace Necrofy
                 return new NameInfo.PathParts(Folder, null, name, Extension, pointer);
             }
 
-            public static PaletteNameInfo FromPath(string path) {
-                PathParts parts = NameInfo.ParsePath(path);
+            public static PaletteNameInfo FromPath(NameInfo.PathParts parts) {
                 if (parts.topFolder != Folder) return null;
                 if (parts.subFolder != null) return null;
                 if (parts.fileExtension != Extension) return null;

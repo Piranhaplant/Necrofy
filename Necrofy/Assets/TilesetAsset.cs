@@ -29,8 +29,7 @@ namespace Necrofy
                 return new PathParts(Folder, tilesetName, name, extension, null);
             }
 
-            public static TilesetNameInfo FromPath(string path, string extension) {
-                PathParts parts = NameInfo.ParsePath(path);
+            public static TilesetNameInfo FromPath(NameInfo.PathParts parts, string extension) {
                 if (parts.topFolder != Folder) return null;
                 if (parts.subFolder == null) return null;
                 if (parts.fileExtension != extension) return null;
@@ -72,8 +71,7 @@ namespace Necrofy
                 return new PathParts(Folder, tilesetName, name, extension, null);
             }
 
-            public static TilesetFixedNameInfo FromPath(string path, string name, string extension) {
-                PathParts parts = NameInfo.ParsePath(path);
+            public static TilesetFixedNameInfo FromPath(NameInfo.PathParts parts, string name, string extension) {
                 if (parts.topFolder != Folder) return null;
                 if (parts.subFolder == null) return null;
                 if (parts.name != name) return null;

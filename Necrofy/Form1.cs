@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using Newtonsoft.Json;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace Necrofy
 {
@@ -16,9 +17,15 @@ namespace Necrofy
         public Form1()
         {
             InitializeComponent();
+            DockForm f2 = new DockForm();
+            f2.Show(docker, DockState.DockLeft);
+            DockForm f3 = new DockForm();
+            f3.Show(docker, DockState.DockRight);
+            DockForm f4 = new DockForm();
+            f4.Show(docker, DockState.Document);
         }
 
-        private void button1_Click(object sender, EventArgs e) {
+        private void toolStripButton1_Click(object sender, EventArgs e) {
             OpenFileDialog ofd = new OpenFileDialog();
             if (ofd.ShowDialog() != System.Windows.Forms.DialogResult.OK)
                 return;
@@ -30,7 +37,7 @@ namespace Necrofy
             new Project(ofd.FileName, projectPath);
         }
 
-        private void button2_Click(object sender, EventArgs e) {
+        private void toolStripButton2_Click(object sender, EventArgs e) {
             OpenFileDialog ofd = new OpenFileDialog();
             if (ofd.ShowDialog() != System.Windows.Forms.DialogResult.OK)
                 return;

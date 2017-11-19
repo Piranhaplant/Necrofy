@@ -77,8 +77,9 @@ namespace Necrofy
         /// <param name="filename">The filename of the asset within the project</param>
         /// <returns>The asset, or null if no asset could be created from the file</returns>
         public static Asset FromFile(string projectDir, string filename) {
+            NameInfo.PathParts pathParts = NameInfo.ParsePath(filename);
             foreach (Creator creator in creators) {
-                NameInfo nameInfo = creator.GetNameInfo(filename);
+                NameInfo nameInfo = creator.GetNameInfo(pathParts);
                 if (nameInfo != null) {
                     return creator.FromFile(nameInfo, Path.Combine(projectDir, filename));
                 }
@@ -151,7 +152,7 @@ namespace Necrofy
             public abstract string Name { get; }
 
             /// <summary>Parses the individual parts out of an asset path</summary>
-            protected static PathParts ParsePath(string path) {
+            public static PathParts ParsePath(string path) {
                 PathParts pathParts = new PathParts();
 
                 string[] parts = path.Split(Path.DirectorySeparatorChar);
@@ -205,7 +206,7 @@ namespace Necrofy
             }
 
             /// <summary>Different parts of an asset path that are used to convert to and from filenames</summary>
-            protected class PathParts
+            public class PathParts
             {
                 public string topFolder;
                 public string subFolder;
@@ -231,7 +232,7 @@ namespace Necrofy
 
             /// <summary>Gets the NameInfo of an asset created from the given path</summary>
             /// <param name="path">The path relative to the root directory of the project</param>
-            public abstract NameInfo GetNameInfo(string path);
+            public abstract NameInfo GetNameInfo(NameInfo.PathParts pathParts);
             /// <summary>Creates a new asset from the given file</summary>
             /// <param name="nameInfo">The name of the asset. This will be the object returned from GetNameInfo</param>
             /// <param name="filename">The full filename of the asset</param>
