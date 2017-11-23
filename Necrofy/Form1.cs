@@ -14,6 +14,8 @@ namespace Necrofy
 {
     public partial class Form1 : Form
     {
+        private Project project;
+
         public Form1()
         {
             InitializeComponent();
@@ -25,7 +27,7 @@ namespace Necrofy
             f4.Show(docker, DockState.Document);
         }
 
-        private void toolStripButton1_Click(object sender, EventArgs e) {
+        private void createProjectButton_Click(object sender, EventArgs e) {
             OpenFileDialog ofd = new OpenFileDialog();
             if (ofd.ShowDialog() != System.Windows.Forms.DialogResult.OK)
                 return;
@@ -34,15 +36,26 @@ namespace Necrofy
                 Directory.Delete(projectPath, true);
             }
             Directory.CreateDirectory(projectPath);
-            new Project(ofd.FileName, projectPath);
+            project = new Project(ofd.FileName, projectPath);
         }
 
-        private void toolStripButton2_Click(object sender, EventArgs e) {
+        private void openProjectButton_Click(object sender, EventArgs e) {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "Necrofy project files (*.nfyp)|*.nfyp|All Files (*.*)|*.*";
+            if (ofd.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+                return;
+            project = new Project(ofd.FileName);
+        }
+
+        private void buildProjectButton_Click(object sender, EventArgs e) {
             OpenFileDialog ofd = new OpenFileDialog();
             if (ofd.ShowDialog() != System.Windows.Forms.DialogResult.OK)
                 return;
-            string projectPath = Path.Combine(Path.GetDirectoryName(ofd.FileName), "zamn_project");
-            new Project(projectPath).Build(ofd.FileName, ofd.FileName + ".new.sfc");
+            project.Build(ofd.FileName, ofd.FileName + ".new.sfc");
+        }
+
+        private void openLevelButton_Click(object sender, EventArgs e) {
+            LoadedLevel loadedLevel = new LoadedLevel(project, 1);
         }
     }
 }

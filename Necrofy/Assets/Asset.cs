@@ -24,8 +24,8 @@ namespace Necrofy
     abstract class Asset : IComparable<Asset>
     {
         /// <summary>Writes a file containing the asset into the given project directory</summary>
-        /// <param name="projectDir">The project directory to write to</param>
-        public abstract void WriteFile(string projectDir);
+        /// <param name="project">The project</param>
+        public abstract void WriteFile(Project project);
         /// <summary>Reserves any space that will be needed by this asset before inserting into a ROM.</summary>
         /// <param name="freespace">The freespace</param>
         public virtual void ReserveSpace(Freespace freespace) {
@@ -73,15 +73,15 @@ namespace Necrofy
             creators.Add(creator);
         }
         /// <summary>Loads an asset from the given file</summary>
-        /// <param name="projectDir">The base directory of the project</param>
+        /// <param name="project">The project</param>
         /// <param name="filename">The filename of the asset within the project</param>
         /// <returns>The asset, or null if no asset could be created from the file</returns>
-        public static Asset FromFile(string projectDir, string filename) {
+        public static Asset FromFile(Project project, string filename) {
             NameInfo.PathParts pathParts = NameInfo.ParsePath(filename);
             foreach (Creator creator in creators) {
                 NameInfo nameInfo = creator.GetNameInfo(pathParts);
                 if (nameInfo != null) {
-                    return creator.FromFile(nameInfo, Path.Combine(projectDir, filename));
+                    return creator.FromFile(nameInfo, Path.Combine(project.path, filename));
                 }
             }
             // TODO: record error or something when this happens

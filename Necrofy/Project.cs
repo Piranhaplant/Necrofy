@@ -4,35 +4,52 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Diagnostics;
+using Newtonsoft.Json;
 
 namespace Necrofy
 {
     /// <summary>Manages aspects of a ROM hack project including creation, modification, and building.</summary>
     class Project
     {
-        public string path { get; private set; }
+        public readonly string path;
+        public readonly string settingsFilename;
+        public readonly ProjectSettings settings;
 
         /// <summary>Creates a new project from the given base ROM.</summary>
         /// <param name="baseROM">The path to a ROM that the files in the project will be extracted from.</param>
         /// <param name="path">The path to a directory in which all of the project files will be placed.</param>
-        public Project(string baseROM, string path) : this(path) {
+        public Project(string baseROM, string path) {
+            this.path = FixPath(path);
             NStream s = new NStream(new FileStream(baseROM, FileMode.Open, FileAccess.Read, FileShare.Read));
             ROMInfo info = new ROMInfo(this, s);
 
             foreach (Asset asset in info.assets) {
-                asset.WriteFile(path);
+                asset.WriteFile(this);
             }
 
             s.Close();
+            settingsFilename = "project.nfyp";
+            settings = new ProjectSettings();
+            WriteSettings();
         }
 
-        /// <summary>Loads an existing project from the given directory.</summary>
-        /// <param name="path">The directory from which to load the project files.</param>
-        public Project(string path) {
-            this.path = path;
-            if (!this.path.EndsWith(Path.DirectorySeparatorChar.ToString())) {
-                this.path += Path.DirectorySeparatorChar;
+        /// <summary>Loads an existing project from the given settings file.</summary>
+        /// <param name="path">The filename of the settings file.</param>
+        public Project(string settingsFile) {
+            path = FixPath(Path.GetDirectoryName(settingsFile));
+            settingsFilename = Path.GetFileName(settingsFile);
+            settings = JsonConvert.DeserializeObject<ProjectSettings>(File.ReadAllText(settingsFile));
+        }
+
+        private static string FixPath(string path) {
+            if (!path.EndsWith(Path.DirectorySeparatorChar.ToString())) {
+                path += Path.DirectorySeparatorChar;
             }
+            return path;
+        }
+
+        private void WriteSettings() {
+            File.WriteAllText(Path.Combine(path, settingsFilename), JsonConvert.SerializeObject(settings));
         }
 
         /// <summary>Builds the project from the specified base ROM into the specified output ROM</summary>
@@ -49,7 +66,7 @@ namespace Necrofy
                     continue;
                 }
                 string relativeFilename = filename.Substring(path.Length);
-                Asset asset = Asset.FromFile(path, relativeFilename);
+                Asset asset = Asset.FromFile(this, relativeFilename);
                 if (asset == null) {
                     // TODO: some sort of error
                     Debug.WriteLine("No asset handled for filename " + relativeFilename);

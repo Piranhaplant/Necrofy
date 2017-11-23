@@ -16,7 +16,11 @@ namespace Necrofy
         }
 
         private readonly LevelNameInfo nameInfo;
-        private readonly Level level;
+        public readonly Level level;
+
+        public static LevelAsset FromProject(Project project, int levelNum) {
+            return new LevelCreator().FromProject(project, levelNum);
+        }
 
         public LevelAsset(int levelNum, Level level) : this(new LevelNameInfo(levelNum), level) { }
 
@@ -29,8 +33,8 @@ namespace Necrofy
             return ROMPointers.LevelPointers + 2 + levelNum * 4;
         }
 
-        public override void WriteFile(string projectDir) {
-            File.WriteAllText(nameInfo.GetFilename(projectDir), JsonConvert.SerializeObject(level));
+        public override void WriteFile(Project project) {
+            File.WriteAllText(nameInfo.GetFilename(project.path), JsonConvert.SerializeObject(level));
         }
 
         protected override Inserter GetInserter(ROMInfo romInfo) {
@@ -51,6 +55,12 @@ namespace Necrofy
 
         class LevelCreator : Creator
         {
+            public LevelAsset FromProject(Project project, int levelNum) {
+                NameInfo nameInfo = new LevelNameInfo(levelNum);
+                string filename = nameInfo.GetFilename(project.path);
+                return (LevelAsset)FromFile(nameInfo, filename);
+            }
+
             public override NameInfo GetNameInfo(NameInfo.PathParts pathParts) {
                 return LevelNameInfo.FromPath(pathParts);
             }

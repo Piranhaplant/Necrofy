@@ -22,13 +22,17 @@ namespace Necrofy
         private TilesetNameInfo nameInfo;
         private byte[] data;
 
+        public static TilesetPaletteAsset FromProject(Project project, string fullPaletteName) {
+            return new TilesetPaletteCreator().FromProject(project, fullPaletteName);
+        }
+
         private TilesetPaletteAsset(TilesetNameInfo nameInfo, byte[] data) {
             this.nameInfo = nameInfo;
             this.data = data;
         }
 
-        public override void WriteFile(string projectDir) {
-            File.WriteAllBytes(nameInfo.GetFilename(projectDir), data);
+        public override void WriteFile(Project project) {
+            File.WriteAllBytes(nameInfo.GetFilename(project.path), data);
         }
 
         protected override Asset.Inserter GetInserter(ROMInfo romInfo) {
@@ -45,6 +49,12 @@ namespace Necrofy
 
         class TilesetPaletteCreator : Creator
         {
+            public TilesetPaletteAsset FromProject(Project project, string fullPaletteName) {
+                NameInfo nameInfo = new TilesetNameInfo(fullPaletteName, AssetExtension);
+                string filename = nameInfo.GetFilename(project.path);
+                return (TilesetPaletteAsset)FromFile(nameInfo, filename);
+            }
+
             public override NameInfo GetNameInfo(NameInfo.PathParts pathParts) {
                 return TilesetNameInfo.FromPath(pathParts, AssetExtension);
             }

@@ -26,8 +26,8 @@ namespace Necrofy
             this.data = data;
         }
 
-        public override void WriteFile(string projectDir) {
-            File.WriteAllBytes(nameInfo.GetFilename(projectDir), data);
+        public override void WriteFile(Project project) {
+            File.WriteAllBytes(nameInfo.GetFilename(project.path), data);
         }
 
         protected override Inserter GetInserter(ROMInfo romInfo) {

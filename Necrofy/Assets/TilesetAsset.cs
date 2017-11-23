@@ -8,12 +8,20 @@ namespace Necrofy
     abstract class TilesetAsset : Asset
     {
         private const string Folder = "Tilesets";
+        private const string NameSeparator = "/";
 
         protected class TilesetNameInfo : NameInfo
         {
             public readonly string tilesetName;
             public readonly string name;
             public readonly string extension;
+
+            public TilesetNameInfo(string fullName, string extension) {
+                int separatorPos = fullName.IndexOf(NameSeparator);
+                this.tilesetName = fullName.Substring(0, separatorPos);
+                this.name = fullName.Substring(separatorPos + 1);
+                this.extension = extension;
+            }
 
             public TilesetNameInfo(string tilesetName, string name, string extension) {
                 this.tilesetName = tilesetName;
@@ -22,7 +30,7 @@ namespace Necrofy
             }
 
             public override string Name {
-                get { return tilesetName + "/" + name; }
+                get { return tilesetName + NameSeparator + name; }
             }
 
             protected override PathParts GetPathParts() {

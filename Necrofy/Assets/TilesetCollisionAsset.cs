@@ -23,13 +23,17 @@ namespace Necrofy
         private TilesetFixedNameInfo nameInfo;
         private byte[] data;
 
+        public static TilesetCollisionAsset FromProject(Project project, string tilesetName) {
+            return new TilesetCollisionCreator().FromProject(project, tilesetName);
+        }
+
         private TilesetCollisionAsset(TilesetFixedNameInfo nameInfo, byte[] data) {
             this.nameInfo = nameInfo;
             this.data = data;
         }
 
-        public override void WriteFile(string projectDir) {
-            File.WriteAllBytes(nameInfo.GetFilename(projectDir), data);
+        public override void WriteFile(Project project) {
+            File.WriteAllBytes(nameInfo.GetFilename(project.path), data);
         }
 
         protected override Asset.Inserter GetInserter(ROMInfo romInfo) {
@@ -46,6 +50,12 @@ namespace Necrofy
 
         class TilesetCollisionCreator : Creator
         {
+            public TilesetCollisionAsset FromProject(Project project, string tilesetName) {
+                NameInfo nameInfo = new TilesetFixedNameInfo(tilesetName, Filename, AssetExtension);
+                string filename = nameInfo.GetFilename(project.path);
+                return (TilesetCollisionAsset)FromFile(nameInfo, filename);
+            }
+
             public override NameInfo GetNameInfo(NameInfo.PathParts pathParts) {
                 return TilesetFixedNameInfo.FromPath(pathParts, Filename, AssetExtension);
             }

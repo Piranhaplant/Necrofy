@@ -10,10 +10,6 @@ namespace Necrofy
     /// <summary>Stores a ZAMN level</summary>
     class Level
     {
-        // The current version of the level format
-        private const int curVersion = 1;
-        /// <summary>The version of the level format used for loading/saving.</summary>
-        public int version { get; set; }
         /// <summary>The background tiles making up the level</summary>
         public ushort[,] background { get; set; }
         public string tilesetTilemapName { get; set; }
@@ -51,7 +47,6 @@ namespace Necrofy
         /// <param name="r">The ROMInfo that freespace, etc. will be saved to</param>
         /// <param name="s">A stream for the ROM file that is positioned at the beginning of the level</param>
         public Level(ROMInfo r, NStream s) {
-            version = curVersion;
             monsters = new List<Monster>();
             oneTimeMonsters = new List<OneTimeMonster>();
             items = new List<Item>();

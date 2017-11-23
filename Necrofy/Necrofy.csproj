@@ -92,28 +92,28 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Freespace.cs" />
-    <Compile Include="Item.cs" />
+    <Compile Include="LevelUI\LoadedLevel.cs" />
+    <Compile Include="LevelUI\LoadedTileset.cs" />
+    <Compile Include="Level\Item.cs" />
     <Compile Include="LevelJsonConverter.cs" />
-    <Compile Include="Level.cs" />
-    <Compile Include="LevelMonster.cs" />
-    <Compile Include="LevelObject.cs" />
+    <Compile Include="Level\Level.cs" />
+    <Compile Include="Level\LevelMonster.cs" />
+    <Compile Include="Level\LevelObject.cs" />
     <Compile Include="MovableData.cs" />
-    <Compile Include="PaletteFadeLevelMonster.cs" />
-    <Compile Include="PositionLevelMonster.cs" />
-    <Compile Include="TileAnimLevelMonster.cs" />
-    <Compile Include="TitlePage.cs" />
+    <Compile Include="Level\PaletteFadeLevelMonster.cs" />
+    <Compile Include="Level\PositionLevelMonster.cs" />
+    <Compile Include="Level\TileAnimLevelMonster.cs" />
+    <Compile Include="Level\TitlePage.cs" />
     <Compile Include="Log.cs" />
-    <Compile Include="Monster.cs" />
+    <Compile Include="Level\Monster.cs" />
     <Compile Include="NStream.cs" />
-    <Compile Include="OneTimeMonster.cs" />
-    <Compile Include="Palette.cs" />
+    <Compile Include="Level\OneTimeMonster.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Project.cs" />
+    <Compile Include="ProjectSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ROMInfo.cs" />
     <Compile Include="ROMPointers.cs" />
-    <Compile Include="SpriteGFX.cs" />
-    <Compile Include="Tileset.cs" />
     <Compile Include="ZAMNCompress.cs" />
     <EmbeddedResource Include="DockForm.resx">
       <DependentUpon>DockForm.cs</DependentUpon>
@@ -170,6 +170,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
