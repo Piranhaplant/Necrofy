@@ -20,7 +20,7 @@ namespace Necrofy
         }
 
         private TilesetNameInfo nameInfo;
-        private byte[] data;
+        public byte[] data;
 
         public static TilesetPaletteAsset FromProject(Project project, string fullPaletteName) {
             return new TilesetPaletteCreator().FromProject(project, fullPaletteName);

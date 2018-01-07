@@ -21,7 +21,7 @@ namespace Necrofy
         public Project(string baseROM, string path) {
             this.path = FixPath(path);
             NStream s = new NStream(new FileStream(baseROM, FileMode.Open, FileAccess.Read, FileShare.Read));
-            ROMInfo info = new ROMInfo(this, s);
+            ROMInfo info = new ROMInfo(s);
 
             foreach (Asset asset in info.assets) {
                 asset.WriteFile(this);
@@ -58,7 +58,7 @@ namespace Necrofy
         public void Build(string baseROM, string outputROM) {
             File.Copy(baseROM, outputROM, true);
             NStream s = new NStream(new FileStream(outputROM, FileMode.Open, FileAccess.ReadWrite, FileShare.Read));
-            ROMInfo info = new ROMInfo(this, s);
+            ROMInfo info = new ROMInfo(s);
             info.assets.Clear();
 
             foreach (string filename in Directory.GetFiles(path, "*", SearchOption.AllDirectories)) {

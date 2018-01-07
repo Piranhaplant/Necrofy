@@ -21,7 +21,7 @@ namespace Necrofy
         }
 
         private TilesetFixedNameInfo nameInfo;
-        private byte[] data;
+        public byte[] data;
 
         public static TilesetCollisionAsset FromProject(Project project, string tilesetName) {
             return new TilesetCollisionCreator().FromProject(project, tilesetName);

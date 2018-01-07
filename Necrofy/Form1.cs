@@ -23,8 +23,6 @@ namespace Necrofy
             f2.Show(docker, DockState.DockLeft);
             DockForm f3 = new DockForm();
             f3.Show(docker, DockState.DockRight);
-            DockForm f4 = new DockForm();
-            f4.Show(docker, DockState.Document);
         }
 
         private void createProjectButton_Click(object sender, EventArgs e) {
@@ -54,8 +52,14 @@ namespace Necrofy
             project.Build(ofd.FileName, ofd.FileName + ".new.sfc");
         }
 
+        int levelnum = 1;
+
         private void openLevelButton_Click(object sender, EventArgs e) {
-            LoadedLevel loadedLevel = new LoadedLevel(project, 1);
+            LoadedLevel loadedLevel = new LoadedLevel(project, levelnum++);
+
+            LevelEditor levelEditor = new LevelEditor();
+            levelEditor.SetLevel(loadedLevel);
+            levelEditor.Show(docker, DockState.Document);
         }
     }
 }

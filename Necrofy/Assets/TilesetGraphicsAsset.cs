@@ -21,7 +21,7 @@ namespace Necrofy
         }
 
         private TilesetFixedNameInfo nameInfo;
-        private byte[] data;
+        public byte[] data;
 
         public static TilesetGraphicsAsset FromProject(Project project, string tilesetName) {
             return new TilesetGraphicsCreator().FromProject(project, tilesetName);

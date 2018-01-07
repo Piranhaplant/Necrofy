@@ -9,7 +9,6 @@ namespace Necrofy
     /// <summary>Holds information about a ROM that will be used to create a new project and compile a project</summary>
     class ROMInfo
     {
-        private Project project;
         /// <summary>A list of assets for the ROM</summary>
         public List<Asset> assets = new List<Asset>();
 
@@ -20,10 +19,8 @@ namespace Necrofy
         public Freespace Freespace;
 
         /// <summary>Loads the ROMInfo data from an already opened stream.</summary>
-        /// <param name="project">The project</param>
         /// <param name="s">A stream to a ROM file</param>
-        public ROMInfo(Project project, NStream s) {
-            this.project = project;
+        public ROMInfo(NStream s) {
             Freespace = new Freespace((int)s.Length);
 
             // First get a list of all the level pointers
@@ -44,7 +41,7 @@ namespace Necrofy
             bool fullLevelPointers = s.ReadByte() == 0;
             s.Seek(-4, SeekOrigin.Current);
 
-            // Don't try to get default assets for ROMs build with Necrofy, since everything is moved around
+            // Don't try to get default assets for ROMs built with Necrofy, since everything is moved around
             if (!fullLevelPointers) {
                 Asset.AddAllDefaults(s, this);
             }
