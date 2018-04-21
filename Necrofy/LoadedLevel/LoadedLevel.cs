@@ -14,6 +14,7 @@ namespace Necrofy
         public readonly LoadedTilesetCollision collision;
         public readonly LoadedTilesetGraphics graphics;
         public readonly LoadedTilesetPalette palette;
+        public readonly LoadedSpriteGraphics spriteGraphics;
 
         public Bitmap[] tiles;
         public Bitmap[] priorityTiles;
@@ -25,6 +26,7 @@ namespace Necrofy
             collision = new LoadedTilesetCollision(project, Level.tilesetCollisionName);
             graphics = new LoadedTilesetGraphics(project, Level.tilesetGraphicsName);
             palette = new LoadedTilesetPalette(project, Level.paletteName);
+            spriteGraphics = new LoadedSpriteGraphics(project, Level.spritePaletteName);
             RenderTiles();
         }
 
@@ -66,7 +68,7 @@ namespace Necrofy
             if (transparent) {
                 SNESGraphics.MakePltTransparent(tile);
             }
-            return tile.LockBits(new Rectangle(0, 0, tile.Width, tile.Height), System.Drawing.Imaging.ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format8bppIndexed);
+            return tile.LockBits(new Rectangle(0, 0, tile.Width, tile.Height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
         }
 
         public Level Level {

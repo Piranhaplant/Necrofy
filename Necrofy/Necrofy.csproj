@@ -72,6 +72,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Asset.cs" />
+    <Compile Include="Assets\EditorAsset.cs" />
+    <Compile Include="Assets\GraphicsAsset.cs" />
     <Compile Include="Assets\LevelAsset.cs" />
     <Compile Include="Assets\PaletteAsset.cs" />
     <Compile Include="Assets\TilesetAsset.cs" />
@@ -98,6 +100,7 @@
     <Compile Include="LevelEditor.Designer.cs">
       <DependentUpon>LevelEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="LoadedLevel\LoadedSpriteGraphics.cs" />
     <Compile Include="LoadedLevel\LoadedTilesetCollision.cs" />
     <Compile Include="LoadedLevel\LoadedLevel.cs" />
     <Compile Include="LoadedLevel\LoadedTilesetGraphics.cs" />
@@ -124,6 +127,7 @@
     <Compile Include="ROMInfo.cs" />
     <Compile Include="ROMPointers.cs" />
     <Compile Include="SNESGraphics.cs" />
+    <Compile Include="SpriteGraphics.cs" />
     <Compile Include="ZAMNCompress.cs" />
     <EmbeddedResource Include="DockForm.resx">
       <DependentUpon>DockForm.cs</DependentUpon>
@@ -179,6 +183,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Tools\SpriteGraphics.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Tools\xkas.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

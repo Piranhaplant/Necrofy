@@ -26,10 +26,13 @@ namespace Necrofy
             return Color.FromArgb((v % 0x20) * 8, ((v / 0x20) % 0x20) * 8, ((v / 0x400) % 0x20) * 8);
         }
 
-        public static Color[] SNESToRGB(byte[] data) {
+        public static Color[] SNESToRGB(byte[] data, bool transparent = false) {
             Color[] colors = new Color[data.Length / 2];
             for (int i = 0; i < colors.Length; i++) {
                 colors[i] = SNESToRGB(data[i * 2], data[i * 2 + 1]);
+                if (transparent && i % 0x10 == 0) {
+                    colors[i] = Color.FromArgb(0, colors[i]);
+                }
             }
             return colors;
         }

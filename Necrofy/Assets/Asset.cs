@@ -13,6 +13,7 @@ namespace Necrofy
     /// </summary>
     public enum AssetCategory
     {
+        Editor,
         Collision,
         Graphics,
         Palette,
@@ -133,6 +134,8 @@ namespace Necrofy
 
         // Have to init all of the loaders here since the static constructors of the subclasses won't be called
         static Asset() {
+            EditorAsset.RegisterLoader();
+            GraphicsAsset.RegisterLoader();
             LevelAsset.RegisterLoader();
             PaletteAsset.RegisterLoader();
             TilesetCollisionAsset.RegisterLoader();
@@ -205,6 +208,29 @@ namespace Necrofy
                 return Path.Combine(directory, filename);
             }
 
+            /// <summary>Finds the name of an existing file that matches this name with any pointer.</summary>
+            public string FindFilename(string projectDir) {
+                PathParts parts = GetPathParts();
+                string directory = projectDir;
+                if (parts.topFolder != null) {
+                    directory = Path.Combine(directory, parts.topFolder);
+                }
+                if (parts.subFolder != null) {
+                    directory = Path.Combine(directory, parts.subFolder);
+                }
+                string regex = "^" + Regex.Escape(parts.name) + "(@[0-9A-Fa-f]{6})?";
+                if (parts.fileExtension != null) {
+                    regex += "\\." + Regex.Escape(parts.fileExtension);
+                }
+                regex += "$";
+                foreach (string file in Directory.GetFiles(directory)) {
+                    if (Regex.IsMatch(Path.GetFileName(file), regex)) {
+                        return file;
+                    }
+                }
+                throw new IOException("Could not find asset " + parts);
+            }
+
             /// <summary>Different parts of an asset path that are used to convert to and from filenames</summary>
             public class PathParts
             {
@@ -221,6 +247,28 @@ namespace Necrofy
                     this.name = name;
                     this.fileExtension = fileExtension;
                     this.pointer = pointer;
+                }
+
+                public override string ToString() {
+                    StringBuilder builder = new StringBuilder();
+                    if (topFolder != null) {
+                        builder.Append(topFolder);
+                        builder.Append("/");
+                    }
+                    if (subFolder != null) {
+                        builder.Append(subFolder);
+                        builder.Append("/");
+                    }
+                    builder.Append(name);
+                    if (pointer != null) {
+                        builder.Append("@");
+                        builder.Append(pointer.Value.ToString("X6"));
+                    }
+                    if (fileExtension != null) {
+                        builder.Append(".");
+                        builder.Append(fileExtension);
+                    }
+                    return builder.ToString();
                 }
             }
         }

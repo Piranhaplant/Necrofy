@@ -26,6 +26,7 @@ namespace Necrofy
         /// <param name="start">The inclusive start of the block</param>
         /// <param name="end">The exclusive end of the block</param>
         public void Add(int start, int end) {
+            if (start == end) return;
             // If the given chunk crosses a bank boundary, split it into two.
             if (start / BankSize != (end - 1) / BankSize) {
                 int splitPoint = (start / BankSize + 1) * BankSize;

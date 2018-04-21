@@ -6,27 +6,28 @@ using System.IO;
 
 namespace Necrofy
 {
-    class PaletteAsset : Asset
+    class GraphicsAsset : Asset
     {
-        private const AssetCategory AssetCat = AssetCategory.Palette;
-        private const string AssetExtension = "plt";
+        private const AssetCategory AssetCat = AssetCategory.Graphics;
+
+        public const String Sprites = "Sprites";
 
         public static void RegisterLoader() {
-            AddCreator(new PaletteCreator());
+            AddCreator(new GraphicsCreator());
         }
         
         public static string GetAssetName(NStream romStream, ROMInfo romInfo, int pointer) {
-            return Asset.GetAssetName(romStream, romInfo, pointer, new PaletteCreator());
+            return Asset.GetAssetName(romStream, romInfo, pointer, new GraphicsCreator());
         }
 
-        private readonly PaletteNameInfo nameInfo;
+        private readonly GraphicsNameInfo nameInfo;
         public readonly byte[] data;
 
-        public static PaletteAsset FromProject(Project project, string paletteName) {
-            return new PaletteCreator().FromProject(project, paletteName);
+        public static GraphicsAsset FromProject(Project project, string graphicsName) {
+            return new GraphicsCreator().FromProject(project, graphicsName);
         }
 
-        private PaletteAsset(PaletteNameInfo nameInfo, byte[] data) {
+        private GraphicsAsset(GraphicsNameInfo nameInfo, byte[] data) {
             this.nameInfo = nameInfo;
             this.data = data;
         }
@@ -51,20 +52,20 @@ namespace Necrofy
             get { return nameInfo.Name; }
         }
 
-        class PaletteCreator : Creator
+        class GraphicsCreator : Creator
         {
-            public PaletteAsset FromProject(Project project, string paletteName) {
-                NameInfo nameInfo = new PaletteNameInfo(paletteName, null);
+            public GraphicsAsset FromProject(Project project, string graphicsName) {
+                NameInfo nameInfo = new GraphicsNameInfo(graphicsName, null);
                 string filename = nameInfo.FindFilename(project.path);
-                return (PaletteAsset)FromFile(nameInfo, filename);
+                return (GraphicsAsset)FromFile(nameInfo, filename);
             }
 
             public override NameInfo GetNameInfo(NameInfo.PathParts pathParts) {
-                return PaletteNameInfo.FromPath(pathParts);
+                return GraphicsNameInfo.FromPath(pathParts);
             }
 
             public override Asset FromFile(NameInfo nameInfo, string filename) {
-                return new PaletteAsset((PaletteNameInfo)nameInfo, File.ReadAllBytes(filename));
+                return new GraphicsAsset((GraphicsNameInfo)nameInfo, File.ReadAllBytes(filename));
             }
 
             public override AssetCategory GetCategory() {
@@ -73,29 +74,28 @@ namespace Necrofy
 
             public override List<DefaultParams> GetDefaults() {
                 return new List<DefaultParams>() {
-                    new DefaultParams(0xf0f76, new PaletteNameInfo("Sprites", 0xf0f76)),
-                    new DefaultParams(0xf0e96, new PaletteNameInfo("Copyright", 0xf0e96), 0x20)
+                    new DefaultParams(0x20000, new GraphicsNameInfo(Sprites, 0x20000), 0x5CC00)
                 };
             }
 
             public override Asset FromRom(NameInfo nameInfo, NStream romStream, int? size) {
-                int actualSize = size ?? 0x100;
-                return new PaletteAsset((PaletteNameInfo)nameInfo, romStream.ReadBytes(actualSize));
+                return new GraphicsAsset((GraphicsNameInfo)nameInfo, romStream.ReadBytes((int)size));
             }
 
             public override NameInfo GetNameInfoForName(string name) {
-                return new PaletteNameInfo(name, null);
+                return new GraphicsNameInfo(name, null);
             }
         }
 
-        class PaletteNameInfo : NameInfo
+        class GraphicsNameInfo : NameInfo
         {
-            private const string Folder = "Palettes";
+            private const string Folder = "Graphics";
+            private const string Extension = "bin";
 
             public readonly string name;
             public readonly int? pointer;
 
-            public PaletteNameInfo(string name, int? pointer) {
+            public GraphicsNameInfo(string name, int? pointer) {
                 this.name = name;
                 this.pointer = pointer;
             }
@@ -105,14 +105,14 @@ namespace Necrofy
             }
 
             protected override NameInfo.PathParts GetPathParts() {
-                return new NameInfo.PathParts(Folder, null, name, AssetExtension, pointer);
+                return new NameInfo.PathParts(Folder, null, name, Extension, pointer);
             }
 
-            public static PaletteNameInfo FromPath(NameInfo.PathParts parts) {
+            public static GraphicsNameInfo FromPath(NameInfo.PathParts parts) {
                 if (parts.topFolder != Folder) return null;
                 if (parts.subFolder != null) return null;
-                if (parts.fileExtension != AssetExtension) return null;
-                return new PaletteNameInfo(parts.name, parts.pointer);
+                if (parts.fileExtension != Extension) return null;
+                return new GraphicsNameInfo(parts.name, parts.pointer);
             }
         }
     }
