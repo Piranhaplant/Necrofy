@@ -43,13 +43,16 @@ namespace Necrofy
                 key = sprite.key;
 
                 image = new Bitmap(sprite.displayWidth * 8, sprite.displayHeight * 8);
-                for (bool priority = false; !priority; priority = !priority) {
-                    for (int y = 0; y < sprite.height; y++) {
-                        for (int x = 0; x < sprite.width; x++) {
-                            SpriteGraphics.Tile tile = sprite.tiles[x, y];
-                            if (tile.priority == priority && tile.index > 0) {
-                                SNESGraphics.DrawTile(image, x * 8 + tile.xShift, y * 8 + tile.yShift, graphics, tile.index, colors, tile.palette * 0x10, tile.xFlip, tile.yFlip);
-                            }
+                DrawTiles(sprite, graphics, colors, false);
+                DrawTiles(sprite, graphics, colors, true);
+            }
+
+            private void DrawTiles(SpriteGraphics.Sprite sprite, byte[] graphics, Color[] colors, bool priority) {
+                for (int y = 0; y < sprite.height; y++) {
+                    for (int x = 0; x < sprite.width; x++) {
+                        SpriteGraphics.Tile tile = sprite.tiles[x, y];
+                        if (tile.priority == priority && tile.index > 0) {
+                            SNESGraphics.DrawTile(image, x * 8 + tile.xShift, y * 8 + tile.yShift, graphics, tile.index, colors, tile.palette * 0x10, tile.xFlip, tile.yFlip);
                         }
                     }
                 }

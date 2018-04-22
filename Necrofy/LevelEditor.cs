@@ -40,6 +40,9 @@ namespace Necrofy
             foreach (Monster m in level.Level.monsters) {
                 level.spriteGraphics.sprites[m.type].Render(e.Graphics, m.x, m.y);
             }
+            foreach (Item i in level.Level.items) {
+                level.spriteGraphics.sprites[i.type].Render(e.Graphics, i.x, i.y);
+            }
 
             //for (int y = 0; y < level.Level.height; y++) {
             //    for (int x = 0; x < level.Level.width; x++) {
