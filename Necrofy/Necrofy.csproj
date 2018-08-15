@@ -81,6 +81,12 @@
     <Compile Include="Assets\TilesetGraphicsAsset.cs" />
     <Compile Include="Assets\TilesetPaletteAsset.cs" />
     <Compile Include="Assets\TilesetTilemapAsset.cs" />
+    <Compile Include="Canvas.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Canvas.Designer.cs">
+      <DependentUpon>Canvas.cs</DependentUpon>
+    </Compile>
     <Compile Include="DockForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -126,9 +132,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ROMInfo.cs" />
     <Compile Include="ROMPointers.cs" />
+    <Compile Include="ScrollWrapper.cs" />
     <Compile Include="SNESGraphics.cs" />
     <Compile Include="SpriteGraphics.cs" />
     <Compile Include="ZAMNCompress.cs" />
+    <EmbeddedResource Include="Canvas.resx">
+      <DependentUpon>Canvas.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DockForm.resx">
       <DependentUpon>DockForm.cs</DependentUpon>
     </EmbeddedResource>

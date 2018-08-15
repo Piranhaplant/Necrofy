@@ -14,20 +14,33 @@ namespace Necrofy
 {
     partial class LevelEditor : DockContent
     {
-        private LoadedLevel level;
+        private readonly LoadedLevel level;
+        private readonly ScrollWrapper scrollWrapper;
 
-        public LevelEditor() {
+        public LevelEditor(LoadedLevel level) {
             InitializeComponent();
-        }
 
-        public void SetLevel(LoadedLevel level) {
             this.level = level;
-            this.Invalidate();
+            scrollWrapper = new ScrollWrapper(canvas, hscroll, vscroll);
+            scrollWrapper.SetClientSize(level.Level.width * 64, level.Level.height * 64);
+            scrollWrapper.Scrolled += new ScrollWrapper.ScrollDelegate(scrollWrapper_Scrolled);
+
+            Repaint();
         }
 
-        private void LevelEditor_Paint(object sender, PaintEventArgs e) {
+        void scrollWrapper_Scrolled() {
+            Repaint();
+        }
+
+        public void Repaint() {
+            canvas.Invalidate();
+        }
+
+        private void canvas_Paint(object sender, PaintEventArgs e) {
             if (level == null)
                 return;
+            e.Graphics.TranslateTransform(scrollWrapper.LeftPosition, scrollWrapper.TopPosition);
+
             for (int y = 0; y < level.Level.height; y++) {
                 for (int x = 0; x < level.Level.width; x++) {
                     e.Graphics.DrawImage(level.tiles[level.Level.background[x, y]], x * 64, y * 64);

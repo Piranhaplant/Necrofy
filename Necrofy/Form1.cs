@@ -57,8 +57,7 @@ namespace Necrofy
         private void openLevelButton_Click(object sender, EventArgs e) {
             LoadedLevel loadedLevel = new LoadedLevel(project, levelnum++);
 
-            LevelEditor levelEditor = new LevelEditor();
-            levelEditor.SetLevel(loadedLevel);
+            LevelEditor levelEditor = new LevelEditor(loadedLevel);
             levelEditor.Show(docker, DockState.Document);
         }
     }
