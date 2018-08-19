@@ -52,6 +52,11 @@ namespace Necrofy
             File.WriteAllText(Path.Combine(path, settingsFilename), JsonConvert.SerializeObject(settings));
         }
 
+        public string GetRelativePath(string filename) {
+            Debug.Assert(filename.StartsWith(path));
+            return filename.Substring(path.Length);
+        }
+
         /// <summary>Builds the project from the specified base ROM into the specified output ROM</summary>
         /// <param name="baseROM">The base ROM</param>
         /// <param name="outputROM">The output ROM</param>
@@ -62,10 +67,7 @@ namespace Necrofy
             info.assets.Clear();
 
             foreach (string filename in Directory.GetFiles(path, "*", SearchOption.AllDirectories)) {
-                if (!filename.StartsWith(path)) {
-                    continue;
-                }
-                string relativeFilename = filename.Substring(path.Length);
+                string relativeFilename = GetRelativePath(filename);
                 Asset asset = Asset.FromFile(this, relativeFilename);
                 if (asset == null) {
                     // TODO: some sort of error

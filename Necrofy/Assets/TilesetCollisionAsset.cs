@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Drawing;
 
 namespace Necrofy
 {
@@ -51,13 +52,13 @@ namespace Necrofy
         class TilesetCollisionCreator : Creator
         {
             public TilesetCollisionAsset FromProject(Project project, string tilesetName) {
-                NameInfo nameInfo = new TilesetFixedNameInfo(tilesetName, Filename, AssetExtension);
+                NameInfo nameInfo = new TilesetCollisionNameInfo(tilesetName);
                 string filename = nameInfo.GetFilename(project.path);
                 return (TilesetCollisionAsset)FromFile(nameInfo, filename);
             }
 
             public override NameInfo GetNameInfo(NameInfo.PathParts pathParts) {
-                return TilesetFixedNameInfo.FromPath(pathParts, Filename, AssetExtension);
+                return TilesetCollisionNameInfo.FromPath(pathParts);
             }
 
             public override Asset FromFile(NameInfo nameInfo, string filename) {
@@ -69,8 +70,12 @@ namespace Necrofy
             }
 
             public override List<DefaultParams> GetDefaults() {
-                return new TilesetFixedDefaultList(Filename, AssetExtension) {
-                    { 0xe6aab, "Castle" }, { 0xdf4d1, "Grass" }, { 0xdf8d1, "Desert" }, { 0xe72ab, "Office" }, { 0xe6eab, "Mall" }
+                return new List<DefaultParams>() {
+                    new DefaultParams(0xe6aab, new TilesetCollisionNameInfo(Castle)),
+                    new DefaultParams(0xdf4d1, new TilesetCollisionNameInfo(Grass)),
+                    new DefaultParams(0xdf8d1, new TilesetCollisionNameInfo(Desert)),
+                    new DefaultParams(0xe72ab, new TilesetCollisionNameInfo(Office)),
+                    new DefaultParams(0xe6eab, new TilesetCollisionNameInfo(Mall))
                 };
             }
 
@@ -79,7 +84,20 @@ namespace Necrofy
             }
 
             public override NameInfo GetNameInfoForName(string name) {
-                return new TilesetFixedNameInfo(name, Filename, AssetExtension);
+                return new TilesetCollisionNameInfo(name);
+            }
+        }
+
+        class TilesetCollisionNameInfo : TilesetFixedNameInfo
+        {
+            public TilesetCollisionNameInfo(string tilesetName) : base(tilesetName, Filename, AssetExtension) { }
+
+            public override Bitmap DisplayImage {
+                get { return Properties.Resources.block; }
+            }
+
+            public static TilesetFixedNameInfo FromPath(NameInfo.PathParts parts) {
+                return TilesetFixedNameInfo.FromPath(parts, Filename, AssetExtension, s => new TilesetCollisionNameInfo(s));
             }
         }
     }

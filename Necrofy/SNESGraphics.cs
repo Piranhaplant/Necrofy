@@ -41,13 +41,13 @@ namespace Necrofy
             byte[,] result = new byte[8, 8];
             int line = 0;
             int bit = 0;
-            for (int l = index; l <= index + 0x1f; l += 2) {
-                for (int m = 0; m <= 7; m++) {
-                    if ((bytes[l] & (1 << m)) != 0) {
-                        result[line, 7 - m] = (byte)(result[line, 7 - m] | (1 << bit));
+            for (int iy = index; iy <= index + 0x1f; iy += 2) {
+                for (int ix = 0; ix <= 7; ix++) {
+                    if ((bytes[iy] & (1 << ix)) != 0) {
+                        result[7 - ix, line] = (byte)(result[7 - ix, line] | (1 << bit));
                     }
-                    if ((bytes[l + 1] & (1 << m)) != 0) {
-                        result[line, 7 - m] = (byte)(result[line, 7 - m] | (1 << bit + 1));
+                    if ((bytes[iy + 1] & (1 << ix)) != 0) {
+                        result[7 - ix, line] = (byte)(result[7 - ix, line] | (1 << bit + 1));
                     }
                 }
                 line += 1;
@@ -72,10 +72,10 @@ namespace Necrofy
                 y += 7;
                 yStep = -1;
             }
-            for (int l = 0; l <= 7; l++) {
-                for (int m = 0; m <= 7; m++) {
-                    if (palette[palIndex + tile[l, m]].A > 0) {
-                        bmp.SetPixel(x, y, palette[palIndex + tile[l, m]]);
+            for (int iy = 0; iy <= 7; iy++) {
+                for (int ix = 0; ix <= 7; ix++) {
+                    if (palette[palIndex + tile[ix, iy]].A > 0) {
+                        bmp.SetPixel(x, y, palette[palIndex + tile[ix, iy]]);
                     }
                     x += xStep;
                 }
@@ -103,9 +103,9 @@ namespace Necrofy
                 y += 7;
                 yStep = -1;
             }
-            for (int l = 0; l <= 7; l++) {
-                for (int m = 0; m <= 7; m++) {
-                    Marshal.WriteByte(bmp.Scan0, y * bmp.Stride + x, (byte)(palIndex + tiles[tile.tileNum][l, m]));
+            for (int iy = 0; iy <= 7; iy++) {
+                for (int ix = 0; ix <= 7; ix++) {
+                    Marshal.WriteByte(bmp.Scan0, y * bmp.Stride + x, (byte)(palIndex + tiles[tile.tileNum][ix, iy]));
                     x += xStep;
                 }
                 y += yStep;
@@ -115,24 +115,24 @@ namespace Necrofy
 
         public static void FillPalette(Bitmap bmp, Color[] colors) {
             ColorPalette pal = bmp.Palette;
-            for (int l = 0; l <= colors.Length - 1; l++) {
-                pal.Entries[l] = colors[l];
+            for (int i = 0; i < colors.Length; i++) {
+                pal.Entries[i] = colors[i];
             }
             bmp.Palette = pal;
         }
 
         public static void MakePltTransparent(Bitmap bmp) {
             ColorPalette pal = bmp.Palette;
-            for (int l = 0; l <= pal.Entries.Length - 1; l += 16) {
-                pal.Entries[l] = Color.Transparent;
+            for (int i = 0; i < pal.Entries.Length; i += 16) {
+                pal.Entries[i] = Color.Transparent;
             }
             bmp.Palette = pal;
         }
 
         public static void DrawWithPlt(Graphics g, int x, int y, Bitmap bmp, Color[] plt, int colorIdx, int colorCount) {
             ColorPalette pal = bmp.Palette;
-            for (int l = 0; l <= colorCount - 1; l++) {
-                pal.Entries[l] = plt[(l + colorIdx) % plt.Length];
+            for (int i = 0; i < colorCount; i++) {
+                pal.Entries[i] = plt[(i + colorIdx) % plt.Length];
             }
             bmp.Palette = pal;
             g.DrawImage(bmp, x, y);

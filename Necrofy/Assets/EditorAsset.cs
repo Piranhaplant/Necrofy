@@ -84,6 +84,14 @@ namespace Necrofy
                 get { return name; }
             }
 
+            public override string DisplayName {
+                get { return name; }
+            }
+
+            public override System.Drawing.Bitmap DisplayImage {
+                get { return Properties.Resources.gear; }
+            }
+
             protected override PathParts GetPathParts() {
                 return new PathParts(Folder, null, name, Extension, null);
             }

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Drawing;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace Necrofy
 {
@@ -88,6 +90,17 @@ namespace Necrofy
             // TODO: record error or something when this happens
             return null;
         }
+        public static NameInfo GetInfo(Project project, string filename) {
+            NameInfo.PathParts pathParts = NameInfo.ParsePath(filename);
+            foreach (Creator creator in creators) {
+                NameInfo nameInfo = creator.GetNameInfo(pathParts);
+                if (nameInfo != null) {
+                    return nameInfo;
+                }
+            }
+            // TODO: record error or something when this happens
+            return null;
+        }
         /// <summary>Adds the default assets for all asset types to romInfo</summary>
         /// <param name="romStream">The ROM stream</param>
         /// <param name="romInfo">The ROM info</param>
@@ -149,20 +162,27 @@ namespace Necrofy
         }
 
         /// <summary>Holds information about an asset's name</summary>
-        protected abstract class NameInfo
+        public abstract class NameInfo
         {
             /// <summary>Condences the NameInfo down to a single string that will be used to reference the asset</summary>
             public abstract string Name { get; }
+            /// <summary>The name that will be displayed to the user in the project browser</summary>
+            public abstract String DisplayName { get; }
+            /// <summary>The image that will be displayed to the user in the project browser</summary>
+            public abstract Bitmap DisplayImage { get; }
 
             /// <summary>Parses the individual parts out of an asset path</summary>
             public static PathParts ParsePath(string path) {
                 PathParts pathParts = new PathParts();
 
                 string[] parts = path.Split(Path.DirectorySeparatorChar);
-                if (parts.Length < 2 || parts.Length > 3) {
+                if (parts.Length > 3) {
+                    // TODO: shouldn't let this return null
                     return null;
                 }
-                pathParts.topFolder = parts[0];
+                if (parts.Length >= 2) {
+                    pathParts.topFolder = parts[0];
+                }
                 if (parts.Length == 3) {
                     pathParts.subFolder = parts[1];
                 }
@@ -184,6 +204,13 @@ namespace Necrofy
 
             /// <summary>Gets the components of the name that will be used in the filename of the asset</summary>
             protected abstract PathParts GetPathParts();
+
+            /// <summary>Gets the component that will be used to edit the asset</summary>
+            /// <param name="project">The project</param>
+            /// <returns>The editor, or null if there is none</returns>
+            public virtual DockContent GetEditor(Project project) {
+                return null;
+            }
 
             /// <summary>Gets the filename for the asset and creates any intermediate directories if they don't exist</summary>
             public string GetFilename(string projectDir) {
@@ -220,7 +247,7 @@ namespace Necrofy
                 }
                 string regex = "^" + Regex.Escape(parts.name) + "(@[0-9A-Fa-f]{6})?";
                 if (parts.fileExtension != null) {
-                    regex += "\\." + Regex.Escape(parts.fileExtension);
+                    regex += Regex.Escape("." + parts.fileExtension);
                 }
                 regex += "$";
                 foreach (string file in Directory.GetFiles(directory)) {

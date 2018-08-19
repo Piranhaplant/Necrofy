@@ -19,10 +19,6 @@ namespace Necrofy
         public Form1()
         {
             InitializeComponent();
-            DockForm f2 = new DockForm();
-            f2.Show(docker, DockState.DockLeft);
-            DockForm f3 = new DockForm();
-            f3.Show(docker, DockState.DockRight);
         }
 
         private void createProjectButton_Click(object sender, EventArgs e) {
@@ -35,6 +31,7 @@ namespace Necrofy
             }
             Directory.CreateDirectory(projectPath);
             project = new Project(ofd.FileName, projectPath);
+            projectReady();
         }
 
         private void openProjectButton_Click(object sender, EventArgs e) {
@@ -43,22 +40,21 @@ namespace Necrofy
             if (ofd.ShowDialog() != System.Windows.Forms.DialogResult.OK)
                 return;
             project = new Project(ofd.FileName);
+            projectReady();
+        }
+
+        private void projectReady() {
+            ProjectBrowser browser = new ProjectBrowser(dockPanel, project);
+            browser.Show(dockPanel, DockState.DockLeft);
         }
 
         private void buildProjectButton_Click(object sender, EventArgs e) {
+            if (project == null)
+                return;
             OpenFileDialog ofd = new OpenFileDialog();
             if (ofd.ShowDialog() != System.Windows.Forms.DialogResult.OK)
                 return;
             project.Build(ofd.FileName, ofd.FileName + ".new.sfc");
-        }
-
-        int levelnum = 1;
-
-        private void openLevelButton_Click(object sender, EventArgs e) {
-            LoadedLevel loadedLevel = new LoadedLevel(project, levelnum++);
-
-            LevelEditor levelEditor = new LevelEditor(loadedLevel);
-            levelEditor.Show(docker, DockState.Document);
         }
     }
 }

@@ -21,6 +21,7 @@ namespace Necrofy
             InitializeComponent();
 
             this.level = level;
+
             scrollWrapper = new ScrollWrapper(canvas, hscroll, vscroll);
             scrollWrapper.SetClientSize(level.Level.width * 64, level.Level.height * 64);
             scrollWrapper.Scrolled += new ScrollWrapper.ScrollDelegate(scrollWrapper_Scrolled);

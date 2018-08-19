@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Drawing;
 
 namespace Necrofy
 {
@@ -10,6 +11,7 @@ namespace Necrofy
     {
         private const AssetCategory AssetCat = AssetCategory.Palette;
         private const string AssetExtension = "plt";
+        private static readonly Bitmap displayImage = Properties.Resources.spectrum;
 
         public static void RegisterLoader() {
             AddCreator(new TilesetPaletteCreator());
@@ -50,13 +52,13 @@ namespace Necrofy
         class TilesetPaletteCreator : Creator
         {
             public TilesetPaletteAsset FromProject(Project project, string fullPaletteName) {
-                NameInfo nameInfo = new TilesetNameInfo(fullPaletteName, AssetExtension);
+                NameInfo nameInfo = new TilesetPaletteNameInfo(fullPaletteName);
                 string filename = nameInfo.GetFilename(project.path);
                 return (TilesetPaletteAsset)FromFile(nameInfo, filename);
             }
 
             public override NameInfo GetNameInfo(NameInfo.PathParts pathParts) {
-                return TilesetNameInfo.FromPath(pathParts, AssetExtension);
+                return TilesetPaletteNameInfo.FromPath(pathParts);
             }
 
             public override Asset FromFile(NameInfo nameInfo, string filename) {
@@ -68,12 +70,30 @@ namespace Necrofy
             }
 
             public override List<DefaultParams> GetDefaults() {
-                return new TilesetDefaultList(AssetExtension) {
-                    { 0xf0e76, "Grass", "Normal" }, { 0xf1076, "Grass", "Autumn" }, { 0xf1176, "Grass", "Winter" }, { 0xf1276, "Grass", "Night" },
-                    { 0xf1476, "Desert", "Pyramid" }, { 0xf1576, "Desert", "Beach" }, { 0xf1676, "Desert", "DarkBeach" }, { 0xf1776, "Desert", "Cave" },
-                    { 0xf1876, "Castle", "Normal" }, { 0xf1976, "Castle", "Night" }, { 0xf1a76, "Castle", "Bright" }, { 0xf1b76, "Castle", "Dark" },
-                    { 0xf1c76, "Mall", "Normal" }, { 0xf1d76, "Mall", "Alternate" },
-                    { 0xf1e76, "Office", "Normal" }, { 0xf1f76, "Office", "DarkFireCave" }, { 0xf2076, "Office", "Light" }, { 0xf2176, "Office", "Dark" }, { 0xf2276, "Office", "FireCave" }
+                return new List<DefaultParams>() {
+                    new DefaultParams(0xf0e76, new TilesetPaletteNameInfo(Grass, "Normal")),
+                    new DefaultParams(0xf1076, new TilesetPaletteNameInfo(Grass, "Autumn")),
+                    new DefaultParams(0xf1176, new TilesetPaletteNameInfo(Grass, "Winter")),
+                    new DefaultParams(0xf1276, new TilesetPaletteNameInfo(Grass, "Night")),
+
+                    new DefaultParams(0xf1476, new TilesetPaletteNameInfo(Desert, "Pyramid")),
+                    new DefaultParams(0xf1576, new TilesetPaletteNameInfo(Desert, "Beach")),
+                    new DefaultParams(0xf1676, new TilesetPaletteNameInfo(Desert, "DarkBeach")),
+                    new DefaultParams(0xf1776, new TilesetPaletteNameInfo(Desert, "Cave")),
+
+                    new DefaultParams(0xf1876, new TilesetPaletteNameInfo(Castle, "Normal")),
+                    new DefaultParams(0xf1976, new TilesetPaletteNameInfo(Castle, "Night")),
+                    new DefaultParams(0xf1a76, new TilesetPaletteNameInfo(Castle, "Bright")),
+                    new DefaultParams(0xf1b76, new TilesetPaletteNameInfo(Castle, "Dark")),
+
+                    new DefaultParams(0xf1c76, new TilesetPaletteNameInfo(Mall, "Normal")),
+                    new DefaultParams(0xf1d76, new TilesetPaletteNameInfo(Mall, "Alternate")),
+
+                    new DefaultParams(0xf1e76, new TilesetPaletteNameInfo(Office, "Normal")),
+                    new DefaultParams(0xf1f76, new TilesetPaletteNameInfo(Office, "DarkFireCave")),
+                    new DefaultParams(0xf2076, new TilesetPaletteNameInfo(Office, "Light")),
+                    new DefaultParams(0xf2176, new TilesetPaletteNameInfo(Office, "Dark")),
+                    new DefaultParams(0xf2276, new TilesetPaletteNameInfo(Office, "FireCave")),
                 };
             }
 
@@ -82,7 +102,21 @@ namespace Necrofy
             }
 
             public override NameInfo GetNameInfoForName(string name) {
-                return new TilesetNameInfo(name, name, AssetExtension);
+                return new TilesetPaletteNameInfo(name, name);
+            }
+        }
+
+        class TilesetPaletteNameInfo : TilesetNameInfo
+        {
+            public TilesetPaletteNameInfo(string fullName) : base(fullName, AssetExtension) { }
+            public TilesetPaletteNameInfo(string tilesetName, string name) : base(tilesetName, name, AssetExtension) { }
+
+            public override Bitmap DisplayImage {
+                get { return Properties.Resources.color; }
+            }
+
+            public static TilesetNameInfo FromPath(NameInfo.PathParts parts) {
+                return TilesetNameInfo.FromPath(parts, AssetExtension, (t, n) => new TilesetPaletteNameInfo(t, n));
             }
         }
     }

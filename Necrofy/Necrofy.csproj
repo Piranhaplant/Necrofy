@@ -87,11 +87,11 @@
     <Compile Include="Canvas.Designer.cs">
       <DependentUpon>Canvas.cs</DependentUpon>
     </Compile>
-    <Compile Include="DockForm.cs">
+    <Compile Include="ProjectBrowser.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DockForm.Designer.cs">
-      <DependentUpon>DockForm.cs</DependentUpon>
+    <Compile Include="ProjectBrowser.Designer.cs">
+      <DependentUpon>ProjectBrowser.cs</DependentUpon>
     </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -139,8 +139,8 @@
     <EmbeddedResource Include="Canvas.resx">
       <DependentUpon>Canvas.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DockForm.resx">
-      <DependentUpon>DockForm.cs</DependentUpon>
+    <EmbeddedResource Include="ProjectBrowser.resx">
+      <DependentUpon>ProjectBrowser.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
@@ -156,6 +156,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -200,7 +201,45 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Icons\folder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\folder-horizontal-open.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\folder-open.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\document.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\block.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\compile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\disk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\image.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\map.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\spectrum.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\layout-4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\gear.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\color.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

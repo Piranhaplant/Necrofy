@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Drawing;
 
 namespace Necrofy
 {
@@ -10,7 +11,13 @@ namespace Necrofy
         private const string Folder = "Tilesets";
         private const string NameSeparator = "/";
 
-        protected class TilesetNameInfo : NameInfo
+        protected const string Castle = "Castle";
+        protected const string Grass = "Grass";
+        protected const string Desert = "Desert";
+        protected const string Office = "Office";
+        protected const string Mall = "Mall";
+
+        protected abstract class TilesetNameInfo : NameInfo
         {
             public readonly string tilesetName;
             public readonly string name;
@@ -33,33 +40,24 @@ namespace Necrofy
                 get { return tilesetName + NameSeparator + name; }
             }
 
+            public override string DisplayName {
+                get { return name; }
+            }
+
             protected override PathParts GetPathParts() {
                 return new PathParts(Folder, tilesetName, name, extension, null);
             }
 
-            public static TilesetNameInfo FromPath(NameInfo.PathParts parts, string extension) {
+            public static TilesetNameInfo FromPath(NameInfo.PathParts parts, string extension, Func<string, string, TilesetNameInfo> constructor) {
                 if (parts.topFolder != Folder) return null;
                 if (parts.subFolder == null) return null;
                 if (parts.fileExtension != extension) return null;
                 if (parts.pointer != null) return null;
-                return new TilesetNameInfo(parts.subFolder, parts.name, extension);
+                return constructor.Invoke(parts.subFolder, parts.name);
             }
         }
 
-        protected class TilesetDefaultList : List<DefaultParams>
-        {
-            private readonly string extension;
-
-            public TilesetDefaultList(string extension) {
-                this.extension = extension;
-            }
-
-            public void Add(int pointer, string tilesetName, string name) {
-                Add(new DefaultParams(pointer, new TilesetNameInfo(tilesetName, name, extension)));
-            }
-        }
-
-        protected class TilesetFixedNameInfo : NameInfo
+        protected abstract class TilesetFixedNameInfo : NameInfo
         {
             public readonly string tilesetName;
             public readonly string name;
@@ -75,32 +73,21 @@ namespace Necrofy
                 get { return tilesetName; }
             }
 
+            public override string DisplayName {
+                get { return name; }
+            }
+
             protected override PathParts GetPathParts() {
                 return new PathParts(Folder, tilesetName, name, extension, null);
             }
 
-            public static TilesetFixedNameInfo FromPath(NameInfo.PathParts parts, string name, string extension) {
+            public static TilesetFixedNameInfo FromPath(NameInfo.PathParts parts, string name, string extension, Func<string, TilesetFixedNameInfo> constructor) {
                 if (parts.topFolder != Folder) return null;
                 if (parts.subFolder == null) return null;
                 if (parts.name != name) return null;
                 if (parts.fileExtension != extension) return null;
                 if (parts.pointer != null) return null;
-                return new TilesetFixedNameInfo(parts.subFolder, parts.name, extension);
-            }
-        }
-
-        protected class TilesetFixedDefaultList : List<DefaultParams>
-        {
-            private readonly string name;
-            private readonly string extension;
-
-            public TilesetFixedDefaultList(string name, string extension) {
-                this.name = name;
-                this.extension = extension;
-            }
-
-            public void Add(int pointer, string tilesetName) {
-                Add(new DefaultParams(pointer, new TilesetFixedNameInfo(tilesetName, name, extension)));
+                return constructor.Invoke(parts.subFolder);
             }
         }
     }

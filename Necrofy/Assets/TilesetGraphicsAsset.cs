@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Drawing;
 
 namespace Necrofy
 {
@@ -51,13 +52,13 @@ namespace Necrofy
         class TilesetGraphicsCreator : Creator
         {
             public TilesetGraphicsAsset FromProject(Project project, string tilesetName) {
-                NameInfo nameInfo = new TilesetFixedNameInfo(tilesetName, Filename, AssetExtension);
+                NameInfo nameInfo = new TilesetGraphicsNameInfo(tilesetName);
                 string filename = nameInfo.GetFilename(project.path);
                 return (TilesetGraphicsAsset)FromFile(nameInfo, filename);
             }
 
             public override NameInfo GetNameInfo(NameInfo.PathParts pathParts) {
-                return TilesetFixedNameInfo.FromPath(pathParts, Filename, AssetExtension);
+                return TilesetGraphicsNameInfo.FromPath(pathParts);
             }
 
             public override Asset FromFile(NameInfo nameInfo, string filename) {
@@ -69,8 +70,12 @@ namespace Necrofy
             }
 
             public override List<DefaultParams> GetDefaults() {
-                return new TilesetFixedDefaultList(Filename, AssetExtension) {
-                    { 0xc8000, "Castle" }, { 0xc0000, "Grass" }, { 0xc4000, "Desert" }, { 0xd0000, "Office" }, { 0xcc000, "Mall" }
+                return new List<DefaultParams>() {
+                    new DefaultParams(0xc8000, new TilesetGraphicsNameInfo(Castle)),
+                    new DefaultParams(0xc0000, new TilesetGraphicsNameInfo(Grass)),
+                    new DefaultParams(0xc4000, new TilesetGraphicsNameInfo(Desert)),
+                    new DefaultParams(0xd0000, new TilesetGraphicsNameInfo(Office)),
+                    new DefaultParams(0xcc000, new TilesetGraphicsNameInfo(Mall))
                 };
             }
 
@@ -79,7 +84,20 @@ namespace Necrofy
             }
 
             public override NameInfo GetNameInfoForName(string name) {
-                return new TilesetFixedNameInfo(name, Filename, AssetExtension);
+                return new TilesetGraphicsNameInfo(name);
+            }
+        }
+
+        class TilesetGraphicsNameInfo : TilesetFixedNameInfo
+        {
+            public TilesetGraphicsNameInfo(string tilesetName) : base(tilesetName, Filename, AssetExtension) { }
+
+            public override Bitmap DisplayImage {
+                get { return Properties.Resources.image; }
+            }
+
+            public static TilesetFixedNameInfo FromPath(NameInfo.PathParts parts) {
+                return TilesetFixedNameInfo.FromPath(parts, Filename, AssetExtension, s => new TilesetGraphicsNameInfo(s));
             }
         }
     }

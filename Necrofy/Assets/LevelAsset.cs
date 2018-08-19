@@ -89,8 +89,20 @@ namespace Necrofy
                 get { return levelNum.ToString(); }
             }
 
+            public override string DisplayName {
+                get { return levelNum.ToString(); }
+            }
+
+            public override System.Drawing.Bitmap DisplayImage {
+                get { return Properties.Resources.map; }
+            }
+
             protected override PathParts GetPathParts() {
                 return new PathParts(Folder, null, levelNum.ToString(), Extension, null);
+            }
+
+            public override WeifenLuo.WinFormsUI.Docking.DockContent GetEditor(Project project) {
+                return new LevelEditor(new LoadedLevel(project, levelNum));
             }
 
             public static LevelNameInfo FromPath(NameInfo.PathParts parts) {
