@@ -9,12 +9,12 @@ using System.Windows.Forms;
 
 namespace Necrofy
 {
-    public partial class NewProject : Form
+    public partial class NewProjectDialog : Form
     {
         public string BaseROM { get; private set; }
         public string ProjectLocation { get; private set; }
 
-        public NewProject() {
+        public NewProjectDialog() {
             InitializeComponent();
         }
 

@@ -1,6 +1,6 @@
 ﻿namespace Necrofy
 {
-    partial class NewProject
+    partial class NewProjectDialog
     {
         /// <summary>
         /// Required designer variable.

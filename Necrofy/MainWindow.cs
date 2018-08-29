@@ -28,15 +28,16 @@ namespace Necrofy
         }
 
         private void createProject(object sender, EventArgs e) {
-            NewProject newProject = new NewProject();
-            if (newProject.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
-                project = new Project(newProject.BaseROM, newProject.ProjectLocation);
+            NewProjectDialog newProjectDialog = new NewProjectDialog();
+            if (newProjectDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+                project = new Project(newProjectDialog.BaseROM, newProjectDialog.ProjectLocation);
                 projectReady();
             }
         }
 
         private void openProject(object sender, EventArgs e) {
             if (openProjectDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+                // TODO: close already open project if there is one
                 project = new Project(openProjectDialog.FileName);
                 projectReady();
             }

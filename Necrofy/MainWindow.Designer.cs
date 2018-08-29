@@ -270,7 +270,7 @@
             // recentProjects
             // 
             this.recentProjects.Files = ((System.Collections.Generic.IEnumerable<string>)(resources.GetObject("recentProjects.Files")));
-            this.recentProjects.MaxItems = 11;
+            this.recentProjects.MaxItems = 10;
             this.recentProjects.MaxLength = 60;
             this.recentProjects.Name = "recentProjects";
             this.recentProjects.Separator = this.fileSeparator3;

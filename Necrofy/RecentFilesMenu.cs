@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -17,6 +18,7 @@ namespace Necrofy
             }
             set {
                 _files = new List<string>(value);
+                trimFiles();
                 createItems();
             }
         }
@@ -28,6 +30,7 @@ namespace Necrofy
             set {
                 if (value >= 1 && value != _maxItems) {
                     _maxItems = value;
+                    trimFiles();
                     createItems();
                 }
             }
@@ -107,8 +110,21 @@ namespace Necrofy
         }
 
         private string trimFile(string file) {
-            // TODO
+            if (file.Length > _maxLength) {
+                string start = file.Substring(0, file.IndexOf(Path.DirectorySeparatorChar) + 1);
+                string end = file.Substring(file.Length - (_maxLength - start.Length));
+                if (end.Contains(Path.DirectorySeparatorChar)) {
+                    end = end.Substring(end.IndexOf(Path.DirectorySeparatorChar));
+                }
+                return start + "..." + end;
+            }
             return file;
+        }
+
+        private void trimFiles() {
+            if (_files.Count > _maxItems) {
+                _files.RemoveRange(_maxItems, _files.Count - _maxItems);
+            }
         }
 
         private Keys getShortcutKeys(int i) {
