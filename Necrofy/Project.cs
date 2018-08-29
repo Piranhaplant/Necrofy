@@ -11,8 +11,16 @@ namespace Necrofy
     /// <summary>Manages aspects of a ROM hack project including creation, modification, and building.</summary>
     class Project
     {
+        public const string baseROMFilename = "base.sfc";
+        public const string buildFilename = "build.sfc";
+
         public readonly string path;
         public readonly string settingsFilename;
+        public string settingsPath {
+            get {
+                return Path.Combine(path, settingsFilename);
+            }
+        }
         public readonly ProjectSettings settings;
 
         /// <summary>Creates a new project from the given base ROM.</summary>
@@ -20,7 +28,16 @@ namespace Necrofy
         /// <param name="path">The path to a directory in which all of the project files will be placed.</param>
         public Project(string baseROM, string path) {
             this.path = FixPath(path);
-            NStream s = new NStream(new FileStream(baseROM, FileMode.Open, FileAccess.Read, FileShare.Read));
+
+            if (Directory.Exists(path)) {
+                Directory.Delete(path, true);
+            }
+            Directory.CreateDirectory(path);
+            string newBaseROM = Path.Combine(path, baseROMFilename);
+            File.Copy(baseROM, newBaseROM);
+            // TODO: Remove header if it exists
+
+            NStream s = new NStream(new FileStream(newBaseROM, FileMode.Open, FileAccess.Read, FileShare.Read));
             ROMInfo info = new ROMInfo(s);
 
             foreach (Asset asset in info.assets) {
@@ -49,7 +66,7 @@ namespace Necrofy
         }
 
         private void WriteSettings() {
-            File.WriteAllText(Path.Combine(path, settingsFilename), JsonConvert.SerializeObject(settings));
+            File.WriteAllText(settingsPath, JsonConvert.SerializeObject(settings));
         }
 
         public string GetRelativePath(string filename) {
@@ -57,11 +74,10 @@ namespace Necrofy
             return filename.Substring(path.Length);
         }
 
-        /// <summary>Builds the project from the specified base ROM into the specified output ROM</summary>
-        /// <param name="baseROM">The base ROM</param>
-        /// <param name="outputROM">The output ROM</param>
-        public void Build(string baseROM, string outputROM) {
-            File.Copy(baseROM, outputROM, true);
+        /// <summary>Builds the project</summary>
+        public void Build() {
+            string outputROM = Path.Combine(path, buildFilename);
+            File.Copy(Path.Combine(path, baseROMFilename), outputROM, true);
             NStream s = new NStream(new FileStream(outputROM, FileMode.Open, FileAccess.ReadWrite, FileShare.Read));
             ROMInfo info = new ROMInfo(s);
             info.assets.Clear();

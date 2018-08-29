@@ -30,6 +30,13 @@ namespace Necrofy
             }
         }
 
+        public void Render(int type, Graphics g, int x, int y) {
+            if (sprites.ContainsKey(type)) {
+                sprites[type].Render(g, x, y);
+            }
+            // TODO: Render unknown sprites
+        }
+
         public class Sprite
         {
             private readonly Bitmap image;
