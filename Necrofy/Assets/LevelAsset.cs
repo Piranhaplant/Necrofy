@@ -110,7 +110,8 @@ namespace Necrofy
                 if (parts.subFolder != null) return null;
                 if (parts.fileExtension != Extension) return null;
                 if (parts.pointer != null) return null;
-                int levelNum = int.Parse(parts.name); // TODO: Handle failed parse
+                int levelNum;
+                if (!int.TryParse(parts.name, out levelNum)) return null;
                 return new LevelNameInfo(levelNum);
             }
         }

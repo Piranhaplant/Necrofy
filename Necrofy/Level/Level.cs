@@ -10,6 +10,8 @@ namespace Necrofy
     /// <summary>Stores a ZAMN level</summary>
     class Level
     {
+        /// <summary>Human readable name of the level. For use in Necrofy only</summary>
+        public string displayName { get; set; }
         /// <summary>The background tiles making up the level</summary>
         public ushort[,] background { get; set; }
         public int width { get { return background.GetLength(0); } }
@@ -20,7 +22,7 @@ namespace Necrofy
         public string tilesetGraphicsName { get; set; }
         public string paletteName { get; set; }
         public string spritePaletteName { get; set; }
-        /// <summary>The palette animation used for the level. Since I don't know how this works yet, it is stored as a pointer.</summary>
+        /// <summary>The palette animation used for the level</summary>
         public int paletteAnimationPtr { get; set; }
         /// <summary>The number of the background track that plays during the level</summary>
         public ushort music { get; set; }
@@ -130,8 +132,8 @@ namespace Necrofy
             data.data.AddPointer(rom.GetAssetPointer(AssetCategory.Tilemap, tilesetTilemapName));
 
             MovableData backgroundData = new MovableData();
-            int width = background.GetLength(0);
-            int height = background.GetLength(1);
+            int width = this.width;
+            int height = this.height;
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     backgroundData.data.AddInt16(background[x, y]);
@@ -154,8 +156,8 @@ namespace Necrofy
             BuildAll(oneTimeMonsters, data, (o, d) => o.Build(d));
             BuildAll(items, data, (o, d) => o.Build(d));
 
-            data.data.AddInt16((ushort)background.GetLength(0));
-            data.data.AddInt16((ushort)background.GetLength(1));
+            data.data.AddInt16((ushort)width);
+            data.data.AddInt16((ushort)height);
             data.data.AddInt16(tilePriorityEnd);
             data.data.AddInt16(hiddenTilesStart);
             data.data.AddInt16(p1startX);
@@ -165,13 +167,8 @@ namespace Necrofy
             data.data.AddInt16(music);
             data.data.AddInt16(sounds);
 
-            MovableData title1Data = new MovableData();
-            title1.Build(title1Data, 0);
-            data.AddPointer(MovableData.PointerSize.TwoBytes, title1Data);
-
-            MovableData title2Data = new MovableData();
-            title2.Build(title2Data, 1);
-            data.AddPointer(MovableData.PointerSize.TwoBytes, title2Data);
+            data.AddPointer(MovableData.PointerSize.TwoBytes, title1.Build(0));
+            data.AddPointer(MovableData.PointerSize.TwoBytes, title2.Build(1));
 
             BuildAll(bonuses, data, (o, d) => d.data.AddInt16(o));
 

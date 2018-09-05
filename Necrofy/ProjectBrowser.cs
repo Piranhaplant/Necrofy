@@ -29,7 +29,9 @@ namespace Necrofy
         }
 
         private void populateTree(TreeNodeCollection parent, string path) {
-            foreach (string dir in Directory.GetDirectories(path)) {
+            string [] dirs = Directory.GetDirectories(path);
+            Array.Sort(dirs, new NumericStringComparer());
+            foreach (string dir in dirs) {
                 TreeNode child = parent.Add(Path.GetFileName(dir));
                 setImage(child, Resources.folder);
 
@@ -38,7 +40,10 @@ namespace Necrofy
                     child.Remove();
                 }
             }
-            foreach (string file in Directory.GetFiles(path)) {
+
+            string[] files = Directory.GetFiles(path);
+            Array.Sort(files, new NumericStringComparer());
+            foreach (string file in files) {
                 Asset.NameInfo info = Asset.GetInfo(project, project.GetRelativePath(file));
                 if (info != null) {
                     TreeNode child = parent.Add(info.DisplayName);

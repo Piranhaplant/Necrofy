@@ -55,6 +55,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -93,6 +94,7 @@
     <Compile Include="NewProjectDialog.Designer.cs">
       <DependentUpon>NewProjectDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="NumericStringComparer.cs" />
     <Compile Include="ProjectBrowser.cs">
       <SubType>Form</SubType>
     </Compile>
