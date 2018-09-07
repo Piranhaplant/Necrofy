@@ -57,7 +57,7 @@ namespace Necrofy
                 return (EditorAsset)FromFile(nameInfo, filename);
             }
 
-            public override NameInfo GetNameInfo(NameInfo.PathParts pathParts) {
+            public override NameInfo GetNameInfo(NameInfo.PathParts pathParts, Project project) {
                 return EditorNameInfo.FromPath(pathParts);
             }
 

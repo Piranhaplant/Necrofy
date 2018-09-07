@@ -82,7 +82,7 @@ namespace Necrofy
         public static Asset FromFile(Project project, string filename) {
             NameInfo.PathParts pathParts = NameInfo.ParsePath(filename);
             foreach (Creator creator in creators) {
-                NameInfo nameInfo = creator.GetNameInfo(pathParts);
+                NameInfo nameInfo = creator.GetNameInfo(pathParts, project);
                 if (nameInfo != null) {
                     return creator.FromFile(nameInfo, Path.Combine(project.path, filename));
                 }
@@ -93,7 +93,7 @@ namespace Necrofy
         public static NameInfo GetInfo(Project project, string filename) {
             NameInfo.PathParts pathParts = NameInfo.ParsePath(filename);
             foreach (Creator creator in creators) {
-                NameInfo nameInfo = creator.GetNameInfo(pathParts);
+                NameInfo nameInfo = creator.GetNameInfo(pathParts, project);
                 if (nameInfo != null) {
                     return nameInfo;
                 }
@@ -306,8 +306,9 @@ namespace Necrofy
             // Methods needed for reading from files
 
             /// <summary>Gets the NameInfo of an asset created from the given path</summary>
-            /// <param name="path">The path relative to the root directory of the project</param>
-            public abstract NameInfo GetNameInfo(NameInfo.PathParts pathParts);
+            /// <param name="pathParts">The path parts</param>
+            /// <param name="project">The project</param>
+            public abstract NameInfo GetNameInfo(NameInfo.PathParts pathParts, Project project);
             /// <summary>Creates a new asset from the given file</summary>
             /// <param name="nameInfo">The name of the asset. This will be the object returned from GetNameInfo</param>
             /// <param name="filename">The full filename of the asset</param>

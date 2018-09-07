@@ -94,6 +94,7 @@ namespace Necrofy
             s.GoToRelativePointerPush();
             title2 = new TitlePage(s);
             s.PopPosition();
+            displayName = generateDisplayName();
 
             // Bonus pointer is optional
             if (s.PeekInt16() > 0) {
@@ -122,6 +123,25 @@ namespace Necrofy
                 add();
             }
             s.PopPosition();
+        }
+
+        public string generateDisplayName() {
+            string name = title1.ToString() + " " + title2.ToString();
+            int actualNameStart = name.LastIndexOf("Level");
+            if (actualNameStart < 0) {
+                return name;
+            }
+            actualNameStart += 6; // Go past the string "Level" and one space
+            if (actualNameStart >= name.Length) {
+                return name;
+            }
+            if (char.IsDigit(name, actualNameStart)) {
+                actualNameStart = name.IndexOf(" ", actualNameStart) + 1;
+                if (actualNameStart <= 0) {
+                    return "";
+                }
+            }
+            return name.Substring(actualNameStart);
         }
 
         /// <summary>Builds the level for inserting into a ROM.</summary>

@@ -146,6 +146,7 @@
     <Compile Include="ScrollWrapper.cs" />
     <Compile Include="SNESGraphics.cs" />
     <Compile Include="SpriteGraphics.cs" />
+    <Compile Include="TupleList.cs" />
     <Compile Include="ZAMNCompress.cs" />
     <EmbeddedResource Include="Canvas.resx">
       <DependentUpon>Canvas.cs</DependentUpon>

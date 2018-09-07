@@ -57,7 +57,7 @@ namespace Necrofy
                 return (TilesetGraphicsAsset)FromFile(nameInfo, filename);
             }
 
-            public override NameInfo GetNameInfo(NameInfo.PathParts pathParts) {
+            public override NameInfo GetNameInfo(NameInfo.PathParts pathParts, Project project) {
                 return TilesetGraphicsNameInfo.FromPath(pathParts);
             }
 

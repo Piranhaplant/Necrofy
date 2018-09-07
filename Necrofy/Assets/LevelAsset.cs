@@ -22,11 +22,15 @@ namespace Necrofy
             return new LevelCreator().FromProject(project, levelNum);
         }
 
-        public LevelAsset(int levelNum, Level level) : this(new LevelNameInfo(levelNum), level) { }
+        public LevelAsset(int levelNum, Level level) : this(new LevelNameInfo(levelNum, n => level.displayName), level) { }
 
         private LevelAsset(LevelNameInfo nameInfo, Level level) {
             this.nameInfo = nameInfo;
             this.level = level;
+        }
+
+        public string GetDisplayText() {
+            return nameInfo.Name + " " + level.displayName;
         }
 
         private static int GetPointerPosition(int levelNum) {
@@ -56,13 +60,13 @@ namespace Necrofy
         class LevelCreator : Creator
         {
             public LevelAsset FromProject(Project project, int levelNum) {
-                NameInfo nameInfo = new LevelNameInfo(levelNum);
+                NameInfo nameInfo = new LevelNameInfo(levelNum, n => GetDisplayName(n, project));
                 string filename = nameInfo.GetFilename(project.path);
                 return (LevelAsset)FromFile(nameInfo, filename);
             }
 
-            public override NameInfo GetNameInfo(NameInfo.PathParts pathParts) {
-                return LevelNameInfo.FromPath(pathParts);
+            public override NameInfo GetNameInfo(NameInfo.PathParts pathParts, Project project) {
+                return LevelNameInfo.FromPath(pathParts, n => GetDisplayName(n, project));
             }
 
             public override Asset FromFile(NameInfo nameInfo, string filename) {
@@ -72,6 +76,23 @@ namespace Necrofy
             public override AssetCategory GetCategory() {
                 return AssetCat;
             }
+
+            private string GetDisplayName(LevelNameInfo nameInfo, Project project) {
+                try {
+                    using (FileStream fs = new FileStream(nameInfo.GetFilename(project.path), FileMode.Open, FileAccess.Read, FileShare.Read))
+                    using (StreamReader sr = new StreamReader(fs))
+                    using (JsonReader reader = new JsonTextReader(sr)) {
+                        while (reader.Read()) {
+                            if (reader.TokenType == JsonToken.PropertyName && (string)reader.Value == "displayName") {
+                                return reader.ReadAsString();
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    Console.Write(e);
+                }
+                return "";
+            }
         }
 
         class LevelNameInfo : NameInfo
@@ -80,9 +101,12 @@ namespace Necrofy
             private const string Extension = "json";
 
             public readonly int levelNum;
+            private readonly Func<LevelNameInfo, string> displayNameGetter;
+            private string displayName = null;
 
-            public LevelNameInfo(int levelNum) {
+            public LevelNameInfo(int levelNum, Func<LevelNameInfo, string> displayNameGetter) {
                 this.levelNum = levelNum;
+                this.displayNameGetter = displayNameGetter;
             }
 
             public override string Name {
@@ -90,7 +114,12 @@ namespace Necrofy
             }
 
             public override string DisplayName {
-                get { return levelNum.ToString(); }
+                get {
+                    if (displayName == null) {
+                        displayName = displayNameGetter(this);
+                    }
+                    return levelNum.ToString() + " " + displayName;
+                }
             }
 
             public override System.Drawing.Bitmap DisplayImage {
@@ -105,14 +134,14 @@ namespace Necrofy
                 return new LevelEditor(new LoadedLevel(project, levelNum));
             }
 
-            public static LevelNameInfo FromPath(NameInfo.PathParts parts) {
+            public static LevelNameInfo FromPath(NameInfo.PathParts parts, Func<LevelNameInfo, string> displayNameGetter) {
                 if (parts.topFolder != Folder) return null;
                 if (parts.subFolder != null) return null;
                 if (parts.fileExtension != Extension) return null;
                 if (parts.pointer != null) return null;
                 int levelNum;
                 if (!int.TryParse(parts.name, out levelNum)) return null;
-                return new LevelNameInfo(levelNum);
+                return new LevelNameInfo(levelNum, displayNameGetter);
             }
         }
 
