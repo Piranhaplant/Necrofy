@@ -88,6 +88,9 @@
     <Compile Include="Canvas.Designer.cs">
       <DependentUpon>Canvas.cs</DependentUpon>
     </Compile>
+    <Compile Include="EditorWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="NewProjectDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -138,6 +141,11 @@
     <Compile Include="Project.cs" />
     <Compile Include="ProjectSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="RecentFilesMenu.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -165,14 +173,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -267,6 +270,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Icons\control-cursor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\item.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\victim.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\one-shot-monster.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\monster.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\boss-monster.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

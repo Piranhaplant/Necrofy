@@ -130,7 +130,7 @@ namespace Necrofy
                 return new PathParts(Folder, null, levelNum.ToString(), Extension, null);
             }
 
-            public override WeifenLuo.WinFormsUI.Docking.DockContent GetEditor(Project project) {
+            public override EditorWindow GetEditor(Project project) {
                 return new LevelEditor(new LoadedLevel(project, levelNum));
             }
 

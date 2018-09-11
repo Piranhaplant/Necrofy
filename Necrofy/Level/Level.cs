@@ -10,6 +10,8 @@ namespace Necrofy
     /// <summary>Stores a ZAMN level</summary>
     class Level
     {
+        // This needs to be first because this field is read to show the level name in the project browser
+        // Keeping it first ensures that it is read quickly. See LevelAsset
         /// <summary>Human readable name of the level. For use in Necrofy only</summary>
         public string displayName { get; set; }
         /// <summary>The background tiles making up the level</summary>

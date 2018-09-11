@@ -12,10 +12,13 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace Necrofy
 {
-    public partial class MainWindow : Form
+    partial class MainWindow : Form
     {
         private const char pathSeparator = ';';
         private Project project;
+
+        private EditorWindow activeEditor = null;
+        private List<ToolStripItem> editorToolStripItems = new List<ToolStripItem>();
 
         public MainWindow()
         {
@@ -27,9 +30,37 @@ namespace Necrofy
             }
         }
 
+        public void ShowEditor(EditorWindow editor) {
+            editor.Show(dockPanel, DockState.Document);
+        }
+
+        private void dockPanel_ActiveDocumentChanged(object sender, EventArgs e) {
+            EditorWindow editor = dockPanel.ActiveContent as EditorWindow;
+            if (activeEditor != null) {
+                if (activeEditor.EditorToolStrip != null) {
+                    foreach (ToolStripItem item in editorToolStripItems) {
+                        // Item is automatically removed from the existing tools strip when it is added to a different one
+                        activeEditor.EditorToolStrip.Items.Add(item);
+                    }
+                }
+            }
+            editorToolStripItems.Clear();
+            if (editor != null) {
+                if (editor.EditorToolStrip != null) {
+                    while (editor.EditorToolStrip.Items.Count > 0) {
+                        ToolStripItem item = editor.EditorToolStrip.Items[0];
+                        toolStrip1.Items.Add(item);
+                        editorToolStripItems.Add(item);
+                    }
+                }
+            }
+            activeEditor = editor;
+        }
+
         private void createProject(object sender, EventArgs e) {
             NewProjectDialog newProjectDialog = new NewProjectDialog();
             if (newProjectDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+                // TODO: close already open project if there is one
                 project = new Project(newProjectDialog.BaseROM, newProjectDialog.ProjectLocation);
                 projectReady();
             }
@@ -53,7 +84,7 @@ namespace Necrofy
             Properties.Settings.Default.RecentProjects = string.Join(pathSeparator.ToString(), recentProjects.Files);
             Properties.Settings.Default.Save();
 
-            ProjectBrowser browser = new ProjectBrowser(dockPanel, project);
+            ProjectBrowser browser = new ProjectBrowser(this, project);
             browser.Show(dockPanel, DockState.DockLeft);
         }
 

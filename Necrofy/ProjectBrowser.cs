@@ -14,14 +14,14 @@ namespace Necrofy
 {
     partial class ProjectBrowser : DockContent
     {
-        private readonly DockPanel dockPanel;
+        private readonly MainWindow mainWindow;
         private readonly Project project;
 
         private readonly Dictionary<Bitmap, int> imageIndexMap = new Dictionary<Bitmap, int>();
 
-        public ProjectBrowser(DockPanel dockPanel, Project project) {
+        public ProjectBrowser(MainWindow mainWindow, Project project) {
             InitializeComponent();
-            this.dockPanel = dockPanel;
+            this.mainWindow = mainWindow;
             this.project = project;
 
             treeImages.Images.Add(Resources.document); // Used as default image
@@ -63,9 +63,9 @@ namespace Necrofy
 
         private void tree_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e) {
             Asset.NameInfo info = (Asset.NameInfo)e.Node.Tag;
-            DockContent editor = info.GetEditor(project);
+            EditorWindow editor = info.GetEditor(project);
             if (editor != null) {
-                editor.Show(dockPanel, DockState.Document);
+                mainWindow.ShowEditor(editor);
             }
         }
 

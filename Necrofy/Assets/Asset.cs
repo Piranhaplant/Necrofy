@@ -5,7 +5,6 @@ using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Drawing;
-using WeifenLuo.WinFormsUI.Docking;
 
 namespace Necrofy
 {
@@ -208,7 +207,7 @@ namespace Necrofy
             /// <summary>Gets the component that will be used to edit the asset</summary>
             /// <param name="project">The project</param>
             /// <returns>The editor, or null if there is none</returns>
-            public virtual DockContent GetEditor(Project project) {
+            public virtual EditorWindow GetEditor(Project project) {
                 return null;
             }
 

@@ -12,7 +12,7 @@ using System.Diagnostics;
 
 namespace Necrofy
 {
-    partial class LevelEditor : DockContent
+    partial class LevelEditor : EditorWindow
     {
         private readonly LoadedLevel level;
         private readonly ScrollWrapper scrollWrapper;

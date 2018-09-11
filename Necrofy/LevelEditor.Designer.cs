@@ -28,6 +28,13 @@
             this.canvas = new Necrofy.Canvas();
             this.hscroll = new System.Windows.Forms.HScrollBar();
             this.vscroll = new System.Windows.Forms.VScrollBar();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.itemsButton = new System.Windows.Forms.ToolStripButton();
+            this.victimsButton = new System.Windows.Forms.ToolStripButton();
+            this.oneShotMonstersButton = new System.Windows.Forms.ToolStripButton();
+            this.monstersButton = new System.Windows.Forms.ToolStripButton();
+            this.bossMonstersButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // canvas
@@ -64,18 +71,88 @@
             this.vscroll.SmallChange = 16;
             this.vscroll.TabIndex = 2;
             // 
+            // toolStrip1
+            // 
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.itemsButton,
+            this.victimsButton,
+            this.oneShotMonstersButton,
+            this.monstersButton,
+            this.bossMonstersButton});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(300, 25);
+            this.toolStrip1.TabIndex = 3;
+            this.toolStrip1.Text = "toolStrip1";
+            this.toolStrip1.Visible = false;
+            // 
+            // itemsButton
+            // 
+            this.itemsButton.CheckOnClick = true;
+            this.itemsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.itemsButton.Image = global::Necrofy.Properties.Resources.item;
+            this.itemsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.itemsButton.Name = "itemsButton";
+            this.itemsButton.Size = new System.Drawing.Size(23, 22);
+            this.itemsButton.Text = "Items";
+            // 
+            // victimsButton
+            // 
+            this.victimsButton.CheckOnClick = true;
+            this.victimsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.victimsButton.Image = global::Necrofy.Properties.Resources.victim;
+            this.victimsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.victimsButton.Name = "victimsButton";
+            this.victimsButton.Size = new System.Drawing.Size(23, 22);
+            this.victimsButton.Text = "Victims";
+            // 
+            // oneShotMonstersButton
+            // 
+            this.oneShotMonstersButton.CheckOnClick = true;
+            this.oneShotMonstersButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.oneShotMonstersButton.Image = global::Necrofy.Properties.Resources.one_shot_monster;
+            this.oneShotMonstersButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.oneShotMonstersButton.Name = "oneShotMonstersButton";
+            this.oneShotMonstersButton.Size = new System.Drawing.Size(23, 22);
+            this.oneShotMonstersButton.Text = "One-shot Monsters";
+            // 
+            // monstersButton
+            // 
+            this.monstersButton.CheckOnClick = true;
+            this.monstersButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.monstersButton.Image = global::Necrofy.Properties.Resources.monster;
+            this.monstersButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.monstersButton.Name = "monstersButton";
+            this.monstersButton.Size = new System.Drawing.Size(23, 22);
+            this.monstersButton.Text = "Monsters";
+            // 
+            // bossMonstersButton
+            // 
+            this.bossMonstersButton.CheckOnClick = true;
+            this.bossMonstersButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bossMonstersButton.Image = global::Necrofy.Properties.Resources.boss_monster;
+            this.bossMonstersButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.bossMonstersButton.Name = "bossMonstersButton";
+            this.bossMonstersButton.Size = new System.Drawing.Size(23, 22);
+            this.bossMonstersButton.Text = "Boss Monsters";
+            // 
             // LevelEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(300, 300);
+            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.vscroll);
             this.Controls.Add(this.hscroll);
             this.Controls.Add(this.canvas);
+            this.EditorToolStrip = this.toolStrip1;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "LevelEditor";
             this.Text = "LevelEditor";
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -84,6 +161,12 @@
         private Canvas canvas;
         private System.Windows.Forms.HScrollBar hscroll;
         private System.Windows.Forms.VScrollBar vscroll;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripButton itemsButton;
+        private System.Windows.Forms.ToolStripButton victimsButton;
+        private System.Windows.Forms.ToolStripButton oneShotMonstersButton;
+        private System.Windows.Forms.ToolStripButton monstersButton;
+        private System.Windows.Forms.ToolStripButton bossMonstersButton;
 
     }
 }
