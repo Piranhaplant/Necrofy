@@ -19,6 +19,7 @@ namespace Necrofy
 
         private EditorWindow activeEditor = null;
         private List<ToolStripItem> editorToolStripItems = new List<ToolStripItem>();
+        private List<ToolStripItem> editorMenuStripItems = new List<ToolStripItem>();
 
         public MainWindow()
         {
@@ -37,15 +38,28 @@ namespace Necrofy
         private void dockPanel_ActiveDocumentChanged(object sender, EventArgs e) {
             EditorWindow editor = dockPanel.ActiveContent as EditorWindow;
             if (activeEditor != null) {
+                if (activeEditor.EditorMenuStrip != null) {
+                    foreach (ToolStripItem item in editorMenuStripItems) {
+                        // Item is automatically removed from the existing tools strip when it is added to a different one
+                        activeEditor.EditorMenuStrip.Items.Add(item);
+                    }
+                }
                 if (activeEditor.EditorToolStrip != null) {
                     foreach (ToolStripItem item in editorToolStripItems) {
-                        // Item is automatically removed from the existing tools strip when it is added to a different one
                         activeEditor.EditorToolStrip.Items.Add(item);
                     }
                 }
             }
+            editorMenuStripItems.Clear();
             editorToolStripItems.Clear();
             if (editor != null) {
+                if (editor.EditorMenuStrip != null) {
+                    while (editor.EditorMenuStrip.Items.Count > 0) {
+                        ToolStripItem item = editor.EditorMenuStrip.Items[0];
+                        menuStrip1.Items.Add(item);
+                        editorMenuStripItems.Add(item);
+                    }
+                }
                 if (editor.EditorToolStrip != null) {
                     while (editor.EditorToolStrip.Items.Count > 0) {
                         ToolStripItem item = editor.EditorToolStrip.Items[0];
@@ -54,6 +68,7 @@ namespace Necrofy
                     }
                 }
             }
+            endToolStripSeparator.Visible = editorToolStripItems.Count > 0;
             activeEditor = editor;
         }
 

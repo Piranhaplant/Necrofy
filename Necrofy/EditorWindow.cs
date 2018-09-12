@@ -9,6 +9,7 @@ namespace Necrofy
 {
     class EditorWindow : DockContent
     {
+        public MenuStrip EditorMenuStrip { get; set; }
         public ToolStrip EditorToolStrip { get; set; }
 
         public EditorWindow() {

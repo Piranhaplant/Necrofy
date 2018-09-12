@@ -34,7 +34,15 @@
             this.oneShotMonstersButton = new System.Windows.Forms.ToolStripButton();
             this.monstersButton = new System.Windows.Forms.ToolStripButton();
             this.bossMonstersButton = new System.Windows.Forms.ToolStripButton();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.toolsMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsItems = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsVictims = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsOneShotMonsters = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsMonsters = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsBossMonsters = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // canvas
@@ -136,21 +144,89 @@
             this.bossMonstersButton.Size = new System.Drawing.Size(23, 22);
             this.bossMonstersButton.Text = "Boss Monsters";
             // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolsMenu});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(300, 24);
+            this.menuStrip1.TabIndex = 4;
+            this.menuStrip1.Text = "menuStrip1";
+            this.menuStrip1.Visible = false;
+            // 
+            // toolsMenu
+            // 
+            this.toolsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolsItems,
+            this.toolsVictims,
+            this.toolsOneShotMonsters,
+            this.toolsMonsters,
+            this.toolsBossMonsters});
+            this.toolsMenu.Name = "toolsMenu";
+            this.toolsMenu.Size = new System.Drawing.Size(48, 20);
+            this.toolsMenu.Text = "Tools";
+            // 
+            // toolsItems
+            // 
+            this.toolsItems.CheckOnClick = true;
+            this.toolsItems.Image = global::Necrofy.Properties.Resources.item;
+            this.toolsItems.Name = "toolsItems";
+            this.toolsItems.Size = new System.Drawing.Size(176, 22);
+            this.toolsItems.Text = "Items";
+            // 
+            // toolsVictims
+            // 
+            this.toolsVictims.CheckOnClick = true;
+            this.toolsVictims.Image = global::Necrofy.Properties.Resources.victim;
+            this.toolsVictims.Name = "toolsVictims";
+            this.toolsVictims.Size = new System.Drawing.Size(176, 22);
+            this.toolsVictims.Text = "Victims";
+            // 
+            // toolsOneShotMonsters
+            // 
+            this.toolsOneShotMonsters.CheckOnClick = true;
+            this.toolsOneShotMonsters.Image = global::Necrofy.Properties.Resources.one_shot_monster;
+            this.toolsOneShotMonsters.Name = "toolsOneShotMonsters";
+            this.toolsOneShotMonsters.Size = new System.Drawing.Size(176, 22);
+            this.toolsOneShotMonsters.Text = "One-shot Monsters";
+            // 
+            // toolsMonsters
+            // 
+            this.toolsMonsters.CheckOnClick = true;
+            this.toolsMonsters.Image = global::Necrofy.Properties.Resources.monster;
+            this.toolsMonsters.Name = "toolsMonsters";
+            this.toolsMonsters.Size = new System.Drawing.Size(176, 22);
+            this.toolsMonsters.Text = "Monsters";
+            // 
+            // toolsBossMonsters
+            // 
+            this.toolsBossMonsters.CheckOnClick = true;
+            this.toolsBossMonsters.Image = global::Necrofy.Properties.Resources.boss_monster;
+            this.toolsBossMonsters.Name = "toolsBossMonsters";
+            this.toolsBossMonsters.Size = new System.Drawing.Size(176, 22);
+            this.toolsBossMonsters.Text = "Boss Monsters";
+            // 
             // LevelEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(300, 300);
+            this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.vscroll);
             this.Controls.Add(this.hscroll);
             this.Controls.Add(this.canvas);
+            this.EditorMenuStrip = this.menuStrip1;
             this.EditorToolStrip = this.toolStrip1;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.MainMenuStrip = this.menuStrip1;
             this.Name = "LevelEditor";
             this.Text = "LevelEditor";
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -167,6 +243,13 @@
         private System.Windows.Forms.ToolStripButton oneShotMonstersButton;
         private System.Windows.Forms.ToolStripButton monstersButton;
         private System.Windows.Forms.ToolStripButton bossMonstersButton;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem toolsMenu;
+        private System.Windows.Forms.ToolStripMenuItem toolsItems;
+        private System.Windows.Forms.ToolStripMenuItem toolsVictims;
+        private System.Windows.Forms.ToolStripMenuItem toolsOneShotMonsters;
+        private System.Windows.Forms.ToolStripMenuItem toolsMonsters;
+        private System.Windows.Forms.ToolStripMenuItem toolsBossMonsters;
 
     }
 }
