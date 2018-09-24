@@ -17,6 +17,7 @@ namespace Necrofy
         private const char pathSeparator = ';';
         private Project project;
 
+        private List<EditorWindow> openEditors = new List<EditorWindow>();
         private EditorWindow activeEditor = null;
         private List<ToolStripItem> editorToolStripItems = new List<ToolStripItem>();
         private List<ToolStripItem> editorMenuStripItems = new List<ToolStripItem>();
@@ -32,11 +33,20 @@ namespace Necrofy
         }
 
         public void ShowEditor(EditorWindow editor) {
+            openEditors.Add(editor);
             editor.Show(dockPanel, DockState.Document);
+        }
+
+        private void dockPanel_ContentRemoved(object sender, DockContentEventArgs e) {
+            EditorWindow editor = e.Content as EditorWindow;
+            if (editor != null) {
+                openEditors.Remove(editor);
+            }
         }
 
         private void dockPanel_ActiveDocumentChanged(object sender, EventArgs e) {
             EditorWindow editor = dockPanel.ActiveContent as EditorWindow;
+
             if (activeEditor != null) {
                 if (activeEditor.EditorMenuStrip != null) {
                     foreach (ToolStripItem item in editorMenuStripItems) {
@@ -52,6 +62,7 @@ namespace Necrofy
             }
             editorMenuStripItems.Clear();
             editorToolStripItems.Clear();
+
             if (editor != null) {
                 if (editor.EditorMenuStrip != null) {
                     while (editor.EditorMenuStrip.Items.Count > 0) {
@@ -68,8 +79,8 @@ namespace Necrofy
                     }
                 }
             }
-            endToolStripSeparator.Visible = editorToolStripItems.Count > 0;
             activeEditor = editor;
+            endToolStripSeparator.Visible = editorToolStripItems.Count > 0;
         }
 
         private void createProject(object sender, EventArgs e) {

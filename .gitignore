@@ -1,3 +1,4 @@
 *.suo
-Necrofy/bin/*
-Necrofy/obj/*
+bin/
+obj/
+TestResults/

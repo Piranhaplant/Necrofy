@@ -28,45 +28,30 @@ namespace Necrofy
         /// <summary>Writes a file containing the asset into the given project directory</summary>
         /// <param name="project">The project</param>
         public abstract void WriteFile(Project project);
-        /// <summary>Reserves any space that will be needed by this asset before inserting into a ROM.</summary>
-        /// <param name="freespace">The freespace</param>
-        public virtual void ReserveSpace(Freespace freespace) {
-            if (FixedPointer != null) {
-                // This will only ever be done on assets that use a byte array inserter, so it's okay to pass null here
-                // and it's cheap to create a second inserter when we actually go to insert the asset.
-                Inserter inserter = GetInserter(null);
-                freespace.Reserve(FixedPointer.Value, inserter.GetSize());
-            }
-        }
         /// <summary>Gets the order that this asset should be inserted</summary>
         protected abstract AssetCategory Category { get; }
         /// <summary>Gets the name of this asset</summary>
         protected abstract string Name { get; }
-        /// <summary>Gets the fixed pointer at which this asset should be inserted to the ROM, if one exists</summary>
-        protected virtual int? FixedPointer {
-            get { return null; }
+        /// <summary>Reserves any space that will be needed by this asset before inserting into a ROM.</summary>
+        /// <param name="freespace">The freespace</param>
+        public virtual void ReserveSpace(Freespace freespace) { }
+        protected void ReserveSpace(Freespace freespace, int? pointer, int length) {
+            if (pointer != null) {
+                freespace.Reserve((int)pointer, length);
+            }
         }
         /// <summary>Inserts the asset into the given ROM</summary>
         /// <param name="rom">The ROM</param>
         /// <param name="romInfo">The ROM info</param>
-        public void Insert(NStream rom, ROMInfo romInfo) {
-            Inserter inserter = GetInserter(romInfo);
-            rom.PushPosition();
-
-            int pointer = romInfo.Freespace.Claim(inserter.GetSize());
-            byte[] data = inserter.GetData(pointer);
-
-            rom.Seek(pointer, SeekOrigin.Begin);
+        public abstract void Insert(NStream rom, ROMInfo romInfo);
+        protected void InsertByteArray(NStream rom, ROMInfo romInfo, byte[] data, int? pointer = null) {
+            if (pointer == null) {
+                pointer = romInfo.Freespace.Claim(data.Length);
+            }
+            rom.Seek((int)pointer, SeekOrigin.Begin);
             rom.Write(data, 0, data.Length);
-            inserter.InsertExtras(pointer, rom);
-            romInfo.AddAssetPointer(Category, Name, pointer);
-
-            rom.PopPosition();
+            romInfo.AddAssetPointer(Category, Name, (int)pointer);
         }
-        /// <summary>Gets the inserter that will be used to insert the asset into the ROM</summary>
-        /// <param name="romInfo">The ROM info</param>
-        /// <returns>The inserter</returns>
-        protected abstract Inserter GetInserter(ROMInfo romInfo);
 
         private static List<Creator> creators = new List<Creator>();
         /// <summary>Adds a creator that will be used to load assets from files and ROMs</summary>
@@ -132,6 +117,7 @@ namespace Necrofy
         private static void CreateAsset(NStream romStream, ROMInfo romInfo, Creator creator, NameInfo nameInfo, int pointer, int? size) {
             romStream.PushPosition();
 
+            // TODO: Don't assume the asset is in one continuous chunk
             romStream.Seek(pointer, SeekOrigin.Begin);
             long startPos = romStream.Position;
             Asset asset = creator.FromRom(nameInfo, romStream, size);
@@ -343,38 +329,6 @@ namespace Necrofy
 
             public DefaultParams(int pointer, NameInfo nameInfo)
                 : this(pointer, nameInfo, null) {
-            }
-        }
-
-        /// <summary>An object that will be used to insert an asset into a ROM</summary>
-        protected abstract class Inserter
-        {
-            /// <summary>Gets the number of bytes of the asset</summary>
-            public abstract int GetSize();
-            /// <summary>Gets the data to be inserted</summary>
-            /// <param name="pointer">The location the asset will be inserted at</param>
-            public abstract byte[] GetData(int pointer);
-            /// <summary>Insets anything separate from the main data</summary>
-            /// <param name="pointer">The location the main data was inserted at</param>
-            /// <param name="romStream">The rom stream</param>
-            public virtual void InsertExtras(int pointer, NStream romStream) { }
-        }
-
-        /// <summary>An inserter for a byte array</summary>
-        protected class ByteArrayInserter : Inserter
-        {
-            private readonly byte[] data;
-
-            public ByteArrayInserter(byte[] data) {
-                this.data = data;
-            }
-
-            public override int GetSize() {
-                return data.Length;
-            }
-
-            public override byte[] GetData(int pointer) {
-                return data;
             }
         }
     }

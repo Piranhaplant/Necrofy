@@ -13,7 +13,7 @@ namespace Necrofy
         public ToolStrip EditorToolStrip { get; set; }
 
         public EditorWindow() {
-            this.DockAreas = DockAreas.Document | DockAreas.Float;
+            this.DockAreas = DockAreas.Document;
         }
     }
 }

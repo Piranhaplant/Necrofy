@@ -36,12 +36,12 @@ namespace Necrofy
             File.WriteAllBytes(nameInfo.GetFilename(project.path), data);
         }
 
-        protected override Inserter GetInserter(ROMInfo romInfo) {
-            return new ByteArrayInserter(data);
+        public override void ReserveSpace(Freespace freespace) {
+            ReserveSpace(freespace, nameInfo.pointer, data.Length);
         }
 
-        protected override int? FixedPointer {
-            get { return nameInfo.pointer; }
+        public override void Insert(NStream rom, ROMInfo romInfo) {
+            InsertByteArray(rom, romInfo, data, nameInfo.pointer);
         }
 
         protected override AssetCategory Category {
@@ -74,7 +74,7 @@ namespace Necrofy
 
             public override List<DefaultParams> GetDefaults() {
                 return new List<DefaultParams>() {
-                    new DefaultParams(0x20000, new GraphicsNameInfo(Sprites, 0x20000), 0x5CC00)
+                    new DefaultParams(0x20000, new GraphicsNameInfo(Sprites, 0x20000), 0x5D300)
                 };
             }
 

@@ -6,7 +6,7 @@ using System.Text;
 namespace Necrofy
 {
     /// <summary>Manages a set of space in a ROM that is available for writing.</summary>
-    class Freespace
+    public class Freespace
     {
         /// <summary>The size of a bank in bytes. Blocks will not be allowed to cross banks.</summary>
         public const int BankSize = 0x8000;
@@ -26,20 +26,20 @@ namespace Necrofy
         /// <param name="start">The inclusive start of the block</param>
         /// <param name="end">The exclusive end of the block</param>
         public void Add(int start, int end) {
-            if (start == end) return;
+            if (start >= end) return;
             // If the given chunk crosses a bank boundary, split it into two.
             if (start / BankSize != (end - 1) / BankSize) {
                 int splitPoint = (start / BankSize + 1) * BankSize;
-                Add(start, splitPoint);
-                start = splitPoint;
-                // TODO: This shouldn't ever happen, so log a warning
+                Add(splitPoint, end);
+                end = splitPoint;
             }
             FreeBlock block = new FreeBlock(start, end);
             blocks.Add(block);
             // Merge any blocks that intersect
             for (int i = 0; i < blocks.Count - 1; i++) {
                 FreeBlock b = blocks[i];
-                if (block.IntersectsWith(b)) {
+                // Don't merge blocks across banks
+                if (block.IntersectsWith(b) && block.Start / BankSize == b.Start / BankSize) {
                     block.Merge(b);
                     blocks.Remove(b);
                     i--;
@@ -115,7 +115,7 @@ namespace Necrofy
         }
 
         /// <summary>Represents one continuous block of free space</summary>
-        private class FreeBlock : IComparable<FreeBlock>
+        public class FreeBlock : IComparable<FreeBlock>
         {
             /// <summary>The inclusive start position of the block.</summary>
             public int Start;
@@ -138,12 +138,11 @@ namespace Necrofy
                 this.End = end;
             }
 
-            /// <summary>Gets whether this block could be combined with the specified block.</summary>
+            /// <summary>Gets whether this block intersects with or is directly adjacent to the specified block.</summary>
             /// <param name="block">The other block</param>
             /// <returns>true if the blocks intersect, false if they don't</returns>
             public bool IntersectsWith(FreeBlock block) {
-                return (block.Start <= End && Start <= block.End)
-                    && (Start / BankSize == block.Start / BankSize); // Don't merge blocks across banks
+                return block.Start <= End && Start <= block.End;
             }
 
             /// <summary>Merges this block with the one specified. Assumes that the blocks intersect.</summary>
@@ -171,13 +170,13 @@ namespace Necrofy
                     End = block.Start;
                     return new FreeBlock(block.End, originalEnd);
                 }
-                // The block intersects the front of this block
-                if (block.End < End) {
-                    Start = block.End;
+                // Chop off the end of this block
+                if (block.End >= End) {
+                    End = Math.Max(Start, block.Start);
                 }
-                // The block intersects the end of this block
-                if (block.Start > Start) {
-                    End = block.Start;
+                // Chop off the start of this block
+                if (block.Start <= Start) {
+                    Start = Math.Min(End, block.End);
                 }
                 return null;
             }

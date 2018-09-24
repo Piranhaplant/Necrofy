@@ -41,8 +41,15 @@ namespace Necrofy
             File.WriteAllText(nameInfo.GetFilename(project.path), JsonConvert.SerializeObject(level));
         }
 
-        protected override Inserter GetInserter(ROMInfo romInfo) {
-            return new LevelInserter(nameInfo.levelNum, level.Build(romInfo));
+        public override void Insert(NStream rom, ROMInfo romInfo) {
+            MovableData levelData = level.Build(romInfo);
+            int pointer = romInfo.Freespace.Claim(levelData.GetSize());
+            byte[] data = levelData.Build(pointer);
+
+            rom.Seek(pointer, SeekOrigin.Begin);
+            rom.Write(data, 0, data.Length);
+            rom.Seek(GetPointerPosition(nameInfo.levelNum), SeekOrigin.Begin);
+            rom.WritePointer(pointer);
         }
 
         public override void ReserveSpace(Freespace freespace) {
@@ -142,30 +149,6 @@ namespace Necrofy
                 int levelNum;
                 if (!int.TryParse(parts.name, out levelNum)) return null;
                 return new LevelNameInfo(levelNum, displayNameGetter);
-            }
-        }
-
-        class LevelInserter : Inserter
-        {
-            private readonly int levelNum;
-            private readonly MovableData levelData;
-
-            public LevelInserter(int levelNum, MovableData levelData) {
-                this.levelNum = levelNum;
-                this.levelData = levelData;
-            }
-
-            public override int GetSize() {
-                return levelData.GetSize();
-            }
-
-            public override byte[] GetData(int pointer) {
-                return levelData.Build(pointer);
-            }
-
-            public override void InsertExtras(int pointer, NStream romStream) {
-                romStream.Seek(GetPointerPosition(levelNum), SeekOrigin.Begin);
-                romStream.WritePointer(pointer);
             }
         }
     }

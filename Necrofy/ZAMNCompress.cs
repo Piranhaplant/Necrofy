@@ -162,5 +162,36 @@ namespace Necrofy
             s.Seek(-2, SeekOrigin.Current);
             freespace.AddSize((int)s.Position, size);
         }
+
+        public static void Insert(Stream s, Freespace freespace, byte[] data, int? pointer = null) {
+            // TODO: Make Compress not add the size bytes
+            byte[] c = Compress(data);
+            byte[] compressed = new byte[c.Length - 2];
+            Array.Copy(c, 2, compressed, 0, compressed.Length);
+
+            if (pointer == null) {
+                // TODO
+            } else {
+                s.Seek((int)pointer, SeekOrigin.Begin);
+                int size = s.ReadInt16();
+                s.Seek(-2, SeekOrigin.Current);
+                if (size >= compressed.Length) {
+                    s.WriteInt16((ushort)compressed.Length);
+                    s.Write(compressed, 0, compressed.Length);
+                } else {
+                    int firstSize = size - 4;
+                    int secondSize = compressed.Length - firstSize;
+                    int secondPointer = freespace.Claim(secondSize + 2);
+
+                    s.WriteInt16((ushort)(firstSize | 0x8000));
+                    s.Write(compressed, 0, firstSize);
+                    s.WritePointer(secondPointer);
+
+                    s.Seek(secondPointer, SeekOrigin.Begin);
+                    s.WriteInt16((ushort)secondSize);
+                    s.Write(compressed, firstSize, secondSize);
+                }
+            }
+        }
     }
 }

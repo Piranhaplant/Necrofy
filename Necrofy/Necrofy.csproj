@@ -91,6 +91,7 @@
     <Compile Include="EditorWindow.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="LevelEditor\Tool.cs" />
     <Compile Include="NewProjectDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -111,10 +112,10 @@
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Freespace.cs" />
-    <Compile Include="LevelEditor.cs">
+    <Compile Include="LevelEditor\LevelEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LevelEditor.Designer.cs">
+    <Compile Include="LevelEditor\LevelEditor.Designer.cs">
       <DependentUpon>LevelEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="LoadedLevel\LoadedSpriteGraphics.cs" />
@@ -168,7 +169,7 @@
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LevelEditor.resx">
+    <EmbeddedResource Include="LevelEditor\LevelEditor.resx">
       <DependentUpon>LevelEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

@@ -101,6 +101,12 @@ namespace Necrofy
                 asset.Insert(s, info);
             }
 
+            // Round size up to the nearest bank
+            s.SetLength((long)Math.Ceiling(s.Length / (double)Freespace.BankSize) * Freespace.BankSize);
+            byte sizeValue = (byte)(Math.Ceiling(Math.Log(s.Length, 2)) - 10);
+            s.Seek(ROMPointers.ROMSize, SeekOrigin.Begin);
+            s.WriteByte(sizeValue);
+
             s.Close();
 
             ProcessStartInfo process = new ProcessStartInfo(Path.Combine("Tools", "xkas.exe"));

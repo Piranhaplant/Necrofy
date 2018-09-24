@@ -34,9 +34,7 @@ namespace Necrofy
             File.WriteAllText(nameInfo.GetFilename(project.path), text);
         }
 
-        protected override Inserter GetInserter(ROMInfo romInfo) {
-            return new EditorInserter();
-        }
+        public override void Insert(NStream rom, ROMInfo romInfo) { }
 
         protected override AssetCategory Category {
             get { return AssetCat; }
@@ -102,19 +100,6 @@ namespace Necrofy
                 if (parts.fileExtension != Extension) return null;
                 if (parts.pointer != null) return null;
                 return new EditorNameInfo(parts.name);
-            }
-        }
-
-        class EditorInserter : Inserter
-        {
-            public EditorInserter() { }
-
-            public override int GetSize() {
-                return 0;
-            }
-
-            public override byte[] GetData(int pointer) {
-                return new byte[0];
             }
         }
     }

@@ -35,12 +35,12 @@ namespace Necrofy
             File.WriteAllBytes(nameInfo.GetFilename(project.path), data);
         }
 
-        protected override Inserter GetInserter(ROMInfo romInfo) {
-            return new ByteArrayInserter(data);
+        public override void ReserveSpace(Freespace freespace) {
+            ReserveSpace(freespace, nameInfo.pointer, data.Length);
         }
 
-        protected override int? FixedPointer {
-            get { return nameInfo.pointer; }
+        public override void Insert(NStream rom, ROMInfo romInfo) {
+            InsertByteArray(rom, romInfo, data, nameInfo.pointer);
         }
 
         protected override AssetCategory Category {

@@ -16,6 +16,8 @@ namespace Necrofy
         public const int LevelPointers = 0xf8000;
         /// <summary>Pointer to the table that indicates which bonus level follows each level</summary>
         public const int BonusLevelNums = 0x1517e;
+        /// <summary>Pointer to the ROM size in the SNES header</summary>
+        public const int ROMSize = 0x7fd7;
 
         // NOTE: in these functions I am using "address" to refer to the lower 16 bits of the full 24 bit LoROM address.
 
@@ -180,6 +182,14 @@ namespace Necrofy
             if (byte2 < 0)
                 throw new EndOfStreamException();
             return (ushort)(byte1 | byte2 << 8);
+        }
+
+        /// <summary>Writes an unsigned little-endian 16-bit integer to the stream</summary>
+        /// <param name="s">The stream</param>
+        /// <param name="value">The value to write</param>
+        public static void WriteInt16(this Stream s, ushort value) {
+            s.WriteByte((byte)(value & 0xff));
+            s.WriteByte((byte)(value >> 8));
         }
 
         /// <summary>Reads the specified number of bytes from the stream.</summary>
