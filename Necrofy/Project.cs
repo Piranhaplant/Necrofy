@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace Necrofy
 {
     /// <summary>Manages aspects of a ROM hack project including creation, modification, and building.</summary>
-    class Project
+    public class Project
     {
         public const string baseROMFilename = "base.sfc";
         public const string buildFilename = "build.sfc";

@@ -1,4 +1,7 @@
 *.suo
+*.pdb
+*.user
 bin/
 obj/
 TestResults/
+.vs

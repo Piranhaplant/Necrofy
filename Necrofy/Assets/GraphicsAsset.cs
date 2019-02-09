@@ -10,14 +10,14 @@ namespace Necrofy
     {
         private const AssetCategory AssetCat = AssetCategory.Graphics;
 
-        public const String Sprites = "Sprites";
+        public const string SpritesName = "Sprites";
 
         public static void RegisterLoader() {
             AddCreator(new GraphicsCreator());
         }
         
         public static string GetAssetName(NStream romStream, ROMInfo romInfo, int pointer) {
-            return Asset.GetAssetName(romStream, romInfo, pointer, new GraphicsCreator());
+            return Asset.GetAssetName(romStream, romInfo, pointer, new GraphicsCreator(), AssetCat);
         }
 
         private readonly GraphicsNameInfo nameInfo;
@@ -45,7 +45,7 @@ namespace Necrofy
         }
 
         protected override AssetCategory Category {
-            get { return AssetCat; }
+            get { return nameInfo.Category; }
         }
 
         protected override string Name {
@@ -68,13 +68,9 @@ namespace Necrofy
                 return new GraphicsAsset((GraphicsNameInfo)nameInfo, File.ReadAllBytes(filename));
             }
 
-            public override AssetCategory GetCategory() {
-                return AssetCat;
-            }
-
             public override List<DefaultParams> GetDefaults() {
                 return new List<DefaultParams>() {
-                    new DefaultParams(0x20000, new GraphicsNameInfo(Sprites, 0x20000), 0x5D300)
+                    new DefaultParams(0x20000, new GraphicsNameInfo(SpritesName, 0x20000), 0x5D300)
                 };
             }
 
@@ -108,8 +104,8 @@ namespace Necrofy
                 get { return name; }
             }
 
-            public override System.Drawing.Bitmap DisplayImage {
-                get { return Properties.Resources.image; }
+            public override AssetCategory Category {
+                get { return AssetCat; }
             }
 
             protected override NameInfo.PathParts GetPathParts() {

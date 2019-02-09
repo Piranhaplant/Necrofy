@@ -16,7 +16,7 @@ namespace Necrofy
         }
         
         public static string GetAssetName(NStream romStream, ROMInfo romInfo, int pointer) {
-            return Asset.GetAssetName(romStream, romInfo, pointer, new PaletteCreator());
+            return Asset.GetAssetName(romStream, romInfo, pointer, new PaletteCreator(), AssetCat);
         }
 
         private readonly PaletteNameInfo nameInfo;
@@ -44,7 +44,7 @@ namespace Necrofy
         }
 
         protected override AssetCategory Category {
-            get { return AssetCat; }
+            get { return nameInfo.Category; }
         }
 
         protected override string Name {
@@ -65,10 +65,6 @@ namespace Necrofy
 
             public override Asset FromFile(NameInfo nameInfo, string filename) {
                 return new PaletteAsset((PaletteNameInfo)nameInfo, File.ReadAllBytes(filename));
-            }
-
-            public override AssetCategory GetCategory() {
-                return AssetCat;
             }
 
             public override List<DefaultParams> GetDefaults() {
@@ -108,8 +104,8 @@ namespace Necrofy
                 get { return name; }
             }
 
-            public override System.Drawing.Bitmap DisplayImage {
-                get { return Properties.Resources.color; }
+            public override AssetCategory Category {
+                get { return AssetCat; }
             }
 
             protected override NameInfo.PathParts GetPathParts() {

@@ -17,10 +17,10 @@ namespace Necrofy
 
         public LoadedSpriteGraphics(Project project, string spritePaletteName) {
             paletteAsset = PaletteAsset.FromProject(project, spritePaletteName);
-            graphicsAsset = GraphicsAsset.FromProject(project, GraphicsAsset.Sprites);
-            spriteGraphicsAsset = EditorAsset.FromProject(project, EditorAsset.SpriteGraphics);
+            graphicsAsset = GraphicsAsset.FromProject(project, GraphicsAsset.SpritesName);
+            spriteGraphicsAsset = EditorAsset.FromProject(project, EditorAsset.SpriteGraphicsName);
 
-            Color[] colors = SNESGraphics.SNESToRGB(paletteAsset.data, true);
+            Color[] colors = SNESGraphics.SNESToRGB(paletteAsset.data, transparent: true);
             SpriteGraphics.Sprite[] sprites = JsonConvert.DeserializeObject<SpriteGraphics.Sprite[]>(spriteGraphicsAsset.text);
 
             this.sprites = new Dictionary<int, Sprite>();

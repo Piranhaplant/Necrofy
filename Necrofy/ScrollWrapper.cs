@@ -24,12 +24,14 @@ namespace Necrofy
         private int dragStartX;
         private int dragStartY;
 
-        public ScrollWrapper(Control control, HScrollBar hscroll, VScrollBar vscroll) {
+        public ScrollWrapper(Control control, HScrollBar hscroll, VScrollBar vscroll, bool autoSize = true) {
             this.control = control;
             this.hscroll = hscroll;
             this.vscroll = vscroll;
 
-            control.SizeChanged += new EventHandler(UpdateSize);
+            if (autoSize) {
+                control.SizeChanged += new EventHandler(UpdateSize);
+            }
             control.MouseDown += new MouseEventHandler(control_MouseDown);
             control.MouseMove += new MouseEventHandler(control_MouseMove);
             control.MouseWheel += new MouseEventHandler(control_MouseWheel);
@@ -46,7 +48,7 @@ namespace Necrofy
         }
 
         private void SetScrollBarValue(ScrollBar bar, int value) {
-            bar.Value = Math.Max(bar.Minimum, Math.Min(bar.Maximum - bar.LargeChange, value));
+            bar.Value = Math.Max(bar.Minimum, Math.Min(bar.Maximum - bar.LargeChange + 1, value));
         }
 
         private void UpdateSize(object sender, EventArgs e) {

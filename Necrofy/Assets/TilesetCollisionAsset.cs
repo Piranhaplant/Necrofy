@@ -18,7 +18,7 @@ namespace Necrofy
         }
 
         public static string GetAssetName(NStream romStream, ROMInfo romInfo, int pointer) {
-            return Asset.GetAssetName(romStream, romInfo, pointer, new TilesetCollisionCreator());
+            return Asset.GetAssetName(romStream, romInfo, pointer, new TilesetCollisionCreator(), AssetCat);
         }
 
         private TilesetFixedNameInfo nameInfo;
@@ -42,7 +42,7 @@ namespace Necrofy
         }
 
         protected override AssetCategory Category {
-            get { return AssetCat; }
+            get { return nameInfo.Category; }
         }
 
         protected override string Name {
@@ -63,10 +63,6 @@ namespace Necrofy
 
             public override Asset FromFile(NameInfo nameInfo, string filename) {
                 return new TilesetCollisionAsset((TilesetFixedNameInfo)nameInfo, File.ReadAllBytes(filename));
-            }
-
-            public override AssetCategory GetCategory() {
-                return AssetCat;
             }
 
             public override List<DefaultParams> GetDefaults() {
@@ -91,9 +87,9 @@ namespace Necrofy
         class TilesetCollisionNameInfo : TilesetFixedNameInfo
         {
             public TilesetCollisionNameInfo(string tilesetName) : base(tilesetName, Filename, AssetExtension) { }
-
-            public override Bitmap DisplayImage {
-                get { return Properties.Resources.block; }
+            
+            public override AssetCategory Category {
+                get { return AssetCat; }
             }
 
             public static TilesetFixedNameInfo FromPath(NameInfo.PathParts parts) {

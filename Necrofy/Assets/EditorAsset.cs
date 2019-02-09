@@ -12,7 +12,7 @@ namespace Necrofy
         private const string Extension = "json";
         private const AssetCategory AssetCat = AssetCategory.Editor;
 
-        public const string SpriteGraphics = "SpriteGraphics";
+        public const string SpriteGraphicsName = "SpriteGraphics";
 
         public static void RegisterLoader() {
             AddCreator(new EditorCreator());
@@ -37,7 +37,7 @@ namespace Necrofy
         public override void Insert(NStream rom, ROMInfo romInfo) { }
 
         protected override AssetCategory Category {
-            get { return AssetCat; }
+            get { return nameInfo.Category; }
         }
 
         protected override string Name {
@@ -62,10 +62,6 @@ namespace Necrofy
             public override Asset FromFile(NameInfo nameInfo, string filename) {
                 return new EditorAsset((EditorNameInfo)nameInfo, File.ReadAllText(filename));
             }
-
-            public override AssetCategory GetCategory() {
-                return AssetCat;
-            }
         }
 
         class EditorNameInfo : NameInfo
@@ -86,8 +82,8 @@ namespace Necrofy
                 get { return name; }
             }
 
-            public override System.Drawing.Bitmap DisplayImage {
-                get { return Properties.Resources.gear; }
+            public override AssetCategory Category {
+                get { return AssetCat; }
             }
 
             protected override PathParts GetPathParts() {

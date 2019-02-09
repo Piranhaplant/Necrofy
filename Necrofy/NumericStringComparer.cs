@@ -10,11 +10,13 @@ namespace Necrofy
     {
         private static readonly char[] digits = new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
+        public static readonly NumericStringComparer instance = new NumericStringComparer();
+
         public int Compare(string x, string y) {
             int curPos = 0;
             while (curPos < x.Length && curPos < y.Length) {
-                int xNextPos = getNextPos(x, curPos);
-                int yNextPos = getNextPos(y, curPos);
+                int xNextPos = GetNextPos(x, curPos);
+                int yNextPos = GetNextPos(y, curPos);
                 string xChunk = x.Substring(curPos, xNextPos - curPos);
                 string yChunk = y.Substring(curPos, yNextPos - curPos);
                 int chunkCompare;
@@ -37,7 +39,7 @@ namespace Necrofy
             return x.Length.CompareTo(y.Length);
         }
 
-        private static int getNextPos(string s, int curPos) {
+        private static int GetNextPos(string s, int curPos) {
             if (digits.Contains(s[curPos])) {
                 do {
                     curPos += 1;

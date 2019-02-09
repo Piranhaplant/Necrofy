@@ -85,7 +85,7 @@
             this.dockPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dockPanel.DockBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(239)))), ((int)(((byte)(242)))));
             this.dockPanel.DockBottomPortion = 200D;
-            this.dockPanel.DockLeftPortion = 200D;
+            this.dockPanel.DockLeftPortion = 220D;
             this.dockPanel.DockRightPortion = 200D;
             this.dockPanel.DockTopPortion = 200D;
             this.dockPanel.Location = new System.Drawing.Point(0, 49);
@@ -131,7 +131,7 @@
             this.createProjectButton.Name = "createProjectButton";
             this.createProjectButton.Size = new System.Drawing.Size(23, 22);
             this.createProjectButton.Text = "Create project";
-            this.createProjectButton.Click += new System.EventHandler(this.createProject);
+            this.createProjectButton.Click += new System.EventHandler(this.CreateProject);
             // 
             // openProjectButton
             // 
@@ -141,7 +141,7 @@
             this.openProjectButton.Name = "openProjectButton";
             this.openProjectButton.Size = new System.Drawing.Size(23, 22);
             this.openProjectButton.Text = "Open Project";
-            this.openProjectButton.Click += new System.EventHandler(this.openProject);
+            this.openProjectButton.Click += new System.EventHandler(this.OpenProject);
             // 
             // saveButton
             // 
@@ -229,7 +229,7 @@
             this.buildProjectButton.Name = "buildProjectButton";
             this.buildProjectButton.Size = new System.Drawing.Size(23, 22);
             this.buildProjectButton.Text = "Build project";
-            this.buildProjectButton.Click += new System.EventHandler(this.buildProject);
+            this.buildProjectButton.Click += new System.EventHandler(this.BuildProject);
             // 
             // runProjectButton
             // 
@@ -290,7 +290,7 @@
             this.fileNewProject.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
             this.fileNewProject.Size = new System.Drawing.Size(187, 22);
             this.fileNewProject.Text = "New Project";
-            this.fileNewProject.Click += new System.EventHandler(this.createProject);
+            this.fileNewProject.Click += new System.EventHandler(this.CreateProject);
             // 
             // fileOpenProject
             // 
@@ -299,7 +299,7 @@
             this.fileOpenProject.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
             this.fileOpenProject.Size = new System.Drawing.Size(187, 22);
             this.fileOpenProject.Text = "Open Project";
-            this.fileOpenProject.Click += new System.EventHandler(this.openProject);
+            this.fileOpenProject.Click += new System.EventHandler(this.OpenProject);
             // 
             // fileSeparator1
             // 
@@ -461,7 +461,7 @@
             this.buildBuildProject.ShortcutKeys = System.Windows.Forms.Keys.F4;
             this.buildBuildProject.Size = new System.Drawing.Size(175, 22);
             this.buildBuildProject.Text = "Build Project";
-            this.buildBuildProject.Click += new System.EventHandler(this.buildProject);
+            this.buildBuildProject.Click += new System.EventHandler(this.BuildProject);
             // 
             // buildRunProject
             // 

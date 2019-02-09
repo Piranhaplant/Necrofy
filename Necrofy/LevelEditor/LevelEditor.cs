@@ -14,9 +14,11 @@ namespace Necrofy
 {
     partial class LevelEditor : EditorWindow
     {
+        private const int LevelPadding = 64;
+
         private readonly LoadedLevel level;
         private readonly ScrollWrapper scrollWrapper;
-
+        
         public LevelEditor(LoadedLevel level) {
             InitializeComponent();
 
@@ -24,10 +26,15 @@ namespace Necrofy
             this.Text = level.levelAsset.GetDisplayText();
 
             scrollWrapper = new ScrollWrapper(canvas, hscroll, vscroll);
-            scrollWrapper.SetClientSize(level.Level.width * 64, level.Level.height * 64);
+            scrollWrapper.SetClientSize(level.Level.width * 64 + LevelPadding * 2, level.Level.height * 64 + LevelPadding * 2);
             scrollWrapper.Scrolled += new ScrollWrapper.ScrollDelegate(scrollWrapper_Scrolled);
 
             Repaint();
+        }
+
+        protected override void Displayed() {
+            mainWindow.ObjectBrowser.Browser.Contents = new TilesetObjectBrowserContents(level);
+            mainWindow.ObjectBrowser.Activate();
         }
 
         void scrollWrapper_Scrolled() {
@@ -39,9 +46,10 @@ namespace Necrofy
         }
 
         private void canvas_Paint(object sender, PaintEventArgs e) {
-            if (level == null)
+            if (level == null) {
                 return;
-            e.Graphics.TranslateTransform(scrollWrapper.LeftPosition, scrollWrapper.TopPosition);
+            }
+            e.Graphics.TranslateTransform(scrollWrapper.LeftPosition + LevelPadding, scrollWrapper.TopPosition + LevelPadding);
 
             for (int y = 0; y < level.Level.height; y++) {
                 for (int x = 0; x < level.Level.width; x++) {

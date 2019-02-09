@@ -11,9 +11,19 @@ namespace Necrofy
     {
         public MenuStrip EditorMenuStrip { get; set; }
         public ToolStrip EditorToolStrip { get; set; }
+        
+        protected MainWindow mainWindow;
 
         public EditorWindow() {
-            this.DockAreas = DockAreas.Document;
+            DockAreas = DockAreas.Document;
+            HideOnClose = false;
         }
+
+        public void Display(MainWindow mainWindow) {
+            this.mainWindow = mainWindow;
+            Displayed();
+        }
+
+        protected virtual void Displayed() { }
     }
 }

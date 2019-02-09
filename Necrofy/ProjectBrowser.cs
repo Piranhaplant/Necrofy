@@ -14,67 +14,98 @@ namespace Necrofy
 {
     partial class ProjectBrowser : DockContent
     {
+        private const int DocumentImageIndex = 0;
+        private const int FolderImageIndex = 1;
+        private const int FolderOpenImageIndex = 2;
+
+        private readonly Dictionary<AssetCategory, Bitmap> displayImages = new Dictionary<AssetCategory, Bitmap> {
+            { AssetCategory.Collision, Resources.block },
+            { AssetCategory.Editor, Resources.gear },
+            { AssetCategory.Graphics, Resources.image },
+            { AssetCategory.Level, Resources.map },
+            { AssetCategory.Palette, Resources.color },
+            { AssetCategory.Tilemap, Resources.layout_4 },
+        };
+        private readonly Dictionary<AssetCategory, int> displayImageIndexes = new Dictionary<AssetCategory, int>();
+        private readonly Dictionary<AssetCategory, Icon> displayIcons = new Dictionary<AssetCategory, Icon>();
+
         private readonly MainWindow mainWindow;
-        private readonly Project project;
+        private Project project;
 
-        private readonly Dictionary<Bitmap, int> imageIndexMap = new Dictionary<Bitmap, int>();
-
-        public ProjectBrowser(MainWindow mainWindow, Project project) {
+        public ProjectBrowser(MainWindow mainWindow) {
             InitializeComponent();
             this.mainWindow = mainWindow;
-            this.project = project;
-
             treeImages.Images.Add(Resources.document); // Used as default image
-            populateTree(tree.Nodes, project.path);
+            treeImages.Images.Add(Resources.folder);
+            treeImages.Images.Add(Resources.folder_open);
         }
 
-        private void populateTree(TreeNodeCollection parent, string path) {
-            string [] dirs = Directory.GetDirectories(path);
-            Array.Sort(dirs, new NumericStringComparer());
+        public void OpenProject(Project project) {
+            this.project = project;
+            tree.Nodes.Clear();
+            if (project != null) {
+                PopulateTree(tree.Nodes, project.path);
+            }
+        }
+
+        private void PopulateTree(TreeNodeCollection parent, string path) {
+            string[] dirs = Directory.GetDirectories(path);
+            Array.Sort(dirs, NumericStringComparer.instance);
             foreach (string dir in dirs) {
                 TreeNode child = parent.Add(Path.GetFileName(dir));
-                setImage(child, Resources.folder);
+                child.ImageIndex = FolderImageIndex;
+                child.SelectedImageIndex = FolderImageIndex;
 
-                populateTree(child.Nodes, dir);
+                PopulateTree(child.Nodes, dir);
                 if (child.Nodes.Count == 0) {
                     child.Remove();
                 }
             }
 
             string[] files = Directory.GetFiles(path);
-            Array.Sort(files, new NumericStringComparer());
+            Array.Sort(files, NumericStringComparer.instance);
             foreach (string file in files) {
                 Asset.NameInfo info = Asset.GetInfo(project, project.GetRelativePath(file));
                 if (info != null) {
                     TreeNode child = parent.Add(info.DisplayName);
-                    setImage(child, info.DisplayImage);
+                    SetImage(child, info.Category);
                     child.Tag = info;
                 }
             }
         }
 
         private void tree_BeforeExpand(object sender, TreeViewCancelEventArgs e) {
-            setImage(e.Node, Resources.folder_open);
+            e.Node.ImageIndex = FolderOpenImageIndex;
+            e.Node.SelectedImageIndex = FolderOpenImageIndex;
         }
 
         private void tree_BeforeCollapse(object sender, TreeViewCancelEventArgs e) {
-            setImage(e.Node, Resources.folder);
+            e.Node.ImageIndex = FolderImageIndex;
+            e.Node.SelectedImageIndex = FolderImageIndex;
         }
 
         private void tree_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e) {
-            Asset.NameInfo info = (Asset.NameInfo)e.Node.Tag;
-            EditorWindow editor = info.GetEditor(project);
+            // Fix bug where double clicking a folder can cause this event to happen on a child node
+            if (!e.Node.IsSelected) {
+                return;
+            }
+            Asset.NameInfo info = e.Node.Tag as Asset.NameInfo;
+            EditorWindow editor = info?.GetEditor(project);
             if (editor != null) {
+                if (!displayIcons.ContainsKey(info.Category)) {
+                    displayIcons[info.Category] = Icon.FromHandle(displayImages[info.Category].GetHicon());
+                }
+                editor.Icon = displayIcons[info.Category];
                 mainWindow.ShowEditor(editor);
             }
         }
 
-        private void setImage(TreeNode node, Bitmap image) {
-            if (!imageIndexMap.ContainsKey(image)) {
-                imageIndexMap[image] = treeImages.Images.Count;
-                treeImages.Images.Add(image);
+        private void SetImage(TreeNode node, AssetCategory category) {
+            if (!displayImageIndexes.ContainsKey(category)) {
+                displayImageIndexes[category] = treeImages.Images.Count;
+                treeImages.Images.Add(displayImages[category]);
             }
-            node.ImageIndex = imageIndexMap[image];
+            node.ImageIndex = displayImageIndexes[category];
             node.SelectedImageIndex = node.ImageIndex;
         }
     }

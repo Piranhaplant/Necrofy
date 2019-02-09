@@ -53,7 +53,7 @@ namespace Necrofy
             }
             return result.ToArray();
         }
-        
+
         private static bool ReadNext(Stream s, ref byte result, ref int bytesLeft) {
             if (bytesLeft == 0) return true;
             int b = s.ReadByte();
@@ -62,7 +62,7 @@ namespace Necrofy
             result = (byte)b;
             return false;
         }
-        
+
         /// <summary>Compresses the given data</summary>
         /// <param name="data">The data</param>
         /// <returns>The compressed data</returns>
@@ -79,15 +79,13 @@ namespace Necrofy
             int formatBitCount = 0;
             int formatByteIndex = 2; // The first format byte will be after the file size
 
-            int findDictPos, findDictLen;
-
             result.Add(0); // The final size will be put here
             result.Add(0);
             result.Add(0); // And one more to hold the first format byte
             while (dataIndex < data.Length) {
                 formatByte >>= 1;
                 formatBitCount++;
-                FindInDict(dict, dictIndex, data, dataIndex, out findDictPos, out findDictLen); // Search for a dictionary match
+                FindInDict(dict, dictIndex, data, dataIndex, out int findDictPos, out int findDictLen); // Search for a dictionary match
                 if (findDictPos > -1) { // Insert a read from the dictionary
                     for (int i = 0; i < findDictLen; i++) { // Write the new bytes to the dictionary
                         dict[dictIndex] = dict[(findDictPos + i) & 0xfff];
@@ -109,7 +107,7 @@ namespace Necrofy
                     formatByte = 0;
                     formatBitCount = 0;
                     formatByteIndex = result.Count;
-					// if (dataIndex < data.Length) // I think this should be here, but it needs to be tested
+                    // if (dataIndex < data.Length) // TODO: I think this should be here, but it needs to be tested
                     result.Add(0); // Make a placeholder for the next one
                 }
             }
@@ -119,7 +117,7 @@ namespace Necrofy
             result[1] = (byte)((len & 0xff00) >> 8);
             return result.ToArray();
         }
-                
+
         // This will find the longest match in the dictionary
         private static void FindInDict(byte[] dict, int dictWriteIndex, byte[] data, int index, out int pos, out int len) {
             int maxMatchCt = 0;

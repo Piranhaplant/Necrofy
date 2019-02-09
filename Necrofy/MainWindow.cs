@@ -17,6 +17,9 @@ namespace Necrofy
         private const char pathSeparator = ';';
         private Project project;
 
+        public ObjectBrowserForm ObjectBrowser { get; private set; }
+        public ProjectBrowser ProjectBrowser { get; private set; }
+
         private List<EditorWindow> openEditors = new List<EditorWindow>();
         private EditorWindow activeEditor = null;
         private List<ToolStripItem> editorToolStripItems = new List<ToolStripItem>();
@@ -25,6 +28,12 @@ namespace Necrofy
         public MainWindow()
         {
             InitializeComponent();
+
+            ObjectBrowser = new ObjectBrowserForm();
+            ObjectBrowser.Show(dockPanel, DockState.DockLeft);
+
+            ProjectBrowser = new ProjectBrowser(this);
+            ProjectBrowser.Show(dockPanel, DockState.DockLeft);
 
             string recentProjectsString = Properties.Settings.Default.RecentProjects;
             if (recentProjectsString != "") {
@@ -35,12 +44,15 @@ namespace Necrofy
         public void ShowEditor(EditorWindow editor) {
             openEditors.Add(editor);
             editor.Show(dockPanel, DockState.Document);
+            editor.Display(this);
         }
 
         private void dockPanel_ContentRemoved(object sender, DockContentEventArgs e) {
-            EditorWindow editor = e.Content as EditorWindow;
-            if (editor != null) {
+            if (e.Content is EditorWindow editor) {
                 openEditors.Remove(editor);
+                if (openEditors.Count == 0) {
+                    ProjectBrowser.Activate();
+                }
             }
         }
 
@@ -83,38 +95,40 @@ namespace Necrofy
             endToolStripSeparator.Visible = editorToolStripItems.Count > 0;
         }
 
-        private void createProject(object sender, EventArgs e) {
+        private void CreateProject(object sender, EventArgs e) {
             NewProjectDialog newProjectDialog = new NewProjectDialog();
-            if (newProjectDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+            if (newProjectDialog.ShowDialog() == DialogResult.OK) {
                 // TODO: close already open project if there is one
                 project = new Project(newProjectDialog.BaseROM, newProjectDialog.ProjectLocation);
-                projectReady();
+                ProjectReady();
             }
         }
 
-        private void openProject(object sender, EventArgs e) {
-            if (openProjectDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+        private void OpenProject(object sender, EventArgs e) {
+            if (openProjectDialog.ShowDialog() == DialogResult.OK) {
                 // TODO: close already open project if there is one
                 project = new Project(openProjectDialog.FileName);
-                projectReady();
+                ProjectReady();
             }
         }
 
         private void recentProjects_FileClicked(string file) {
             project = new Project(file);
-            projectReady();
+            ProjectReady();
         }
 
-        private void projectReady() {
+        private void ProjectReady() {
             recentProjects.Add(project.settingsPath);
             Properties.Settings.Default.RecentProjects = string.Join(pathSeparator.ToString(), recentProjects.Files);
             Properties.Settings.Default.Save();
 
-            ProjectBrowser browser = new ProjectBrowser(this, project);
-            browser.Show(dockPanel, DockState.DockLeft);
+            ProjectBrowser.OpenProject(project);
+            ProjectBrowser.Activate();
+
+            //new SpriteViewer().Show(Path.Combine(project.path, Project.baseROMFilename), project);
         }
 
-        private void buildProject(object sender, EventArgs e) {
+        private void BuildProject(object sender, EventArgs e) {
             if (project == null)
                 return;
             project.Build();

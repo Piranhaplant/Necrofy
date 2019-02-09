@@ -19,9 +19,9 @@ namespace Necrofy
         Graphics,
         Palette,
         Tilemap,
-        Level
+        Level,
     }
-
+    
     /// <summary>An asset that is part of a project. For example, levels, tilesets, palettes...</summary>
     abstract class Asset : IComparable<Asset>
     {
@@ -102,8 +102,8 @@ namespace Necrofy
         /// <param name="pointer">The pointer to the data</param>
         /// <param name="creator">The creator that will be used to create a new asset if one does not yet exist</param>
         /// <returns>The name of the asset</returns>
-        protected static string GetAssetName(NStream romStream, ROMInfo romInfo, int pointer, Creator creator) {
-            string name = romInfo.GetAssetName(creator.GetCategory(), pointer);
+        protected static string GetAssetName(NStream romStream, ROMInfo romInfo, int pointer, Creator creator, AssetCategory category) {
+            string name = romInfo.GetAssetName(category, pointer);
             if (name == null) {
                 string hexName = pointer.ToString("X6");
                 NameInfo nameInfo = creator.GetNameInfoForName(hexName);
@@ -125,7 +125,7 @@ namespace Necrofy
             romInfo.Freespace.AddSize(pointer, (int)(romStream.Position - startPos));
 
             romInfo.assets.Add(asset);
-            romInfo.AddAssetName(creator.GetCategory(), pointer, nameInfo.Name);
+            romInfo.AddAssetName(nameInfo.Category, pointer, nameInfo.Name);
 
             romStream.PopPosition();
         }
@@ -152,9 +152,9 @@ namespace Necrofy
             /// <summary>Condences the NameInfo down to a single string that will be used to reference the asset</summary>
             public abstract string Name { get; }
             /// <summary>The name that will be displayed to the user in the project browser</summary>
-            public abstract String DisplayName { get; }
-            /// <summary>The image that will be displayed to the user in the project browser</summary>
-            public abstract Bitmap DisplayImage { get; }
+            public abstract string DisplayName { get; }
+            /// <summary>Gets the order that this asset should be inserted</summary>
+            public abstract AssetCategory Category { get; }
 
             /// <summary>Parses the individual parts out of an asset path</summary>
             public static PathParts ParsePath(string path) {
@@ -298,8 +298,6 @@ namespace Necrofy
             /// <param name="nameInfo">The name of the asset. This will be the object returned from GetNameInfo</param>
             /// <param name="filename">The full filename of the asset</param>
             public abstract Asset FromFile(NameInfo nameInfo, string filename);
-            /// <summary>Gets the category of assets that will be created</summary>
-            public abstract AssetCategory GetCategory();
 
             // Methods needed for reading from ROMs
             // These don't have to be implemented since some assets can't be read from a ROM

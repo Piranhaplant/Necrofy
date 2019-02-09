@@ -57,7 +57,7 @@ namespace Necrofy
         }
 
         protected override AssetCategory Category {
-            get { return AssetCat; }
+            get { return nameInfo.Category; }
         }
 
         protected override string Name {
@@ -78,10 +78,6 @@ namespace Necrofy
 
             public override Asset FromFile(NameInfo nameInfo, string filename) {
                 return new LevelAsset((LevelNameInfo)nameInfo, JsonConvert.DeserializeObject<Level>(File.ReadAllText(filename), new LevelJsonConverter()));
-            }
-
-            public override AssetCategory GetCategory() {
-                return AssetCat;
             }
 
             private string GetDisplayName(LevelNameInfo nameInfo, Project project) {
@@ -129,8 +125,8 @@ namespace Necrofy
                 }
             }
 
-            public override System.Drawing.Bitmap DisplayImage {
-                get { return Properties.Resources.map; }
+            public override AssetCategory Category {
+                get { return AssetCat; }
             }
 
             protected override PathParts GetPathParts() {
@@ -146,8 +142,7 @@ namespace Necrofy
                 if (parts.subFolder != null) return null;
                 if (parts.fileExtension != Extension) return null;
                 if (parts.pointer != null) return null;
-                int levelNum;
-                if (!int.TryParse(parts.name, out levelNum)) return null;
+                if (!int.TryParse(parts.name, out int levelNum)) return null;
                 return new LevelNameInfo(levelNum, displayNameGetter);
             }
         }
