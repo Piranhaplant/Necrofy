@@ -16,11 +16,7 @@ namespace Necrofy
 
         public readonly string path;
         public readonly string settingsFilename;
-        public string settingsPath {
-            get {
-                return Path.Combine(path, settingsFilename);
-            }
-        }
+        public string SettingsPath => Path.Combine(path, settingsFilename);
         public readonly ProjectSettings settings;
 
         /// <summary>Creates a new project from the given base ROM.</summary>
@@ -30,7 +26,7 @@ namespace Necrofy
             this.path = FixPath(path);
 
             if (Directory.Exists(path)) {
-                Directory.Delete(path, true);
+                Directory.Delete(path, true); // TODO: Warn about this
             }
             Directory.CreateDirectory(path);
             string newBaseROM = Path.Combine(path, baseROMFilename);
@@ -66,7 +62,7 @@ namespace Necrofy
         }
 
         private void WriteSettings() {
-            File.WriteAllText(settingsPath, JsonConvert.SerializeObject(settings));
+            File.WriteAllText(SettingsPath, JsonConvert.SerializeObject(settings));
         }
 
         public string GetRelativePath(string filename) {
@@ -78,9 +74,22 @@ namespace Necrofy
         public void Build() {
             string outputROM = Path.Combine(path, buildFilename);
             File.Copy(Path.Combine(path, baseROMFilename), outputROM, true);
+
+            ProcessStartInfo processInfo = new ProcessStartInfo(Path.Combine("Tools", "xkas.exe")) {
+                // TODO: Check that this works with spaces in the path
+                Arguments = string.Format("\"{0}\" \"{1}\"", Path.Combine("Tools", "ROMExpand.asm"), outputROM),
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardOutput = true
+            };
+            Process p = Process.Start(processInfo);
+            p.WaitForExit();
+            Console.Out.WriteLine(p.StandardOutput.ReadToEnd());
+
             NStream s = new NStream(new FileStream(outputROM, FileMode.Open, FileAccess.ReadWrite, FileShare.Read));
             ROMInfo info = new ROMInfo(s);
             info.assets.Clear();
+            AddEndOfBankFreespace(s, info.Freespace);
 
             foreach (string filename in Directory.GetFiles(path, "*", SearchOption.AllDirectories)) {
                 string relativeFilename = GetRelativePath(filename);
@@ -108,17 +117,21 @@ namespace Necrofy
             s.WriteByte(sizeValue);
 
             s.Close();
+        }
 
-            ProcessStartInfo process = new ProcessStartInfo(Path.Combine("Tools", "xkas.exe"));
-            // TODO: Check that this works with spaces in the path
-            process.Arguments = String.Format("\"{0}\" \"{1}\"", Path.Combine("Tools", "ROMExpand.asm"), outputROM);
-            process.CreateNoWindow = true;
-            process.UseShellExecute = false;
-            process.RedirectStandardOutput = true;
-
-            Process p = Process.Start(process);
-            p.WaitForExit();
-            Console.Out.WriteLine(p.StandardOutput.ReadToEnd());
+        private static void AddEndOfBankFreespace(Stream s, Freespace freespace) {
+            for (int bankEndPos = Freespace.BankSize - 1; bankEndPos < s.Length; bankEndPos += Freespace.BankSize) {
+                s.Seek(bankEndPos, SeekOrigin.Begin);
+                int length = 0;
+                while (s.ReadByte() == 0xff) {
+                    length++;
+                    s.Seek(-2, SeekOrigin.Current);
+                }
+                // Leave 2 bytes of 0xff in case they were part of the end of some data
+                if (length >= 2) {
+                    freespace.AddSize((int)s.Position + 2, length - 2);
+                }
+            }
         }
     }
 }

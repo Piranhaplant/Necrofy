@@ -200,8 +200,8 @@ namespace Tests
             freespace.Add(0x40, 0x50);
             freespace.Sort();
             Assert.AreEqual("000010-000030 (000020)\r\n000040-000050 (000010)\r\n", freespace.ToString());
-            Assert.AreEqual(0x40, freespace.Claim(0x8));
-            Assert.AreEqual("000010-000030 (000020)\r\n000048-000050 (000008)\r\n", freespace.ToString());
+            Assert.AreEqual(0x10, freespace.Claim(0x8));
+            Assert.AreEqual("000018-000030 (000018)\r\n000040-000050 (000010)\r\n", freespace.ToString());
 
             freespace = new Freespace(Freespace.BankSize);
             freespace.Add(0x10, 0x20);

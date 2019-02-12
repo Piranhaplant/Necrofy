@@ -26,7 +26,9 @@ namespace Necrofy
         /// <param name="start">The inclusive start of the block</param>
         /// <param name="end">The exclusive end of the block</param>
         public void Add(int start, int end) {
-            if (start >= end) return;
+            if (start >= end) {
+                return;
+            }
             // If the given chunk crosses a bank boundary, split it into two.
             if (start / BankSize != (end - 1) / BankSize) {
                 int splitPoint = (start / BankSize + 1) * BankSize;
@@ -58,15 +60,18 @@ namespace Necrofy
         /// <param name="size">The number of bytes required</param>
         /// <returns>The address of the claimed space</returns>
         public int Claim(int size) {
-            if (size > BankSize)
+            if (size > BankSize) {
                 throw new ArgumentException("size cannot be bigger than bankSize");
-            // Find the smallest block that will hold the required bytes. Hopefully this will use the freespace fairly efficiently.
-            FreeBlock bestBlock = null;
-            foreach (FreeBlock b in blocks) {
-                if (b.Size >= size && (bestBlock == null || b.Size < bestBlock.Size))
-                    bestBlock = b;
             }
-            if (bestBlock == null) {
+            // Find the first block that will hold the required bytes
+            FreeBlock foundBlock = null;
+            foreach (FreeBlock b in blocks) {
+                if (b.Size >= size) {
+                    foundBlock = b;
+                    break;
+                }
+            }
+            if (foundBlock == null) {
                 // Couldn't find a block big enough, so add some new space at the end of the ROM
                 // TODO: Add check for exceeding the maximum possible ROM size
                 AddSize(romSize, BankSize);
@@ -74,11 +79,12 @@ namespace Necrofy
                 return Claim(size);
             } else {
                 // Found a block, so make that block smaller and return its original start
-                int address = bestBlock.Start;
-                bestBlock.Subtract(size);
+                int address = foundBlock.Start;
+                foundBlock.Subtract(size);
                 // And remove the block if there's no space left in it. Not necessary, but I think it's a probably a good idea
-                if (bestBlock.Size == 0)
-                    blocks.Remove(bestBlock);
+                if (foundBlock.Size == 0) {
+                    blocks.Remove(foundBlock);
+                }
                 return address;
             }
         }
@@ -92,8 +98,9 @@ namespace Necrofy
                 FreeBlock b = blocks[i];
                 if (b.IntersectsWith(reservedBlock)) {
                     FreeBlock splitBlock = b.Subtract(reservedBlock);
-                    if (splitBlock != null)
+                    if (splitBlock != null) {
                         blocks.Add(splitBlock);
+                    }
                     if (b.Size <= 0) {
                         blocks.RemoveAt(i);
                         i--;
@@ -109,8 +116,9 @@ namespace Necrofy
 
         public override string ToString() {
             StringBuilder builder = new StringBuilder();
-            foreach (FreeBlock b in blocks)
+            foreach (FreeBlock b in blocks) {
                 builder.AppendLine(b.ToString());
+            }
             return builder.ToString();
         }
 
@@ -123,19 +131,18 @@ namespace Necrofy
             public int End;
 
             /// <summary>Gets the number of bytes held in this block.</summary>
-            public int Size {
-                get { return End - Start; }
-            }
+            public int Size => End - Start;
 
             /// <summary>Creates a new block with the specified start and end.</summary>
             /// <param name="start">The start of the block</param>
             /// <param name="end">The end of the block</param>
             /// <exception cref="System.ArgumentException">if end is less than or equal to start</exception>
             public FreeBlock(int start, int end) {
-                if (end <= start)
+                if (end <= start) {
                     throw new ArgumentException("end must be greater than start");
-                this.Start = start;
-                this.End = end;
+                }
+                Start = start;
+                End = end;
             }
 
             /// <summary>Gets whether this block intersects with or is directly adjacent to the specified block.</summary>
@@ -148,10 +155,12 @@ namespace Necrofy
             /// <summary>Merges this block with the one specified. Assumes that the blocks intersect.</summary>
             /// <param name="block">The block with which to merge</param>
             public void Merge(FreeBlock block) {
-                if (block.Start < Start)
+                if (block.Start < Start) {
                     Start = block.Start;
-                if (block.End > End)
+                }
+                if (block.End > End) {
                     End = block.End;
+                }
             }
 
             /// <summary>Removes <paramref name="size"/> bytes from the beginning of this block. Assumes that this block is at least that big.</summary>

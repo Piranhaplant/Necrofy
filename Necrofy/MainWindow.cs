@@ -118,7 +118,7 @@ namespace Necrofy
         }
 
         private void ProjectReady() {
-            recentProjects.Add(project.settingsPath);
+            recentProjects.Add(project.SettingsPath);
             Properties.Settings.Default.RecentProjects = string.Join(pathSeparator.ToString(), recentProjects.Files);
             Properties.Settings.Default.Save();
 
