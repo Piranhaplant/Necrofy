@@ -9,14 +9,13 @@ namespace Necrofy
     class PaletteAsset : Asset
     {
         private const AssetCategory AssetCat = AssetCategory.Palette;
-        private const string AssetExtension = "plt";
 
         public static void RegisterLoader() {
             AddCreator(new PaletteCreator());
         }
         
         public static string GetAssetName(NStream romStream, ROMInfo romInfo, int pointer) {
-            return Asset.GetAssetName(romStream, romInfo, pointer, new PaletteCreator(), AssetCat);
+            return GetAssetName(romStream, romInfo, pointer, new PaletteCreator(), AssetCat);
         }
 
         private readonly PaletteNameInfo nameInfo;
@@ -43,13 +42,8 @@ namespace Necrofy
             InsertByteArray(rom, romInfo, data, nameInfo.pointer);
         }
 
-        protected override AssetCategory Category {
-            get { return nameInfo.Category; }
-        }
-
-        protected override string Name {
-            get { return nameInfo.Name; }
-        }
+        protected override AssetCategory Category => nameInfo.Category;
+        protected override string Name => nameInfo.Name;
 
         class PaletteCreator : Creator
         {
@@ -87,6 +81,7 @@ namespace Necrofy
         class PaletteNameInfo : NameInfo
         {
             private const string Folder = "Palettes";
+            private const string Extension = "plt";
 
             public readonly string name;
             public readonly int? pointer;
@@ -96,26 +91,18 @@ namespace Necrofy
                 this.pointer = pointer;
             }
 
-            public override string Name {
-                get { return name; }
+            public override string Name => name;
+            public override string DisplayName => name;
+            public override AssetCategory Category => AssetCat;
+
+            protected override PathParts GetPathParts() {
+                return new PathParts(Folder, null, name, Extension, pointer);
             }
 
-            public override string DisplayName {
-                get { return name; }
-            }
-
-            public override AssetCategory Category {
-                get { return AssetCat; }
-            }
-
-            protected override NameInfo.PathParts GetPathParts() {
-                return new NameInfo.PathParts(Folder, null, name, AssetExtension, pointer);
-            }
-
-            public static PaletteNameInfo FromPath(NameInfo.PathParts parts) {
+            public static PaletteNameInfo FromPath(PathParts parts) {
                 if (parts.topFolder != Folder) return null;
                 if (parts.subFolder != null) return null;
-                if (parts.fileExtension != AssetExtension) return null;
+                if (parts.fileExtension != Extension) return null;
                 return new PaletteNameInfo(parts.name, parts.pointer);
             }
         }

@@ -124,8 +124,6 @@ namespace Necrofy
 
             ProjectBrowser.OpenProject(project);
             ProjectBrowser.Activate();
-
-            //new SpriteViewer().Show(Path.Combine(project.path, Project.baseROMFilename), project);
         }
 
         private void BuildProject(object sender, EventArgs e) {
@@ -133,6 +131,12 @@ namespace Necrofy
                 return;
             project.Build();
             // TODO tell the user that it finished
+        }
+
+        private void buildRunSettings_Click(object sender, EventArgs e) {
+            if (project == null)
+                return;
+            new SpriteViewer().Show(project);
         }
     }
 }

@@ -16,8 +16,8 @@ namespace Necrofy
         public string displayName { get; set; }
         /// <summary>The background tiles making up the level</summary>
         public ushort[,] background { get; set; }
-        public int width { get { return background.GetLength(0); } }
-        public int height { get { return background.GetLength(1); } }
+        public int width => background.GetLength(0);
+        public int height => background.GetLength(1);
 
         public string tilesetTilemapName { get; set; }
         public string tilesetCollisionName { get; set; }
@@ -72,7 +72,7 @@ namespace Necrofy
             AddAllObjects(s, () => {
                 Monster m = new Monster(s);
                 // In level 29, there are some invalid monsters, so remove them now
-                if (m.type > 0) {
+                if (m.type > -1) {
                     monsters.Add(m);
                 }
             });
@@ -96,7 +96,7 @@ namespace Necrofy
             s.GoToRelativePointerPush();
             title2 = new TitlePage(s);
             s.PopPosition();
-            displayName = generateDisplayName();
+            displayName = GenerateDisplayName();
 
             // Bonus pointer is optional
             if (s.PeekInt16() > 0) {
@@ -127,9 +127,9 @@ namespace Necrofy
             s.PopPosition();
         }
 
-        public string generateDisplayName() {
+        public string GenerateDisplayName() {
             string name = title1.ToString() + " " + title2.ToString();
-            int actualNameStart = name.LastIndexOf("Level");
+            int actualNameStart = name.LastIndexOf("Level ");
             if (actualNameStart < 0) {
                 return name;
             }

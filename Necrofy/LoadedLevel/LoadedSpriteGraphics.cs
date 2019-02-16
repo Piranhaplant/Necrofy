@@ -11,60 +11,68 @@ namespace Necrofy
     {
         public readonly PaletteAsset paletteAsset;
         public readonly GraphicsAsset graphicsAsset;
-        public readonly EditorAsset spriteGraphicsAsset;
+        public readonly SpritesAsset spritesAsset;
+        public readonly EditorAsset<SpriteDisplay[]> spriteDisplayAsset;
 
-        public readonly Dictionary<int, Sprite> sprites;
+        public readonly Dictionary<SpriteDisplay.Key.Type, Dictionary<int, LoadedSprite>> sprites;
 
         public LoadedSpriteGraphics(Project project, string spritePaletteName) {
             paletteAsset = PaletteAsset.FromProject(project, spritePaletteName);
             graphicsAsset = GraphicsAsset.FromProject(project, GraphicsAsset.SpritesName);
-            spriteGraphicsAsset = EditorAsset.FromProject(project, EditorAsset.SpriteGraphicsName);
+            spritesAsset = SpritesAsset.FromProject(project);
+            spriteDisplayAsset = EditorAsset<SpriteDisplay[]>.FromProject(project, "SpriteDisplay");
 
             Color[] colors = SNESGraphics.SNESToRGB(paletteAsset.data, transparent: true);
-            SpriteGraphics.Sprite[] sprites = JsonConvert.DeserializeObject<SpriteGraphics.Sprite[]>(spriteGraphicsAsset.text);
 
-            this.sprites = new Dictionary<int, Sprite>();
-            foreach (SpriteGraphics.Sprite sprite in sprites) {
-                Sprite s = new Sprite(sprite, graphicsAsset.data, colors);
-                this.sprites.Add(s.key, s);
+            sprites = new Dictionary<SpriteDisplay.Key.Type, Dictionary<int, LoadedSprite>>();
+            foreach (SpriteDisplay.Key.Type keyType in Enum.GetValues(typeof(SpriteDisplay.Key.Type))) {
+                sprites[keyType] = new Dictionary<int, LoadedSprite>();
+            }
+            foreach (SpriteDisplay spriteDisplay in spriteDisplayAsset.data) {
+                LoadedSprite s = new LoadedSprite(spritesAsset.sprites[spriteDisplay.spriteIndex], graphicsAsset.data, colors, spriteDisplay.overridePalette);
+                sprites[spriteDisplay.key.type][spriteDisplay.key.value] = s;
             }
         }
 
-        public void Render(int type, Graphics g, int x, int y) {
-            if (sprites.ContainsKey(type)) {
-                sprites[type].Render(g, x, y);
+        public void Render(SpriteDisplay.Key.Type type, int value, Graphics g, int x, int y) {
+            if (sprites[type].TryGetValue(value, out LoadedSprite s)) {
+                s.Render(g, x, y);
             }
             // TODO: Render unknown sprites
         }
 
-        public class Sprite
+        public class LoadedSprite
         {
             private readonly Bitmap image;
             private readonly int anchorX;
             private readonly int anchorY;
-            public readonly int key;
 
-            public Sprite(SpriteGraphics.Sprite sprite, byte[] graphics, Color[] colors) {
-                anchorX = sprite.anchorX;
-                anchorY = sprite.anchorY;
-                key = sprite.key;
+            public LoadedSprite(Sprite sprite, byte[] graphics, Color[] colors, int? overridePalette) {
+                int minX = 0, maxX = 0, minY = 0, maxY = 0;
+                foreach (Sprite.Tile t in sprite.tiles) {
+                    minX = Math.Min(minX, t.xOffset);
+                    maxX = Math.Max(maxX, t.xOffset + 16);
+                    minY = Math.Min(minY, t.yOffset + 1);
+                    maxY = Math.Max(maxY, t.yOffset + 1 + 16);
+                }
 
-                image = new Bitmap(sprite.displayWidth * 8, sprite.displayHeight * 8);
-                DrawTiles(sprite, graphics, colors, false);
-                DrawTiles(sprite, graphics, colors, true);
-            }
+                anchorX = -minX;
+                anchorY = -minY;
+                if (sprite.tiles.Length > 0) {
+                    image = new Bitmap(maxX - minX, maxY - minY);
+                } else {
+                    image = new Bitmap(1, 1);
+                }
 
-            private void DrawTiles(SpriteGraphics.Sprite sprite, byte[] graphics, Color[] colors, bool priority) {
-                for (int y = 0; y < sprite.height; y++) {
-                    for (int x = 0; x < sprite.width; x++) {
-                        SpriteGraphics.Tile tile = sprite.tiles[x, y];
-                        if (tile.priority == priority && tile.index > 0) {
-                            SNESGraphics.DrawTile(image, x * 8 + tile.xShift, y * 8 + tile.yShift, graphics, tile.index, colors, tile.palette * 0x10, tile.xFlip, tile.yFlip);
-                        }
-                    }
+                foreach (Sprite.Tile t in sprite.tiles) {
+                    int palette = overridePalette ?? t.palette;
+                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 8 : 0), anchorY + t.yOffset + 1 + (t.yFlip ? 8 : 0), graphics, t.tileNum * 0x80 + 0x00, colors, palette * 0x10, t.xFlip, t.yFlip);
+                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 0 : 8), anchorY + t.yOffset + 1 + (t.yFlip ? 8 : 0), graphics, t.tileNum * 0x80 + 0x20, colors, palette * 0x10, t.xFlip, t.yFlip);
+                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 8 : 0), anchorY + t.yOffset + 1 + (t.yFlip ? 0 : 8), graphics, t.tileNum * 0x80 + 0x40, colors, palette * 0x10, t.xFlip, t.yFlip);
+                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 0 : 8), anchorY + t.yOffset + 1 + (t.yFlip ? 0 : 8), graphics, t.tileNum * 0x80 + 0x60, colors, palette * 0x10, t.xFlip, t.yFlip);
                 }
             }
-
+            
             public void Render(Graphics g, int x, int y) {
                 g.DrawImage(image, x - anchorX, y - anchorY);
             }

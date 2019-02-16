@@ -95,6 +95,7 @@
     <Compile Include="Assets\GraphicsAsset.cs" />
     <Compile Include="Assets\LevelAsset.cs" />
     <Compile Include="Assets\PaletteAsset.cs" />
+    <Compile Include="Assets\SpritesAsset.cs" />
     <Compile Include="Assets\TilesetAsset.cs" />
     <Compile Include="Assets\TilesetCollisionAsset.cs" />
     <Compile Include="Assets\TilesetGraphicsAsset.cs" />
@@ -186,7 +187,8 @@
     <Compile Include="ROMPointers.cs" />
     <Compile Include="ScrollWrapper.cs" />
     <Compile Include="SNESGraphics.cs" />
-    <Compile Include="SpriteGraphics.cs" />
+    <Compile Include="Sprite.cs" />
+    <Compile Include="SpriteDisplay.cs" />
     <Compile Include="SpriteViewer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -261,7 +263,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Tools\SpriteGraphics.json">
+    <None Include="Tools\SpriteDisplay.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Tools\xkas.exe">

@@ -459,7 +459,7 @@
             this.buildBuildProject.Image = global::Necrofy.Properties.Resources.compile;
             this.buildBuildProject.Name = "buildBuildProject";
             this.buildBuildProject.ShortcutKeys = System.Windows.Forms.Keys.F4;
-            this.buildBuildProject.Size = new System.Drawing.Size(175, 22);
+            this.buildBuildProject.Size = new System.Drawing.Size(180, 22);
             this.buildBuildProject.Text = "Build Project";
             this.buildBuildProject.Click += new System.EventHandler(this.BuildProject);
             // 
@@ -468,7 +468,7 @@
             this.buildRunProject.Image = global::Necrofy.Properties.Resources.control;
             this.buildRunProject.Name = "buildRunProject";
             this.buildRunProject.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.buildRunProject.Size = new System.Drawing.Size(175, 22);
+            this.buildRunProject.Size = new System.Drawing.Size(180, 22);
             this.buildRunProject.Text = "Run Project";
             // 
             // buildRunFromLevel
@@ -476,14 +476,15 @@
             this.buildRunFromLevel.Image = global::Necrofy.Properties.Resources.control_cursor;
             this.buildRunFromLevel.Name = "buildRunFromLevel";
             this.buildRunFromLevel.ShortcutKeys = System.Windows.Forms.Keys.F6;
-            this.buildRunFromLevel.Size = new System.Drawing.Size(175, 22);
+            this.buildRunFromLevel.Size = new System.Drawing.Size(180, 22);
             this.buildRunFromLevel.Text = "Run From Level";
             // 
             // buildRunSettings
             // 
             this.buildRunSettings.Name = "buildRunSettings";
-            this.buildRunSettings.Size = new System.Drawing.Size(175, 22);
+            this.buildRunSettings.Size = new System.Drawing.Size(180, 22);
             this.buildRunSettings.Text = "Run Settings...";
+            this.buildRunSettings.Click += new System.EventHandler(this.buildRunSettings_Click);
             // 
             // openProjectDialog
             // 

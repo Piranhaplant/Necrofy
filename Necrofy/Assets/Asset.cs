@@ -15,6 +15,7 @@ namespace Necrofy
     public enum AssetCategory
     {
         Editor,
+        Sprites,
         Collision,
         Graphics,
         Palette,
@@ -121,8 +122,10 @@ namespace Necrofy
             romStream.Seek(pointer, SeekOrigin.Begin);
             long startPos = romStream.Position;
             Asset asset = creator.FromRom(nameInfo, romStream, size);
-            // We can't just use data.Length here because the size itself counts towards the length for compressed data
-            romInfo.Freespace.AddSize(pointer, (int)(romStream.Position - startPos));
+            if (creator.AutoTrackFreespace) {
+                // We can't just use data.Length here because of compressed data
+                romInfo.Freespace.AddSize(pointer, (int)(romStream.Position - startPos));
+            }
 
             romInfo.assets.Add(asset);
             romInfo.AddAssetName(nameInfo.Category, pointer, nameInfo.Name);
@@ -132,10 +135,10 @@ namespace Necrofy
 
         // Have to init all of the loaders here since the static constructors of the subclasses won't be called
         static Asset() {
-            EditorAsset.RegisterLoader();
             GraphicsAsset.RegisterLoader();
             LevelAsset.RegisterLoader();
             PaletteAsset.RegisterLoader();
+            SpritesAsset.RegisterLoader();
             TilesetCollisionAsset.RegisterLoader();
             TilesetGraphicsAsset.RegisterLoader();
             TilesetPaletteAsset.RegisterLoader();
@@ -310,6 +313,8 @@ namespace Necrofy
             public virtual Asset FromRom(NameInfo nameInfo, NStream romStream, int? size) { return null; }
             /// <summary>Gets a NameInfo from the given name string. This is used to create assets that do not exist in the defaults.</summary>
             public virtual NameInfo GetNameInfoForName(string name) { return null; }
+            /// <summary>Automatically track freespace used when loading the asset from a ROM</summary>
+            public virtual bool AutoTrackFreespace => true;
         }
 
         /// <summary>Information about an asset that exists in a clean ROM</summary>

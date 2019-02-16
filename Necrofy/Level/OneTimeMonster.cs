@@ -10,6 +10,8 @@ namespace Necrofy
     /// </summary>
     class OneTimeMonster : LevelObject
     {
+        public const int CreditHeadType = 0x15D52;
+
         public ushort x { get; set; }
         public ushort y { get; set; }
         /// <summary>Special extra data available to the monster. Only used by the NPCs in the credits level.</summary>

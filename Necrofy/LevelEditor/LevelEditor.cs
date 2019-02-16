@@ -57,14 +57,21 @@ namespace Necrofy
                 }
             }
 
+            level.spriteGraphics.Render(SpriteDisplay.Key.Type.Player, 0, e.Graphics, level.Level.p1startX, level.Level.p1startY);
+            level.spriteGraphics.Render(SpriteDisplay.Key.Type.Player, 1, e.Graphics, level.Level.p2startX, level.Level.p2startY);
+
             foreach (OneTimeMonster m in level.Level.oneTimeMonsters) {
-                level.spriteGraphics.Render(m.type, e.Graphics, m.x, m.y);
+                if (m.type == OneTimeMonster.CreditHeadType) {
+                    level.spriteGraphics.Render(SpriteDisplay.Key.Type.CreditHead, m.extra, e.Graphics, m.x, m.y);
+                } else {
+                    level.spriteGraphics.Render(SpriteDisplay.Key.Type.Pointer, m.type, e.Graphics, m.x, m.y);
+                }
             }
             foreach (Monster m in level.Level.monsters) {
-                level.spriteGraphics.Render(m.type, e.Graphics, m.x, m.y);
+                level.spriteGraphics.Render(SpriteDisplay.Key.Type.Pointer, m.type, e.Graphics, m.x, m.y);
             }
             foreach (Item i in level.Level.items) {
-                level.spriteGraphics.Render(i.type, e.Graphics, i.x, i.y);
+                level.spriteGraphics.Render(SpriteDisplay.Key.Type.Item, i.type, e.Graphics, i.x, i.y);
             }
 
             //for (int y = 0; y < level.Level.height; y++) {

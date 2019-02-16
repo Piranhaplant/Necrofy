@@ -36,19 +36,14 @@ namespace Necrofy
                 this.extension = extension;
             }
 
-            public override string Name {
-                get { return tilesetName + NameSeparator + name; }
-            }
-
-            public override string DisplayName {
-                get { return name; }
-            }
+            public override string Name => tilesetName + NameSeparator + name;
+            public override string DisplayName => name;
 
             protected override PathParts GetPathParts() {
                 return new PathParts(Folder, tilesetName, name, extension, null);
             }
 
-            public static TilesetNameInfo FromPath(NameInfo.PathParts parts, string extension, Func<string, string, TilesetNameInfo> constructor) {
+            public static TilesetNameInfo FromPath(PathParts parts, string extension, Func<string, string, TilesetNameInfo> constructor) {
                 if (parts.topFolder != Folder) return null;
                 if (parts.subFolder == null) return null;
                 if (parts.fileExtension != extension) return null;
@@ -69,19 +64,14 @@ namespace Necrofy
                 this.extension = extension;
             }
 
-            public override string Name {
-                get { return tilesetName; }
-            }
-
-            public override string DisplayName {
-                get { return name; }
-            }
+            public override string Name => tilesetName;
+            public override string DisplayName => name;
 
             protected override PathParts GetPathParts() {
                 return new PathParts(Folder, tilesetName, name, extension, null);
             }
 
-            public static TilesetFixedNameInfo FromPath(NameInfo.PathParts parts, string name, string extension, Func<string, TilesetFixedNameInfo> constructor) {
+            public static TilesetFixedNameInfo FromPath(PathParts parts, string name, string extension, Func<string, TilesetFixedNameInfo> constructor) {
                 if (parts.topFolder != Folder) return null;
                 if (parts.subFolder == null) return null;
                 if (parts.name != name) return null;

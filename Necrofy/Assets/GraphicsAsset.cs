@@ -17,7 +17,7 @@ namespace Necrofy
         }
         
         public static string GetAssetName(NStream romStream, ROMInfo romInfo, int pointer) {
-            return Asset.GetAssetName(romStream, romInfo, pointer, new GraphicsCreator(), AssetCat);
+            return GetAssetName(romStream, romInfo, pointer, new GraphicsCreator(), AssetCat);
         }
 
         private readonly GraphicsNameInfo nameInfo;
@@ -44,13 +44,8 @@ namespace Necrofy
             InsertByteArray(rom, romInfo, data, nameInfo.pointer);
         }
 
-        protected override AssetCategory Category {
-            get { return nameInfo.Category; }
-        }
-
-        protected override string Name {
-            get { return nameInfo.Name; }
-        }
+        protected override AssetCategory Category => nameInfo.Category;
+        protected override string Name => nameInfo.Name;
 
         class GraphicsCreator : Creator
         {
@@ -96,23 +91,15 @@ namespace Necrofy
                 this.pointer = pointer;
             }
 
-            public override string Name {
-                get { return name; }
+            public override string Name => name;
+            public override string DisplayName => name;
+            public override AssetCategory Category => AssetCat;
+
+            protected override PathParts GetPathParts() {
+                return new PathParts(Folder, null, name, Extension, pointer);
             }
 
-            public override string DisplayName {
-                get { return name; }
-            }
-
-            public override AssetCategory Category {
-                get { return AssetCat; }
-            }
-
-            protected override NameInfo.PathParts GetPathParts() {
-                return new NameInfo.PathParts(Folder, null, name, Extension, pointer);
-            }
-
-            public static GraphicsNameInfo FromPath(NameInfo.PathParts parts) {
+            public static GraphicsNameInfo FromPath(PathParts parts) {
                 if (parts.topFolder != Folder) return null;
                 if (parts.subFolder != null) return null;
                 if (parts.fileExtension != Extension) return null;

@@ -10,15 +10,13 @@ namespace Necrofy
     class TilesetGraphicsAsset : TilesetAsset
     {
         private const AssetCategory AssetCat = AssetCategory.Graphics;
-        private const string Filename = "graphics";
-        private const string AssetExtension = "bin";
 
         public static void RegisterLoader() {
             AddCreator(new TilesetGraphicsCreator());
         }
 
         public static string GetAssetName(NStream romStream, ROMInfo romInfo, int pointer) {
-            return Asset.GetAssetName(romStream, romInfo, pointer, new TilesetGraphicsCreator(), AssetCat);
+            return GetAssetName(romStream, romInfo, pointer, new TilesetGraphicsCreator(), AssetCat);
         }
 
         private TilesetFixedNameInfo nameInfo;
@@ -41,13 +39,8 @@ namespace Necrofy
             InsertByteArray(rom, romInfo, data);
         }
 
-        protected override AssetCategory Category {
-            get { return nameInfo.Category; }
-        }
-
-        protected override string Name {
-            get { return nameInfo.Name; }
-        }
+        protected override AssetCategory Category => nameInfo.Category;
+        protected override string Name => nameInfo.Name;
 
         class TilesetGraphicsCreator : Creator
         {
@@ -86,14 +79,15 @@ namespace Necrofy
 
         class TilesetGraphicsNameInfo : TilesetFixedNameInfo
         {
-            public TilesetGraphicsNameInfo(string tilesetName) : base(tilesetName, Filename, AssetExtension) { }
-            
-            public override AssetCategory Category {
-                get { return AssetCat; }
-            }
+            private const string Filename = "graphics";
+            private const string Extension = "bin";
 
-            public static TilesetFixedNameInfo FromPath(NameInfo.PathParts parts) {
-                return TilesetFixedNameInfo.FromPath(parts, Filename, AssetExtension, s => new TilesetGraphicsNameInfo(s));
+            public TilesetGraphicsNameInfo(string tilesetName) : base(tilesetName, Filename, Extension) { }
+
+            public override AssetCategory Category => AssetCat;
+
+            public static TilesetFixedNameInfo FromPath(PathParts parts) {
+                return FromPath(parts, Filename, Extension, s => new TilesetGraphicsNameInfo(s));
             }
         }
     }

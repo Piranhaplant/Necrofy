@@ -111,6 +111,7 @@ namespace Necrofy
             }
 
             // Round size up to the nearest bank
+            // TODO: Check if everything still works if more than one bank of extra stuff has been added
             s.SetLength((long)Math.Ceiling(s.Length / (double)Freespace.BankSize) * Freespace.BankSize);
             byte sizeValue = (byte)(Math.Ceiling(Math.Log(s.Length, 2)) - 10);
             s.Seek(ROMPointers.ROMSize, SeekOrigin.Begin);
@@ -120,6 +121,7 @@ namespace Necrofy
         }
 
         private static void AddEndOfBankFreespace(Stream s, Freespace freespace) {
+            // TODO: New banks added by Necrofy will end with zeros
             for (int bankEndPos = Freespace.BankSize - 1; bankEndPos < s.Length; bankEndPos += Freespace.BankSize) {
                 s.Seek(bankEndPos, SeekOrigin.Begin);
                 int length = 0;

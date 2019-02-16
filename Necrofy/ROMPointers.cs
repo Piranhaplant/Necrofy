@@ -18,6 +18,10 @@ namespace Necrofy
         public const int BonusLevelNums = 0x1517e;
         /// <summary>Pointer to the ROM size in the SNES header</summary>
         public const int ROMSize = 0x7fd7;
+        /// <summary>Pointer to the first chunk of sprite data</summary>
+        public const int SpriteData1 = 0x7d300;
+        /// <summary>Pointer to the second chunk of sprite data</summary>
+        public const int SpriteData2 = 0x80000;
 
         // NOTE: in these functions I am using "address" to refer to the lower 16 bits of the full 24 bit LoROM address.
 

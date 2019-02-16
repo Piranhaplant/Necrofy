@@ -30,7 +30,7 @@ namespace Necrofy
         }
 
         public string GetDisplayText() {
-            return nameInfo.Name + " " + level.displayName;
+            return nameInfo.DisplayName;
         }
 
         private static int GetPointerPosition(int levelNum) {
@@ -56,13 +56,8 @@ namespace Necrofy
             freespace.Reserve(GetPointerPosition(nameInfo.levelNum), 4);
         }
 
-        protected override AssetCategory Category {
-            get { return nameInfo.Category; }
-        }
-
-        protected override string Name {
-            get { return nameInfo.Name; }
-        }
+        protected override AssetCategory Category => nameInfo.Category;
+        protected override string Name => nameInfo.Name;
 
         class LevelCreator : Creator
         {
@@ -112,9 +107,7 @@ namespace Necrofy
                 this.displayNameGetter = displayNameGetter;
             }
 
-            public override string Name {
-                get { return levelNum.ToString(); }
-            }
+            public override string Name => levelNum.ToString();
 
             public override string DisplayName {
                 get {
@@ -125,9 +118,7 @@ namespace Necrofy
                 }
             }
 
-            public override AssetCategory Category {
-                get { return AssetCat; }
-            }
+            public override AssetCategory Category => AssetCat;
 
             protected override PathParts GetPathParts() {
                 return new PathParts(Folder, null, levelNum.ToString(), Extension, null);
@@ -137,7 +128,7 @@ namespace Necrofy
                 return new LevelEditor(new LoadedLevel(project, levelNum));
             }
 
-            public static LevelNameInfo FromPath(NameInfo.PathParts parts, Func<LevelNameInfo, string> displayNameGetter) {
+            public static LevelNameInfo FromPath(PathParts parts, Func<LevelNameInfo, string> displayNameGetter) {
                 if (parts.topFolder != Folder) return null;
                 if (parts.subFolder != null) return null;
                 if (parts.fileExtension != Extension) return null;

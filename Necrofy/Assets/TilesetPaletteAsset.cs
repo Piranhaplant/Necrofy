@@ -10,15 +10,13 @@ namespace Necrofy
     class TilesetPaletteAsset : TilesetAsset
     {
         private const AssetCategory AssetCat = AssetCategory.Palette;
-        private const string AssetExtension = "plt";
-        private static readonly Bitmap displayImage = Properties.Resources.spectrum;
 
         public static void RegisterLoader() {
             AddCreator(new TilesetPaletteCreator());
         }
 
         public static string GetAssetName(NStream romStream, ROMInfo romInfo, int pointer) {
-            return Asset.GetAssetName(romStream, romInfo, pointer, new TilesetPaletteCreator(), AssetCat);
+            return GetAssetName(romStream, romInfo, pointer, new TilesetPaletteCreator(), AssetCat);
         }
 
         private TilesetNameInfo nameInfo;
@@ -41,13 +39,8 @@ namespace Necrofy
             InsertByteArray(rom, romInfo, data);
         }
 
-        protected override AssetCategory Category {
-            get { return nameInfo.Category; }
-        }
-
-        protected override string Name {
-            get { return nameInfo.Name; }
-        }
+        protected override AssetCategory Category => nameInfo.Category;
+        protected override string Name => nameInfo.Name;
 
         class TilesetPaletteCreator : Creator
         {
@@ -104,15 +97,15 @@ namespace Necrofy
 
         class TilesetPaletteNameInfo : TilesetNameInfo
         {
-            public TilesetPaletteNameInfo(string fullName) : base(fullName, AssetExtension) { }
-            public TilesetPaletteNameInfo(string tilesetName, string name) : base(tilesetName, name, AssetExtension) { }
+            private const string Extension = "plt";
 
-            public override AssetCategory Category {
-                get { return AssetCat; }
-            }
+            public TilesetPaletteNameInfo(string fullName) : base(fullName, Extension) { }
+            public TilesetPaletteNameInfo(string tilesetName, string name) : base(tilesetName, name, Extension) { }
 
-            public static TilesetNameInfo FromPath(NameInfo.PathParts parts) {
-                return TilesetNameInfo.FromPath(parts, AssetExtension, (t, n) => new TilesetPaletteNameInfo(t, n));
+            public override AssetCategory Category => AssetCat;
+
+            public static TilesetNameInfo FromPath(PathParts parts) {
+                return FromPath(parts, Extension, (t, n) => new TilesetPaletteNameInfo(t, n));
             }
         }
     }

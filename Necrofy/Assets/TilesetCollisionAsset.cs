@@ -10,15 +10,13 @@ namespace Necrofy
     class TilesetCollisionAsset : TilesetAsset
     {
         private const AssetCategory AssetCat = AssetCategory.Collision;
-        private const string Filename = "collision";
-        private const string AssetExtension = "bin";
 
         public static void RegisterLoader() {
             AddCreator(new TilesetCollisionCreator());
         }
 
         public static string GetAssetName(NStream romStream, ROMInfo romInfo, int pointer) {
-            return Asset.GetAssetName(romStream, romInfo, pointer, new TilesetCollisionCreator(), AssetCat);
+            return GetAssetName(romStream, romInfo, pointer, new TilesetCollisionCreator(), AssetCat);
         }
 
         private TilesetFixedNameInfo nameInfo;
@@ -41,13 +39,8 @@ namespace Necrofy
             InsertByteArray(rom, romInfo, data);
         }
 
-        protected override AssetCategory Category {
-            get { return nameInfo.Category; }
-        }
-
-        protected override string Name {
-            get { return nameInfo.Name; }
-        }
+        protected override AssetCategory Category => nameInfo.Category;
+        protected override string Name => nameInfo.Name;
 
         class TilesetCollisionCreator : Creator
         {
@@ -86,14 +79,15 @@ namespace Necrofy
 
         class TilesetCollisionNameInfo : TilesetFixedNameInfo
         {
-            public TilesetCollisionNameInfo(string tilesetName) : base(tilesetName, Filename, AssetExtension) { }
-            
-            public override AssetCategory Category {
-                get { return AssetCat; }
-            }
+            private const string Filename = "collision";
+            private const string Extension = "bin";
 
-            public static TilesetFixedNameInfo FromPath(NameInfo.PathParts parts) {
-                return TilesetFixedNameInfo.FromPath(parts, Filename, AssetExtension, s => new TilesetCollisionNameInfo(s));
+            public TilesetCollisionNameInfo(string tilesetName) : base(tilesetName, Filename, Extension) { }
+
+            public override AssetCategory Category => AssetCat;
+
+            public static TilesetFixedNameInfo FromPath(PathParts parts) {
+                return FromPath(parts, Filename, Extension, s => new TilesetCollisionNameInfo(s));
             }
         }
     }

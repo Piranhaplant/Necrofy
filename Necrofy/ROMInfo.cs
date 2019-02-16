@@ -42,6 +42,7 @@ namespace Necrofy
             s.Seek(-4, SeekOrigin.Current);
 
             // Don't try to get default assets for ROMs built with Necrofy, since everything is moved around
+            // TODO: Some stuff doesn't move around and those still need to be extracted
             if (!fullLevelPointers) {
                 Asset.AddAllDefaults(s, this);
             }
