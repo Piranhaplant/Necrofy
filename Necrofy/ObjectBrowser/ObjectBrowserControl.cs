@@ -22,15 +22,25 @@ namespace Necrofy
         private ObjectBrowserContents contents;
         public ObjectBrowserContents Contents {
             set {
+                if (contents != null) {
+                    contents.Changed -= Contents_Changed;
+                }
                 contents = value;
+                if (contents != null) {
+                    contents.Changed += Contents_Changed;
+                }
                 LayoutObjects();
             }
+        }
+
+        private void Contents_Changed(object sender, EventArgs e) {
+            LayoutObjects();
         }
 
         public ObjectBrowserControl() {
             InitializeComponent();
             scrollWrapper = new ScrollWrapper(canvas, hScrollBar, vScrollBar, autoSize: false);
-            scrollWrapper.Scrolled += new ScrollWrapper.ScrollDelegate(scrollWrapper_Scrolled);
+            scrollWrapper.Scrolled += scrollWrapper_Scrolled;
             LayoutObjects();
         }
 

@@ -12,14 +12,14 @@ namespace Necrofy
     public class RecentFilesMenu : ToolStripMenuItem
     {
         private List<string> _files = new List<string>();
-        public IEnumerable<String> Files {
+        public IEnumerable<string> Files {
             get {
                 return _files.AsReadOnly();
             }
             set {
                 _files = new List<string>(value);
-                trimFiles();
-                createItems();
+                TrimFiles();
+                CreateItems();
             }
         }
         private int _maxItems = 10;
@@ -30,8 +30,8 @@ namespace Necrofy
             set {
                 if (value >= 1 && value != _maxItems) {
                     _maxItems = value;
-                    trimFiles();
-                    createItems();
+                    TrimFiles();
+                    CreateItems();
                 }
             }
         }
@@ -43,7 +43,7 @@ namespace Necrofy
             set {
                 if (value >= 1 && value != _maxLength) {
                     _maxLength = value;
-                    createItems();
+                    CreateItems();
                 }
             }
         }
@@ -54,7 +54,7 @@ namespace Necrofy
             }
             set {
                 _separator = value;
-                createItems();
+                CreateItems();
             }
         }
 
@@ -63,9 +63,9 @@ namespace Necrofy
 
         private List<ToolStripMenuItem> items = new List<ToolStripMenuItem>();
 
-        private void createItems() {
+        private void CreateItems() {
             foreach (ToolStripMenuItem item in items) {
-                this.Parent.Items.Remove(item);
+                Parent.Items.Remove(item);
             }
             items.Clear();
 
@@ -75,19 +75,19 @@ namespace Necrofy
                     item = this;
                 } else {
                     item = new ToolStripMenuItem();
-                    this.Parent.Items.Insert(this.Parent.Items.IndexOf(this) + i, item);
+                    Parent.Items.Insert(Parent.Items.IndexOf(this) + i, item);
                     items.Add(item);
                 }
-                item.Text = (i + 1).ToString() + " " + trimFile(_files[i]);
-                item.ShortcutKeys = getShortcutKeys(i);
+                item.Text = (i + 1).ToString() + " " + TrimFile(_files[i]);
+                item.ShortcutKeys = GetShortcutKeys(i);
                 int iClosure = i;
-                item.Click += new EventHandler((sender, e) => item_Click(sender, iClosure));
+                item.Click += (sender, e) => Item_Click(sender, iClosure);
             }
 
             if (!DesignMode) {
-                this.Visible = _files.Count > 0;
+                Visible = _files.Count > 0;
                 if (_separator != null) {
-                    _separator.Visible = _files.Count > 0;
+                    _separator.Visible = Visible;
                 }
             }
         }
@@ -100,16 +100,14 @@ namespace Necrofy
             if (_files.Count > _maxItems) {
                 _files.RemoveAt(_files.Count - 1);
             }
-            createItems();
+            CreateItems();
         }
 
-        void item_Click(object sender, int i) {
-            if (FileClicked != null) {
-                FileClicked(_files[i]);
-            }
+        private void Item_Click(object sender, int i) {
+            FileClicked?.Invoke(_files[i]);
         }
 
-        private string trimFile(string file) {
+        private string TrimFile(string file) {
             if (file.Length > _maxLength) {
                 string start = file.Substring(0, file.IndexOf(Path.DirectorySeparatorChar) + 1);
                 string end = file.Substring(file.Length - (_maxLength - start.Length));
@@ -121,13 +119,13 @@ namespace Necrofy
             return file;
         }
 
-        private void trimFiles() {
+        private void TrimFiles() {
             if (_files.Count > _maxItems) {
                 _files.RemoveRange(_maxItems, _files.Count - _maxItems);
             }
         }
 
-        private Keys getShortcutKeys(int i) {
+        private Keys GetShortcutKeys(int i) {
             Keys k = Keys.Control | Keys.Shift;
             switch (i) {
                 case 0:

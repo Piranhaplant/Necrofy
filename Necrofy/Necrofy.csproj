@@ -131,6 +131,7 @@
     <Compile Include="ObjectBrowser\ObjectBrowserForm.Designer.cs">
       <DependentUpon>ObjectBrowserForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ObjectBrowser\SpriteObjectBrowserContents.cs" />
     <Compile Include="ObjectBrowser\TilesetObjectBrowserContents.cs" />
     <Compile Include="ProjectBrowser.cs">
       <SubType>Form</SubType>
@@ -186,6 +187,9 @@
     <Compile Include="ROMInfo.cs" />
     <Compile Include="ROMPointers.cs" />
     <Compile Include="ScrollWrapper.cs" />
+    <Compile Include="SeparateCheckToolStripMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="SNESGraphics.cs" />
     <Compile Include="Sprite.cs" />
     <Compile Include="SpriteDisplay.cs" />

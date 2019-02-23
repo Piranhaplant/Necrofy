@@ -9,6 +9,7 @@ using System.Text;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using System.Diagnostics;
+using System.Windows.Forms.Layout;
 
 namespace Necrofy
 {
@@ -18,7 +19,10 @@ namespace Necrofy
 
         private readonly LoadedLevel level;
         private readonly ScrollWrapper scrollWrapper;
-        
+
+        private readonly TilesetObjectBrowserContents tilesetObjectBrowserContents;
+        private readonly SpriteObjectBrowserContents spriteObjectBrowserContents;
+
         public LevelEditor(LoadedLevel level) {
             InitializeComponent();
 
@@ -27,13 +31,20 @@ namespace Necrofy
 
             scrollWrapper = new ScrollWrapper(canvas, hscroll, vscroll);
             scrollWrapper.SetClientSize(level.Level.width * 64 + LevelPadding * 2, level.Level.height * 64 + LevelPadding * 2);
-            scrollWrapper.Scrolled += new ScrollWrapper.ScrollDelegate(scrollWrapper_Scrolled);
+            scrollWrapper.Scrolled += scrollWrapper_Scrolled;
+
+            tilesetObjectBrowserContents = new TilesetObjectBrowserContents(level);
+            spriteObjectBrowserContents = new SpriteObjectBrowserContents(level.spriteGraphics);
+            spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.Item);
+            spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.Victim);
+            spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.OneTimeMonster);
+            spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.Monster);
 
             Repaint();
         }
-
+        
         protected override void Displayed() {
-            mainWindow.ObjectBrowser.Browser.Contents = new TilesetObjectBrowserContents(level);
+            mainWindow.ObjectBrowser.Browser.Contents = spriteObjectBrowserContents;
             mainWindow.ObjectBrowser.Activate();
         }
 
@@ -79,6 +90,42 @@ namespace Necrofy
             //        e.Graphics.DrawImage(level.priorityTiles[level.Level.background[x, y]], x * 64, y * 64);
             //    }
             //}
+        }
+
+        private void UpdateSpriteCategory(SpriteDisplay.Category category, bool enabled) {
+            if (enabled) {
+                spriteObjectBrowserContents.AddCategory(category);
+            } else {
+                spriteObjectBrowserContents.RemoveCategory(category);
+            }
+        }
+
+        private void spritesItems_CheckedChanged(object sender, EventArgs e) {
+            UpdateSpriteCategory(SpriteDisplay.Category.Item, spritesItems.Checked);
+        }
+
+        private void spritesVictims_CheckedChanged(object sender, EventArgs e) {
+            UpdateSpriteCategory(SpriteDisplay.Category.Victim, spritesVictims.Checked);
+        }
+
+        private void spritesOneShotMonsters_CheckedChanged(object sender, EventArgs e) {
+            UpdateSpriteCategory(SpriteDisplay.Category.OneTimeMonster, spritesOneShotMonsters.Checked);
+        }
+
+        private void spritesMonsters_CheckedChanged(object sender, EventArgs e) {
+            UpdateSpriteCategory(SpriteDisplay.Category.Monster, spritesMonsters.Checked);
+        }
+
+        private void spritesBossMonsters_CheckedChanged(object sender, EventArgs e) {
+            // TODO
+        }
+
+        private void spritesAll_Click(object sender, EventArgs e) {
+            spritesItems.Checked = true;
+            spritesVictims.Checked = true;
+            spritesOneShotMonsters.Checked = true;
+            spritesMonsters.Checked = true;
+            spritesBossMonsters.Checked = true;
         }
     }
 }

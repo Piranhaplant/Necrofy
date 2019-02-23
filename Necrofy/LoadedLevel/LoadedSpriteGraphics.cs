@@ -15,6 +15,7 @@ namespace Necrofy
         public readonly EditorAsset<SpriteDisplay[]> spriteDisplayAsset;
 
         public readonly Dictionary<SpriteDisplay.Key.Type, Dictionary<int, LoadedSprite>> sprites;
+        public readonly Dictionary<SpriteDisplay.Category, List<LoadedSprite>> spritesByCategory;
 
         public LoadedSpriteGraphics(Project project, string spritePaletteName) {
             paletteAsset = PaletteAsset.FromProject(project, spritePaletteName);
@@ -28,9 +29,15 @@ namespace Necrofy
             foreach (SpriteDisplay.Key.Type keyType in Enum.GetValues(typeof(SpriteDisplay.Key.Type))) {
                 sprites[keyType] = new Dictionary<int, LoadedSprite>();
             }
+            spritesByCategory = new Dictionary<SpriteDisplay.Category, List<LoadedSprite>>();
+            foreach (SpriteDisplay.Category category in Enum.GetValues(typeof(SpriteDisplay.Category))) {
+                spritesByCategory[category] = new List<LoadedSprite>();
+            }
+
             foreach (SpriteDisplay spriteDisplay in spriteDisplayAsset.data) {
                 LoadedSprite s = new LoadedSprite(spritesAsset.sprites[spriteDisplay.spriteIndex], graphicsAsset.data, colors, spriteDisplay.overridePalette);
                 sprites[spriteDisplay.key.type][spriteDisplay.key.value] = s;
+                spritesByCategory[spriteDisplay.category].Add(s);
             }
         }
 
@@ -72,9 +79,15 @@ namespace Necrofy
                     SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 0 : 8), anchorY + t.yOffset + 1 + (t.yFlip ? 0 : 8), graphics, t.tileNum * 0x80 + 0x60, colors, palette * 0x10, t.xFlip, t.yFlip);
                 }
             }
+
+            public Size Size => image.Size;
             
             public void Render(Graphics g, int x, int y) {
                 g.DrawImage(image, x - anchorX, y - anchorY);
+            }
+
+            public void RenderFromTopCorner(Graphics g, int x, int y) {
+                g.DrawImage(image, x, y);
             }
         }
     }

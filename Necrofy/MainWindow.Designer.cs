@@ -56,7 +56,6 @@
             this.fileSave = new System.Windows.Forms.ToolStripMenuItem();
             this.fileSaveAll = new System.Windows.Forms.ToolStripMenuItem();
             this.fileSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.recentProjects = new Necrofy.RecentFilesMenu();
             this.fileSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.fileExit = new System.Windows.Forms.ToolStripMenuItem();
             this.editMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -76,6 +75,7 @@
             this.buildRunFromLevel = new System.Windows.Forms.ToolStripMenuItem();
             this.buildRunSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.openProjectDialog = new System.Windows.Forms.OpenFileDialog();
+            this.recentProjects = new Necrofy.RecentFilesMenu();
             this.toolStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -117,6 +117,7 @@
             this.runProjectButton,
             this.runFromLevelButton,
             this.endToolStripSeparator});
+            this.toolStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1061, 25);
@@ -330,17 +331,6 @@
             this.fileSeparator2.Name = "fileSeparator2";
             this.fileSeparator2.Size = new System.Drawing.Size(184, 6);
             // 
-            // recentProjects
-            // 
-            this.recentProjects.Files = ((System.Collections.Generic.IEnumerable<string>)(resources.GetObject("recentProjects.Files")));
-            this.recentProjects.MaxItems = 10;
-            this.recentProjects.MaxLength = 60;
-            this.recentProjects.Name = "recentProjects";
-            this.recentProjects.Separator = this.fileSeparator3;
-            this.recentProjects.Size = new System.Drawing.Size(187, 22);
-            this.recentProjects.Text = "Recent Projects";
-            this.recentProjects.FileClicked += new Necrofy.RecentFilesMenu.FileClickedDelegate(this.recentProjects_FileClicked);
-            // 
             // fileSeparator3
             // 
             this.fileSeparator3.Name = "fileSeparator3";
@@ -459,7 +449,7 @@
             this.buildBuildProject.Image = global::Necrofy.Properties.Resources.compile;
             this.buildBuildProject.Name = "buildBuildProject";
             this.buildBuildProject.ShortcutKeys = System.Windows.Forms.Keys.F4;
-            this.buildBuildProject.Size = new System.Drawing.Size(180, 22);
+            this.buildBuildProject.Size = new System.Drawing.Size(175, 22);
             this.buildBuildProject.Text = "Build Project";
             this.buildBuildProject.Click += new System.EventHandler(this.BuildProject);
             // 
@@ -468,7 +458,7 @@
             this.buildRunProject.Image = global::Necrofy.Properties.Resources.control;
             this.buildRunProject.Name = "buildRunProject";
             this.buildRunProject.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.buildRunProject.Size = new System.Drawing.Size(180, 22);
+            this.buildRunProject.Size = new System.Drawing.Size(175, 22);
             this.buildRunProject.Text = "Run Project";
             // 
             // buildRunFromLevel
@@ -476,13 +466,13 @@
             this.buildRunFromLevel.Image = global::Necrofy.Properties.Resources.control_cursor;
             this.buildRunFromLevel.Name = "buildRunFromLevel";
             this.buildRunFromLevel.ShortcutKeys = System.Windows.Forms.Keys.F6;
-            this.buildRunFromLevel.Size = new System.Drawing.Size(180, 22);
+            this.buildRunFromLevel.Size = new System.Drawing.Size(175, 22);
             this.buildRunFromLevel.Text = "Run From Level";
             // 
             // buildRunSettings
             // 
             this.buildRunSettings.Name = "buildRunSettings";
-            this.buildRunSettings.Size = new System.Drawing.Size(180, 22);
+            this.buildRunSettings.Size = new System.Drawing.Size(175, 22);
             this.buildRunSettings.Text = "Run Settings...";
             this.buildRunSettings.Click += new System.EventHandler(this.buildRunSettings_Click);
             // 
@@ -490,6 +480,17 @@
             // 
             this.openProjectDialog.Filter = "Necrofy project files (*.nfyp)|*.nfyp|All Files (*.*)|*.*";
             this.openProjectDialog.Title = "Open Project";
+            // 
+            // recentProjects
+            // 
+            this.recentProjects.Files = ((System.Collections.Generic.IEnumerable<string>)(resources.GetObject("recentProjects.Files")));
+            this.recentProjects.MaxItems = 10;
+            this.recentProjects.MaxLength = 60;
+            this.recentProjects.Name = "recentProjects";
+            this.recentProjects.Separator = this.fileSeparator3;
+            this.recentProjects.Size = new System.Drawing.Size(187, 22);
+            this.recentProjects.Text = "Recent Projects";
+            this.recentProjects.FileClicked += new Necrofy.RecentFilesMenu.FileClickedDelegate(this.recentProjects_FileClicked);
             // 
             // MainWindow
             // 
@@ -561,7 +562,6 @@
         private System.Windows.Forms.ToolStripSplitButton undoButton;
         private System.Windows.Forms.ToolStripSplitButton redoButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-
     }
 }
 

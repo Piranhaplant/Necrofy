@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.vScrollBar = new System.Windows.Forms.VScrollBar();
-            this.canvas = new Necrofy.Canvas();
             this.hScrollBar = new System.Windows.Forms.HScrollBar();
+            this.canvas = new Necrofy.Canvas();
             this.SuspendLayout();
             // 
             // vScrollBar
@@ -41,17 +41,6 @@
             this.vScrollBar.Size = new System.Drawing.Size(17, 133);
             this.vScrollBar.TabIndex = 0;
             // 
-            // canvas
-            // 
-            this.canvas.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.canvas.Location = new System.Drawing.Point(0, 0);
-            this.canvas.Name = "canvas";
-            this.canvas.Size = new System.Drawing.Size(133, 133);
-            this.canvas.TabIndex = 1;
-            this.canvas.SizeChanged += new System.EventHandler(this.canvas_SizeChanged);
-            this.canvas.Paint += new System.Windows.Forms.PaintEventHandler(this.canvas_Paint);
-            this.canvas.MouseDown += new System.Windows.Forms.MouseEventHandler(this.canvas_MouseDown);
-            // 
             // hScrollBar
             // 
             this.hScrollBar.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -61,14 +50,26 @@
             this.hScrollBar.TabIndex = 2;
             this.hScrollBar.Visible = false;
             // 
-            // ObjectBrowser
+            // canvas
+            // 
+            this.canvas.BackColor = System.Drawing.SystemColors.Control;
+            this.canvas.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.canvas.Location = new System.Drawing.Point(0, 0);
+            this.canvas.Name = "canvas";
+            this.canvas.Size = new System.Drawing.Size(133, 133);
+            this.canvas.TabIndex = 1;
+            this.canvas.SizeChanged += new System.EventHandler(this.canvas_SizeChanged);
+            this.canvas.Paint += new System.Windows.Forms.PaintEventHandler(this.canvas_Paint);
+            this.canvas.MouseDown += new System.Windows.Forms.MouseEventHandler(this.canvas_MouseDown);
+            // 
+            // ObjectBrowserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.canvas);
             this.Controls.Add(this.vScrollBar);
             this.Controls.Add(this.hScrollBar);
-            this.Name = "ObjectBrowser";
+            this.Name = "ObjectBrowserControl";
             this.ResumeLayout(false);
 
         }
