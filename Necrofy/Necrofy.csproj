@@ -107,9 +107,14 @@
     <Compile Include="Canvas.Designer.cs">
       <DependentUpon>Canvas.cs</DependentUpon>
     </Compile>
+    <Compile Include="CheckableToolStripSplitButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="EditorWindow.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="LevelEditor\PaintbrushTool.cs" />
+    <Compile Include="LevelEditor\SpriteTool.cs" />
     <Compile Include="LevelEditor\Tool.cs" />
     <Compile Include="NewProjectDialog.cs">
       <SubType>Form</SubType>

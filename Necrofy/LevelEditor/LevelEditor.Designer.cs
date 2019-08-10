@@ -30,7 +30,8 @@
             this.hscroll = new System.Windows.Forms.HScrollBar();
             this.vscroll = new System.Windows.Forms.VScrollBar();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.spritesButton = new System.Windows.Forms.ToolStripSplitButton();
+            this.paintbrushButton = new System.Windows.Forms.ToolStripButton();
+            this.spritesButton = new Necrofy.CheckableToolStripSplitButton();
             this.spritesItems = new Necrofy.SeparateCheckToolStripMenuItem();
             this.spritesVictims = new Necrofy.SeparateCheckToolStripMenuItem();
             this.spritesOneShotMonsters = new Necrofy.SeparateCheckToolStripMenuItem();
@@ -40,6 +41,7 @@
             this.spritesAll = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolsMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsPaintbrush = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsSprites = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -56,6 +58,9 @@
             this.canvas.Size = new System.Drawing.Size(283, 283);
             this.canvas.TabIndex = 0;
             this.canvas.Paint += new System.Windows.Forms.PaintEventHandler(this.canvas_Paint);
+            this.canvas.MouseDown += new System.Windows.Forms.MouseEventHandler(this.canvas_MouseDown);
+            this.canvas.MouseMove += new System.Windows.Forms.MouseEventHandler(this.canvas_MouseMove);
+            this.canvas.MouseUp += new System.Windows.Forms.MouseEventHandler(this.canvas_MouseUp);
             // 
             // hscroll
             // 
@@ -82,6 +87,7 @@
             // toolStrip1
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.paintbrushButton,
             this.spritesButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
@@ -90,8 +96,19 @@
             this.toolStrip1.Text = "toolStrip1";
             this.toolStrip1.Visible = false;
             // 
+            // paintbrushButton
+            // 
+            this.paintbrushButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.paintbrushButton.Image = ((System.Drawing.Image)(resources.GetObject("paintbrushButton.Image")));
+            this.paintbrushButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.paintbrushButton.Name = "paintbrushButton";
+            this.paintbrushButton.Size = new System.Drawing.Size(23, 22);
+            this.paintbrushButton.Text = "Paintbrush";
+            this.paintbrushButton.Click += new System.EventHandler(this.paintbrush_Click);
+            // 
             // spritesButton
             // 
+            this.spritesButton.Checked = false;
             this.spritesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.spritesButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.spritesItems,
@@ -106,6 +123,7 @@
             this.spritesButton.Name = "spritesButton";
             this.spritesButton.Size = new System.Drawing.Size(32, 22);
             this.spritesButton.Text = "Sprites";
+            this.spritesButton.ButtonClick += new System.EventHandler(this.sprites_Click);
             // 
             // spritesItems
             // 
@@ -113,7 +131,7 @@
             this.spritesItems.CheckState = System.Windows.Forms.CheckState.Checked;
             this.spritesItems.Image = global::Necrofy.Properties.Resources.item;
             this.spritesItems.Name = "spritesItems";
-            this.spritesItems.Size = new System.Drawing.Size(180, 22);
+            this.spritesItems.Size = new System.Drawing.Size(176, 22);
             this.spritesItems.Text = "Items";
             this.spritesItems.CheckedChanged += new System.EventHandler(this.spritesItems_CheckedChanged);
             // 
@@ -123,7 +141,7 @@
             this.spritesVictims.CheckState = System.Windows.Forms.CheckState.Checked;
             this.spritesVictims.Image = global::Necrofy.Properties.Resources.victim;
             this.spritesVictims.Name = "spritesVictims";
-            this.spritesVictims.Size = new System.Drawing.Size(180, 22);
+            this.spritesVictims.Size = new System.Drawing.Size(176, 22);
             this.spritesVictims.Text = "Victims";
             this.spritesVictims.CheckedChanged += new System.EventHandler(this.spritesVictims_CheckedChanged);
             // 
@@ -133,7 +151,7 @@
             this.spritesOneShotMonsters.CheckState = System.Windows.Forms.CheckState.Checked;
             this.spritesOneShotMonsters.Image = global::Necrofy.Properties.Resources.one_shot_monster;
             this.spritesOneShotMonsters.Name = "spritesOneShotMonsters";
-            this.spritesOneShotMonsters.Size = new System.Drawing.Size(180, 22);
+            this.spritesOneShotMonsters.Size = new System.Drawing.Size(176, 22);
             this.spritesOneShotMonsters.Text = "One-shot Monsters";
             this.spritesOneShotMonsters.CheckedChanged += new System.EventHandler(this.spritesOneShotMonsters_CheckedChanged);
             // 
@@ -143,7 +161,7 @@
             this.spritesMonsters.CheckState = System.Windows.Forms.CheckState.Checked;
             this.spritesMonsters.Image = global::Necrofy.Properties.Resources.monster;
             this.spritesMonsters.Name = "spritesMonsters";
-            this.spritesMonsters.Size = new System.Drawing.Size(180, 22);
+            this.spritesMonsters.Size = new System.Drawing.Size(176, 22);
             this.spritesMonsters.Text = "Monsters";
             this.spritesMonsters.CheckedChanged += new System.EventHandler(this.spritesMonsters_CheckedChanged);
             // 
@@ -153,19 +171,19 @@
             this.spritesBossMonsters.CheckState = System.Windows.Forms.CheckState.Checked;
             this.spritesBossMonsters.Image = global::Necrofy.Properties.Resources.boss_monster;
             this.spritesBossMonsters.Name = "spritesBossMonsters";
-            this.spritesBossMonsters.Size = new System.Drawing.Size(180, 22);
+            this.spritesBossMonsters.Size = new System.Drawing.Size(176, 22);
             this.spritesBossMonsters.Text = "Boss Monsters";
             this.spritesBossMonsters.CheckedChanged += new System.EventHandler(this.spritesBossMonsters_CheckedChanged);
             // 
             // spritesSeparator
             // 
             this.spritesSeparator.Name = "spritesSeparator";
-            this.spritesSeparator.Size = new System.Drawing.Size(177, 6);
+            this.spritesSeparator.Size = new System.Drawing.Size(173, 6);
             // 
             // spritesAll
             // 
             this.spritesAll.Name = "spritesAll";
-            this.spritesAll.Size = new System.Drawing.Size(180, 22);
+            this.spritesAll.Size = new System.Drawing.Size(176, 22);
             this.spritesAll.Text = "All";
             this.spritesAll.Click += new System.EventHandler(this.spritesAll_Click);
             // 
@@ -183,16 +201,25 @@
             // toolsMenu
             // 
             this.toolsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolsPaintbrush,
             this.toolsSprites});
             this.toolsMenu.Name = "toolsMenu";
-            this.toolsMenu.Size = new System.Drawing.Size(47, 20);
+            this.toolsMenu.Size = new System.Drawing.Size(46, 20);
             this.toolsMenu.Text = "Tools";
+            // 
+            // toolsPaintbrush
+            // 
+            this.toolsPaintbrush.Name = "toolsPaintbrush";
+            this.toolsPaintbrush.Size = new System.Drawing.Size(131, 22);
+            this.toolsPaintbrush.Text = "Paintbrush";
+            this.toolsPaintbrush.Click += new System.EventHandler(this.paintbrush_Click);
             // 
             // toolsSprites
             // 
             this.toolsSprites.Name = "toolsSprites";
-            this.toolsSprites.Size = new System.Drawing.Size(109, 22);
+            this.toolsSprites.Size = new System.Drawing.Size(131, 22);
             this.toolsSprites.Text = "Sprites";
+            this.toolsSprites.Click += new System.EventHandler(this.sprites_Click);
             // 
             // LevelEditor
             // 
@@ -227,7 +254,7 @@
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem toolsMenu;
-        private System.Windows.Forms.ToolStripSplitButton spritesButton;
+        private CheckableToolStripSplitButton spritesButton;
         private System.Windows.Forms.ToolStripSeparator spritesSeparator;
         private System.Windows.Forms.ToolStripMenuItem spritesAll;
         private SeparateCheckToolStripMenuItem spritesItems;
@@ -236,5 +263,7 @@
         private SeparateCheckToolStripMenuItem spritesMonsters;
         private SeparateCheckToolStripMenuItem spritesBossMonsters;
         private System.Windows.Forms.ToolStripMenuItem toolsSprites;
+        private System.Windows.Forms.ToolStripButton paintbrushButton;
+        private System.Windows.Forms.ToolStripMenuItem toolsPaintbrush;
     }
 }

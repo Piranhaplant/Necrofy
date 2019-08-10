@@ -19,11 +19,14 @@ namespace Necrofy
             HideOnClose = false;
         }
 
-        public void Display(MainWindow mainWindow) {
+        public void Setup(MainWindow mainWindow) {
             this.mainWindow = mainWindow;
-            Displayed();
+            FirstDisplayed();
         }
 
-        protected virtual void Displayed() { }
+        /// <summary>Called the first time the editor is displayed</summary>
+        protected virtual void FirstDisplayed() { }
+        /// <summary>Called each time the editor is displayed</summary>
+        public virtual void Displayed() { }
     }
 }

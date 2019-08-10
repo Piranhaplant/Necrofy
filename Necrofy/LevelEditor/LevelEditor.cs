@@ -17,11 +17,21 @@ namespace Necrofy
     {
         private const int LevelPadding = 64;
 
-        private readonly LoadedLevel level;
-        private readonly ScrollWrapper scrollWrapper;
+        public readonly LoadedLevel level;
 
-        private readonly TilesetObjectBrowserContents tilesetObjectBrowserContents;
-        private readonly SpriteObjectBrowserContents spriteObjectBrowserContents;
+        public readonly TilesetObjectBrowserContents tilesetObjectBrowserContents;
+        public readonly SpriteObjectBrowserContents spriteObjectBrowserContents;
+
+        private readonly ScrollWrapper scrollWrapper;
+        
+        private readonly PaintbrushTool paintbrushTool;
+        private readonly SpriteTool spriteTool;
+        private readonly Dictionary<Tool, ToolStripItem> toolButtons;
+        private readonly Dictionary<Tool, ToolStripMenuItem> toolMenuItems;
+        private readonly Dictionary<Tool.ObjectType, ObjectBrowserContents> toolTypeToObjectContents;
+
+        private ObjectBrowserContents currentContents;
+        private Tool currentTool;
 
         public LevelEditor(LoadedLevel level) {
             InitializeComponent();
@@ -40,12 +50,59 @@ namespace Necrofy
             spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.OneTimeMonster);
             spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.Monster);
 
+            paintbrushTool = new PaintbrushTool(this);
+            spriteTool = new SpriteTool(this);
+
+            toolTypeToObjectContents = new Dictionary<Tool.ObjectType, ObjectBrowserContents> {
+                { Tool.ObjectType.Sprites, spriteObjectBrowserContents },
+                { Tool.ObjectType.Tiles, tilesetObjectBrowserContents },
+            };
+            toolButtons = new Dictionary<Tool, ToolStripItem> {
+                { paintbrushTool, paintbrushButton },
+                { spriteTool, spritesButton },
+            };
+            toolMenuItems = new Dictionary<Tool, ToolStripMenuItem> {
+                { paintbrushTool, toolsPaintbrush },
+                { spriteTool, toolsSprites },
+            };
+
             Repaint();
         }
         
-        protected override void Displayed() {
-            mainWindow.ObjectBrowser.Browser.Contents = spriteObjectBrowserContents;
+        protected override void FirstDisplayed() {
+            ChangeTool(paintbrushTool);
             mainWindow.ObjectBrowser.Activate();
+        }
+
+        public override void Displayed() {
+            mainWindow.ObjectBrowser.Browser.Contents = currentContents;
+        }
+
+        private void ChangeTool(Tool tool) {
+            if (tool != currentTool) {
+                currentTool = tool;
+                currentContents = toolTypeToObjectContents[tool.objectType];
+                mainWindow.ObjectBrowser.Browser.Contents = currentContents;
+
+                foreach (ToolStripItem button in toolButtons.Values) {
+                    SetChecked(button, false);
+                }
+                foreach (ToolStripMenuItem menuItem in toolMenuItems.Values) {
+                    menuItem.Checked = false;
+                }
+                SetChecked(toolButtons[tool], true);
+                toolMenuItems[tool].Checked = true;
+            }
+        }
+
+        private void SetChecked(ToolStripItem item, bool value) {
+            if (item is ToolStripButton button) {
+                button.Checked = value;
+            } else if (item is CheckableToolStripSplitButton checkableButton) {
+                checkableButton.Checked = value;
+            } else {
+                Debug.WriteLine("Tried to SetChecked on item of unknown type: " + item);
+            }
         }
 
         void scrollWrapper_Scrolled() {
@@ -90,6 +147,45 @@ namespace Necrofy
             //        e.Graphics.DrawImage(level.priorityTiles[level.Level.background[x, y]], x * 64, y * 64);
             //    }
             //}
+
+            currentTool.Paint(e.Graphics);
+        }
+
+        private void canvas_MouseDown(object sender, MouseEventArgs e) {
+            if (TransformMouseArgs(e, out MouseEventArgs args)) {
+                currentTool.MouseDown(args);
+            }
+        }
+
+        private void canvas_MouseUp(object sender, MouseEventArgs e) {
+            if (TransformMouseArgs(e, out MouseEventArgs args)) {
+                currentTool.MouseUp(args);
+            }
+        }
+
+        private void canvas_MouseMove(object sender, MouseEventArgs e) {
+            if (TransformMouseArgs(e, out MouseEventArgs args)) {
+                currentTool.MouseMove(args);
+            }
+        }
+
+        private bool TransformMouseArgs(MouseEventArgs e, out MouseEventArgs ret) {
+            int x = e.X - scrollWrapper.LeftPosition - LevelPadding;
+            int y = e.Y - scrollWrapper.TopPosition - LevelPadding;
+            if (e.Button == MouseButtons.Left) {
+                ret = new MouseEventArgs(e.Button, e.Clicks, x, y, e.Delta);
+                return true;
+            }
+            ret = null;
+            return false;
+        }
+
+        private void paintbrush_Click(object sender, EventArgs e) {
+            ChangeTool(paintbrushTool);
+        }
+
+        private void sprites_Click(object sender, EventArgs e) {
+            ChangeTool(spriteTool);
         }
 
         private void UpdateSpriteCategory(SpriteDisplay.Category category, bool enabled) {

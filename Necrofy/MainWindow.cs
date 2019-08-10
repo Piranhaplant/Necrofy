@@ -43,8 +43,8 @@ namespace Necrofy
 
         public void ShowEditor(EditorWindow editor) {
             openEditors.Add(editor);
+            editor.Setup(this);
             editor.Show(dockPanel, DockState.Document);
-            editor.Display(this);
         }
 
         private void dockPanel_ContentRemoved(object sender, DockContentEventArgs e) {
@@ -90,6 +90,8 @@ namespace Necrofy
                         editorToolStripItems.Add(item);
                     }
                 }
+
+                editor.Displayed();
             }
             activeEditor = editor;
             endToolStripSeparator.Visible = editorToolStripItems.Count > 0;
