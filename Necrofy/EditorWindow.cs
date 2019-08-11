@@ -28,5 +28,8 @@ namespace Necrofy
         protected virtual void FirstDisplayed() { }
         /// <summary>Called each time the editor is displayed</summary>
         public virtual void Displayed() { }
+
+        public virtual void Undo() { }
+        public virtual void Redo() { }
     }
 }

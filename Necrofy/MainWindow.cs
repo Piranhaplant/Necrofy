@@ -20,6 +20,8 @@ namespace Necrofy
         public ObjectBrowserForm ObjectBrowser { get; private set; }
         public ProjectBrowser ProjectBrowser { get; private set; }
 
+        private readonly List<ToolStripMenuItem> projectMenuItems;
+
         private List<EditorWindow> openEditors = new List<EditorWindow>();
         private EditorWindow activeEditor = null;
         private List<ToolStripItem> editorToolStripItems = new List<ToolStripItem>();
@@ -39,7 +41,22 @@ namespace Necrofy
             if (recentProjectsString != "") {
                 recentProjects.Files = recentProjectsString.Split(pathSeparator);
             }
+
+            ToolBarMenuLinker.Link(saveButton, fileSave);
+            ToolBarMenuLinker.Link(saveAllButton, fileSaveAll);
+            ToolBarMenuLinker.Link(cutButton, editCut);
+            ToolBarMenuLinker.Link(copyButton, editCopy);
+            ToolBarMenuLinker.Link(pasteButton, editPaste);
+            ToolBarMenuLinker.Link(undoButton, editUndo);
+            ToolBarMenuLinker.Link(redoButton, editRedo);
+            ToolBarMenuLinker.Link(buildProjectButton, buildBuildProject);
+            ToolBarMenuLinker.Link(runProjectButton, buildRunProject);
+            ToolBarMenuLinker.Link(runFromLevelButton, buildRunFromLevel);
+            projectMenuItems = new List<ToolStripMenuItem>() { buildBuildProject, buildRunProject };
         }
+
+        public ToolStripSplitButton UndoButton => undoButton;
+        public ToolStripSplitButton RedoButton => redoButton;
 
         public void ShowEditor(EditorWindow editor) {
             openEditors.Add(editor);
@@ -126,6 +143,10 @@ namespace Necrofy
 
             ProjectBrowser.OpenProject(project);
             ProjectBrowser.Activate();
+
+            foreach (ToolStripMenuItem item in projectMenuItems) {
+                item.Enabled = true;
+            }
         }
 
         private void BuildProject(object sender, EventArgs e) {
@@ -139,6 +160,14 @@ namespace Necrofy
             if (project == null)
                 return;
             new SpriteViewer().Show(project);
+        }
+
+        private void undo_Click(object sender, EventArgs e) {
+            activeEditor?.Undo();
+        }
+
+        private void redo_Click(object sender, EventArgs e) {
+            activeEditor?.Redo();
         }
     }
 }

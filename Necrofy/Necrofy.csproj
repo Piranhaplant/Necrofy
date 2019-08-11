@@ -204,7 +204,10 @@
     <Compile Include="SpriteViewer.Designer.cs">
       <DependentUpon>SpriteViewer.cs</DependentUpon>
     </Compile>
+    <Compile Include="ToolBarMenuLinker.cs" />
     <Compile Include="TupleList.cs" />
+    <Compile Include="Undo\TileAction.cs" />
+    <Compile Include="Undo\UndoManager.cs" />
     <Compile Include="ZAMNCompress.cs" />
     <EmbeddedResource Include="Canvas.resx">
       <DependentUpon>Canvas.cs</DependentUpon>

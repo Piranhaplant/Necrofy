@@ -12,6 +12,8 @@ namespace Necrofy
     class CheckableToolStripSplitButton : ToolStripSplitButton
     {
         private static readonly ProfessionalColorTable colorTable = new ProfessionalColorTable();
+        
+        public event EventHandler CheckedChanged;
 
         private bool _checked;
         public bool Checked {
@@ -21,6 +23,7 @@ namespace Necrofy
             set {
                 _checked = value;
                 Invalidate();
+                CheckedChanged?.Invoke(this, EventArgs.Empty);
             }
         }
         

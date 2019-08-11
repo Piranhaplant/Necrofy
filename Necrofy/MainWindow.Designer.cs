@@ -147,6 +147,7 @@
             // saveButton
             // 
             this.saveButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.saveButton.Enabled = false;
             this.saveButton.Image = global::Necrofy.Properties.Resources.disk;
             this.saveButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.saveButton.Name = "saveButton";
@@ -156,6 +157,7 @@
             // saveAllButton
             // 
             this.saveAllButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.saveAllButton.Enabled = false;
             this.saveAllButton.Image = global::Necrofy.Properties.Resources.disks;
             this.saveAllButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.saveAllButton.Name = "saveAllButton";
@@ -170,6 +172,7 @@
             // cutButton
             // 
             this.cutButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.cutButton.Enabled = false;
             this.cutButton.Image = global::Necrofy.Properties.Resources.scissors;
             this.cutButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.cutButton.Name = "cutButton";
@@ -179,6 +182,7 @@
             // copyButton
             // 
             this.copyButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.copyButton.Enabled = false;
             this.copyButton.Image = global::Necrofy.Properties.Resources.document_copy;
             this.copyButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.copyButton.Name = "copyButton";
@@ -188,6 +192,7 @@
             // pasteButton
             // 
             this.pasteButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.pasteButton.Enabled = false;
             this.pasteButton.Image = global::Necrofy.Properties.Resources.clipboard_paste;
             this.pasteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.pasteButton.Name = "pasteButton";
@@ -202,20 +207,24 @@
             // undoButton
             // 
             this.undoButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.undoButton.Enabled = false;
             this.undoButton.Image = global::Necrofy.Properties.Resources.arrow_return_180;
             this.undoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.undoButton.Name = "undoButton";
             this.undoButton.Size = new System.Drawing.Size(32, 22);
             this.undoButton.Text = "Undo";
+            this.undoButton.ButtonClick += new System.EventHandler(this.undo_Click);
             // 
             // redoButton
             // 
             this.redoButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.redoButton.Enabled = false;
             this.redoButton.Image = global::Necrofy.Properties.Resources.arrow_return;
             this.redoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.redoButton.Name = "redoButton";
             this.redoButton.Size = new System.Drawing.Size(32, 22);
             this.redoButton.Text = "Redo";
+            this.redoButton.ButtonClick += new System.EventHandler(this.redo_Click);
             // 
             // toolStripSeparator3
             // 
@@ -225,6 +234,7 @@
             // buildProjectButton
             // 
             this.buildProjectButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buildProjectButton.Enabled = false;
             this.buildProjectButton.Image = global::Necrofy.Properties.Resources.compile;
             this.buildProjectButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buildProjectButton.Name = "buildProjectButton";
@@ -235,6 +245,7 @@
             // runProjectButton
             // 
             this.runProjectButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.runProjectButton.Enabled = false;
             this.runProjectButton.Image = global::Necrofy.Properties.Resources.control;
             this.runProjectButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.runProjectButton.Name = "runProjectButton";
@@ -244,6 +255,7 @@
             // runFromLevelButton
             // 
             this.runFromLevelButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.runFromLevelButton.Enabled = false;
             this.runFromLevelButton.Image = global::Necrofy.Properties.Resources.control_cursor;
             this.runFromLevelButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.runFromLevelButton.Name = "runFromLevelButton";
@@ -362,19 +374,23 @@
             // 
             // editUndo
             // 
+            this.editUndo.Enabled = false;
             this.editUndo.Image = global::Necrofy.Properties.Resources.arrow_return_180;
             this.editUndo.Name = "editUndo";
-            this.editUndo.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
+            this.editUndo.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
             this.editUndo.Size = new System.Drawing.Size(211, 22);
             this.editUndo.Text = "Undo";
+            this.editUndo.Click += new System.EventHandler(this.undo_Click);
             // 
             // editRedo
             // 
+            this.editRedo.Enabled = false;
             this.editRedo.Image = global::Necrofy.Properties.Resources.arrow_return;
             this.editRedo.Name = "editRedo";
-            this.editRedo.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
+            this.editRedo.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
             this.editRedo.Size = new System.Drawing.Size(211, 22);
             this.editRedo.Text = "Redo";
+            this.editRedo.Click += new System.EventHandler(this.redo_Click);
             // 
             // editSeparator1
             // 
@@ -383,6 +399,7 @@
             // 
             // editCut
             // 
+            this.editCut.Enabled = false;
             this.editCut.Image = global::Necrofy.Properties.Resources.scissors;
             this.editCut.Name = "editCut";
             this.editCut.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
@@ -391,6 +408,7 @@
             // 
             // editCopy
             // 
+            this.editCopy.Enabled = false;
             this.editCopy.Image = global::Necrofy.Properties.Resources.document_copy;
             this.editCopy.Name = "editCopy";
             this.editCopy.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
@@ -399,6 +417,7 @@
             // 
             // editPaste
             // 
+            this.editPaste.Enabled = false;
             this.editPaste.Image = global::Necrofy.Properties.Resources.clipboard_paste;
             this.editPaste.Name = "editPaste";
             this.editPaste.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
@@ -407,6 +426,7 @@
             // 
             // editDelete
             // 
+            this.editDelete.Enabled = false;
             this.editDelete.Image = global::Necrofy.Properties.Resources.cross_script;
             this.editDelete.Name = "editDelete";
             this.editDelete.ShortcutKeys = System.Windows.Forms.Keys.Delete;
@@ -420,6 +440,7 @@
             // 
             // editSelectAll
             // 
+            this.editSelectAll.Enabled = false;
             this.editSelectAll.Name = "editSelectAll";
             this.editSelectAll.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
             this.editSelectAll.Size = new System.Drawing.Size(211, 22);
@@ -427,6 +448,7 @@
             // 
             // editSelectNone
             // 
+            this.editSelectNone.Enabled = false;
             this.editSelectNone.Name = "editSelectNone";
             this.editSelectNone.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.A)));
@@ -446,6 +468,7 @@
             // 
             // buildBuildProject
             // 
+            this.buildBuildProject.Enabled = false;
             this.buildBuildProject.Image = global::Necrofy.Properties.Resources.compile;
             this.buildBuildProject.Name = "buildBuildProject";
             this.buildBuildProject.ShortcutKeys = System.Windows.Forms.Keys.F4;
@@ -455,6 +478,7 @@
             // 
             // buildRunProject
             // 
+            this.buildRunProject.Enabled = false;
             this.buildRunProject.Image = global::Necrofy.Properties.Resources.control;
             this.buildRunProject.Name = "buildRunProject";
             this.buildRunProject.ShortcutKeys = System.Windows.Forms.Keys.F5;
@@ -463,6 +487,7 @@
             // 
             // buildRunFromLevel
             // 
+            this.buildRunFromLevel.Enabled = false;
             this.buildRunFromLevel.Image = global::Necrofy.Properties.Resources.control_cursor;
             this.buildRunFromLevel.Name = "buildRunFromLevel";
             this.buildRunFromLevel.ShortcutKeys = System.Windows.Forms.Keys.F6;
@@ -471,6 +496,7 @@
             // 
             // buildRunSettings
             // 
+            this.buildRunSettings.Enabled = false;
             this.buildRunSettings.Name = "buildRunSettings";
             this.buildRunSettings.Size = new System.Drawing.Size(175, 22);
             this.buildRunSettings.Text = "Run Settings...";

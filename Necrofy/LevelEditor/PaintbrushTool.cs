@@ -28,8 +28,7 @@ namespace Necrofy
                 if (selecting) {
                     editor.tilesetObjectBrowserContents.SelectedIndex = editor.level.Level.background[tileX, tileY];
                 } else if (editor.tilesetObjectBrowserContents.SelectedIndex > -1) {
-                    // TODO undo stuff
-                    editor.level.Level.background[tileX, tileY] = (ushort)editor.tilesetObjectBrowserContents.SelectedIndex;
+                    editor.undoManager.Do(new PaintTileAction(tileX, tileY, (ushort)editor.tilesetObjectBrowserContents.SelectedIndex));
                     editor.Repaint();
                 }
                 prevX = tileX;
@@ -40,7 +39,7 @@ namespace Necrofy
         public override void MouseUp(MouseEventArgs e) {
             prevX = -1;
             prevY = -1;
-            // TODO undo stuff
+            editor.undoManager.ForceNoMerge();
         }
     }
 }

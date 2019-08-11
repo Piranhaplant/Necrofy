@@ -23,10 +23,10 @@ namespace Necrofy
         public readonly SpriteObjectBrowserContents spriteObjectBrowserContents;
 
         private readonly ScrollWrapper scrollWrapper;
+        public UndoManager undoManager;
         
         private readonly PaintbrushTool paintbrushTool;
         private readonly SpriteTool spriteTool;
-        private readonly Dictionary<Tool, ToolStripItem> toolButtons;
         private readonly Dictionary<Tool, ToolStripMenuItem> toolMenuItems;
         private readonly Dictionary<Tool.ObjectType, ObjectBrowserContents> toolTypeToObjectContents;
 
@@ -42,7 +42,7 @@ namespace Necrofy
             scrollWrapper = new ScrollWrapper(canvas, hscroll, vscroll);
             scrollWrapper.SetClientSize(level.Level.width * 64 + LevelPadding * 2, level.Level.height * 64 + LevelPadding * 2);
             scrollWrapper.Scrolled += scrollWrapper_Scrolled;
-
+            
             tilesetObjectBrowserContents = new TilesetObjectBrowserContents(level);
             spriteObjectBrowserContents = new SpriteObjectBrowserContents(level.spriteGraphics);
             spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.Item);
@@ -57,25 +57,33 @@ namespace Necrofy
                 { Tool.ObjectType.Sprites, spriteObjectBrowserContents },
                 { Tool.ObjectType.Tiles, tilesetObjectBrowserContents },
             };
-            toolButtons = new Dictionary<Tool, ToolStripItem> {
-                { paintbrushTool, paintbrushButton },
-                { spriteTool, spritesButton },
-            };
             toolMenuItems = new Dictionary<Tool, ToolStripMenuItem> {
                 { paintbrushTool, toolsPaintbrush },
                 { spriteTool, toolsSprites },
             };
+            ToolBarMenuLinker.Link(paintbrushButton, toolsPaintbrush);
+            ToolBarMenuLinker.Link(spritesButton, toolsSprites);
 
             Repaint();
         }
         
         protected override void FirstDisplayed() {
+            undoManager = new UndoManager(mainWindow.UndoButton, mainWindow.RedoButton, this);
             ChangeTool(paintbrushTool);
             mainWindow.ObjectBrowser.Activate();
         }
 
         public override void Displayed() {
             mainWindow.ObjectBrowser.Browser.Contents = currentContents;
+            undoManager.RefreshItems();
+        }
+
+        public override void Undo() {
+            undoManager.UndoLast();
+        }
+
+        public override void Redo() {
+            undoManager.RedoLast();
         }
 
         private void ChangeTool(Tool tool) {
@@ -83,28 +91,14 @@ namespace Necrofy
                 currentTool = tool;
                 currentContents = toolTypeToObjectContents[tool.objectType];
                 mainWindow.ObjectBrowser.Browser.Contents = currentContents;
-
-                foreach (ToolStripItem button in toolButtons.Values) {
-                    SetChecked(button, false);
-                }
+                
                 foreach (ToolStripMenuItem menuItem in toolMenuItems.Values) {
                     menuItem.Checked = false;
                 }
-                SetChecked(toolButtons[tool], true);
                 toolMenuItems[tool].Checked = true;
             }
         }
-
-        private void SetChecked(ToolStripItem item, bool value) {
-            if (item is ToolStripButton button) {
-                button.Checked = value;
-            } else if (item is CheckableToolStripSplitButton checkableButton) {
-                checkableButton.Checked = value;
-            } else {
-                Debug.WriteLine("Tried to SetChecked on item of unknown type: " + item);
-            }
-        }
-
+        
         void scrollWrapper_Scrolled() {
             Repaint();
         }
@@ -194,6 +188,7 @@ namespace Necrofy
             } else {
                 spriteObjectBrowserContents.RemoveCategory(category);
             }
+            ChangeTool(spriteTool);
         }
 
         private void spritesItems_CheckedChanged(object sender, EventArgs e) {
