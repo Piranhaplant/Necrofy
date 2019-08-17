@@ -44,6 +44,13 @@ namespace Necrofy
             LayoutObjects();
         }
 
+        public void ScrollToSelection() {
+            if (contents != null && contents.SelectedIndex >= 0 && contents.SelectedIndex < objectRects.Count) {
+                Rectangle r = objectRects[contents.SelectedIndex];
+                scrollWrapper.ScrollToPoint(r.X + r.Width / 2, r.Y + r.Height / 2);
+            }
+        }
+
         private void LayoutObjects() {
             objectRects.Clear();
             if (contents == null) {
@@ -107,7 +114,7 @@ namespace Necrofy
             }
         }
 
-        void scrollWrapper_Scrolled() {
+        void scrollWrapper_Scrolled(object sender, EventArgs e) {
             canvas.Invalidate();
         }
 

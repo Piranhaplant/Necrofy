@@ -64,6 +64,10 @@ namespace Necrofy
         private List<ToolStripMenuItem> items = new List<ToolStripMenuItem>();
 
         private void CreateItems() {
+            if (DesignMode) {
+                return;
+            }
+
             foreach (ToolStripMenuItem item in items) {
                 Parent.Items.Remove(item);
             }
@@ -83,12 +87,10 @@ namespace Necrofy
                 int iClosure = i;
                 item.Click += (sender, e) => Item_Click(sender, iClosure);
             }
-
-            if (!DesignMode) {
-                Visible = _files.Count > 0;
-                if (_separator != null) {
-                    _separator.Visible = Visible;
-                }
+            
+            Visible = _files.Count > 0;
+            if (_separator != null) {
+                _separator.Visible = _files.Count > 0; // For some reason trying to reuse "Visible" here doesn't work
             }
         }
 

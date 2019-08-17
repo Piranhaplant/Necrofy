@@ -17,11 +17,13 @@ namespace Necrofy
 
         public abstract ObjectType objectType { get; }
         public virtual void Paint(Graphics g) { }
-        public virtual void MouseDown(MouseEventArgs e) { }
-        public virtual void MouseUp(MouseEventArgs e) { }
-        public virtual void MouseMove(MouseEventArgs e) { }
+        public virtual void MouseDown(LevelMouseEventArgs e) { }
+        public virtual void MouseUp(LevelMouseEventArgs e) { }
+        public virtual void MouseMove(LevelMouseEventArgs e) { }
         public virtual void KeyDown(KeyEventArgs e) { }
         public virtual void KeyUp(KeyEventArgs e) { }
+        public virtual void TileChanged() { }
+        public virtual void SpriteChanged() { }
 
         public enum ObjectType
         {

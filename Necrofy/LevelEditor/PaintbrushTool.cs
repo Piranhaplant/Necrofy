@@ -16,27 +16,26 @@ namespace Necrofy
 
         public override ObjectType objectType => ObjectType.Tiles;
 
-        public override void MouseDown(MouseEventArgs e) {
+        public override void MouseDown(LevelMouseEventArgs e) {
             selecting = (Control.ModifierKeys == Keys.Control);
             MouseMove(e);
         }
 
-        public override void MouseMove(MouseEventArgs e) {
-            int tileX = e.X / 64;
-            int tileY = e.Y / 64;
-            if ((tileX != prevX || tileY != prevY) && tileX >= 0 && tileY >= 0 && tileX < editor.level.Level.width && tileY < editor.level.Level.height) {
+        public override void MouseMove(LevelMouseEventArgs e) {
+            if ((e.TileX != prevX || e.TileY != prevY) && e.InBounds) {
                 if (selecting) {
-                    editor.tilesetObjectBrowserContents.SelectedIndex = editor.level.Level.background[tileX, tileY];
+                    editor.tilesetObjectBrowserContents.SelectedIndex = editor.level.Level.background[e.TileX, e.TileY];
+                    editor.ScrollObjectBrowserToSelection();
                 } else if (editor.tilesetObjectBrowserContents.SelectedIndex > -1) {
-                    editor.undoManager.Do(new PaintTileAction(tileX, tileY, (ushort)editor.tilesetObjectBrowserContents.SelectedIndex));
+                    editor.undoManager.Do(new PaintTileAction(e.TileX, e.TileY, (ushort)editor.tilesetObjectBrowserContents.SelectedIndex));
                     editor.Repaint();
                 }
-                prevX = tileX;
-                prevY = tileY;
+                prevX = e.TileX;
+                prevY = e.TileY;
             }
         }
 
-        public override void MouseUp(MouseEventArgs e) {
+        public override void MouseUp(LevelMouseEventArgs e) {
             prevX = -1;
             prevY = -1;
             editor.undoManager.ForceNoMerge();

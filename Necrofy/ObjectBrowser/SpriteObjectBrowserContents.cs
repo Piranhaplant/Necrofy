@@ -11,21 +11,19 @@ namespace Necrofy
         private readonly LoadedSpriteGraphics spriteGrahpics;
         private readonly HashSet<SpriteDisplay.Category> categories = new HashSet<SpriteDisplay.Category>();
         private readonly List<LoadedSpriteGraphics.LoadedSprite> sprites = new List<LoadedSpriteGraphics.LoadedSprite>();
-
+        
         public SpriteObjectBrowserContents(LoadedSpriteGraphics spriteGrahpics) {
             this.spriteGrahpics = spriteGrahpics;
         }
 
         public void AddCategory(SpriteDisplay.Category category) {
-            if (!categories.Contains(category)) {
-                categories.Add(category);
+            if (categories.Add(category)) {
                 UpdateSpriteList();
             }
         }
 
         public void RemoveCategory(SpriteDisplay.Category category) {
-            if (categories.Contains(category)) {
-                categories.Remove(category);
+            if (categories.Remove(category)) {
                 UpdateSpriteList();
             }
         }

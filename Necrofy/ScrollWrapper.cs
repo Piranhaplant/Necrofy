@@ -11,9 +11,8 @@ namespace Necrofy
         private readonly Control control;
         private readonly HScrollBar hscroll;
         private readonly VScrollBar vscroll;
-
-        public delegate void ScrollDelegate();
-        public event ScrollDelegate Scrolled;
+        
+        public event EventHandler Scrolled;
 
         public int LeftPosition { get; private set; }
         public int TopPosition { get; private set; }
@@ -30,13 +29,13 @@ namespace Necrofy
             this.vscroll = vscroll;
 
             if (autoSize) {
-                control.SizeChanged += new EventHandler(UpdateSize);
+                control.SizeChanged += UpdateSize;
             }
-            control.MouseDown += new MouseEventHandler(control_MouseDown);
-            control.MouseMove += new MouseEventHandler(control_MouseMove);
-            control.MouseWheel += new MouseEventHandler(control_MouseWheel);
-            hscroll.ValueChanged += new EventHandler(UpdatePosition);
-            vscroll.ValueChanged += new EventHandler(UpdatePosition);
+            control.MouseDown += control_MouseDown;
+            control.MouseMove += control_MouseMove;
+            control.MouseWheel += control_MouseWheel;
+            hscroll.ValueChanged += UpdatePosition;
+            vscroll.ValueChanged += UpdatePosition;
         }
 
         public void SetClientSize(int width, int height) {
@@ -45,6 +44,15 @@ namespace Necrofy
             TopPosition = 0;
             LeftPosition = 0;
             UpdateSize();
+        }
+
+        public void ScrollToPoint(int x, int y) {
+            if (hscroll.Enabled) {
+                SetScrollBarValue(hscroll, x - control.Width / 2);
+            }
+            if (vscroll.Enabled) {
+                SetScrollBarValue(vscroll, y - control.Height / 2);
+            }
         }
 
         private void SetScrollBarValue(ScrollBar bar, int value) {
@@ -79,10 +87,8 @@ namespace Necrofy
                 SetScrollBarValue(vscroll, vscroll.Value);
                 TopPosition = -vscroll.Value;
             }
-
-            if (Scrolled != null) {
-                Scrolled.Invoke();
-            }
+            
+            Scrolled?.Invoke(this, EventArgs.Empty);
         }
 
         void UpdatePosition(object sender, EventArgs e) {
@@ -96,10 +102,8 @@ namespace Necrofy
             if (hscroll.Enabled) {
                 LeftPosition = -hscroll.Value;
             }
-
-            if (Scrolled != null) {
-                Scrolled.Invoke();
-            }
+            
+            Scrolled?.Invoke(this, EventArgs.Empty);
         }
 
         void control_MouseDown(object sender, MouseEventArgs e) {

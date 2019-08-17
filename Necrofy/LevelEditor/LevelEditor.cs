@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
@@ -24,9 +25,24 @@ namespace Necrofy
 
         private readonly ScrollWrapper scrollWrapper;
         public UndoManager undoManager;
-        
+
+        public readonly Selection selection;
+        private GraphicsPath selectionPath = null;
+        private Rectangle eraserRect = Rectangle.Empty;
+
+        private readonly SolidBrush selectionFillBrush = new SolidBrush(Color.FromArgb(96, 0, 0, 0));
+        private readonly SolidBrush eraserFillBrush = new SolidBrush(Color.FromArgb(128, 255, 255, 255));
+        private readonly Pen selectionBorderDashPen = new Pen(Color.Black) {
+            DashOffset = 0,
+            DashPattern = new float[] { 4f, 4f },
+        };
+
         private readonly PaintbrushTool paintbrushTool;
+        private readonly RectangleSelectTool rectangleSelectTool;
+        private readonly PencilSelectTool pencilSelectTool;
+        private readonly TileSelectTool tileSelectTool;
         private readonly SpriteTool spriteTool;
+
         private readonly Dictionary<Tool, ToolStripMenuItem> toolMenuItems;
         private readonly Dictionary<Tool.ObjectType, ObjectBrowserContents> toolTypeToObjectContents;
 
@@ -42,31 +58,56 @@ namespace Necrofy
             scrollWrapper = new ScrollWrapper(canvas, hscroll, vscroll);
             scrollWrapper.SetClientSize(level.Level.width * 64 + LevelPadding * 2, level.Level.height * 64 + LevelPadding * 2);
             scrollWrapper.Scrolled += scrollWrapper_Scrolled;
+
+            selection = new Selection(level.Level.width, level.Level.height);
+            selection.Changed += Selection_Changed;
             
             tilesetObjectBrowserContents = new TilesetObjectBrowserContents(level);
+            tilesetObjectBrowserContents.SelectedIndexChanged += TilesetObjectBrowserContents_SelectedIndexChanged;
             spriteObjectBrowserContents = new SpriteObjectBrowserContents(level.spriteGraphics);
+            spriteObjectBrowserContents.SelectedIndexChanged += SpriteObjectBrowserContents_SelectedIndexChanged;
             spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.Item);
             spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.Victim);
             spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.OneTimeMonster);
             spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.Monster);
 
-            paintbrushTool = new PaintbrushTool(this);
-            spriteTool = new SpriteTool(this);
-
             toolTypeToObjectContents = new Dictionary<Tool.ObjectType, ObjectBrowserContents> {
                 { Tool.ObjectType.Sprites, spriteObjectBrowserContents },
                 { Tool.ObjectType.Tiles, tilesetObjectBrowserContents },
             };
+
+            paintbrushTool = new PaintbrushTool(this);
+            rectangleSelectTool = new RectangleSelectTool(this);
+            pencilSelectTool = new PencilSelectTool(this);
+            tileSelectTool = new TileSelectTool(this);
+            spriteTool = new SpriteTool(this);
+
             toolMenuItems = new Dictionary<Tool, ToolStripMenuItem> {
                 { paintbrushTool, toolsPaintbrush },
+                { rectangleSelectTool, toolsRectangleSelect },
+                { pencilSelectTool, toolsPencilSelect },
+                { tileSelectTool, toolsTileSelect },
                 { spriteTool, toolsSprites },
             };
             ToolBarMenuLinker.Link(paintbrushButton, toolsPaintbrush);
+            ToolBarMenuLinker.Link(rectangleSelectButton, toolsRectangleSelect);
+            ToolBarMenuLinker.Link(pencilSelectButton, toolsPencilSelect);
+            ToolBarMenuLinker.Link(tileSelectButton, toolsTileSelect);
             ToolBarMenuLinker.Link(spritesButton, toolsSprites);
-
+            
             Repaint();
         }
         
+        public void ScrollObjectBrowserToSelection() {
+            mainWindow.ObjectBrowser.Browser.ScrollToSelection();
+        }
+
+        public void FillSelection() {
+            if (tilesetObjectBrowserContents.SelectedIndex >= 0 && selectionPath != null) {
+                undoManager.Do(new FillSelectionAction((ushort)tilesetObjectBrowserContents.SelectedIndex));
+            }
+        }
+
         protected override void FirstDisplayed() {
             undoManager = new UndoManager(mainWindow.UndoButton, mainWindow.RedoButton, this);
             ChangeTool(paintbrushTool);
@@ -76,6 +117,15 @@ namespace Necrofy
         public override void Displayed() {
             mainWindow.ObjectBrowser.Browser.Contents = currentContents;
             undoManager.RefreshItems();
+        }
+
+        private void Selection_Changed(object sender, EventArgs e) {
+            if (selectionPath != null) {
+                selectionPath.Dispose();
+            }
+            selectionPath = selection.GetGraphicsPath();
+            eraserRect = selection.GetEraserRectangle();
+            Repaint();
         }
 
         public override void Undo() {
@@ -98,8 +148,16 @@ namespace Necrofy
                 toolMenuItems[tool].Checked = true;
             }
         }
-        
-        void scrollWrapper_Scrolled() {
+
+        private void TilesetObjectBrowserContents_SelectedIndexChanged(object sender, EventArgs e) {
+            currentTool.TileChanged();
+        }
+
+        private void SpriteObjectBrowserContents_SelectedIndexChanged(object sender, EventArgs e) {
+            currentTool.SpriteChanged();
+        }
+
+        void scrollWrapper_Scrolled(object sender, EventArgs e) {
             Repaint();
         }
 
@@ -142,32 +200,47 @@ namespace Necrofy
             //    }
             //}
 
+            if (selectionPath != null) {
+                e.Graphics.FillPath(selectionFillBrush, selectionPath);
+                e.Graphics.DrawPath(Pens.White, selectionPath);
+                e.Graphics.DrawPath(selectionBorderDashPen, selectionPath);
+            }
+            if (eraserRect != Rectangle.Empty) {
+                e.Graphics.FillRectangle(eraserFillBrush, eraserRect);
+                e.Graphics.DrawRectangle(Pens.White, eraserRect);
+                e.Graphics.DrawRectangle(selectionBorderDashPen, eraserRect);
+            }
+
             currentTool.Paint(e.Graphics);
         }
 
+        // Double clicking on the title bar to maximize the window causes mouse move/up events to be sent without a mouse down. This is used to ignore those.
+        private bool mouseDown = false;
         private void canvas_MouseDown(object sender, MouseEventArgs e) {
-            if (TransformMouseArgs(e, out MouseEventArgs args)) {
+            mouseDown = true;
+            if (TransformMouseArgs(e, out LevelMouseEventArgs args)) {
                 currentTool.MouseDown(args);
             }
         }
 
         private void canvas_MouseUp(object sender, MouseEventArgs e) {
-            if (TransformMouseArgs(e, out MouseEventArgs args)) {
+            if (TransformMouseArgs(e, out LevelMouseEventArgs args)) {
                 currentTool.MouseUp(args);
             }
+            mouseDown = false;
         }
 
         private void canvas_MouseMove(object sender, MouseEventArgs e) {
-            if (TransformMouseArgs(e, out MouseEventArgs args)) {
+            if (TransformMouseArgs(e, out LevelMouseEventArgs args)) {
                 currentTool.MouseMove(args);
             }
         }
 
-        private bool TransformMouseArgs(MouseEventArgs e, out MouseEventArgs ret) {
+        private bool TransformMouseArgs(MouseEventArgs e, out LevelMouseEventArgs ret) {
             int x = e.X - scrollWrapper.LeftPosition - LevelPadding;
             int y = e.Y - scrollWrapper.TopPosition - LevelPadding;
-            if (e.Button == MouseButtons.Left) {
-                ret = new MouseEventArgs(e.Button, e.Clicks, x, y, e.Delta);
+            if (mouseDown && e.Button == MouseButtons.Left) {
+                ret = new LevelMouseEventArgs(e.Button, e.Clicks, x, y, e.Delta, level.Level.width, level.Level.height);
                 return true;
             }
             ret = null;
@@ -176,6 +249,18 @@ namespace Necrofy
 
         private void paintbrush_Click(object sender, EventArgs e) {
             ChangeTool(paintbrushTool);
+        }
+
+        private void rectangleSelect_Click(object sender, EventArgs e) {
+            ChangeTool(rectangleSelectTool);
+        }
+
+        private void pencilSelect_Click(object sender, EventArgs e) {
+            ChangeTool(pencilSelectTool);
+        }
+
+        private void tileSelect_Click(object sender, EventArgs e) {
+            ChangeTool(tileSelectTool);
         }
 
         private void sprites_Click(object sender, EventArgs e) {

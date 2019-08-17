@@ -13,6 +13,7 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -25,7 +26,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -113,8 +113,12 @@
     <Compile Include="EditorWindow.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="LevelEditor\LevelMouseEventArgs.cs" />
     <Compile Include="LevelEditor\PaintbrushTool.cs" />
+    <Compile Include="LevelEditor\PencilSelectTool.cs" />
+    <Compile Include="LevelEditor\RectangleSelectTool.cs" />
     <Compile Include="LevelEditor\SpriteTool.cs" />
+    <Compile Include="LevelEditor\TileSelectTool.cs" />
     <Compile Include="LevelEditor\Tool.cs" />
     <Compile Include="NewProjectDialog.cs">
       <SubType>Form</SubType>
@@ -192,6 +196,7 @@
     <Compile Include="ROMInfo.cs" />
     <Compile Include="ROMPointers.cs" />
     <Compile Include="ScrollWrapper.cs" />
+    <Compile Include="LevelEditor\Selection.cs" />
     <Compile Include="SeparateCheckToolStripMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>
