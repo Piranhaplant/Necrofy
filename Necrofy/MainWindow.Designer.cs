@@ -56,6 +56,7 @@
             this.fileSave = new System.Windows.Forms.ToolStripMenuItem();
             this.fileSaveAll = new System.Windows.Forms.ToolStripMenuItem();
             this.fileSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.recentProjects = new Necrofy.RecentFilesMenu();
             this.fileSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.fileExit = new System.Windows.Forms.ToolStripMenuItem();
             this.editMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -75,7 +76,6 @@
             this.buildRunFromLevel = new System.Windows.Forms.ToolStripMenuItem();
             this.buildRunSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.openProjectDialog = new System.Windows.Forms.OpenFileDialog();
-            this.recentProjects = new Necrofy.RecentFilesMenu();
             this.toolStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -153,6 +153,7 @@
             this.saveButton.Name = "saveButton";
             this.saveButton.Size = new System.Drawing.Size(23, 22);
             this.saveButton.Text = "Save";
+            this.saveButton.Click += new System.EventHandler(this.Save);
             // 
             // saveAllButton
             // 
@@ -163,6 +164,7 @@
             this.saveAllButton.Name = "saveAllButton";
             this.saveAllButton.Size = new System.Drawing.Size(23, 22);
             this.saveAllButton.Text = "Save All";
+            this.saveAllButton.Click += new System.EventHandler(this.SaveAll);
             // 
             // toolStripSeparator1
             // 
@@ -213,7 +215,7 @@
             this.undoButton.Name = "undoButton";
             this.undoButton.Size = new System.Drawing.Size(32, 22);
             this.undoButton.Text = "Undo";
-            this.undoButton.ButtonClick += new System.EventHandler(this.undo_Click);
+            this.undoButton.ButtonClick += new System.EventHandler(this.Undo);
             // 
             // redoButton
             // 
@@ -224,7 +226,7 @@
             this.redoButton.Name = "redoButton";
             this.redoButton.Size = new System.Drawing.Size(32, 22);
             this.redoButton.Text = "Redo";
-            this.redoButton.ButtonClick += new System.EventHandler(this.redo_Click);
+            this.redoButton.ButtonClick += new System.EventHandler(this.Redo);
             // 
             // toolStripSeparator3
             // 
@@ -327,6 +329,7 @@
             this.fileSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.fileSave.Size = new System.Drawing.Size(187, 22);
             this.fileSave.Text = "Save";
+            this.fileSave.Click += new System.EventHandler(this.Save);
             // 
             // fileSaveAll
             // 
@@ -337,11 +340,23 @@
             | System.Windows.Forms.Keys.S)));
             this.fileSaveAll.Size = new System.Drawing.Size(187, 22);
             this.fileSaveAll.Text = "Save All";
+            this.fileSaveAll.Click += new System.EventHandler(this.SaveAll);
             // 
             // fileSeparator2
             // 
             this.fileSeparator2.Name = "fileSeparator2";
             this.fileSeparator2.Size = new System.Drawing.Size(184, 6);
+            // 
+            // recentProjects
+            // 
+            this.recentProjects.Files = ((System.Collections.Generic.IEnumerable<string>)(resources.GetObject("recentProjects.Files")));
+            this.recentProjects.MaxItems = 10;
+            this.recentProjects.MaxLength = 60;
+            this.recentProjects.Name = "recentProjects";
+            this.recentProjects.Separator = this.fileSeparator3;
+            this.recentProjects.Size = new System.Drawing.Size(187, 22);
+            this.recentProjects.Text = "Recent Projects";
+            this.recentProjects.FileClicked += new Necrofy.RecentFilesMenu.FileClickedDelegate(this.recentProjects_FileClicked);
             // 
             // fileSeparator3
             // 
@@ -380,7 +395,7 @@
             this.editUndo.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
             this.editUndo.Size = new System.Drawing.Size(211, 22);
             this.editUndo.Text = "Undo";
-            this.editUndo.Click += new System.EventHandler(this.undo_Click);
+            this.editUndo.Click += new System.EventHandler(this.Undo);
             // 
             // editRedo
             // 
@@ -390,7 +405,7 @@
             this.editRedo.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
             this.editRedo.Size = new System.Drawing.Size(211, 22);
             this.editRedo.Text = "Redo";
-            this.editRedo.Click += new System.EventHandler(this.redo_Click);
+            this.editRedo.Click += new System.EventHandler(this.Redo);
             // 
             // editSeparator1
             // 
@@ -500,23 +515,12 @@
             this.buildRunSettings.Name = "buildRunSettings";
             this.buildRunSettings.Size = new System.Drawing.Size(175, 22);
             this.buildRunSettings.Text = "Run Settings...";
-            this.buildRunSettings.Click += new System.EventHandler(this.buildRunSettings_Click);
+            this.buildRunSettings.Click += new System.EventHandler(this.RunSettings);
             // 
             // openProjectDialog
             // 
             this.openProjectDialog.Filter = "Necrofy project files (*.nfyp)|*.nfyp|All Files (*.*)|*.*";
             this.openProjectDialog.Title = "Open Project";
-            // 
-            // recentProjects
-            // 
-            this.recentProjects.Files = ((System.Collections.Generic.IEnumerable<string>)(resources.GetObject("recentProjects.Files")));
-            this.recentProjects.MaxItems = 10;
-            this.recentProjects.MaxLength = 60;
-            this.recentProjects.Name = "recentProjects";
-            this.recentProjects.Separator = this.fileSeparator3;
-            this.recentProjects.Size = new System.Drawing.Size(187, 22);
-            this.recentProjects.Text = "Recent Projects";
-            this.recentProjects.FileClicked += new Necrofy.RecentFilesMenu.FileClickedDelegate(this.recentProjects_FileClicked);
             // 
             // MainWindow
             // 

@@ -24,7 +24,7 @@ namespace Necrofy
         public readonly SpriteObjectBrowserContents spriteObjectBrowserContents;
 
         private readonly ScrollWrapper scrollWrapper;
-        public UndoManager undoManager;
+        public UndoManager<LevelEditor> undoManager;
 
         public readonly Selection selection;
         private GraphicsPath selectionPath = null;
@@ -108,17 +108,22 @@ namespace Necrofy
             }
         }
 
-        protected override void FirstDisplayed() {
-            undoManager = new UndoManager(mainWindow.UndoButton, mainWindow.RedoButton, this);
+        protected override UndoManager Setup() {
+            undoManager = new UndoManager<LevelEditor>(mainWindow.UndoButton, mainWindow.RedoButton, this);
             ChangeTool(paintbrushTool);
             mainWindow.ObjectBrowser.Activate();
+            return undoManager;
         }
 
         public override void Displayed() {
+            base.Displayed();
             mainWindow.ObjectBrowser.Browser.Contents = currentContents;
-            undoManager.RefreshItems();
         }
 
+        protected override void DoSave(Project project) {
+            level.levelAsset.WriteFile(project);
+        }
+        
         private void Selection_Changed(object sender, EventArgs e) {
             if (selectionPath != null) {
                 selectionPath.Dispose();
@@ -127,15 +132,7 @@ namespace Necrofy
             eraserRect = selection.GetEraserRectangle();
             Repaint();
         }
-
-        public override void Undo() {
-            undoManager.UndoLast();
-        }
-
-        public override void Redo() {
-            undoManager.RedoLast();
-        }
-
+        
         private void ChangeTool(Tool tool) {
             if (tool != currentTool) {
                 currentTool = tool;

@@ -22,10 +22,11 @@ namespace Necrofy
 
         private readonly List<ToolStripMenuItem> projectMenuItems;
 
-        private List<EditorWindow> openEditors = new List<EditorWindow>();
+        private readonly HashSet<EditorWindow> openEditors = new HashSet<EditorWindow>();
+        private readonly HashSet<EditorWindow> dirtyEditors = new HashSet<EditorWindow>();
         private EditorWindow activeEditor = null;
-        private List<ToolStripItem> editorToolStripItems = new List<ToolStripItem>();
-        private List<ToolStripItem> editorMenuStripItems = new List<ToolStripItem>();
+        private readonly List<ToolStripItem> editorToolStripItems = new List<ToolStripItem>();
+        private readonly List<ToolStripItem> editorMenuStripItems = new List<ToolStripItem>();
 
         public MainWindow()
         {
@@ -62,6 +63,24 @@ namespace Necrofy
             openEditors.Add(editor);
             editor.Setup(this);
             editor.Show(dockPanel, DockState.Document);
+            editor.DirtyChanged += Editor_DirtyChanged;
+        }
+
+        private void Editor_DirtyChanged(object sender, EventArgs e) {
+            EditorWindow editor = (EditorWindow)sender;
+            if (editor.Dirty) {
+                if (dirtyEditors.Add(editor)) {
+                    editor.Text += "*";
+                }
+            } else {
+                if (dirtyEditors.Remove(editor)) {
+                    editor.Text = editor.Text.Substring(0, editor.Text.Length - 1);
+                }
+            }
+            if (editor == activeEditor) {
+                saveButton.Enabled = editor.Dirty;
+            }
+            saveAllButton.Enabled = dirtyEditors.Count > 0;
         }
 
         private void dockPanel_ContentRemoved(object sender, DockContentEventArgs e) {
@@ -109,6 +128,7 @@ namespace Necrofy
                 }
 
                 editor.Displayed();
+                saveButton.Enabled = editor.Dirty;
             }
             activeEditor = editor;
             endToolStripSeparator.Visible = editorToolStripItems.Count > 0;
@@ -149,6 +169,26 @@ namespace Necrofy
             }
         }
 
+        private void Save(object sender, EventArgs e) {
+            activeEditor?.Save(project);
+        }
+
+        private void SaveAll(object sender, EventArgs e) {
+            // Calling save on the editors will modify this set, so operate on a copy
+            HashSet<EditorWindow> allDirtyEditors = new HashSet<EditorWindow>(dirtyEditors);
+            foreach (EditorWindow editor in allDirtyEditors) {
+                editor.Save(project);
+            }
+        }
+
+        private void Undo(object sender, EventArgs e) {
+            activeEditor?.Undo();
+        }
+
+        private void Redo(object sender, EventArgs e) {
+            activeEditor?.Redo();
+        }
+
         private void BuildProject(object sender, EventArgs e) {
             if (project == null)
                 return;
@@ -156,18 +196,10 @@ namespace Necrofy
             // TODO tell the user that it finished
         }
 
-        private void buildRunSettings_Click(object sender, EventArgs e) {
+        private void RunSettings(object sender, EventArgs e) {
             if (project == null)
                 return;
             new SpriteViewer().Show(project);
-        }
-
-        private void undo_Click(object sender, EventArgs e) {
-            activeEditor?.Undo();
-        }
-
-        private void redo_Click(object sender, EventArgs e) {
-            activeEditor?.Redo();
         }
     }
 }

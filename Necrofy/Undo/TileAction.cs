@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Necrofy
 {
-    class PaintTileAction : UndoManager.Action
+    class PaintTileAction : LevelEditorAction
     {
         private readonly List<Point> points = new List<Point>();
         private readonly List<ushort> prevTileType = new List<ushort>();
@@ -16,8 +16,9 @@ namespace Necrofy
             points.Add(new Point(x, y));
             this.tileType = tileType;
         }
-
-        protected override void AfterSetEditor() {
+        
+        public override void SetEditor(LevelEditor editor) {
+            base.SetEditor(editor);
             prevTileType.Add(level.background[points[0].X, points[0].Y]);
         }
 
@@ -35,7 +36,7 @@ namespace Necrofy
 
         public override bool CanMerge => true;
 
-        public override void Merge(UndoManager.Action action) {
+        public override void Merge(UndoAction<LevelEditor> action) {
             PaintTileAction paintTileAction = (PaintTileAction)action;
             if (!points.Contains(paintTileAction.points[0])) {
                 points.Add(paintTileAction.points[0]);
@@ -48,7 +49,7 @@ namespace Necrofy
         }
     }
 
-    class FillSelectionAction : UndoManager.Action
+    class FillSelectionAction : LevelEditorAction
     {
         private readonly List<Point> points = new List<Point>();
         private readonly List<ushort> prevTileType = new List<ushort>();
@@ -57,8 +58,9 @@ namespace Necrofy
         public FillSelectionAction(ushort tileType) {
             this.tileType = tileType;
         }
-
-        protected override void AfterSetEditor() {
+        
+        public override void SetEditor(LevelEditor editor) {
+            base.SetEditor(editor);
             for (int y = 0; y < editor.level.Level.height; y++) {
                 for (int x = 0; x < editor.level.Level.width; x++) {
                     if (editor.selection.GetPoint(x, y)) {
@@ -83,7 +85,7 @@ namespace Necrofy
 
         public override bool CanMerge => true;
 
-        public override void Merge(UndoManager.Action action) {
+        public override void Merge(UndoAction<LevelEditor> action) {
             tileType = ((FillSelectionAction)action).tileType;
         }
 

@@ -7,12 +7,15 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace Necrofy
 {
-    class EditorWindow : DockContent
+    abstract class EditorWindow : DockContent
     {
         public MenuStrip EditorMenuStrip { get; set; }
         public ToolStrip EditorToolStrip { get; set; }
+
+        public event EventHandler DirtyChanged;
         
         protected MainWindow mainWindow;
+        private UndoManager undoManager;
 
         public EditorWindow() {
             DockAreas = DockAreas.Document;
@@ -21,15 +24,35 @@ namespace Necrofy
 
         public void Setup(MainWindow mainWindow) {
             this.mainWindow = mainWindow;
-            FirstDisplayed();
+            undoManager = Setup();
+            if (undoManager != null) {
+                undoManager.DirtyChanged += (sender, e) => DirtyChanged?.Invoke(this, e);
+            }
         }
 
-        /// <summary>Called the first time the editor is displayed</summary>
-        protected virtual void FirstDisplayed() { }
-        /// <summary>Called each time the editor is displayed</summary>
-        public virtual void Displayed() { }
+        protected virtual UndoManager Setup() {
+            return null;
+        }
 
-        public virtual void Undo() { }
-        public virtual void Redo() { }
+        public virtual void Displayed() {
+            undoManager?.RefreshItems();
+        }
+        
+        public void Save(Project project) {
+            DoSave(project);
+            undoManager?.Clean();
+        }
+
+        protected abstract void DoSave(Project project);
+
+        public void Undo() {
+            undoManager?.UndoLast();
+        }
+
+        public void Redo() {
+            undoManager?.RedoLast();
+        }
+
+        public bool Dirty => undoManager?.Dirty ?? false;
     }
 }

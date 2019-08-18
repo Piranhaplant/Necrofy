@@ -7,24 +7,22 @@ using System.Windows.Forms;
 
 namespace Necrofy
 {
-    class UndoManager
+    class UndoManager<T> : UndoManager
     {
-        private const int MaxToolStripItems = 20;
-        
-        private readonly LevelEditor editor;
-        
+        private readonly T editor;
+
         private readonly ActionStack undoActions;
         private readonly ActionStack redoActions;
         private bool merge = true;
         private int savePos = 0;
-        
-        public UndoManager(ToolStripSplitButton undoButton, ToolStripSplitButton redoButton, LevelEditor editor) {
+
+        public UndoManager(ToolStripSplitButton undoButton, ToolStripSplitButton redoButton, T editor) {
             this.editor = editor;
             undoActions = new ActionStack(this, undoButton, action => action.DoUndo());
             redoActions = new ActionStack(this, redoButton, action => action.DoRedo());
         }
-        
-        public void Do(Action action, bool performAction = true) {
+
+        public void Do(UndoAction<T> action, bool performAction = true) {
             action.SetEditor(editor);
             if (action.cancel) {
                 return;
@@ -42,9 +40,10 @@ namespace Necrofy
             }
             redoActions.Clear();
             merge = true;
+            InvokeDirtyChanged();
         }
 
-        public void Perform(Action action) {
+        public void Perform(UndoAction<T> action) {
             action.SetEditor(editor);
             if (action.cancel) {
                 return;
@@ -52,54 +51,67 @@ namespace Necrofy
             action.DoRedo();
         }
 
-        public bool Dirty {
+        public override bool Dirty {
             get {
                 return savePos != undoActions.Count;
             }
         }
 
-        public void Clean() {
+        public override void Clean() {
             savePos = undoActions.Count;
+            InvokeDirtyChanged();
         }
 
-        public void ForceDirty() {
+        public override void ForceDirty() {
             savePos = -1;
+            InvokeDirtyChanged();
         }
 
-        public void ForceNoMerge() {
+        public override void ForceNoMerge() {
             merge = false;
         }
 
-        public Action UndoLast() {
-            Action action = undoActions.Pop();
+        public override void UndoLast() {
+            UndoLastAndGet();
+            InvokeDirtyChanged();
+        }
+
+        private UndoAction<T> UndoLastAndGet() {
+            UndoAction<T> action = undoActions.Pop();
             redoActions.Push(action);
             merge = false;
             return action;
         }
-        
-        public Action RedoLast() {
-            Action action = redoActions.Pop();
+
+        public override void RedoLast() {
+            RedoLastAndGet();
+            InvokeDirtyChanged();
+        }
+
+        private UndoAction<T> RedoLastAndGet() {
+            UndoAction<T> action = redoActions.Pop();
             undoActions.Push(action);
             merge = false;
             return action;
         }
 
-        private void UndoOrRedoUpTo(Action action) {
+        private void UndoOrRedoUpTo(UndoAction<T> action) {
             if (undoActions.Contains(action)) {
-                while (UndoLast() != action) ;
+                while (UndoLastAndGet() != action) ;
             } else if (redoActions.Contains(action)) {
-                while (RedoLast() != action) ;
+                while (RedoLastAndGet() != action) ;
             } else {
-                Debug.WriteLine("Unknown UndoAction: " + action);
+                throw new Exception("Unknown UndoAction: " + action);
             }
+            InvokeDirtyChanged();
         }
 
-        public void RefreshItems() {
+        public override void RefreshItems() {
             undoActions.RefreshItems();
             redoActions.RefreshItems();
         }
-        
-        private ToolStripMenuItem CreateToolStripItem(Action action) {
+
+        private ToolStripMenuItem CreateToolStripItem(UndoAction<T> action) {
             ToolStripMenuItem item = new ToolStripMenuItem(action.ToString());
             item.Click += (sender, e) => {
                 UndoOrRedoUpTo(action);
@@ -109,12 +121,14 @@ namespace Necrofy
 
         private class ActionStack
         {
-            private readonly Stack<Action> actions = new Stack<Action>();
-            private readonly UndoManager manager;
-            private readonly ToolStripSplitButton button;
-            private readonly Action<Action> performAction;
+            private const int MaxToolStripItems = 20;
 
-            public ActionStack(UndoManager manager, ToolStripSplitButton button, Action<Action> performAction) {
+            private readonly Stack<UndoAction<T>> actions = new Stack<UndoAction<T>>();
+            private readonly UndoManager<T> manager;
+            private readonly ToolStripSplitButton button;
+            private readonly Action<UndoAction<T>> performAction;
+
+            public ActionStack(UndoManager<T> manager, ToolStripSplitButton button, Action<UndoAction<T>> performAction) {
                 this.manager = manager;
                 this.button = button;
                 this.performAction = performAction;
@@ -122,11 +136,11 @@ namespace Necrofy
 
             public int Count => actions.Count;
 
-            public bool Contains(Action action) {
+            public bool Contains(UndoAction<T> action) {
                 return actions.Contains(action);
             }
 
-            public void Push(Action action) {
+            public void Push(UndoAction<T> action) {
                 actions.Push(action);
                 button.DropDownItems.Insert(0, manager.CreateToolStripItem(action));
                 if (button.DropDownItems.Count > MaxToolStripItems) {
@@ -135,20 +149,19 @@ namespace Necrofy
                 UpdateEnabled();
             }
 
-            public Action Pop() {
-                Action action = actions.Pop();
+            public UndoAction<T> Pop() {
+                UndoAction<T> action = actions.Pop();
                 performAction(action);
 
                 button.DropDownItems.RemoveAt(0);
                 if (button.DropDownItems.Count < actions.Count) {
-                    // TODO make sure ElementAt works here
                     button.DropDownItems.Add(manager.CreateToolStripItem(actions.ElementAt(button.DropDownItems.Count)));
                 }
                 UpdateEnabled();
                 return action;
             }
 
-            public Action Peek() {
+            public UndoAction<T> Peek() {
                 return actions.Peek();
             }
 
@@ -160,7 +173,7 @@ namespace Necrofy
 
             public void RefreshItems() {
                 button.DropDownItems.Clear();
-                foreach (Action action in actions) {
+                foreach (UndoAction<T> action in actions) {
                     button.DropDownItems.Add(manager.CreateToolStripItem(action));
                     if (button.DropDownItems.Count == MaxToolStripItems) {
                         break;
@@ -173,40 +186,51 @@ namespace Necrofy
                 button.Enabled = actions.Count > 0;
             }
         }
+    }
 
-        public abstract class Action
-        {
-            protected LevelEditor editor;
-            protected Level level;
-            
-            public void DoUndo() {
-                this.Undo();
-                this.AfterAction();
-                editor.Repaint();
-            }
-            public void DoRedo() {
-                this.Redo();
-                this.AfterAction();
-                editor.Repaint();
-            }
-            protected virtual void Undo() { }
-            protected virtual void Redo() { }
-            protected virtual void AfterAction() { }
-            protected virtual void AfterSetEditor() { }
-            public virtual bool CanMerge => false;
-            public virtual void Merge(Action action) { }
-            public void SetEditor(LevelEditor editor) {
-                this.editor = editor;
-                this.level = editor.level.Level;
-                this.AfterSetEditor();
-            }
-            public bool cancel;
+    abstract class UndoManager
+    {
+        public event EventHandler DirtyChanged;
 
-            protected void UpdateSelection() {
-                // TODO
-                //if (EdControl.t != null)
-                //    EdControl.t.UpdateSelection();
-            }
+        protected void InvokeDirtyChanged() {
+            DirtyChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public abstract bool Dirty { get; }
+        public abstract void Clean();
+        public abstract void ForceDirty();
+        public abstract void ForceNoMerge();
+        public abstract void UndoLast();
+        public abstract void RedoLast();
+        public abstract void RefreshItems();
+    }
+
+    public abstract class UndoAction<T>
+    {
+        protected T editor;
+
+        public void DoUndo() {
+            this.Undo();
+            this.AfterAction();
+        }
+        public void DoRedo() {
+            this.Redo();
+            this.AfterAction();
+        }
+        protected virtual void Undo() { }
+        protected virtual void Redo() { }
+        protected virtual void AfterAction() { }
+        public virtual bool CanMerge => false;
+        public virtual void Merge(UndoAction<T> action) { }
+        public virtual void SetEditor(T editor) {
+            this.editor = editor;
+        }
+        public bool cancel;
+
+        protected void UpdateSelection() {
+            // TODO
+            //if (EdControl.t != null)
+            //    EdControl.t.UpdateSelection();
         }
     }
 }

@@ -211,6 +211,7 @@
     </Compile>
     <Compile Include="ToolBarMenuLinker.cs" />
     <Compile Include="TupleList.cs" />
+    <Compile Include="Undo\LevelEditorAction.cs" />
     <Compile Include="Undo\TileAction.cs" />
     <Compile Include="Undo\UndoManager.cs" />
     <Compile Include="ZAMNCompress.cs" />
