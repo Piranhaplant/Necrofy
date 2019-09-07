@@ -21,7 +21,7 @@ namespace Necrofy
         }
 
         protected override void MouseMove2(LevelMouseEventArgs e) {
-            if ((e.TileX != prevX || e.TileY != prevY) && e.InBounds) {
+            if (e.MouseIsDown && (e.TileX != prevX || e.TileY != prevY) && e.InBounds) {
                 ushort tileType = editor.level.Level.background[e.TileX, e.TileY];
                 editor.tileSelection.SetAllPoints((x, y) => editor.level.Level.background[x, y] == tileType);
 

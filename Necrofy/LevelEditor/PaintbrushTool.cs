@@ -22,7 +22,7 @@ namespace Necrofy
         }
 
         protected override void MouseMove2(LevelMouseEventArgs e) {
-            if ((e.TileX != prevX || e.TileY != prevY) && e.InBounds) {
+            if (e.MouseIsDown && (e.TileX != prevX || e.TileY != prevY) && e.InBounds) {
                 if (selecting) {
                     editor.tilesetObjectBrowserContents.SelectedIndex = editor.level.Level.background[e.TileX, e.TileY];
                     editor.ScrollObjectBrowserToSelection();

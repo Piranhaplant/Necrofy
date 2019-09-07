@@ -12,6 +12,19 @@ namespace Necrofy
         public MenuStrip EditorMenuStrip { get; set; }
         public ToolStrip EditorToolStrip { get; set; }
 
+        private ObjectBrowserContents browserContents = null;
+        public ObjectBrowserContents BrowserContents {
+            get {
+                return browserContents;
+            }
+            protected set {
+                browserContents = value;
+                if (mainWindow != null) {
+                    mainWindow.ObjectBrowser.Browser.Contents = browserContents;
+                }
+            }
+        }
+
         public event EventHandler DirtyChanged;
         public event EventHandler SelectionChanged;
         
@@ -25,6 +38,7 @@ namespace Necrofy
 
         public void Setup(MainWindow mainWindow) {
             this.mainWindow = mainWindow;
+            mainWindow.ObjectBrowser.Browser.Contents = browserContents;
             undoManager = Setup();
             if (undoManager != null) {
                 undoManager.DirtyChanged += (sender, e) => DirtyChanged?.Invoke(this, e);

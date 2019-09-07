@@ -151,6 +151,7 @@ namespace Necrofy
             endToolStripSeparator.Visible = editorToolStripItems.Count > 0;
             Editor_DirtyChanged(editor, e);
             Editor_SelectionChanged(editor, e);
+            ObjectBrowser.Browser.Contents = activeEditor?.BrowserContents;
         }
 
         private void CreateProject(object sender, EventArgs e) {

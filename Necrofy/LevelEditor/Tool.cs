@@ -37,7 +37,7 @@ namespace Necrofy
         public virtual void Delete() { }
         public virtual void SelectAll() { }
         public virtual void SelectNone() { }
-
+        
         public enum ObjectType
         {
             Tiles,

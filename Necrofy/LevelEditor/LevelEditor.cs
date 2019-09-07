@@ -44,8 +44,7 @@ namespace Necrofy
 
         private readonly Dictionary<Tool, ToolStripMenuItem> toolMenuItems;
         private readonly Dictionary<Tool.ObjectType, ObjectBrowserContents> toolTypeToObjectContents;
-
-        private ObjectBrowserContents currentContents;
+        
         private Tool currentTool;
 
         public LevelEditor(LoadedLevel level) {
@@ -111,6 +110,15 @@ namespace Necrofy
             return new Point(canvas.Width / 2 - scrollWrapper.LeftPosition - LevelPadding, canvas.Height / 2 - scrollWrapper.TopPosition - LevelPadding);
         }
 
+        public void SetCursor(Cursor cursor) {
+            canvas.Cursor = cursor;
+        }
+
+        public void GenerateMouseMove() {
+            Point mousePosition = PointToClient(MousePosition);
+            canvas_MouseMove(this, new MouseEventArgs(MouseButtons, 0, mousePosition.X, mousePosition.Y, 0));
+        }
+
         protected override UndoManager Setup() {
             undoManager = new UndoManager<LevelEditor>(mainWindow.UndoButton, mainWindow.RedoButton, this);
             ChangeTool(paintbrushTool);
@@ -120,7 +128,6 @@ namespace Necrofy
 
         public override void Displayed() {
             base.Displayed();
-            mainWindow.ObjectBrowser.Browser.Contents = currentContents;
         }
 
         protected override void DoSave(Project project) {
@@ -169,13 +176,13 @@ namespace Necrofy
         private void ChangeTool(Tool tool) {
             if (tool != currentTool) {
                 currentTool = tool;
-                currentContents = toolTypeToObjectContents[tool.objectType];
-                mainWindow.ObjectBrowser.Browser.Contents = currentContents;
+                BrowserContents = toolTypeToObjectContents[tool.objectType];
                 
                 foreach (ToolStripMenuItem menuItem in toolMenuItems.Values) {
                     menuItem.Checked = false;
                 }
                 toolMenuItems[tool].Checked = true;
+                SetCursor(Cursors.Default);
                 RaiseSelectionChanged();
             }
         }
@@ -245,7 +252,7 @@ namespace Necrofy
             currentTool.Paint(e.Graphics);
         }
 
-        // Double clicking on the title bar to maximize the window causes mouse move/up events to be sent without a mouse down. This is used to ignore those.
+        // Double clicking on the title bar to maximize the window causes mouse up events to be sent without a mouse down. This is used to ignore those.
         private bool mouseDown = false;
         private void canvas_MouseDown(object sender, MouseEventArgs e) {
             mouseDown = true;
@@ -255,7 +262,7 @@ namespace Necrofy
         }
 
         private void canvas_MouseUp(object sender, MouseEventArgs e) {
-            if (TransformMouseArgs(e, out LevelMouseEventArgs args)) {
+            if (TransformMouseArgs(e, out LevelMouseEventArgs args, mouseDownOnly: true)) {
                 currentTool.MouseUp(args);
             }
             mouseDown = false;
@@ -267,11 +274,11 @@ namespace Necrofy
             }
         }
 
-        private bool TransformMouseArgs(MouseEventArgs e, out LevelMouseEventArgs ret) {
+        private bool TransformMouseArgs(MouseEventArgs e, out LevelMouseEventArgs ret, bool mouseDownOnly = false) {
             int x = e.X - scrollWrapper.LeftPosition - LevelPadding;
             int y = e.Y - scrollWrapper.TopPosition - LevelPadding;
-            if (mouseDown && e.Button == MouseButtons.Left) {
-                ret = new LevelMouseEventArgs(e.Button, e.Clicks, x, y, e.Delta, level.Level.width, level.Level.height);
+            if ((mouseDown && e.Button == MouseButtons.Left) || (!mouseDown && !mouseDownOnly)) {
+                ret = new LevelMouseEventArgs(e.Button, e.Clicks, x, y, e.Delta, level.Level.width, level.Level.height, mouseDown);
                 return true;
             }
             ret = null;

@@ -21,8 +21,8 @@ namespace Necrofy
         private int pasteDragY;
         private int prevX;
         private int prevY;
-        // Used to avoid sending mouse events to the actual tool after completing a paste until the mouse up event happens
-        private bool pasteFinished = false;
+        // Used to ignore mouse events when pasting and when finishing a paste
+        private bool ignoreMouse = false;
 
         public TileTool(LevelEditor editor) : base(editor) { }
 
@@ -47,15 +47,14 @@ namespace Necrofy
         }
 
         public override sealed void MouseDown(LevelMouseEventArgs e) {
+            ignoreMouse = false;
             if (IsPasting) {
-                int relativeX = e.TileX - pasteX / 64;
-                int relativeY = e.TileY - pasteY / 64;
-                if (relativeX >= 0 && relativeX < pasteTiles.GetWidth() && relativeY >= 0 && relativeY < pasteTiles.GetHeight() && pasteTiles[relativeX, relativeY] != null) {
+                if (PointInPasteTiles(e.TileX, e.TileY)) {
                     pasteDragX = e.X - pasteX;
                     pasteDragY = e.Y - pasteY;
                 } else {
                     CommitPaste();
-                    pasteFinished = true;
+                    ignoreMouse = true;
                     editor.Repaint();
                 }
                 prevX = e.X;
@@ -66,20 +65,26 @@ namespace Necrofy
         }
 
         public override sealed void MouseMove(LevelMouseEventArgs e) {
-            if (IsPasting) {
-                pasteX = e.X - pasteDragX;
-                pasteY = e.Y - pasteDragY;
-                TranslatePath(e.X - prevX, e.Y - prevY);
-                prevX = e.X;
-                prevY = e.Y;
-                editor.Repaint();
-            } else if (!pasteFinished) {
+           if (IsPasting) {
+                if (e.MouseIsDown && !ignoreMouse) {
+                    pasteX = e.X - pasteDragX;
+                    pasteY = e.Y - pasteDragY;
+                    TranslatePath(e.X - prevX, e.Y - prevY);
+                    prevX = e.X;
+                    prevY = e.Y;
+                    editor.Repaint();
+                } else {
+                    editor.SetCursor(PointInPasteTiles(e.TileX, e.TileY) ? Cursors.SizeAll : Cursors.Default);
+                }
+            } else if (!ignoreMouse) {
                 MouseMove2(e);
             }
         }
 
         public override sealed void MouseUp(LevelMouseEventArgs e) {
-            if (IsPasting) {
+            if (ignoreMouse) {
+                ignoreMouse = false;
+            } else if (IsPasting) {
                 int newX = RoundToTile(pasteX) * 64;
                 int newY = RoundToTile(pasteY) * 64;
                 TranslatePath(newX - pasteX, newY - pasteY);
@@ -87,10 +92,8 @@ namespace Necrofy
                 pasteY = newY;
                 // TODO animation?
                 editor.Repaint();
-            } else if (!pasteFinished) {
-                MouseUp2(e);
             } else {
-                pasteFinished = false;
+                MouseUp2(e);
             }
         }
 
@@ -155,6 +158,8 @@ namespace Necrofy
                 TranslatePath(pasteX, pasteY);
 
                 editor.tileSelection.Clear();
+                ignoreMouse = true;
+                editor.GenerateMouseMove();
             } catch (Exception) { }
         }
 
@@ -177,10 +182,17 @@ namespace Necrofy
             pasteTiles = null;
             pasteTilesPath.Dispose();
             pasteTilesPath = null;
+            editor.SetCursor(Cursors.Default);
         }
 
         private int RoundToTile(int position) {
             return (int)Math.Round(position / 64.0);
+        }
+
+        private bool PointInPasteTiles(int tileX, int tileY) {
+            int relativeX = tileX - pasteX / 64;
+            int relativeY = tileY - pasteY / 64;
+            return relativeX >= 0 && relativeX < pasteTiles.GetWidth() && relativeY >= 0 && relativeY < pasteTiles.GetHeight() && pasteTiles[relativeX, relativeY] != null;
         }
     }
 }
