@@ -6,30 +6,28 @@ using System.Windows.Forms;
 
 namespace Necrofy
 {
-    class RectangleSelectTool : Tool
+    class RectangleSelectTool : TileTool
     {
         public RectangleSelectTool(LevelEditor editor) : base(editor) { }
 
-        public override ObjectType objectType => ObjectType.Tiles;
-
-        public override void MouseDown(LevelMouseEventArgs e) {
+        protected override void MouseDown2(LevelMouseEventArgs e) {
             bool addToSelection = true;
             if (Control.ModifierKeys == Keys.Alt) {
                 addToSelection = false;
             } else if (Control.ModifierKeys != Keys.Shift) {
-                editor.selection.Clear();
+                editor.tileSelection.Clear();
             }
-            editor.selection.StartRect(e.TileX, e.TileY, addToSelection);
+            editor.tileSelection.StartRect(e.TileX, e.TileY, addToSelection);
             editor.undoManager.ForceNoMerge();
         }
 
-        public override void MouseMove(LevelMouseEventArgs e) {
-            editor.selection.MoveRect(e.TileX, e.TileY);
+        protected override void MouseMove2(LevelMouseEventArgs e) {
+            editor.tileSelection.MoveRect(e.TileX, e.TileY);
             editor.tilesetObjectBrowserContents.SelectedIndex = -1;
         }
 
-        public override void MouseUp(LevelMouseEventArgs e) {
-            editor.selection.EndRect();
+        protected override void MouseUp2(LevelMouseEventArgs e) {
+            editor.tileSelection.EndRect();
         }
 
         public override void TileChanged() {

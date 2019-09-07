@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Necrofy
 {
-    class Selection
+    class TileSelection
     {
         private readonly int width;
         private readonly int height;
@@ -24,7 +24,7 @@ namespace Necrofy
 
         public event EventHandler Changed;
 
-        public Selection(int width, int height) {
+        public TileSelection(int width, int height) {
             this.width = width;
             this.height = height;
             points = new bool[width, height];

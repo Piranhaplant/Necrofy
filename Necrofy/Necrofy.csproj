@@ -113,12 +113,14 @@
     <Compile Include="EditorWindow.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Extensions.cs" />
     <Compile Include="LevelEditor\LevelMouseEventArgs.cs" />
     <Compile Include="LevelEditor\PaintbrushTool.cs" />
     <Compile Include="LevelEditor\PencilSelectTool.cs" />
     <Compile Include="LevelEditor\RectangleSelectTool.cs" />
     <Compile Include="LevelEditor\SpriteTool.cs" />
     <Compile Include="LevelEditor\TileSelectTool.cs" />
+    <Compile Include="LevelEditor\TileTool.cs" />
     <Compile Include="LevelEditor\Tool.cs" />
     <Compile Include="NewProjectDialog.cs">
       <SubType>Form</SubType>
@@ -196,7 +198,7 @@
     <Compile Include="ROMInfo.cs" />
     <Compile Include="ROMPointers.cs" />
     <Compile Include="ScrollWrapper.cs" />
-    <Compile Include="LevelEditor\Selection.cs" />
+    <Compile Include="LevelEditor\TileSelection.cs" />
     <Compile Include="SeparateCheckToolStripMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>

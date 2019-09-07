@@ -7,12 +7,13 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace Necrofy
 {
-    abstract class EditorWindow : DockContent
+    class EditorWindow : DockContent
     {
         public MenuStrip EditorMenuStrip { get; set; }
         public ToolStrip EditorToolStrip { get; set; }
 
         public event EventHandler DirtyChanged;
+        public event EventHandler SelectionChanged;
         
         protected MainWindow mainWindow;
         private UndoManager undoManager;
@@ -43,7 +44,7 @@ namespace Necrofy
             undoManager?.Clean();
         }
 
-        protected abstract void DoSave(Project project);
+        protected virtual void DoSave(Project project) { }
 
         public void Undo() {
             undoManager?.UndoLast();
@@ -54,5 +55,20 @@ namespace Necrofy
         }
 
         public bool Dirty => undoManager?.Dirty ?? false;
+
+        protected void RaiseSelectionChanged() {
+            SelectionChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public virtual bool CanCopy => false;
+        public virtual bool CanPaste => false;
+        public virtual bool CanDelete => false;
+        public virtual bool HasSelection => false;
+
+        public virtual void Copy() { }
+        public virtual void Paste() { }
+        public virtual void Delete() { }
+        public virtual void SelectAll() { }
+        public virtual void SelectNone() { }
     }
 }

@@ -16,8 +16,8 @@ namespace Necrofy
         public string displayName { get; set; }
         /// <summary>The background tiles making up the level</summary>
         public ushort[,] background { get; set; }
-        public int width => background.GetLength(0);
-        public int height => background.GetLength(1);
+        public int width => background.GetWidth();
+        public int height => background.GetHeight();
 
         public string tilesetTilemapName { get; set; }
         public string tilesetCollisionName { get; set; }

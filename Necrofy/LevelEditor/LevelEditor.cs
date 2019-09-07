@@ -14,8 +14,7 @@ using System.Windows.Forms.Layout;
 
 namespace Necrofy
 {
-    partial class LevelEditor : EditorWindow
-    {
+    partial class LevelEditor : EditorWindow {
         private const int LevelPadding = 64;
 
         public readonly LoadedLevel level;
@@ -26,13 +25,13 @@ namespace Necrofy
         private readonly ScrollWrapper scrollWrapper;
         public UndoManager<LevelEditor> undoManager;
 
-        public readonly Selection selection;
-        private GraphicsPath selectionPath = null;
-        private Rectangle eraserRect = Rectangle.Empty;
+        public readonly TileSelection tileSelection;
+        private GraphicsPath tileSelectionPath = null;
+        private Rectangle tileSelectionEraserRect = Rectangle.Empty;
 
-        private readonly SolidBrush selectionFillBrush = new SolidBrush(Color.FromArgb(96, 0, 0, 0));
-        private readonly SolidBrush eraserFillBrush = new SolidBrush(Color.FromArgb(128, 255, 255, 255));
-        private readonly Pen selectionBorderDashPen = new Pen(Color.Black) {
+        public static readonly SolidBrush selectionFillBrush = new SolidBrush(Color.FromArgb(96, 0, 0, 0));
+        public static readonly SolidBrush eraserFillBrush = new SolidBrush(Color.FromArgb(128, 255, 255, 255));
+        public static readonly Pen selectionBorderDashPen = new Pen(Color.Black) {
             DashOffset = 0,
             DashPattern = new float[] { 4f, 4f },
         };
@@ -59,9 +58,9 @@ namespace Necrofy
             scrollWrapper.SetClientSize(level.Level.width * 64 + LevelPadding * 2, level.Level.height * 64 + LevelPadding * 2);
             scrollWrapper.Scrolled += scrollWrapper_Scrolled;
 
-            selection = new Selection(level.Level.width, level.Level.height);
-            selection.Changed += Selection_Changed;
-            
+            tileSelection = new TileSelection(level.Level.width, level.Level.height);
+            tileSelection.Changed += TileSelection_Changed;
+
             tilesetObjectBrowserContents = new TilesetObjectBrowserContents(level);
             tilesetObjectBrowserContents.SelectedIndexChanged += TilesetObjectBrowserContents_SelectedIndexChanged;
             spriteObjectBrowserContents = new SpriteObjectBrowserContents(level.spriteGraphics);
@@ -94,18 +93,22 @@ namespace Necrofy
             ToolBarMenuLinker.Link(pencilSelectButton, toolsPencilSelect);
             ToolBarMenuLinker.Link(tileSelectButton, toolsTileSelect);
             ToolBarMenuLinker.Link(spritesButton, toolsSprites);
-            
+
             Repaint();
         }
-        
+
         public void ScrollObjectBrowserToSelection() {
             mainWindow.ObjectBrowser.Browser.ScrollToSelection();
         }
 
         public void FillSelection() {
-            if (tilesetObjectBrowserContents.SelectedIndex >= 0 && selectionPath != null) {
+            if (tilesetObjectBrowserContents.SelectedIndex >= 0 && TileSelectionExists) {
                 undoManager.Do(new FillSelectionAction((ushort)tilesetObjectBrowserContents.SelectedIndex));
             }
+        }
+
+        public Point GetViewCenter() {
+            return new Point(canvas.Width / 2 - scrollWrapper.LeftPosition - LevelPadding, canvas.Height / 2 - scrollWrapper.TopPosition - LevelPadding);
         }
 
         protected override UndoManager Setup() {
@@ -123,14 +126,44 @@ namespace Necrofy
         protected override void DoSave(Project project) {
             level.levelAsset.WriteFile(project);
         }
-        
-        private void Selection_Changed(object sender, EventArgs e) {
-            if (selectionPath != null) {
-                selectionPath.Dispose();
-            }
-            selectionPath = selection.GetGraphicsPath();
-            eraserRect = selection.GetEraserRectangle();
+
+        public override bool CanCopy => currentTool?.CanCopy ?? false;
+        public override bool CanPaste => currentTool?.CanPaste ?? false;
+        public override bool CanDelete => currentTool?.CanDelete ?? false;
+        public override bool HasSelection => currentTool?.HasSelection ?? false;
+
+        public override void Copy() {
+            currentTool?.Copy();
+        }
+
+        public override void Paste() {
+            currentTool?.Paste();
+        }
+
+        public override void Delete() {
+            currentTool?.Delete();
+        }
+
+        public override void SelectAll() {
+            currentTool?.SelectAll();
+        }
+
+        public override void SelectNone() {
+            currentTool?.SelectNone();
+        }
+
+        private void TileSelection_Changed(object sender, EventArgs e) {
+            tileSelectionPath?.Dispose();
+            tileSelectionPath = tileSelection.GetGraphicsPath();
+            tileSelectionEraserRect = tileSelection.GetEraserRectangle();
+            RaiseSelectionChanged();
             Repaint();
+        }
+
+        public bool TileSelectionExists => tileSelectionPath != null;
+
+        public void NonTileSelectionChanged() {
+            RaiseSelectionChanged();
         }
         
         private void ChangeTool(Tool tool) {
@@ -143,6 +176,7 @@ namespace Necrofy
                     menuItem.Checked = false;
                 }
                 toolMenuItems[tool].Checked = true;
+                RaiseSelectionChanged();
             }
         }
 
@@ -197,15 +231,15 @@ namespace Necrofy
             //    }
             //}
 
-            if (selectionPath != null) {
-                e.Graphics.FillPath(selectionFillBrush, selectionPath);
-                e.Graphics.DrawPath(Pens.White, selectionPath);
-                e.Graphics.DrawPath(selectionBorderDashPen, selectionPath);
+            if (TileSelectionExists) {
+                e.Graphics.FillPath(selectionFillBrush, tileSelectionPath);
+                e.Graphics.DrawPath(Pens.White, tileSelectionPath);
+                e.Graphics.DrawPath(selectionBorderDashPen, tileSelectionPath);
             }
-            if (eraserRect != Rectangle.Empty) {
-                e.Graphics.FillRectangle(eraserFillBrush, eraserRect);
-                e.Graphics.DrawRectangle(Pens.White, eraserRect);
-                e.Graphics.DrawRectangle(selectionBorderDashPen, eraserRect);
+            if (tileSelectionEraserRect != Rectangle.Empty) {
+                e.Graphics.FillRectangle(eraserFillBrush, tileSelectionEraserRect);
+                e.Graphics.DrawRectangle(Pens.White, tileSelectionEraserRect);
+                e.Graphics.DrawRectangle(selectionBorderDashPen, tileSelectionEraserRect);
             }
 
             currentTool.Paint(e.Graphics);

@@ -14,7 +14,6 @@ namespace Necrofy
 {
     partial class MainWindow : Form
     {
-        private const char pathSeparator = ';';
         private Project project;
 
         public ObjectBrowserForm ObjectBrowser { get; private set; }
@@ -40,7 +39,7 @@ namespace Necrofy
 
             string recentProjectsString = Properties.Settings.Default.RecentProjects;
             if (recentProjectsString != "") {
-                recentProjects.Files = recentProjectsString.Split(pathSeparator);
+                recentProjects.Files = recentProjectsString.Split(Path.PathSeparator);
             }
 
             ToolBarMenuLinker.Link(saveButton, fileSave);
@@ -64,30 +63,49 @@ namespace Necrofy
             editor.Setup(this);
             editor.Show(dockPanel, DockState.Document);
             editor.DirtyChanged += Editor_DirtyChanged;
+            editor.SelectionChanged += Editor_SelectionChanged;
         }
 
         private void Editor_DirtyChanged(object sender, EventArgs e) {
             EditorWindow editor = (EditorWindow)sender;
-            if (editor.Dirty) {
-                if (dirtyEditors.Add(editor)) {
-                    editor.Text += "*";
-                }
-            } else {
-                if (dirtyEditors.Remove(editor)) {
-                    editor.Text = editor.Text.Substring(0, editor.Text.Length - 1);
+            if (editor != null) {
+                if (editor.Dirty) {
+                    if (dirtyEditors.Add(editor)) {
+                        editor.Text += "*";
+                    }
+                } else {
+                    if (dirtyEditors.Remove(editor)) {
+                        editor.Text = editor.Text.Substring(0, editor.Text.Length - 1);
+                    }
                 }
             }
             if (editor == activeEditor) {
-                saveButton.Enabled = editor.Dirty;
+                saveButton.Enabled = editor?.Dirty ?? false;
             }
             saveAllButton.Enabled = dirtyEditors.Count > 0;
+        }
+
+        private void Editor_SelectionChanged(object sender, EventArgs e) {
+            if (sender == activeEditor) {
+                editCopy.Enabled = activeEditor?.CanCopy ?? false;
+                editPaste.Enabled = activeEditor?.CanPaste ?? false;
+                editDelete.Enabled = activeEditor?.CanDelete ?? false;
+                editCut.Enabled = editCopy.Enabled && editDelete.Enabled;
+
+                editSelectAll.Enabled = activeEditor?.HasSelection ?? false;
+                editSelectNone.Enabled = activeEditor?.HasSelection ?? false;
+            }
         }
 
         private void dockPanel_ContentRemoved(object sender, DockContentEventArgs e) {
             if (e.Content is EditorWindow editor) {
                 openEditors.Remove(editor);
+                dirtyEditors.Remove(editor);
+                Editor_DirtyChanged(null, e); // Update the "save all" button state
                 if (openEditors.Count == 0) {
                     ProjectBrowser.Activate();
+                    undoButton.Enabled = false;
+                    redoButton.Enabled = false;
                 }
             }
         }
@@ -111,6 +129,7 @@ namespace Necrofy
             editorMenuStripItems.Clear();
             editorToolStripItems.Clear();
 
+            activeEditor = editor;
             if (editor != null) {
                 if (editor.EditorMenuStrip != null) {
                     while (editor.EditorMenuStrip.Items.Count > 0) {
@@ -128,10 +147,10 @@ namespace Necrofy
                 }
 
                 editor.Displayed();
-                saveButton.Enabled = editor.Dirty;
             }
-            activeEditor = editor;
             endToolStripSeparator.Visible = editorToolStripItems.Count > 0;
+            Editor_DirtyChanged(editor, e);
+            Editor_SelectionChanged(editor, e);
         }
 
         private void CreateProject(object sender, EventArgs e) {
@@ -152,13 +171,14 @@ namespace Necrofy
         }
 
         private void recentProjects_FileClicked(string file) {
+            // TODO: close already open project if there is one
             project = new Project(file);
             ProjectReady();
         }
 
         private void ProjectReady() {
             recentProjects.Add(project.SettingsPath);
-            Properties.Settings.Default.RecentProjects = string.Join(pathSeparator.ToString(), recentProjects.Files);
+            Properties.Settings.Default.RecentProjects = string.Join(Path.PathSeparator.ToString(), recentProjects.Files);
             Properties.Settings.Default.Save();
 
             ProjectBrowser.OpenProject(project);
@@ -187,6 +207,31 @@ namespace Necrofy
 
         private void Redo(object sender, EventArgs e) {
             activeEditor?.Redo();
+        }
+
+        private void Cut(object sender, EventArgs e) {
+            activeEditor?.Copy();
+            activeEditor?.Delete();
+        }
+
+        private void Copy(object sender, EventArgs e) {
+            activeEditor?.Copy();
+        }
+
+        private void Paste(object sender, EventArgs e) {
+            activeEditor?.Paste();
+        }
+
+        private void Delete(object sender, EventArgs e) {
+            activeEditor?.Delete();
+        }
+
+        private void SelectAll(object sender, EventArgs e) {
+            activeEditor?.SelectAll();
+        }
+
+        private void SelectNone(object sender, EventArgs e) {
+            activeEditor?.SelectNone();
         }
 
         private void BuildProject(object sender, EventArgs e) {

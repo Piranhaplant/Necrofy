@@ -180,6 +180,7 @@
             this.cutButton.Name = "cutButton";
             this.cutButton.Size = new System.Drawing.Size(23, 22);
             this.cutButton.Text = "Cut";
+            this.cutButton.Click += new System.EventHandler(this.Cut);
             // 
             // copyButton
             // 
@@ -190,6 +191,7 @@
             this.copyButton.Name = "copyButton";
             this.copyButton.Size = new System.Drawing.Size(23, 22);
             this.copyButton.Text = "Copy";
+            this.copyButton.Click += new System.EventHandler(this.Copy);
             // 
             // pasteButton
             // 
@@ -200,6 +202,7 @@
             this.pasteButton.Name = "pasteButton";
             this.pasteButton.Size = new System.Drawing.Size(23, 22);
             this.pasteButton.Text = "Paste";
+            this.pasteButton.Click += new System.EventHandler(this.Paste);
             // 
             // toolStripSeparator2
             // 
@@ -420,6 +423,7 @@
             this.editCut.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
             this.editCut.Size = new System.Drawing.Size(211, 22);
             this.editCut.Text = "Cut";
+            this.editCut.Click += new System.EventHandler(this.Cut);
             // 
             // editCopy
             // 
@@ -429,6 +433,7 @@
             this.editCopy.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
             this.editCopy.Size = new System.Drawing.Size(211, 22);
             this.editCopy.Text = "Copy";
+            this.editCopy.Click += new System.EventHandler(this.Copy);
             // 
             // editPaste
             // 
@@ -438,6 +443,7 @@
             this.editPaste.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
             this.editPaste.Size = new System.Drawing.Size(211, 22);
             this.editPaste.Text = "Paste";
+            this.editPaste.Click += new System.EventHandler(this.Paste);
             // 
             // editDelete
             // 
@@ -447,6 +453,7 @@
             this.editDelete.ShortcutKeys = System.Windows.Forms.Keys.Delete;
             this.editDelete.Size = new System.Drawing.Size(211, 22);
             this.editDelete.Text = "Delete";
+            this.editDelete.Click += new System.EventHandler(this.Delete);
             // 
             // editSeparator2
             // 
@@ -460,6 +467,7 @@
             this.editSelectAll.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
             this.editSelectAll.Size = new System.Drawing.Size(211, 22);
             this.editSelectAll.Text = "Select All";
+            this.editSelectAll.Click += new System.EventHandler(this.SelectAll);
             // 
             // editSelectNone
             // 
@@ -469,6 +477,7 @@
             | System.Windows.Forms.Keys.A)));
             this.editSelectNone.Size = new System.Drawing.Size(211, 22);
             this.editSelectNone.Text = "Select None";
+            this.editSelectNone.Click += new System.EventHandler(this.SelectNone);
             // 
             // buildMenu
             // 

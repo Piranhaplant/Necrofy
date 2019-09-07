@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace Necrofy
 {
-    class PaintbrushTool : Tool
+    class PaintbrushTool : TileTool
     {
         private int prevX = -1;
         private int prevY = -1;
@@ -14,14 +14,14 @@ namespace Necrofy
 
         public PaintbrushTool(LevelEditor editor) : base(editor) { }
 
-        public override ObjectType objectType => ObjectType.Tiles;
-
-        public override void MouseDown(LevelMouseEventArgs e) {
+        protected override void MouseDown2(LevelMouseEventArgs e) {
+            prevX = -1;
+            prevY = -1;
             selecting = (Control.ModifierKeys == Keys.Control);
             MouseMove(e);
         }
 
-        public override void MouseMove(LevelMouseEventArgs e) {
+        protected override void MouseMove2(LevelMouseEventArgs e) {
             if ((e.TileX != prevX || e.TileY != prevY) && e.InBounds) {
                 if (selecting) {
                     editor.tilesetObjectBrowserContents.SelectedIndex = editor.level.Level.background[e.TileX, e.TileY];
@@ -35,9 +35,7 @@ namespace Necrofy
             }
         }
 
-        public override void MouseUp(LevelMouseEventArgs e) {
-            prevX = -1;
-            prevY = -1;
+        protected override void MouseUp2(LevelMouseEventArgs e) {
             editor.undoManager.ForceNoMerge();
         }
     }
