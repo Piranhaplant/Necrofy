@@ -100,6 +100,7 @@
     <Compile Include="Assets\TilesetCollisionAsset.cs" />
     <Compile Include="Assets\TilesetGraphicsAsset.cs" />
     <Compile Include="Assets\TilesetPaletteAsset.cs" />
+    <Compile Include="Assets\TilesetSuggestionsAsset.cs" />
     <Compile Include="Assets\TilesetTilemapAsset.cs" />
     <Compile Include="Canvas.cs">
       <SubType>UserControl</SubType>
@@ -120,6 +121,7 @@
     <Compile Include="LevelEditor\RectangleSelectTool.cs" />
     <Compile Include="LevelEditor\SpriteTool.cs" />
     <Compile Include="LevelEditor\TileSelectTool.cs" />
+    <Compile Include="LevelEditor\TileSuggestionTool.cs" />
     <Compile Include="LevelEditor\TileTool.cs" />
     <Compile Include="LevelEditor\Tool.cs" />
     <Compile Include="NewProjectDialog.cs">
@@ -211,6 +213,7 @@
     <Compile Include="SpriteViewer.Designer.cs">
       <DependentUpon>SpriteViewer.cs</DependentUpon>
     </Compile>
+    <Compile Include="TilesetSuggestions.cs" />
     <Compile Include="ToolBarMenuLinker.cs" />
     <Compile Include="TupleList.cs" />
     <Compile Include="Undo\LevelEditorAction.cs" />
@@ -247,6 +250,24 @@
       <DependentUpon>SpriteViewer.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="ProjectFiles\Editor\SpriteDisplay.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectFiles\Tilesets\Castle\suggestions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectFiles\Tilesets\Desert\suggestions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectFiles\Tilesets\Grass\suggestions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectFiles\Tilesets\Mall\suggestions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectFiles\Tilesets\Office\suggestions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -256,9 +277,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Tools\ROMExpand.asm">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
@@ -283,9 +301,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Tools\SpriteDisplay.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="Tools\xkas.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -374,6 +389,14 @@
   <ItemGroup>
     <None Include="Icons\cross-script.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\circle.png" />
+    <None Include="Images\arrow.png" />
+    <Content Include="ProjectFiles\Patches\ROMExpand.asm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

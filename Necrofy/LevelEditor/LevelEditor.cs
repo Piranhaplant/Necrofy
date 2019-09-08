@@ -37,6 +37,7 @@ namespace Necrofy
         };
 
         private readonly PaintbrushTool paintbrushTool;
+        private readonly TileSuggestionTool tileSuggestionTool;
         private readonly RectangleSelectTool rectangleSelectTool;
         private readonly PencilSelectTool pencilSelectTool;
         private readonly TileSelectTool tileSelectTool;
@@ -75,6 +76,7 @@ namespace Necrofy
             };
 
             paintbrushTool = new PaintbrushTool(this);
+            tileSuggestionTool = new TileSuggestionTool(this);
             rectangleSelectTool = new RectangleSelectTool(this);
             pencilSelectTool = new PencilSelectTool(this);
             tileSelectTool = new TileSelectTool(this);
@@ -82,12 +84,14 @@ namespace Necrofy
 
             toolMenuItems = new Dictionary<Tool, ToolStripMenuItem> {
                 { paintbrushTool, toolsPaintbrush },
+                { tileSuggestionTool, toolsTileSuggest },
                 { rectangleSelectTool, toolsRectangleSelect },
                 { pencilSelectTool, toolsPencilSelect },
                 { tileSelectTool, toolsTileSelect },
                 { spriteTool, toolsSprites },
             };
             ToolBarMenuLinker.Link(paintbrushButton, toolsPaintbrush);
+            ToolBarMenuLinker.Link(tileSuggestButton, toolsTileSuggest);
             ToolBarMenuLinker.Link(rectangleSelectButton, toolsRectangleSelect);
             ToolBarMenuLinker.Link(pencilSelectButton, toolsPencilSelect);
             ToolBarMenuLinker.Link(tileSelectButton, toolsTileSelect);
@@ -134,29 +138,29 @@ namespace Necrofy
             level.levelAsset.WriteFile(project);
         }
 
-        public override bool CanCopy => currentTool?.CanCopy ?? false;
-        public override bool CanPaste => currentTool?.CanPaste ?? false;
-        public override bool CanDelete => currentTool?.CanDelete ?? false;
-        public override bool HasSelection => currentTool?.HasSelection ?? false;
+        public override bool CanCopy => currentTool.CanCopy;
+        public override bool CanPaste => currentTool.CanPaste;
+        public override bool CanDelete => currentTool.CanDelete;
+        public override bool HasSelection => currentTool.HasSelection;
 
         public override void Copy() {
-            currentTool?.Copy();
+            currentTool.Copy();
         }
 
         public override void Paste() {
-            currentTool?.Paste();
+            currentTool.Paste();
         }
 
         public override void Delete() {
-            currentTool?.Delete();
+            currentTool.Delete();
         }
 
         public override void SelectAll() {
-            currentTool?.SelectAll();
+            currentTool.SelectAll();
         }
 
         public override void SelectNone() {
-            currentTool?.SelectNone();
+            currentTool.SelectNone();
         }
 
         private void TileSelection_Changed(object sender, EventArgs e) {
@@ -175,6 +179,7 @@ namespace Necrofy
         
         private void ChangeTool(Tool tool) {
             if (tool != currentTool) {
+                currentTool?.DoneBeingUsed();
                 currentTool = tool;
                 BrowserContents = toolTypeToObjectContents[tool.objectType];
                 
@@ -184,6 +189,7 @@ namespace Necrofy
                 toolMenuItems[tool].Checked = true;
                 SetCursor(Cursors.Default);
                 RaiseSelectionChanged();
+                Repaint();
             }
         }
 
@@ -285,8 +291,20 @@ namespace Necrofy
             return false;
         }
 
+        private void canvas_KeyDown(object sender, KeyEventArgs e) {
+            currentTool.KeyDown(e);
+        }
+
+        private void canvas_KeyUp(object sender, KeyEventArgs e) {
+            currentTool.KeyUp(e);
+        }
+
         private void paintbrush_Click(object sender, EventArgs e) {
             ChangeTool(paintbrushTool);
+        }
+
+        private void tileSuggest_Click(object sender, EventArgs e) {
+            ChangeTool(tileSuggestionTool);
         }
 
         private void rectangleSelect_Click(object sender, EventArgs e) {

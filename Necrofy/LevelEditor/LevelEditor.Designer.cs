@@ -31,6 +31,7 @@
             this.vscroll = new System.Windows.Forms.VScrollBar();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.paintbrushButton = new System.Windows.Forms.ToolStripButton();
+            this.tileSuggestButton = new System.Windows.Forms.ToolStripButton();
             this.rectangleSelectButton = new System.Windows.Forms.ToolStripButton();
             this.pencilSelectButton = new System.Windows.Forms.ToolStripButton();
             this.tileSelectButton = new System.Windows.Forms.ToolStripButton();
@@ -45,6 +46,7 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsPaintbrush = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsTileSuggest = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsRectangleSelect = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsPencilSelect = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsTileSelect = new System.Windows.Forms.ToolStripMenuItem();
@@ -64,6 +66,8 @@
             this.canvas.Size = new System.Drawing.Size(283, 283);
             this.canvas.TabIndex = 0;
             this.canvas.Paint += new System.Windows.Forms.PaintEventHandler(this.canvas_Paint);
+            this.canvas.KeyDown += new System.Windows.Forms.KeyEventHandler(this.canvas_KeyDown);
+            this.canvas.KeyUp += new System.Windows.Forms.KeyEventHandler(this.canvas_KeyUp);
             this.canvas.MouseDown += new System.Windows.Forms.MouseEventHandler(this.canvas_MouseDown);
             this.canvas.MouseMove += new System.Windows.Forms.MouseEventHandler(this.canvas_MouseMove);
             this.canvas.MouseUp += new System.Windows.Forms.MouseEventHandler(this.canvas_MouseUp);
@@ -94,6 +98,7 @@
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.paintbrushButton,
+            this.tileSuggestButton,
             this.rectangleSelectButton,
             this.pencilSelectButton,
             this.tileSelectButton,
@@ -114,6 +119,16 @@
             this.paintbrushButton.Size = new System.Drawing.Size(23, 22);
             this.paintbrushButton.Text = "Paintbrush";
             this.paintbrushButton.Click += new System.EventHandler(this.paintbrush_Click);
+            // 
+            // tileSuggestButton
+            // 
+            this.tileSuggestButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tileSuggestButton.Image = ((System.Drawing.Image)(resources.GetObject("tileSuggestButton.Image")));
+            this.tileSuggestButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tileSuggestButton.Name = "tileSuggestButton";
+            this.tileSuggestButton.Size = new System.Drawing.Size(23, 22);
+            this.tileSuggestButton.Text = "Tile Suggest";
+            this.tileSuggestButton.Click += new System.EventHandler(this.tileSuggest_Click);
             // 
             // rectangleSelectButton
             // 
@@ -241,6 +256,7 @@
             // 
             this.toolsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolsPaintbrush,
+            this.toolsTileSuggest,
             this.toolsRectangleSelect,
             this.toolsPencilSelect,
             this.toolsTileSelect,
@@ -252,14 +268,21 @@
             // toolsPaintbrush
             // 
             this.toolsPaintbrush.Name = "toolsPaintbrush";
-            this.toolsPaintbrush.Size = new System.Drawing.Size(160, 22);
+            this.toolsPaintbrush.Size = new System.Drawing.Size(180, 22);
             this.toolsPaintbrush.Text = "Paintbrush";
             this.toolsPaintbrush.Click += new System.EventHandler(this.paintbrush_Click);
+            // 
+            // toolsTileSuggest
+            // 
+            this.toolsTileSuggest.Name = "toolsTileSuggest";
+            this.toolsTileSuggest.Size = new System.Drawing.Size(180, 22);
+            this.toolsTileSuggest.Text = "Tile Suggest";
+            this.toolsTileSuggest.Click += new System.EventHandler(this.tileSuggest_Click);
             // 
             // toolsRectangleSelect
             // 
             this.toolsRectangleSelect.Name = "toolsRectangleSelect";
-            this.toolsRectangleSelect.Size = new System.Drawing.Size(160, 22);
+            this.toolsRectangleSelect.Size = new System.Drawing.Size(180, 22);
             this.toolsRectangleSelect.Text = "Rectangle Select";
             this.toolsRectangleSelect.Click += new System.EventHandler(this.rectangleSelect_Click);
             // 
@@ -280,7 +303,7 @@
             // toolsSprites
             // 
             this.toolsSprites.Name = "toolsSprites";
-            this.toolsSprites.Size = new System.Drawing.Size(160, 22);
+            this.toolsSprites.Size = new System.Drawing.Size(180, 22);
             this.toolsSprites.Text = "Sprites";
             this.toolsSprites.Click += new System.EventHandler(this.sprites_Click);
             // 
@@ -289,8 +312,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(300, 300);
-            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.vscroll);
             this.Controls.Add(this.hscroll);
             this.Controls.Add(this.canvas);
@@ -334,5 +357,7 @@
         private System.Windows.Forms.ToolStripButton tileSelectButton;
         private System.Windows.Forms.ToolStripMenuItem toolsPencilSelect;
         private System.Windows.Forms.ToolStripMenuItem toolsTileSelect;
+        private System.Windows.Forms.ToolStripButton tileSuggestButton;
+        private System.Windows.Forms.ToolStripMenuItem toolsTileSuggest;
     }
 }

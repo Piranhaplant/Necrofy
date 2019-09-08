@@ -9,7 +9,6 @@ namespace Necrofy
 {
     class EditorAsset<T> : Asset
     {
-        private const string Extension = "json";
         private const AssetCategory AssetCat = AssetCategory.Editor;
         
         private readonly EditorNameInfo nameInfo;
@@ -39,7 +38,7 @@ namespace Necrofy
                 NameInfo nameInfo = new EditorNameInfo(name);
                 string filename = nameInfo.GetFilename(project.path);
                 if (!File.Exists(filename)) {
-                    filename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Tools", name + "." + Extension);
+                    filename = nameInfo.GetFilename(Project.internalProjectFilesPath);
                 }
                 return (EditorAsset<T>)FromFile(nameInfo, filename);
             }
@@ -56,6 +55,7 @@ namespace Necrofy
         class EditorNameInfo : NameInfo
         {
             private const string Folder = "Editor";
+            private const string Extension = "json";
 
             public readonly string name;
 

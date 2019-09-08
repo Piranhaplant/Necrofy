@@ -13,6 +13,8 @@ namespace Necrofy
     {
         public const string baseROMFilename = "base.sfc";
         public const string buildFilename = "build.sfc";
+        private const string internalProjectFilesFolder = "ProjectFiles";
+        public static readonly string internalProjectFilesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, internalProjectFilesFolder);
 
         public readonly string path;
         public readonly string settingsFilename;
@@ -77,7 +79,7 @@ namespace Necrofy
 
             ProcessStartInfo processInfo = new ProcessStartInfo(Path.Combine("Tools", "xkas.exe")) {
                 // TODO: Check that this works with spaces in the path
-                Arguments = string.Format("\"{0}\" \"{1}\"", Path.Combine("Tools", "ROMExpand.asm"), outputROM),
+                Arguments = string.Format("\"{0}\" \"{1}\"", Path.Combine(internalProjectFilesPath, "Patches", "ROMExpand.asm"), outputROM),
                 CreateNoWindow = true,
                 UseShellExecute = false,
                 RedirectStandardOutput = true

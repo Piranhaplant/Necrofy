@@ -49,6 +49,43 @@ namespace Necrofy
         }
     }
 
+    class TileSuggestAction : LevelEditorAction
+    {
+        private readonly int x;
+        private readonly int y;
+        private ushort prevTileType;
+        private ushort tileType;
+
+        public TileSuggestAction(int x, int y, ushort tileType) {
+            this.x = x;
+            this.y = y;
+            this.tileType = tileType;
+        }
+
+        public override void SetEditor(LevelEditor editor) {
+            base.SetEditor(editor);
+            prevTileType = level.background[x, y];
+        }
+
+        protected override void Undo() {
+            level.background[x, y] = prevTileType;
+        }
+
+        protected override void Redo() {
+            level.background[x, y] = tileType;
+        }
+
+        public override bool CanMerge => true;
+
+        public override void Merge(UndoAction<LevelEditor> action) {
+            tileType = ((TileSuggestAction)action).tileType;
+        }
+
+        public override string ToString() {
+            return "Change Tile";
+        }
+    }
+
     class FillSelectionAction : LevelEditorAction
     {
         private readonly List<Point> points = new List<Point>();

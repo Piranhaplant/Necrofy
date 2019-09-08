@@ -29,11 +29,12 @@ namespace Necrofy
         }
 
         private void UpdateSpriteList() {
+            // TODO: update selected index
             sprites.Clear();
             foreach (SpriteDisplay.Category category in categories.OrderBy(c => c)) {
                 sprites.AddRange(spriteGrahpics.spritesByCategory[category]);
             }
-            RaiseChangedEvent();
+            RaiseObjectsChangedEvent();
         }
 
         public override IEnumerable<Size> Objects {
@@ -47,10 +48,6 @@ namespace Necrofy
         public override bool PaintObject(int i, Graphics g, int x, int y) {
             sprites[i].RenderFromTopCorner(g, x, y);
             return false;
-        }
-
-        protected override void ObjectSelected(int i) {
-            // TODO
         }
     }
 }

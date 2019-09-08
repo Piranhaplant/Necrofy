@@ -24,10 +24,10 @@ namespace Necrofy
                 return false;
             }
         }
-        /// <summary>Invoked when there is a change to the contents or the selected object</summary>
-        public event EventHandler Changed;
-        protected void RaiseChangedEvent() {
-            Changed?.Invoke(this, EventArgs.Empty);
+        /// <summary>Invoked when there is a change to the list of objects</summary>
+        public event EventHandler ObjectsChanged;
+        protected void RaiseObjectsChangedEvent() {
+            ObjectsChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>Invoked when there is a change to the selected object</summary>
@@ -41,14 +41,9 @@ namespace Necrofy
             set {
                 if (selectedIndex != value) {
                     selectedIndex = value;
-                    ObjectSelected(selectedIndex);
-                    RaiseChangedEvent();
                     SelectedIndexChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
         }
-        /// <summary>Callback for when an object is selected</summary>
-        /// <param name="i">The index of the selected object</param>
-        protected abstract void ObjectSelected(int i);
     }
 }

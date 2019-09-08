@@ -15,6 +15,7 @@ namespace Necrofy
         public readonly LoadedTilesetGraphics graphics;
         public readonly LoadedTilesetPalette palette;
         public readonly LoadedSpriteGraphics spriteGraphics;
+        public readonly TilesetSuggestionsAsset tilesetSuggestionsAsset;
 
         public Bitmap[] tiles;
         public Bitmap[] priorityTiles;
@@ -27,6 +28,7 @@ namespace Necrofy
             graphics = new LoadedTilesetGraphics(project, Level.tilesetGraphicsName);
             palette = new LoadedTilesetPalette(project, Level.paletteName);
             spriteGraphics = new LoadedSpriteGraphics(project, Level.spritePaletteName);
+            tilesetSuggestionsAsset = TilesetSuggestionsAsset.FromProject(project, Level.tilesetTilemapName);
             RenderTiles();
         }
 
@@ -37,7 +39,7 @@ namespace Necrofy
 
             for (int i = 0; i < tiles.Length; i++) {
                 BitmapData curTile = CreateTile(tiles, i);
-                BitmapData curPriorityTile = CreateTile(priorityTiles, i, true);
+                BitmapData curPriorityTile = CreateTile(priorityTiles, i, transparent: true);
                 BitmapData curSolidOnlyTile = CreateTile(solidOnlyTiles, i);
 
                 for (int y = 0; y < 8; y++) {
@@ -71,8 +73,7 @@ namespace Necrofy
             return tile.LockBits(new Rectangle(0, 0, tile.Width, tile.Height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
         }
 
-        public Level Level {
-            get { return levelAsset.level; }
-        }
+        public Level Level => levelAsset.level;
+        public TilesetSuggestions TilesetSuggestions => tilesetSuggestionsAsset.data;
     }
 }

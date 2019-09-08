@@ -55,7 +55,6 @@ namespace Necrofy
                 } else {
                     CommitPaste();
                     ignoreMouse = true;
-                    editor.Repaint();
                 }
                 prevX = e.X;
                 prevY = e.Y;
@@ -90,10 +89,27 @@ namespace Necrofy
                 TranslatePath(newX - pasteX, newY - pasteY);
                 pasteX = newX;
                 pasteY = newY;
-                // TODO animation?
                 editor.Repaint();
             } else {
                 MouseUp2(e);
+            }
+        }
+
+        public override sealed void KeyDown(KeyEventArgs e) {
+            if (IsPasting) {
+                if (e.KeyCode == Keys.Escape) {
+                    EndPaste();
+                } else if (e.KeyCode == Keys.Enter) {
+                    CommitPaste();
+                }
+            }
+        }
+
+        public override sealed void DoneBeingUsed() {
+            if (IsPasting) {
+                CommitPaste();
+            } else {
+                DoneBeingUsed2();
             }
         }
 
@@ -101,6 +117,7 @@ namespace Necrofy
         protected virtual void MouseDown2(LevelMouseEventArgs e) { }
         protected virtual void MouseUp2(LevelMouseEventArgs e) { }
         protected virtual void MouseMove2(LevelMouseEventArgs e) { }
+        protected virtual void DoneBeingUsed2() { }
 
         public override bool CanCopy => editor.TileSelectionExists;
         public override bool CanPaste => true;
@@ -157,6 +174,7 @@ namespace Necrofy
                 pasteY = RoundToTile(center.Y - pasteTiles.GetHeight() * 64 / 2) * 64;
                 TranslatePath(pasteX, pasteY);
 
+                DoneBeingUsed2();
                 editor.tileSelection.Clear();
                 ignoreMouse = true;
                 editor.GenerateMouseMove();
@@ -179,10 +197,15 @@ namespace Necrofy
 
         private void CommitPaste() {
             editor.undoManager.Do(new PasteTilesAction(RoundToTile(pasteX), RoundToTile(pasteY), pasteTiles));
+            EndPaste();
+        }
+
+        private void EndPaste() {
             pasteTiles = null;
             pasteTilesPath.Dispose();
             pasteTilesPath = null;
             editor.SetCursor(Cursors.Default);
+            editor.Repaint();
         }
 
         private int RoundToTile(int position) {

@@ -23,18 +23,25 @@ namespace Necrofy
         public ObjectBrowserContents Contents {
             set {
                 if (contents != null) {
-                    contents.Changed -= Contents_Changed;
+                    contents.ObjectsChanged -= Contents_ObjectsChanged;
+                    contents.SelectedIndexChanged -= Contents_SelectedIndexChanged;
                 }
                 contents = value;
                 if (contents != null) {
-                    contents.Changed += Contents_Changed;
+                    contents.ObjectsChanged += Contents_ObjectsChanged;
+                    contents.SelectedIndexChanged += Contents_SelectedIndexChanged;
                 }
                 LayoutObjects();
             }
         }
 
-        private void Contents_Changed(object sender, EventArgs e) {
+        private void Contents_ObjectsChanged(object sender, EventArgs e) {
             LayoutObjects();
+            scrollWrapper.ScrollToPoint(0, 0);
+        }
+
+        private void Contents_SelectedIndexChanged(object sender, EventArgs e) {
+            canvas.Invalidate();
         }
 
         public ObjectBrowserControl() {
@@ -84,6 +91,7 @@ namespace Necrofy
             if (contents == null) {
                 return;
             }
+            // TODO: only paint objects that are visible
             e.Graphics.TranslateTransform(scrollWrapper.LeftPosition, scrollWrapper.TopPosition);
             for (int i = 0; i < objectRects.Count; i++) {
                 Rectangle objectRect = objectRects[i];

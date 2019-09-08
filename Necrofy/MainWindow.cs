@@ -72,6 +72,7 @@ namespace Necrofy
                 if (editor.Dirty) {
                     if (dirtyEditors.Add(editor)) {
                         editor.Text += "*";
+                        // TODO: fix "*" getting cut off if the name is too long
                     }
                 } else {
                     if (dirtyEditors.Remove(editor)) {
