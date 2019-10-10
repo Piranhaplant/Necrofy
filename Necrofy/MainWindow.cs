@@ -244,6 +244,41 @@ namespace Necrofy
         }
 
         private void RunSettings(object sender, EventArgs e) {
+            
+        }
+
+        private void debugToolStripMenuItem_Click(object sender, EventArgs e) {
+            // Convert demo data
+            //OpenFileDialog ofd = new OpenFileDialog();
+            //if (ofd.ShowDialog() == DialogResult.OK) {
+            //    FileStream fs = new FileStream(ofd.FileName, FileMode.Open);
+            //    int frameCount = fs.ReadInt16();
+
+            //    ushort prevInput = fs.ReadInt16();
+            //    ushort inputCount = 1;
+
+            //    List<byte> output = new List<byte>();
+            //    for (int i = 1; i < frameCount; i++) {
+            //        ushort nextInput = fs.ReadInt16();
+            //        if (nextInput == prevInput) {
+            //            inputCount++;
+            //        } else {
+            //            output.AddInt16(prevInput);
+            //            output.AddInt16(inputCount);
+            //            prevInput = nextInput;
+            //            inputCount = 1;
+            //        }
+            //    }
+
+            //    output.AddInt16(prevInput);
+            //    output.AddInt16(inputCount);
+
+            //    SaveFileDialog sfd = new SaveFileDialog();
+            //    if (sfd.ShowDialog() == DialogResult.OK) {
+            //        File.WriteAllBytes(sfd.FileName, output.ToArray());
+            //    }
+            //}
+
             if (project == null)
                 return;
             new SpriteViewer().Show(project);

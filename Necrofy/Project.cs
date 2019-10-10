@@ -77,17 +77,6 @@ namespace Necrofy
             string outputROM = Path.Combine(path, buildFilename);
             File.Copy(Path.Combine(path, baseROMFilename), outputROM, true);
 
-            ProcessStartInfo processInfo = new ProcessStartInfo(Path.Combine("Tools", "xkas.exe")) {
-                // TODO: Check that this works with spaces in the path
-                Arguments = string.Format("\"{0}\" \"{1}\"", Path.Combine(internalProjectFilesPath, "Patches", "ROMExpand.asm"), outputROM),
-                CreateNoWindow = true,
-                UseShellExecute = false,
-                RedirectStandardOutput = true
-            };
-            Process p = Process.Start(processInfo);
-            p.WaitForExit();
-            Console.Out.WriteLine(p.StandardOutput.ReadToEnd());
-
             NStream s = new NStream(new FileStream(outputROM, FileMode.Open, FileAccess.ReadWrite, FileShare.Read));
             ROMInfo info = new ROMInfo(s);
             info.assets.Clear();
@@ -119,11 +108,23 @@ namespace Necrofy
             s.Seek(ROMPointers.ROMSize, SeekOrigin.Begin);
             s.WriteByte(sizeValue);
 
+            // TODO: fill freespace with 0xFF so that it could be used by patches
+
             s.Close();
+
+            ProcessStartInfo processInfo = new ProcessStartInfo(Path.Combine("Tools", "asar.exe")) {
+                // TODO: Check that this works with spaces in the path
+                Arguments = string.Format("\"{0}\" \"{1}\"", Path.Combine(internalProjectFilesPath, "Patches", "ROMExpand.asm"), outputROM),
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardOutput = true
+            };
+            Process p = Process.Start(processInfo);
+            p.WaitForExit();
+            Console.Out.WriteLine(p.StandardOutput.ReadToEnd());
         }
 
         private static void AddEndOfBankFreespace(Stream s, Freespace freespace) {
-            // TODO: New banks added by Necrofy will end with zeros
             for (int bankEndPos = Freespace.BankSize - 1; bankEndPos < s.Length; bankEndPos += Freespace.BankSize) {
                 s.Seek(bankEndPos, SeekOrigin.Begin);
                 int length = 0;
