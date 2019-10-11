@@ -35,8 +35,8 @@ namespace Necrofy
             File.WriteAllBytes(nameInfo.GetFilename(project.path), data);
         }
 
-        public override void Insert(NStream rom, ROMInfo romInfo) {
-            InsertByteArray(rom, romInfo, ZAMNCompress.Compress(data));
+        public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
+            InsertCompressedByteArray(rom, romInfo, data, nameInfo.GetFilename(project.path));
         }
 
         protected override AssetCategory Category => nameInfo.Category;

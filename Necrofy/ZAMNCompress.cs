@@ -77,11 +77,9 @@ namespace Necrofy
             int dataIndex = 0;
             byte formatByte = 0;
             int formatBitCount = 0;
-            int formatByteIndex = 2; // The first format byte will be after the file size
+            int formatByteIndex = 0;
 
-            result.Add(0); // The final size will be put here
-            result.Add(0);
-            result.Add(0); // And one more to hold the first format byte
+            result.Add(0); // Placeholder for the first format byte
             while (dataIndex < data.Length) {
                 formatByte >>= 1;
                 formatBitCount++;
@@ -111,10 +109,7 @@ namespace Necrofy
                     result.Add(0); // Make a placeholder for the next one
                 }
             }
-
-            int len = result.Count - 2; // Don't count the first two bytes themselves
-            result[0] = (byte)(len & 0xff);
-            result[1] = (byte)((len & 0xff00) >> 8);
+            
             return result.ToArray();
         }
 
@@ -161,34 +156,34 @@ namespace Necrofy
             freespace.AddSize((int)s.Position, size);
         }
 
-        public static void Insert(Stream s, Freespace freespace, byte[] data, int? pointer = null) {
-            // TODO: Make Compress not add the size bytes
-            byte[] c = Compress(data);
-            byte[] compressed = new byte[c.Length - 2];
-            Array.Copy(c, 2, compressed, 0, compressed.Length);
-
+        public static int Insert(Stream s, Freespace freespace, byte[] compressedData, int? pointer = null) {
             if (pointer == null) {
-                // TODO
+                int newPointer = freespace.Claim(compressedData.Length + 2);
+                s.Seek(newPointer, SeekOrigin.Begin);
+                s.WriteInt16((ushort)compressedData.Length);
+                s.Write(compressedData, 0, compressedData.Length);
+                return newPointer;
             } else {
                 s.Seek((int)pointer, SeekOrigin.Begin);
                 int size = s.ReadInt16();
                 s.Seek(-2, SeekOrigin.Current);
-                if (size >= compressed.Length) {
-                    s.WriteInt16((ushort)compressed.Length);
-                    s.Write(compressed, 0, compressed.Length);
+                if (size >= compressedData.Length) {
+                    s.WriteInt16((ushort)compressedData.Length);
+                    s.Write(compressedData, 0, compressedData.Length);
                 } else {
                     int firstSize = size - 4;
-                    int secondSize = compressed.Length - firstSize;
+                    int secondSize = compressedData.Length - firstSize;
                     int secondPointer = freespace.Claim(secondSize + 2);
 
                     s.WriteInt16((ushort)(firstSize | 0x8000));
-                    s.Write(compressed, 0, firstSize);
+                    s.Write(compressedData, 0, firstSize);
                     s.WritePointer(secondPointer);
 
                     s.Seek(secondPointer, SeekOrigin.Begin);
                     s.WriteInt16((ushort)secondSize);
-                    s.Write(compressed, firstSize, secondSize);
+                    s.Write(compressedData, firstSize, secondSize);
                 }
+                return (int)pointer;
             }
         }
     }

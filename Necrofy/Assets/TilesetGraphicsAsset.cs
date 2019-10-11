@@ -35,7 +35,7 @@ namespace Necrofy
             File.WriteAllBytes(nameInfo.GetFilename(project.path), data);
         }
 
-        public override void Insert(NStream rom, ROMInfo romInfo) {
+        public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
             InsertByteArray(rom, romInfo, data);
         }
 

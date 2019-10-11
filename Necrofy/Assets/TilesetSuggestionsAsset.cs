@@ -30,9 +30,10 @@ namespace Necrofy
         public override void WriteFile(Project project) {
             // TODO: data would need to be converted back to JSON format first
             //File.WriteAllText(nameInfo.GetFilename(project.path), JsonConvert.SerializeObject(data));
+            throw new NotImplementedException();
         }
 
-        public override void Insert(NStream rom, ROMInfo romInfo) { }
+        public override void Insert(NStream rom, ROMInfo romInfo, Project project) { }
 
         protected override AssetCategory Category => nameInfo.Category;
         protected override string Name => nameInfo.Name;

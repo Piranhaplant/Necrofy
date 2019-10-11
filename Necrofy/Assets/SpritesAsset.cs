@@ -31,7 +31,7 @@ namespace Necrofy
             File.WriteAllText(nameInfo.GetFilename(project.path), JsonConvert.SerializeObject(sprites));
         }
 
-        public override void Insert(NStream rom, ROMInfo romInfo) {
+        public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
             int i = 0;
             i = Sprite.WriteToROM(sprites, i, rom, ROMPointers.SpriteData1);
             i = Sprite.WriteToROM(sprites, i, rom, ROMPointers.SpriteData2);

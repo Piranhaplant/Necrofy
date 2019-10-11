@@ -27,7 +27,7 @@ namespace Necrofy
             File.WriteAllText(nameInfo.GetFilename(project.path), JsonConvert.SerializeObject(data));
         }
 
-        public override void Insert(NStream rom, ROMInfo romInfo) { }
+        public override void Insert(NStream rom, ROMInfo romInfo, Project project) { }
 
         protected override AssetCategory Category => nameInfo.Category;
         protected override string Name => nameInfo.Name;

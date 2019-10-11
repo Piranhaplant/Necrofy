@@ -44,7 +44,8 @@ namespace Necrofy
         /// <summary>Inserts the asset into the given ROM</summary>
         /// <param name="rom">The ROM</param>
         /// <param name="romInfo">The ROM info</param>
-        public abstract void Insert(NStream rom, ROMInfo romInfo);
+        /// <param name="project">The project</param>
+        public abstract void Insert(NStream rom, ROMInfo romInfo, Project project);
         protected void InsertByteArray(NStream rom, ROMInfo romInfo, byte[] data, int? pointer = null) {
             if (pointer == null) {
                 pointer = romInfo.Freespace.Claim(data.Length);
@@ -52,6 +53,19 @@ namespace Necrofy
             rom.Seek((int)pointer, SeekOrigin.Begin);
             rom.Write(data, 0, data.Length);
             romInfo.AddAssetPointer(Category, Name, (int)pointer);
+        }
+        protected void InsertCompressedByteArray(NStream rom, ROMInfo romInfo, byte[] data, string filename, int? pointer = null) {
+            string compressedFilename = filename + ".nfyz";
+            byte[] compressedData;
+            if (!File.Exists(compressedFilename) || File.GetLastWriteTimeUtc(filename) > File.GetLastWriteTimeUtc(compressedFilename)) {
+                compressedData = ZAMNCompress.Compress(data);
+                File.WriteAllBytes(compressedFilename, compressedData);
+            } else {
+                compressedData = File.ReadAllBytes(compressedFilename);
+            }
+            
+            int newPointer = ZAMNCompress.Insert(rom, romInfo.Freespace, compressedData, pointer);
+            romInfo.AddAssetPointer(Category, Name, newPointer);
         }
 
         private static List<Creator> creators = new List<Creator>();

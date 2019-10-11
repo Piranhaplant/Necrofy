@@ -38,7 +38,7 @@ namespace Necrofy
             ReserveSpace(freespace, nameInfo.pointer, data.Length);
         }
 
-        public override void Insert(NStream rom, ROMInfo romInfo) {
+        public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
             InsertByteArray(rom, romInfo, data, nameInfo.pointer);
         }
 

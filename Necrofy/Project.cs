@@ -98,7 +98,7 @@ namespace Necrofy
                 asset.ReserveSpace(info.Freespace);
             }
             foreach (Asset asset in info.assets) {
-                asset.Insert(s, info);
+                asset.Insert(s, info, this);
             }
 
             // Round size up to the nearest bank

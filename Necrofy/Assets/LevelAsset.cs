@@ -41,7 +41,7 @@ namespace Necrofy
             File.WriteAllText(nameInfo.GetFilename(project.path), JsonConvert.SerializeObject(level));
         }
 
-        public override void Insert(NStream rom, ROMInfo romInfo) {
+        public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
             MovableData levelData = level.Build(romInfo);
             int pointer = romInfo.Freespace.Claim(levelData.GetSize());
             byte[] data = levelData.Build(pointer);
