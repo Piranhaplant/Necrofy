@@ -84,5 +84,8 @@ namespace Necrofy
         public virtual void Delete() { }
         public virtual void SelectAll() { }
         public virtual void SelectNone() { }
+
+        // Level number used for the "run from level" feature
+        public virtual int? LevelNumber => null;
     }
 }

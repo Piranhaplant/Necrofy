@@ -153,6 +153,7 @@ namespace Necrofy
             Editor_DirtyChanged(editor, e);
             Editor_SelectionChanged(editor, e);
             ObjectBrowser.Browser.Contents = activeEditor?.BrowserContents;
+            buildRunFromLevel.Enabled = activeEditor?.LevelNumber  != null;
         }
 
         private void CreateProject(object sender, EventArgs e) {
@@ -237,10 +238,18 @@ namespace Necrofy
         }
 
         private void BuildProject(object sender, EventArgs e) {
-            if (project == null)
-                return;
-            project.Build();
+            project?.Build();
             // TODO tell the user that it finished
+        }
+
+        private void RunProject(object sender, EventArgs e) {
+            project?.Run();
+        }
+
+        private void RunFromLevel(object sender, EventArgs e) {
+            if (activeEditor?.LevelNumber != null) {
+                project?.RunFromLevel((int)activeEditor?.LevelNumber);
+            }
         }
 
         private void RunSettings(object sender, EventArgs e) {

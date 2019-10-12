@@ -13,6 +13,7 @@ namespace Necrofy
     {
         public const string baseROMFilename = "base.sfc";
         public const string buildFilename = "build.sfc";
+        public const string runFromLevelFilename = "runFromLevel.sfc";
         private const string internalProjectFilesFolder = "ProjectFiles";
         public static readonly string internalProjectFilesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, internalProjectFilesFolder);
 
@@ -111,17 +112,27 @@ namespace Necrofy
             // TODO: fill freespace with 0xFF so that it could be used by patches
 
             s.Close();
+            
+            Patch(outputROM, "ROMExpand.asm");
+        }
 
-            ProcessStartInfo processInfo = new ProcessStartInfo(Path.Combine("Tools", "asar.exe")) {
-                // TODO: Check that this works with spaces in the path
-                Arguments = string.Format("\"{0}\" \"{1}\"", Path.Combine(internalProjectFilesPath, "Patches", "ROMExpand.asm"), outputROM),
-                CreateNoWindow = true,
-                UseShellExecute = false,
-                RedirectStandardOutput = true
+        public void Run() {
+            // TODO: Don't build if not necessary
+            Build();
+            Process.Start(Path.Combine(path, buildFilename));
+        }
+
+        public void RunFromLevel(int level) {
+            // TODO: Don't build if not necessary
+            Build();
+            string runROM = Path.Combine(path, runFromLevelFilename);
+            File.Copy(Path.Combine(path, buildFilename), runROM, true);
+
+            Dictionary<string, string> defines = new Dictionary<string, string> {
+                ["LEVEL"] = level.ToString()
             };
-            Process p = Process.Start(processInfo);
-            p.WaitForExit();
-            Console.Out.WriteLine(p.StandardOutput.ReadToEnd());
+            Patch(runROM, "RunFromLevel.asm", defines);
+            Process.Start(runROM);
         }
 
         private static void AddEndOfBankFreespace(Stream s, Freespace freespace) {
@@ -137,6 +148,27 @@ namespace Necrofy
                     freespace.AddSize((int)s.Position + 2, length - 2);
                 }
             }
+        }
+
+        private static void Patch(string rom, string patch, Dictionary<string, string> defines = null) {
+            // TODO: Check that this works with spaces in the path
+            string args = "";
+            if (defines != null) {
+                foreach (KeyValuePair<string, string> define in defines) {
+                    args += string.Format("\"-D{0}={1}\" ", define.Key, define.Value);
+                }
+            }
+            args += string.Format("\"{0}\" \"{1}\"", Path.Combine(internalProjectFilesPath, "Patches", patch), rom);
+
+            ProcessStartInfo processInfo = new ProcessStartInfo(Path.Combine("Tools", "asar.exe")) {
+                Arguments = args,
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
+            Process p = Process.Start(processInfo);
+            p.WaitForExit();
         }
     }
 }

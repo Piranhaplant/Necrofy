@@ -52,7 +52,7 @@ namespace Necrofy
             InitializeComponent();
 
             this.level = level;
-            this.Text = level.levelAsset.GetDisplayText();
+            this.Text = level.levelAsset.DisplayText;
 
             scrollWrapper = new ScrollWrapper(canvas, hscroll, vscroll);
             scrollWrapper.SetClientSize(level.Level.width * 64 + LevelPadding * 2, level.Level.height * 64 + LevelPadding * 2);
@@ -162,6 +162,8 @@ namespace Necrofy
         public override void SelectNone() {
             currentTool.SelectNone();
         }
+
+        public override int? LevelNumber => level.levelAsset.LevelNumber;
 
         private void TileSelection_Changed(object sender, EventArgs e) {
             tileSelectionPath?.Dispose();

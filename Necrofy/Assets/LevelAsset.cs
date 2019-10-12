@@ -29,9 +29,8 @@ namespace Necrofy
             this.level = level;
         }
 
-        public string GetDisplayText() {
-            return nameInfo.DisplayName;
-        }
+        public string DisplayText => nameInfo.DisplayName;
+        public int LevelNumber => nameInfo.levelNum;
 
         private static int GetPointerPosition(int levelNum) {
             return ROMPointers.LevelPointers + 2 + levelNum * 4;

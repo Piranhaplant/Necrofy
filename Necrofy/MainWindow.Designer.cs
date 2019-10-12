@@ -75,8 +75,8 @@
             this.buildRunProject = new System.Windows.Forms.ToolStripMenuItem();
             this.buildRunFromLevel = new System.Windows.Forms.ToolStripMenuItem();
             this.buildRunSettings = new System.Windows.Forms.ToolStripMenuItem();
-            this.openProjectDialog = new System.Windows.Forms.OpenFileDialog();
             this.debugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openProjectDialog = new System.Windows.Forms.OpenFileDialog();
             this.toolStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -257,6 +257,7 @@
             this.runProjectButton.Name = "runProjectButton";
             this.runProjectButton.Size = new System.Drawing.Size(23, 22);
             this.runProjectButton.Text = "Run Project";
+            this.runProjectButton.Click += new System.EventHandler(this.RunProject);
             // 
             // runFromLevelButton
             // 
@@ -267,6 +268,7 @@
             this.runFromLevelButton.Name = "runFromLevelButton";
             this.runFromLevelButton.Size = new System.Drawing.Size(23, 22);
             this.runFromLevelButton.Text = "Run From Level";
+            this.runFromLevelButton.Click += new System.EventHandler(this.RunFromLevel);
             // 
             // endToolStripSeparator
             // 
@@ -510,6 +512,7 @@
             this.buildRunProject.ShortcutKeys = System.Windows.Forms.Keys.F5;
             this.buildRunProject.Size = new System.Drawing.Size(180, 22);
             this.buildRunProject.Text = "Run Project";
+            this.buildRunProject.Click += new System.EventHandler(this.RunProject);
             // 
             // buildRunFromLevel
             // 
@@ -519,6 +522,7 @@
             this.buildRunFromLevel.ShortcutKeys = System.Windows.Forms.Keys.F6;
             this.buildRunFromLevel.Size = new System.Drawing.Size(180, 22);
             this.buildRunFromLevel.Text = "Run From Level";
+            this.buildRunFromLevel.Click += new System.EventHandler(this.RunFromLevel);
             // 
             // buildRunSettings
             // 
@@ -528,17 +532,17 @@
             this.buildRunSettings.Text = "Run Settings...";
             this.buildRunSettings.Click += new System.EventHandler(this.RunSettings);
             // 
-            // openProjectDialog
-            // 
-            this.openProjectDialog.Filter = "Necrofy project files (*.nfyp)|*.nfyp|All Files (*.*)|*.*";
-            this.openProjectDialog.Title = "Open Project";
-            // 
             // debugToolStripMenuItem
             // 
             this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
             this.debugToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.debugToolStripMenuItem.Text = "Debug";
             this.debugToolStripMenuItem.Click += new System.EventHandler(this.debugToolStripMenuItem_Click);
+            // 
+            // openProjectDialog
+            // 
+            this.openProjectDialog.Filter = "Necrofy project files (*.nfyp)|*.nfyp|All Files (*.*)|*.*";
+            this.openProjectDialog.Title = "Open Project";
             // 
             // MainWindow
             // 

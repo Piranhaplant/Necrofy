@@ -387,6 +387,9 @@
     <None Include="Icons\cross-script.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ProjectFiles\Patches\RunFromLevel.asm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Tools\asar.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
