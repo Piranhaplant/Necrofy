@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -105,6 +106,18 @@ namespace Necrofy
                         blocks.RemoveAt(i);
                         i--;
                     }
+                }
+            }
+        }
+
+        /// <summary>Fills all freespace in the given stream with the given byte value</summary>
+        /// <param name="s">The stream</param>
+        /// <param name="value">The value to fill with</param>
+        public void Fill(Stream s, byte value) {
+            foreach (FreeBlock block in blocks) {
+                s.Seek(block.Start, SeekOrigin.Begin);
+                for (int i = block.Start; i < block.End; i++) {
+                    s.WriteByte(value);
                 }
             }
         }

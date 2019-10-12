@@ -1,37 +1,5 @@
 lorom
 
-!VICTIMS = $10
-
-!WEAPON0 = $100
-!WEAPON1 = $1
-!WEAPON2 = $2
-!WEAPON3 = $3
-!WEAPON4 = $4
-!WEAPON5 = $5
-!WEAPON6 = $6
-!WEAPON7 = $7
-!WEAPON8 = $8
-!WEAPON9 = $9
-!WEAPON10 = $10
-!WEAPON11 = $11
-!WEAPON12 = $12
-!WEAPON13 = $13
-!WEAPON_COUNT = 14
-
-!SPECIAL0 = $99
-!SPECIAL1 = $1
-!SPECIAL2 = $2
-!SPECIAL3 = $3
-!SPECIAL4 = $4
-!SPECIAL5 = $5
-!SPECIAL6 = $6
-!SPECIAL7 = $7
-!SPECIAL8 = $8
-!SPECIAL9 = $9
-!SPECIAL10 = $10
-!SPECIAL11 = $11
-!SPECIAL_COUNT = 12
-
 ; Remove original code that sets default weapons/specials
 org $808891
 RTL

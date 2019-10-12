@@ -109,8 +109,7 @@ namespace Necrofy
             s.Seek(ROMPointers.ROMSize, SeekOrigin.Begin);
             s.WriteByte(sizeValue);
 
-            // TODO: fill freespace with 0xFF so that it could be used by patches
-
+            info.Freespace.Fill(s, 0xFF);
             s.Close();
             
             Patch(outputROM, "ROMExpand.asm");
@@ -122,15 +121,25 @@ namespace Necrofy
             Process.Start(Path.Combine(path, buildFilename));
         }
 
-        public void RunFromLevel(int level) {
+        public void RunFromLevel(int level, RunSettings settings) {
             // TODO: Don't build if not necessary
             Build();
             string runROM = Path.Combine(path, runFromLevelFilename);
             File.Copy(Path.Combine(path, buildFilename), runROM, true);
 
             Dictionary<string, string> defines = new Dictionary<string, string> {
-                ["LEVEL"] = level.ToString()
+                ["LEVEL"] = level.ToString(),
+                ["VICTIMS"] = "$" + settings.victimCount.ToString(),
+                ["WEAPON_COUNT"] = settings.weaponAmounts.Length.ToString(),
+                ["SPECIAL_COUNT"] = settings.specialAmounts.Length.ToString(),
             };
+            for (int i = 0; i < settings.weaponAmounts.Length; i++) {
+                defines["WEAPON" + i.ToString()] = "$" + settings.weaponAmounts[i].ToString();
+            }
+            for (int i = 0; i < settings.specialAmounts.Length; i++) {
+                defines["SPECIAL" + i.ToString()] = "$" + settings.specialAmounts[i].ToString();
+            }
+
             Patch(runROM, "RunFromLevel.asm", defines);
             Process.Start(runROM);
         }
@@ -151,7 +160,6 @@ namespace Necrofy
         }
 
         private static void Patch(string rom, string patch, Dictionary<string, string> defines = null) {
-            // TODO: Check that this works with spaces in the path
             string args = "";
             if (defines != null) {
                 foreach (KeyValuePair<string, string> define in defines) {
@@ -165,7 +173,7 @@ namespace Necrofy
                 CreateNoWindow = true,
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
-                RedirectStandardError = true
+                RedirectStandardError = true,
             };
             Process p = Process.Start(processInfo);
             p.WaitForExit();

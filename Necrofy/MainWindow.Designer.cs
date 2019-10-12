@@ -499,8 +499,7 @@
             this.buildBuildProject.Enabled = false;
             this.buildBuildProject.Image = global::Necrofy.Properties.Resources.compile;
             this.buildBuildProject.Name = "buildBuildProject";
-            this.buildBuildProject.ShortcutKeys = System.Windows.Forms.Keys.F4;
-            this.buildBuildProject.Size = new System.Drawing.Size(180, 22);
+            this.buildBuildProject.Size = new System.Drawing.Size(210, 22);
             this.buildBuildProject.Text = "Build Project";
             this.buildBuildProject.Click += new System.EventHandler(this.BuildProject);
             // 
@@ -509,8 +508,7 @@
             this.buildRunProject.Enabled = false;
             this.buildRunProject.Image = global::Necrofy.Properties.Resources.control;
             this.buildRunProject.Name = "buildRunProject";
-            this.buildRunProject.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.buildRunProject.Size = new System.Drawing.Size(180, 22);
+            this.buildRunProject.Size = new System.Drawing.Size(210, 22);
             this.buildRunProject.Text = "Run Project";
             this.buildRunProject.Click += new System.EventHandler(this.RunProject);
             // 
@@ -519,23 +517,22 @@
             this.buildRunFromLevel.Enabled = false;
             this.buildRunFromLevel.Image = global::Necrofy.Properties.Resources.control_cursor;
             this.buildRunFromLevel.Name = "buildRunFromLevel";
-            this.buildRunFromLevel.ShortcutKeys = System.Windows.Forms.Keys.F6;
-            this.buildRunFromLevel.Size = new System.Drawing.Size(180, 22);
+            this.buildRunFromLevel.ShortcutKeys = System.Windows.Forms.Keys.F5;
+            this.buildRunFromLevel.Size = new System.Drawing.Size(210, 22);
             this.buildRunFromLevel.Text = "Run From Level";
             this.buildRunFromLevel.Click += new System.EventHandler(this.RunFromLevel);
             // 
             // buildRunSettings
             // 
-            this.buildRunSettings.Enabled = false;
             this.buildRunSettings.Name = "buildRunSettings";
-            this.buildRunSettings.Size = new System.Drawing.Size(180, 22);
-            this.buildRunSettings.Text = "Run Settings...";
-            this.buildRunSettings.Click += new System.EventHandler(this.RunSettings);
+            this.buildRunSettings.Size = new System.Drawing.Size(210, 22);
+            this.buildRunSettings.Text = "Run From Level Settings...";
+            this.buildRunSettings.Click += new System.EventHandler(this.RunFromLevelSettings);
             // 
             // debugToolStripMenuItem
             // 
             this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
-            this.debugToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.debugToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.debugToolStripMenuItem.Text = "Debug";
             this.debugToolStripMenuItem.Click += new System.EventHandler(this.debugToolStripMenuItem_Click);
             // 

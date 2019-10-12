@@ -201,6 +201,13 @@
     </Compile>
     <Compile Include="ROMInfo.cs" />
     <Compile Include="ROMPointers.cs" />
+    <Compile Include="RunSettings.cs" />
+    <Compile Include="RunSettingsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RunSettingsDialog.Designer.cs">
+      <DependentUpon>RunSettingsDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="ScrollWrapper.cs" />
     <Compile Include="LevelEditor\TileSelection.cs" />
     <Compile Include="SeparateCheckToolStripMenuItem.cs">
@@ -247,6 +254,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RunSettingsDialog.resx">
+      <DependentUpon>RunSettingsDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SpriteViewer.resx">
       <DependentUpon>SpriteViewer.cs</DependentUpon>
@@ -395,6 +405,8 @@
     </None>
     <None Include="Images\circle.png" />
     <None Include="Images\arrow.png" />
+    <None Include="Icons\plus.png" />
+    <None Include="Icons\minus.png" />
     <Content Include="ProjectFiles\Patches\ROMExpand.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

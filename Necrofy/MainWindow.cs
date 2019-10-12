@@ -16,6 +16,9 @@ namespace Necrofy
     {
         private Project project;
 
+        private Dictionary<string, RunSettings> savedRunSettings;
+        private string currentRunSettings;
+
         public ObjectBrowserForm ObjectBrowser { get; private set; }
         public ProjectBrowser ProjectBrowser { get; private set; }
 
@@ -42,6 +45,8 @@ namespace Necrofy
                 recentProjects.Files = recentProjectsString.Split(Path.PathSeparator);
             }
 
+            LoadRunSettings();
+            
             ToolBarMenuLinker.Link(saveButton, fileSave);
             ToolBarMenuLinker.Link(saveAllButton, fileSaveAll);
             ToolBarMenuLinker.Link(cutButton, editCut);
@@ -53,6 +58,68 @@ namespace Necrofy
             ToolBarMenuLinker.Link(runProjectButton, buildRunProject);
             ToolBarMenuLinker.Link(runFromLevelButton, buildRunFromLevel);
             projectMenuItems = new List<ToolStripMenuItem>() { buildBuildProject, buildRunProject };
+        }
+
+        private void LoadRunSettings() {
+            if (string.IsNullOrEmpty(Properties.Settings.Default.SavedRunSettings)) {
+                SetDefaultRunSettings();
+            } else {
+                try {
+                    savedRunSettings = JsonConvert.DeserializeObject<Dictionary<string, RunSettings>>(Properties.Settings.Default.SavedRunSettings);
+                    List<string> invalidSettings = new List<string>();
+                    foreach (string settingsName in savedRunSettings.Keys) {
+                        RunSettings settings = savedRunSettings[settingsName];
+                        if (settings.weaponAmounts.Length != RunSettings.WeaponCount || settings.specialAmounts.Length != RunSettings.SpecialCount) {
+                            invalidSettings.Add(settingsName);
+                        }
+                    }
+                    foreach (string settingsName in invalidSettings) {
+                        savedRunSettings.Remove(settingsName);
+                    }
+                    if (savedRunSettings.Count == 0) {
+                        SetDefaultRunSettings();
+                    } else {
+                        currentRunSettings = Properties.Settings.Default.CurrentRunSettingsName;
+                        if (!savedRunSettings.ContainsKey(currentRunSettings)) {
+                            currentRunSettings = savedRunSettings.Keys.First();
+                            SaveRunSettings();
+                        }
+                    }
+                } catch {
+                    SetDefaultRunSettings();
+                }
+            }
+        }
+
+        private void SetDefaultRunSettings() {
+            savedRunSettings = new Dictionary<string, RunSettings>();
+
+            RunSettings starting = new RunSettings();
+            starting.weaponAmounts[0] = 150;
+            starting.specialAmounts[7] = 1;
+            savedRunSettings["Starting"] = starting;
+
+            RunSettings max = new RunSettings();
+            for (int i = 0; i < max.weaponAmounts.Length; i++) {
+                max.weaponAmounts[i] = 999;
+            }
+            max.weaponAmounts[9] = 0;
+            for (int i = 0; i < max.specialAmounts.Length; i++) {
+                max.specialAmounts[i] = 99;
+            }
+            max.specialAmounts[5] = 0;
+            max.specialAmounts[6] = 0;
+            max.specialAmounts[11] = 0;
+            savedRunSettings["Max"] = max;
+
+            currentRunSettings = "Max";
+            SaveRunSettings();
+        }
+
+        private void SaveRunSettings() {
+            Properties.Settings.Default.SavedRunSettings = JsonConvert.SerializeObject(savedRunSettings);
+            Properties.Settings.Default.CurrentRunSettingsName = currentRunSettings;
+            Properties.Settings.Default.Save();
         }
 
         public ToolStripSplitButton UndoButton => undoButton;
@@ -248,12 +315,17 @@ namespace Necrofy
 
         private void RunFromLevel(object sender, EventArgs e) {
             if (activeEditor?.LevelNumber != null) {
-                project?.RunFromLevel((int)activeEditor?.LevelNumber);
+                project?.RunFromLevel((int)activeEditor?.LevelNumber, savedRunSettings[currentRunSettings]);
             }
         }
 
-        private void RunSettings(object sender, EventArgs e) {
-            
+        private void RunFromLevelSettings(object sender, EventArgs e) {
+            RunSettingsDialog dialog = new RunSettingsDialog(savedRunSettings, currentRunSettings);
+            dialog.FormClosed += (sender2, e2) => {
+                currentRunSettings = dialog.currentSettings;
+                SaveRunSettings();
+            };
+            dialog.Show();
         }
 
         private void debugToolStripMenuItem_Click(object sender, EventArgs e) {
