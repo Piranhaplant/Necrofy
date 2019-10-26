@@ -282,7 +282,7 @@
             // 
             this.toolsPaintbrush.Image = global::Necrofy.Properties.Resources.paint_brush;
             this.toolsPaintbrush.Name = "toolsPaintbrush";
-            this.toolsPaintbrush.ShortcutKeyDisplayString = "P";
+            this.toolsPaintbrush.ShortcutKeyDisplayString = "";
             this.toolsPaintbrush.Size = new System.Drawing.Size(180, 22);
             this.toolsPaintbrush.Text = "&Paintbrush";
             this.toolsPaintbrush.Click += new System.EventHandler(this.paintbrush_Click);
@@ -291,7 +291,7 @@
             // 
             this.toolsTileSuggest.Image = global::Necrofy.Properties.Resources.light_bulb;
             this.toolsTileSuggest.Name = "toolsTileSuggest";
-            this.toolsTileSuggest.ShortcutKeyDisplayString = "S";
+            this.toolsTileSuggest.ShortcutKeyDisplayString = "";
             this.toolsTileSuggest.Size = new System.Drawing.Size(180, 22);
             this.toolsTileSuggest.Text = "Tile &Suggest";
             this.toolsTileSuggest.Click += new System.EventHandler(this.tileSuggest_Click);
@@ -300,7 +300,7 @@
             // 
             this.toolsRectangleSelect.Image = global::Necrofy.Properties.Resources.selection_select;
             this.toolsRectangleSelect.Name = "toolsRectangleSelect";
-            this.toolsRectangleSelect.ShortcutKeyDisplayString = "R";
+            this.toolsRectangleSelect.ShortcutKeyDisplayString = "";
             this.toolsRectangleSelect.Size = new System.Drawing.Size(180, 22);
             this.toolsRectangleSelect.Text = "&Rectangle Select";
             this.toolsRectangleSelect.Click += new System.EventHandler(this.rectangleSelect_Click);
@@ -309,7 +309,7 @@
             // 
             this.toolsPencilSelect.Image = global::Necrofy.Properties.Resources.pencil_select;
             this.toolsPencilSelect.Name = "toolsPencilSelect";
-            this.toolsPencilSelect.ShortcutKeyDisplayString = "C";
+            this.toolsPencilSelect.ShortcutKeyDisplayString = "";
             this.toolsPencilSelect.Size = new System.Drawing.Size(180, 22);
             this.toolsPencilSelect.Text = "Pen&cil Select";
             this.toolsPencilSelect.Click += new System.EventHandler(this.pencilSelect_Click);
@@ -318,7 +318,7 @@
             // 
             this.toolsTileSelect.Image = global::Necrofy.Properties.Resources.tile_select;
             this.toolsTileSelect.Name = "toolsTileSelect";
-            this.toolsTileSelect.ShortcutKeyDisplayString = "T";
+            this.toolsTileSelect.ShortcutKeyDisplayString = "";
             this.toolsTileSelect.Size = new System.Drawing.Size(180, 22);
             this.toolsTileSelect.Text = "&Tile Select";
             this.toolsTileSelect.Click += new System.EventHandler(this.tileSelect_Click);
@@ -327,7 +327,7 @@
             // 
             this.toolsResizeLevel.Image = global::Necrofy.Properties.Resources.map_resize;
             this.toolsResizeLevel.Name = "toolsResizeLevel";
-            this.toolsResizeLevel.ShortcutKeyDisplayString = "L";
+            this.toolsResizeLevel.ShortcutKeyDisplayString = "";
             this.toolsResizeLevel.Size = new System.Drawing.Size(180, 22);
             this.toolsResizeLevel.Text = "Resize &Level";
             this.toolsResizeLevel.Click += new System.EventHandler(this.resizeLevel_Click);
@@ -336,7 +336,7 @@
             // 
             this.toolsSprites.Image = global::Necrofy.Properties.Resources.leaf;
             this.toolsSprites.Name = "toolsSprites";
-            this.toolsSprites.ShortcutKeyDisplayString = "I";
+            this.toolsSprites.ShortcutKeyDisplayString = "";
             this.toolsSprites.Size = new System.Drawing.Size(180, 22);
             this.toolsSprites.Text = "Spr&ites";
             this.toolsSprites.Click += new System.EventHandler(this.sprites_Click);
@@ -346,8 +346,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(300, 300);
-            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.vscroll);
             this.Controls.Add(this.hscroll);
             this.Controls.Add(this.canvas);

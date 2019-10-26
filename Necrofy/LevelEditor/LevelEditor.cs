@@ -44,8 +44,9 @@ namespace Necrofy
         private readonly ResizeLevelTool resizeLevelTool;
         private readonly SpriteTool spriteTool;
 
-        private readonly Dictionary<Tool, ToolStripMenuItem> toolMenuItems;
+        private readonly Dictionary<Tool, ToolStripMenuItem> toolMenuItems = new Dictionary<Tool, ToolStripMenuItem>();
         private readonly Dictionary<Tool.ObjectType, ObjectBrowserContents> toolTypeToObjectContents;
+        private readonly Dictionary<Keys, Tool> toolShortcutKeys = new Dictionary<Keys, Tool>();
         
         private Tool currentTool;
 
@@ -84,24 +85,22 @@ namespace Necrofy
             resizeLevelTool = new ResizeLevelTool(this);
             spriteTool = new SpriteTool(this);
 
-            toolMenuItems = new Dictionary<Tool, ToolStripMenuItem> {
-                { paintbrushTool, toolsPaintbrush },
-                { tileSuggestionTool, toolsTileSuggest },
-                { rectangleSelectTool, toolsRectangleSelect },
-                { pencilSelectTool, toolsPencilSelect },
-                { tileSelectTool, toolsTileSelect },
-                { resizeLevelTool, toolsResizeLevel },
-                { spriteTool, toolsSprites },
-            };
-            ToolBarMenuLinker.Link(paintbrushButton, toolsPaintbrush);
-            ToolBarMenuLinker.Link(tileSuggestButton, toolsTileSuggest);
-            ToolBarMenuLinker.Link(rectangleSelectButton, toolsRectangleSelect);
-            ToolBarMenuLinker.Link(pencilSelectButton, toolsPencilSelect);
-            ToolBarMenuLinker.Link(tileSelectButton, toolsTileSelect);
-            ToolBarMenuLinker.Link(resizeLevelButton, toolsResizeLevel);
-            ToolBarMenuLinker.Link(spritesButton, toolsSprites);
-
+            SetupTool(paintbrushTool, Keys.P, toolsPaintbrush, paintbrushButton);
+            SetupTool(tileSuggestionTool, Keys.S, toolsTileSuggest, tileSuggestButton);
+            SetupTool(rectangleSelectTool, Keys.R, toolsRectangleSelect, rectangleSelectButton);
+            SetupTool(pencilSelectTool, Keys.C, toolsPencilSelect, pencilSelectButton);
+            SetupTool(tileSelectTool, Keys.T, toolsTileSelect, tileSelectButton);
+            SetupTool(resizeLevelTool, Keys.L, toolsResizeLevel, resizeLevelButton);
+            SetupTool(spriteTool, Keys.I, toolsSprites, spritesButton);
+            
             Repaint();
+        }
+
+        private void SetupTool(Tool tool, Keys shortcutKey, ToolStripMenuItem menuItem, ToolStripItem toolStripButton) {
+            toolMenuItems[tool] = menuItem;
+            toolShortcutKeys[shortcutKey] = tool;
+            ToolBarMenuLinker.Link(toolStripButton, menuItem);
+            menuItem.ShortcutKeyDisplayString = shortcutKey.ToString();
         }
 
         public void ScrollObjectBrowserToSelection() {
@@ -197,7 +196,11 @@ namespace Necrofy
                     menuItem.Checked = false;
                 }
                 toolMenuItems[tool].Checked = true;
+
                 SetCursor(Cursors.Default);
+                scrollWrapper.ExpandingDrag = false;
+                UpdateLevelSize();
+
                 RaiseSelectionChanged();
                 Repaint();
             }
@@ -305,7 +308,12 @@ namespace Necrofy
         }
 
         private void canvas_KeyDown(object sender, KeyEventArgs e) {
-            currentTool.KeyDown(e);
+            if (toolShortcutKeys.TryGetValue(e.KeyData, out Tool t)) {
+                mouseDown = false;
+                ChangeTool(t);
+            } else {
+                currentTool.KeyDown(e);
+            }
         }
 
         private void canvas_KeyUp(object sender, KeyEventArgs e) {

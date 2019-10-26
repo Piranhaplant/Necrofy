@@ -8,9 +8,12 @@ namespace Necrofy
 {
     class RectangleSelectTool : TileTool
     {
+        bool selecting = false;
+
         public RectangleSelectTool(LevelEditor editor) : base(editor) { }
 
         protected override void MouseDown2(LevelMouseEventArgs e) {
+            selecting = true;
             bool addToSelection = true;
             if (Control.ModifierKeys == Keys.Alt) {
                 addToSelection = false;
@@ -22,7 +25,7 @@ namespace Necrofy
         }
 
         protected override void MouseMove2(LevelMouseEventArgs e) {
-            if (e.MouseIsDown) {
+            if (selecting) {
                 editor.tileSelection.MoveRect(e.TileX, e.TileY);
                 editor.tilesetObjectBrowserContents.SelectedIndex = -1;
             }
@@ -30,6 +33,14 @@ namespace Necrofy
 
         protected override void MouseUp2(LevelMouseEventArgs e) {
             editor.tileSelection.EndRect();
+            selecting = false;
+        }
+
+        protected override void DoneBeingUsed2() {
+            if (selecting) {
+                editor.tileSelection.EndRect();
+                selecting = false;
+            }
         }
 
         public override void TileChanged() {

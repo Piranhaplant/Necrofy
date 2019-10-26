@@ -138,17 +138,18 @@ namespace Necrofy
         }
 
         protected override void MouseUp2(LevelMouseEventArgs e) {
-            if (resizing) {
-                if (curStartX != 0 || curStartY != 0 || curEndX != Width || curEndY != Height) {
-                    int tile = Math.Max(editor.tilesetObjectBrowserContents.SelectedTile, 0);
-                    editor.undoManager.Do(new ResizeLevelAction(curStartX, curStartY, curEndX, curEndY, (ushort)tile));
-                } else {
-                    editor.UpdateLevelSize(); // Reset out of bounds scrolling even if the level size wasn't changed
-                }
+            if (resizing && (curStartX != 0 || curStartY != 0 || curEndX != Width || curEndY != Height)) {
+                int tile = Math.Max(editor.tilesetObjectBrowserContents.SelectedTile, 0);
+                editor.undoManager.Do(new ResizeLevelAction(curStartX, curStartY, curEndX, curEndY, (ushort)tile));
             }
             resizing = false;
             editor.scrollWrapper.ExpandingDrag = false;
+            editor.UpdateLevelSize();
             editor.undoManager.ForceNoMerge();
+        }
+
+        protected override void DoneBeingUsed2() {
+            resizing = false;
         }
     }
 }
