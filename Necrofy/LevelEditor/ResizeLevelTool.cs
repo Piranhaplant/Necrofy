@@ -1,0 +1,154 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace Necrofy
+{
+    class ResizeLevelTool : TileTool
+    {
+        public ResizeLevelTool(LevelEditor editor) : base(editor) { }
+
+        private enum ResizeMode
+        {
+            None,
+            Start,
+            End,
+        }
+
+        private bool resizing = false;
+        private ResizeMode horizontalResizeMode = ResizeMode.None;
+        private ResizeMode verticalResizeMode = ResizeMode.None;
+        private int curStartX;
+        private int curStartY;
+        private int curEndX;
+        private int curEndY;
+
+        private int Width => editor.level.Level.width;
+        private int Height => editor.level.Level.height;
+
+        protected override void Paint2(Graphics g) {
+            int startX, startY, endX, endY;
+            if (resizing) {
+                startX = curStartX * 64;
+                startY = curStartY * 64;
+                endX = curEndX * 64;
+                endY = curEndY * 64;
+            } else {
+                startX = 0;
+                startY = 0;
+                endX = Width * 64;
+                endY = Height * 64;
+            }
+
+            int width = endX - startX;
+            int height = endY - startY;
+            g.DrawRectangle(Pens.Black, startX, startY, width, height);
+            g.DrawRectangle(Pens.White, startX + 1, startY + 1, width - 2, height - 2);
+
+            int midX = (startX + endX) / 2;
+            int midY = (startY + endY) / 2;
+            DrawHandle(g, startX, startY);
+            DrawHandle(g, midX, startY);
+            DrawHandle(g, endX, startY);
+            DrawHandle(g, endX, midY);
+            DrawHandle(g, endX, endY);
+            DrawHandle(g, midX, endY);
+            DrawHandle(g, startX, endY);
+            DrawHandle(g, startX, midY);
+        }
+
+        private void DrawHandle(Graphics g, int x, int y) {
+            g.FillRectangle(Brushes.White, x - 4, y - 4, 8, 8);
+            g.DrawRectangle(Pens.Black, x - 4, y - 4, 8, 8);
+        }
+
+        protected override void MouseDown2(LevelMouseEventArgs e) {
+            if (horizontalResizeMode != ResizeMode.None || verticalResizeMode != ResizeMode.None) {
+                resizing = true;
+                curStartX = 0;
+                curStartY = 0;
+                curEndX = Width;
+                curEndY = Height;
+                editor.scrollWrapper.ExpandingDrag = true;
+            }
+        }
+
+        protected override void MouseMove2(LevelMouseEventArgs e) {
+            if (resizing) {
+                int newStartX = curStartX;
+                int newStartY = curStartY;
+                int newEndX = curEndX;
+                int newEndY = curEndY;
+
+                if (horizontalResizeMode == ResizeMode.Start) {
+                    newStartX = Math.Min((int)Math.Round(e.X / 64.0), Width - 1);
+                } else if (horizontalResizeMode == ResizeMode.End) {
+                    newEndX = Math.Max((int)Math.Round(e.X / 64.0), 1);
+                }
+
+                if (verticalResizeMode == ResizeMode.Start) {
+                    newStartY = Math.Min((int)Math.Round(e.Y / 64.0), Height - 1);
+                } else if (verticalResizeMode == ResizeMode.End) {
+                    newEndY = Math.Max((int)Math.Round(e.Y / 64.0), 1);
+                }
+
+                if (newStartX != curStartX || newStartY != curStartY || newEndX != curEndX || newEndY != curEndY) {
+                    curStartX = newStartX;
+                    curStartY = newStartY;
+                    curEndX = newEndX;
+                    curEndY = newEndY;
+                    editor.Repaint();
+                }
+            } else {
+                int width = Width * 64;
+                int height = Height * 64;
+
+                horizontalResizeMode = ResizeMode.None;
+                verticalResizeMode = ResizeMode.None;
+
+                if (e.Y >= -16 && e.Y < height + 16 && e.X >= -16 && e.X < width + 16) {
+                    if (e.X < 16) {
+                        horizontalResizeMode = ResizeMode.Start;
+                    } else if (e.X >= width - 16) {
+                        horizontalResizeMode = ResizeMode.End;
+                    }
+
+                    if (e.Y < 16) {
+                        verticalResizeMode = ResizeMode.Start;
+                    } else if (e.Y >= height - 16) {
+                        verticalResizeMode = ResizeMode.End;
+                    }
+                }
+
+                Cursor c = Cursors.Default;
+                if (horizontalResizeMode == ResizeMode.Start && verticalResizeMode == ResizeMode.Start || horizontalResizeMode == ResizeMode.End && verticalResizeMode == ResizeMode.End) {
+                    c = Cursors.SizeNWSE;
+                } else if (horizontalResizeMode == ResizeMode.Start && verticalResizeMode == ResizeMode.End || horizontalResizeMode == ResizeMode.End && verticalResizeMode == ResizeMode.Start) {
+                    c = Cursors.SizeNESW;
+                } else if (horizontalResizeMode != ResizeMode.None) {
+                    c = Cursors.SizeWE;
+                } else if (verticalResizeMode != ResizeMode.None) {
+                    c = Cursors.SizeNS;
+                }
+                editor.SetCursor(c);
+            }
+        }
+
+        protected override void MouseUp2(LevelMouseEventArgs e) {
+            if (resizing) {
+                if (curStartX != 0 || curStartY != 0 || curEndX != Width || curEndY != Height) {
+                    int tile = Math.Max(editor.tilesetObjectBrowserContents.SelectedTile, 0);
+                    editor.undoManager.Do(new ResizeLevelAction(curStartX, curStartY, curEndX, curEndY, (ushort)tile));
+                } else {
+                    editor.UpdateLevelSize(); // Reset out of bounds scrolling even if the level size wasn't changed
+                }
+            }
+            resizing = false;
+            editor.scrollWrapper.ExpandingDrag = false;
+            editor.undoManager.ForceNoMerge();
+        }
+    }
+}

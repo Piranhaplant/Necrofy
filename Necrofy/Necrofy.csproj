@@ -121,6 +121,7 @@
     <Compile Include="LevelEditor\PaintbrushTool.cs" />
     <Compile Include="LevelEditor\PencilSelectTool.cs" />
     <Compile Include="LevelEditor\RectangleSelectTool.cs" />
+    <Compile Include="LevelEditor\ResizeLevelTool.cs" />
     <Compile Include="LevelEditor\SpriteTool.cs" />
     <Compile Include="LevelEditor\TileSelectTool.cs" />
     <Compile Include="LevelEditor\TileSuggestionTool.cs" />
@@ -407,6 +408,13 @@
     <None Include="Images\arrow.png" />
     <None Include="Icons\plus.png" />
     <None Include="Icons\minus.png" />
+    <None Include="Icons\paint-brush.png" />
+    <None Include="Icons\light-bulb.png" />
+    <None Include="Icons\selection-select.png" />
+    <None Include="Icons\pencil-select.png" />
+    <None Include="Icons\tile-select.png" />
+    <None Include="Icons\map-resize.png" />
+    <None Include="Icons\leaf.png" />
     <Content Include="ProjectFiles\Patches\ROMExpand.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -179,4 +179,75 @@ namespace Necrofy
             return "Paste Tiles";
         }
     }
+
+    class ResizeLevelAction : LevelEditorAction
+    {
+        private readonly int startX;
+        private readonly int startY;
+        private readonly int endX;
+        private readonly int endY;
+        private readonly ushort tileType;
+
+        private ushort[,] oldTiles;
+        private readonly Dictionary<LevelObject, Point> oldPositions = new Dictionary<LevelObject, Point>();
+
+        public ResizeLevelAction(int startX, int startY, int endX, int endY, ushort tileType) {
+            this.startX = startX;
+            this.startY = startY;
+            this.endX = endX;
+            this.endY = endY;
+            this.tileType = tileType;
+        }
+
+        public override void SetEditor(LevelEditor editor) {
+            base.SetEditor(editor);
+            oldTiles = level.background.Clone() as ushort[,];
+            foreach (LevelObject o in level.GetAllObjects()) {
+                if (o.x < startX * 64 || o.x > endX * 64 || o.y < startY * 64 || o.y > endY * 64) {
+                    oldPositions[o] = new Point(o.x, o.y);
+                }
+            }
+        }
+
+        protected override void Undo() {
+            level.background = oldTiles;
+            foreach (LevelObject o in level.GetAllObjects()) {
+                o.x = (ushort)Math.Max(0, o.x + startX * 64);
+                o.y = (ushort)Math.Max(0, o.y + startY * 64);
+            }
+            foreach (KeyValuePair<LevelObject, Point> pair in oldPositions) {
+                pair.Key.x = (ushort)pair.Value.X;
+                pair.Key.y = (ushort)pair.Value.Y;
+            }
+            editor.tileSelection.Resize(-startX, -startY, oldTiles.GetWidth() - startX, oldTiles.GetHeight() - startY);
+        }
+
+        protected override void Redo() {
+            level.background = new ushort[endX - startX, endY - startY];
+            for (int y = 0; y < level.height; y++) {
+                for (int x = 0; x < level.width; x++) {
+                    level.background[x, y] = tileType;
+                }
+            }
+            for (int y = Math.Max(startY, 0); y < Math.Min(endY, oldTiles.GetHeight()); y++) {
+                for (int x = Math.Max(startX, 0); x < Math.Min(endX, oldTiles.GetWidth()); x++) {
+                    level.background[x - startX, y - startY] = oldTiles[x, y];
+                }
+            }
+            foreach (LevelObject o in level.GetAllObjects()) {
+                o.x = (ushort)Math.Max(0, Math.Min(level.width * 64, o.x - startX * 64));
+                o.y = (ushort)Math.Max(0, Math.Min(level.height * 64, o.y - startY * 64));
+            }
+            editor.tileSelection.Resize(startX, startY, endX, endY);
+        }
+
+        protected override void AfterAction() {
+            base.AfterAction();
+            editor.UpdateLevelSize();
+        }
+
+        public override string ToString() {
+            return "Resize Level";
+        }
+    }
 }

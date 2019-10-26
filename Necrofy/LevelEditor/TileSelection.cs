@@ -9,10 +9,10 @@ namespace Necrofy
 {
     class TileSelection
     {
-        private readonly int width;
-        private readonly int height;
-        private readonly bool[,] points;
-        private readonly bool[,] curPoints;
+        private int width;
+        private int height;
+        private bool[,] points;
+        private bool[,] curPoints;
         private bool useCurPoints = false;
 
         // Selection rectangle
@@ -55,6 +55,22 @@ namespace Necrofy
 
         public bool GetPoint(int x, int y) {
             return points[x, y];
+        }
+
+        public void Resize(int startX, int startY, int endX, int endY) {
+            bool[,] oldPoints = points;
+
+            width = endX - startX;
+            height = endY - startY;
+            points = new bool[width, height];
+            curPoints = new bool[width, height];
+
+            for (int y = Math.Max(startY, 0); y < Math.Min(endY, oldPoints.GetHeight()); y++) {
+                for (int x = Math.Max(startX, 0); x < Math.Min(endX, oldPoints.GetWidth()); x++) {
+                    points[x - startX, y - startY] = oldPoints[x, y];
+                }
+            }
+            Changed?.Invoke(this, EventArgs.Empty);
         }
 
         public void StartRect(int x, int y, bool selected) {

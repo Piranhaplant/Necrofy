@@ -8,7 +8,7 @@ namespace Necrofy
     /// <summary>
     /// A level monster that starts at a specific position in the level
     /// </summary>
-    class PositionLevelMonster : LevelMonster
+    class PositionLevelMonster : LevelMonster, LevelObject
     {
         public ushort x { get; set; }
         public ushort y { get; set; }
@@ -16,8 +16,8 @@ namespace Necrofy
         public PositionLevelMonster() { }
 
         public PositionLevelMonster(int type, NStream s) : base(type) {
-            this.x = s.ReadInt16();
-            this.y = s.ReadInt16();
+            x = s.ReadInt16();
+            y = s.ReadInt16();
         }
 
         public override void Build(MovableData data, ROMInfo rom) {

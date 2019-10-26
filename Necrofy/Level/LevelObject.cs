@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Necrofy
 {
-    abstract class LevelObject
+    interface LevelObject
     {
-        //public abstract ushort x { get; set; }
-        //public abstract ushort y { get; set; }
+        ushort x { get; set; }
+        ushort y { get; set; }
     }
 }

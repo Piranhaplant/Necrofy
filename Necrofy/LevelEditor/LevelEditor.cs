@@ -22,7 +22,7 @@ namespace Necrofy
         public readonly TilesetObjectBrowserContents tilesetObjectBrowserContents;
         public readonly SpriteObjectBrowserContents spriteObjectBrowserContents;
 
-        private readonly ScrollWrapper scrollWrapper;
+        public readonly ScrollWrapper scrollWrapper;
         public UndoManager<LevelEditor> undoManager;
 
         public readonly TileSelection tileSelection;
@@ -41,6 +41,7 @@ namespace Necrofy
         private readonly RectangleSelectTool rectangleSelectTool;
         private readonly PencilSelectTool pencilSelectTool;
         private readonly TileSelectTool tileSelectTool;
+        private readonly ResizeLevelTool resizeLevelTool;
         private readonly SpriteTool spriteTool;
 
         private readonly Dictionary<Tool, ToolStripMenuItem> toolMenuItems;
@@ -55,8 +56,8 @@ namespace Necrofy
             this.Text = level.levelAsset.DisplayText;
 
             scrollWrapper = new ScrollWrapper(canvas, hscroll, vscroll);
-            scrollWrapper.SetClientSize(level.Level.width * 64 + LevelPadding * 2, level.Level.height * 64 + LevelPadding * 2);
             scrollWrapper.Scrolled += scrollWrapper_Scrolled;
+            UpdateLevelSize();
 
             tileSelection = new TileSelection(level.Level.width, level.Level.height);
             tileSelection.Changed += TileSelection_Changed;
@@ -80,6 +81,7 @@ namespace Necrofy
             rectangleSelectTool = new RectangleSelectTool(this);
             pencilSelectTool = new PencilSelectTool(this);
             tileSelectTool = new TileSelectTool(this);
+            resizeLevelTool = new ResizeLevelTool(this);
             spriteTool = new SpriteTool(this);
 
             toolMenuItems = new Dictionary<Tool, ToolStripMenuItem> {
@@ -88,6 +90,7 @@ namespace Necrofy
                 { rectangleSelectTool, toolsRectangleSelect },
                 { pencilSelectTool, toolsPencilSelect },
                 { tileSelectTool, toolsTileSelect },
+                { resizeLevelTool, toolsResizeLevel },
                 { spriteTool, toolsSprites },
             };
             ToolBarMenuLinker.Link(paintbrushButton, toolsPaintbrush);
@@ -95,6 +98,7 @@ namespace Necrofy
             ToolBarMenuLinker.Link(rectangleSelectButton, toolsRectangleSelect);
             ToolBarMenuLinker.Link(pencilSelectButton, toolsPencilSelect);
             ToolBarMenuLinker.Link(tileSelectButton, toolsTileSelect);
+            ToolBarMenuLinker.Link(resizeLevelButton, toolsResizeLevel);
             ToolBarMenuLinker.Link(spritesButton, toolsSprites);
 
             Repaint();
@@ -121,6 +125,10 @@ namespace Necrofy
         public void GenerateMouseMove() {
             Point mousePosition = PointToClient(MousePosition);
             canvas_MouseMove(this, new MouseEventArgs(MouseButtons, 0, mousePosition.X, mousePosition.Y, 0));
+        }
+
+        public void UpdateLevelSize() {
+            scrollWrapper.SetClientSize(level.Level.width * 64 + LevelPadding * 2, level.Level.height * 64 + LevelPadding * 2);
         }
 
         protected override UndoManager Setup() {
@@ -204,6 +212,9 @@ namespace Necrofy
         }
 
         void scrollWrapper_Scrolled(object sender, EventArgs e) {
+            if (MouseButtons == MouseButtons.Left) {
+                GenerateMouseMove();
+            }
             Repaint();
         }
 
@@ -319,6 +330,10 @@ namespace Necrofy
 
         private void tileSelect_Click(object sender, EventArgs e) {
             ChangeTool(tileSelectTool);
+        }
+
+        private void resizeLevel_Click(object sender, EventArgs e) {
+            ChangeTool(resizeLevelTool);
         }
 
         private void sprites_Click(object sender, EventArgs e) {

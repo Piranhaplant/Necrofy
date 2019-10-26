@@ -302,7 +302,7 @@
             this.fileExit});
             this.fileMenu.Name = "fileMenu";
             this.fileMenu.Size = new System.Drawing.Size(37, 20);
-            this.fileMenu.Text = "File";
+            this.fileMenu.Text = "&File";
             // 
             // fileNewProject
             // 
@@ -310,7 +310,7 @@
             this.fileNewProject.Name = "fileNewProject";
             this.fileNewProject.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
             this.fileNewProject.Size = new System.Drawing.Size(187, 22);
-            this.fileNewProject.Text = "New Project";
+            this.fileNewProject.Text = "&New Project";
             this.fileNewProject.Click += new System.EventHandler(this.CreateProject);
             // 
             // fileOpenProject
@@ -319,7 +319,7 @@
             this.fileOpenProject.Name = "fileOpenProject";
             this.fileOpenProject.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
             this.fileOpenProject.Size = new System.Drawing.Size(187, 22);
-            this.fileOpenProject.Text = "Open Project";
+            this.fileOpenProject.Text = "&Open Project";
             this.fileOpenProject.Click += new System.EventHandler(this.OpenProject);
             // 
             // fileSeparator1
@@ -334,7 +334,7 @@
             this.fileSave.Name = "fileSave";
             this.fileSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.fileSave.Size = new System.Drawing.Size(187, 22);
-            this.fileSave.Text = "Save";
+            this.fileSave.Text = "&Save";
             this.fileSave.Click += new System.EventHandler(this.Save);
             // 
             // fileSaveAll
@@ -345,7 +345,7 @@
             this.fileSaveAll.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.S)));
             this.fileSaveAll.Size = new System.Drawing.Size(187, 22);
-            this.fileSaveAll.Text = "Save All";
+            this.fileSaveAll.Text = "Save &All";
             this.fileSaveAll.Click += new System.EventHandler(this.SaveAll);
             // 
             // fileSeparator2
@@ -374,7 +374,7 @@
             this.fileExit.Name = "fileExit";
             this.fileExit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
             this.fileExit.Size = new System.Drawing.Size(187, 22);
-            this.fileExit.Text = "Exit";
+            this.fileExit.Text = "E&xit";
             // 
             // editMenu
             // 
@@ -391,7 +391,7 @@
             this.editSelectNone});
             this.editMenu.Name = "editMenu";
             this.editMenu.Size = new System.Drawing.Size(39, 20);
-            this.editMenu.Text = "Edit";
+            this.editMenu.Text = "&Edit";
             // 
             // editUndo
             // 
@@ -400,7 +400,7 @@
             this.editUndo.Name = "editUndo";
             this.editUndo.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
             this.editUndo.Size = new System.Drawing.Size(211, 22);
-            this.editUndo.Text = "Undo";
+            this.editUndo.Text = "&Undo";
             this.editUndo.Click += new System.EventHandler(this.Undo);
             // 
             // editRedo
@@ -410,7 +410,7 @@
             this.editRedo.Name = "editRedo";
             this.editRedo.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
             this.editRedo.Size = new System.Drawing.Size(211, 22);
-            this.editRedo.Text = "Redo";
+            this.editRedo.Text = "&Redo";
             this.editRedo.Click += new System.EventHandler(this.Redo);
             // 
             // editSeparator1
@@ -425,7 +425,7 @@
             this.editCut.Name = "editCut";
             this.editCut.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
             this.editCut.Size = new System.Drawing.Size(211, 22);
-            this.editCut.Text = "Cut";
+            this.editCut.Text = "Cu&t";
             this.editCut.Click += new System.EventHandler(this.Cut);
             // 
             // editCopy
@@ -435,7 +435,7 @@
             this.editCopy.Name = "editCopy";
             this.editCopy.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
             this.editCopy.Size = new System.Drawing.Size(211, 22);
-            this.editCopy.Text = "Copy";
+            this.editCopy.Text = "&Copy";
             this.editCopy.Click += new System.EventHandler(this.Copy);
             // 
             // editPaste
@@ -445,7 +445,7 @@
             this.editPaste.Name = "editPaste";
             this.editPaste.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
             this.editPaste.Size = new System.Drawing.Size(211, 22);
-            this.editPaste.Text = "Paste";
+            this.editPaste.Text = "&Paste";
             this.editPaste.Click += new System.EventHandler(this.Paste);
             // 
             // editDelete
@@ -455,7 +455,7 @@
             this.editDelete.Name = "editDelete";
             this.editDelete.ShortcutKeys = System.Windows.Forms.Keys.Delete;
             this.editDelete.Size = new System.Drawing.Size(211, 22);
-            this.editDelete.Text = "Delete";
+            this.editDelete.Text = "&Delete";
             this.editDelete.Click += new System.EventHandler(this.Delete);
             // 
             // editSeparator2
@@ -469,7 +469,7 @@
             this.editSelectAll.Name = "editSelectAll";
             this.editSelectAll.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
             this.editSelectAll.Size = new System.Drawing.Size(211, 22);
-            this.editSelectAll.Text = "Select All";
+            this.editSelectAll.Text = "Select &All";
             this.editSelectAll.Click += new System.EventHandler(this.SelectAll);
             // 
             // editSelectNone
@@ -479,7 +479,7 @@
             this.editSelectNone.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.A)));
             this.editSelectNone.Size = new System.Drawing.Size(211, 22);
-            this.editSelectNone.Text = "Select None";
+            this.editSelectNone.Text = "Select &None";
             this.editSelectNone.Click += new System.EventHandler(this.SelectNone);
             // 
             // buildMenu
@@ -492,7 +492,7 @@
             this.debugToolStripMenuItem});
             this.buildMenu.Name = "buildMenu";
             this.buildMenu.Size = new System.Drawing.Size(46, 20);
-            this.buildMenu.Text = "Build";
+            this.buildMenu.Text = "&Build";
             // 
             // buildBuildProject
             // 
@@ -500,7 +500,7 @@
             this.buildBuildProject.Image = global::Necrofy.Properties.Resources.compile;
             this.buildBuildProject.Name = "buildBuildProject";
             this.buildBuildProject.Size = new System.Drawing.Size(210, 22);
-            this.buildBuildProject.Text = "Build Project";
+            this.buildBuildProject.Text = "&Build Project";
             this.buildBuildProject.Click += new System.EventHandler(this.BuildProject);
             // 
             // buildRunProject
@@ -509,7 +509,7 @@
             this.buildRunProject.Image = global::Necrofy.Properties.Resources.control;
             this.buildRunProject.Name = "buildRunProject";
             this.buildRunProject.Size = new System.Drawing.Size(210, 22);
-            this.buildRunProject.Text = "Run Project";
+            this.buildRunProject.Text = "&Run Project";
             this.buildRunProject.Click += new System.EventHandler(this.RunProject);
             // 
             // buildRunFromLevel
@@ -519,14 +519,14 @@
             this.buildRunFromLevel.Name = "buildRunFromLevel";
             this.buildRunFromLevel.ShortcutKeys = System.Windows.Forms.Keys.F5;
             this.buildRunFromLevel.Size = new System.Drawing.Size(210, 22);
-            this.buildRunFromLevel.Text = "Run From Level";
+            this.buildRunFromLevel.Text = "Run From &Level";
             this.buildRunFromLevel.Click += new System.EventHandler(this.RunFromLevel);
             // 
             // buildRunSettings
             // 
             this.buildRunSettings.Name = "buildRunSettings";
             this.buildRunSettings.Size = new System.Drawing.Size(210, 22);
-            this.buildRunSettings.Text = "Run From Level Settings...";
+            this.buildRunSettings.Text = "Run From Level &Settings...";
             this.buildRunSettings.Click += new System.EventHandler(this.RunFromLevelSettings);
             // 
             // debugToolStripMenuItem

@@ -25,7 +25,6 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LevelEditor));
             this.canvas = new Necrofy.Canvas();
             this.hscroll = new System.Windows.Forms.HScrollBar();
             this.vscroll = new System.Windows.Forms.VScrollBar();
@@ -35,6 +34,7 @@
             this.rectangleSelectButton = new System.Windows.Forms.ToolStripButton();
             this.pencilSelectButton = new System.Windows.Forms.ToolStripButton();
             this.tileSelectButton = new System.Windows.Forms.ToolStripButton();
+            this.resizeLevelButton = new System.Windows.Forms.ToolStripButton();
             this.spritesButton = new Necrofy.CheckableToolStripSplitButton();
             this.spritesItems = new Necrofy.SeparateCheckToolStripMenuItem();
             this.spritesVictims = new Necrofy.SeparateCheckToolStripMenuItem();
@@ -50,6 +50,7 @@
             this.toolsRectangleSelect = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsPencilSelect = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsTileSelect = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsResizeLevel = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsSprites = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -102,6 +103,7 @@
             this.rectangleSelectButton,
             this.pencilSelectButton,
             this.tileSelectButton,
+            this.resizeLevelButton,
             this.spritesButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
@@ -113,7 +115,7 @@
             // paintbrushButton
             // 
             this.paintbrushButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.paintbrushButton.Image = ((System.Drawing.Image)(resources.GetObject("paintbrushButton.Image")));
+            this.paintbrushButton.Image = global::Necrofy.Properties.Resources.paint_brush;
             this.paintbrushButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.paintbrushButton.Name = "paintbrushButton";
             this.paintbrushButton.Size = new System.Drawing.Size(23, 22);
@@ -123,7 +125,7 @@
             // tileSuggestButton
             // 
             this.tileSuggestButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tileSuggestButton.Image = ((System.Drawing.Image)(resources.GetObject("tileSuggestButton.Image")));
+            this.tileSuggestButton.Image = global::Necrofy.Properties.Resources.light_bulb;
             this.tileSuggestButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tileSuggestButton.Name = "tileSuggestButton";
             this.tileSuggestButton.Size = new System.Drawing.Size(23, 22);
@@ -133,7 +135,7 @@
             // rectangleSelectButton
             // 
             this.rectangleSelectButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.rectangleSelectButton.Image = ((System.Drawing.Image)(resources.GetObject("rectangleSelectButton.Image")));
+            this.rectangleSelectButton.Image = global::Necrofy.Properties.Resources.selection_select;
             this.rectangleSelectButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.rectangleSelectButton.Name = "rectangleSelectButton";
             this.rectangleSelectButton.Size = new System.Drawing.Size(23, 22);
@@ -143,7 +145,7 @@
             // pencilSelectButton
             // 
             this.pencilSelectButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.pencilSelectButton.Image = ((System.Drawing.Image)(resources.GetObject("pencilSelectButton.Image")));
+            this.pencilSelectButton.Image = global::Necrofy.Properties.Resources.pencil_select;
             this.pencilSelectButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.pencilSelectButton.Name = "pencilSelectButton";
             this.pencilSelectButton.Size = new System.Drawing.Size(23, 22);
@@ -153,12 +155,22 @@
             // tileSelectButton
             // 
             this.tileSelectButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tileSelectButton.Image = ((System.Drawing.Image)(resources.GetObject("tileSelectButton.Image")));
+            this.tileSelectButton.Image = global::Necrofy.Properties.Resources.tile_select;
             this.tileSelectButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tileSelectButton.Name = "tileSelectButton";
             this.tileSelectButton.Size = new System.Drawing.Size(23, 22);
             this.tileSelectButton.Text = "Tile Select";
             this.tileSelectButton.Click += new System.EventHandler(this.tileSelect_Click);
+            // 
+            // resizeLevelButton
+            // 
+            this.resizeLevelButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.resizeLevelButton.Image = global::Necrofy.Properties.Resources.map_resize;
+            this.resizeLevelButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.resizeLevelButton.Name = "resizeLevelButton";
+            this.resizeLevelButton.Size = new System.Drawing.Size(23, 22);
+            this.resizeLevelButton.Text = "Resize Level";
+            this.resizeLevelButton.Click += new System.EventHandler(this.resizeLevel_Click);
             // 
             // spritesButton
             // 
@@ -172,7 +184,7 @@
             this.spritesBossMonsters,
             this.spritesSeparator,
             this.spritesAll});
-            this.spritesButton.Image = ((System.Drawing.Image)(resources.GetObject("spritesButton.Image")));
+            this.spritesButton.Image = global::Necrofy.Properties.Resources.leaf;
             this.spritesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.spritesButton.Name = "spritesButton";
             this.spritesButton.Size = new System.Drawing.Size(32, 22);
@@ -260,51 +272,73 @@
             this.toolsRectangleSelect,
             this.toolsPencilSelect,
             this.toolsTileSelect,
+            this.toolsResizeLevel,
             this.toolsSprites});
             this.toolsMenu.Name = "toolsMenu";
             this.toolsMenu.Size = new System.Drawing.Size(46, 20);
-            this.toolsMenu.Text = "Tools";
+            this.toolsMenu.Text = "&Tools";
             // 
             // toolsPaintbrush
             // 
+            this.toolsPaintbrush.Image = global::Necrofy.Properties.Resources.paint_brush;
             this.toolsPaintbrush.Name = "toolsPaintbrush";
+            this.toolsPaintbrush.ShortcutKeyDisplayString = "P";
             this.toolsPaintbrush.Size = new System.Drawing.Size(180, 22);
-            this.toolsPaintbrush.Text = "Paintbrush";
+            this.toolsPaintbrush.Text = "&Paintbrush";
             this.toolsPaintbrush.Click += new System.EventHandler(this.paintbrush_Click);
             // 
             // toolsTileSuggest
             // 
+            this.toolsTileSuggest.Image = global::Necrofy.Properties.Resources.light_bulb;
             this.toolsTileSuggest.Name = "toolsTileSuggest";
+            this.toolsTileSuggest.ShortcutKeyDisplayString = "S";
             this.toolsTileSuggest.Size = new System.Drawing.Size(180, 22);
-            this.toolsTileSuggest.Text = "Tile Suggest";
+            this.toolsTileSuggest.Text = "Tile &Suggest";
             this.toolsTileSuggest.Click += new System.EventHandler(this.tileSuggest_Click);
             // 
             // toolsRectangleSelect
             // 
+            this.toolsRectangleSelect.Image = global::Necrofy.Properties.Resources.selection_select;
             this.toolsRectangleSelect.Name = "toolsRectangleSelect";
+            this.toolsRectangleSelect.ShortcutKeyDisplayString = "R";
             this.toolsRectangleSelect.Size = new System.Drawing.Size(180, 22);
-            this.toolsRectangleSelect.Text = "Rectangle Select";
+            this.toolsRectangleSelect.Text = "&Rectangle Select";
             this.toolsRectangleSelect.Click += new System.EventHandler(this.rectangleSelect_Click);
             // 
             // toolsPencilSelect
             // 
+            this.toolsPencilSelect.Image = global::Necrofy.Properties.Resources.pencil_select;
             this.toolsPencilSelect.Name = "toolsPencilSelect";
+            this.toolsPencilSelect.ShortcutKeyDisplayString = "C";
             this.toolsPencilSelect.Size = new System.Drawing.Size(180, 22);
-            this.toolsPencilSelect.Text = "Pencil Select";
+            this.toolsPencilSelect.Text = "Pen&cil Select";
             this.toolsPencilSelect.Click += new System.EventHandler(this.pencilSelect_Click);
             // 
             // toolsTileSelect
             // 
+            this.toolsTileSelect.Image = global::Necrofy.Properties.Resources.tile_select;
             this.toolsTileSelect.Name = "toolsTileSelect";
+            this.toolsTileSelect.ShortcutKeyDisplayString = "T";
             this.toolsTileSelect.Size = new System.Drawing.Size(180, 22);
-            this.toolsTileSelect.Text = "Tile Select";
+            this.toolsTileSelect.Text = "&Tile Select";
             this.toolsTileSelect.Click += new System.EventHandler(this.tileSelect_Click);
+            // 
+            // toolsResizeLevel
+            // 
+            this.toolsResizeLevel.Image = global::Necrofy.Properties.Resources.map_resize;
+            this.toolsResizeLevel.Name = "toolsResizeLevel";
+            this.toolsResizeLevel.ShortcutKeyDisplayString = "L";
+            this.toolsResizeLevel.Size = new System.Drawing.Size(180, 22);
+            this.toolsResizeLevel.Text = "Resize &Level";
+            this.toolsResizeLevel.Click += new System.EventHandler(this.resizeLevel_Click);
             // 
             // toolsSprites
             // 
+            this.toolsSprites.Image = global::Necrofy.Properties.Resources.leaf;
             this.toolsSprites.Name = "toolsSprites";
+            this.toolsSprites.ShortcutKeyDisplayString = "I";
             this.toolsSprites.Size = new System.Drawing.Size(180, 22);
-            this.toolsSprites.Text = "Sprites";
+            this.toolsSprites.Text = "Spr&ites";
             this.toolsSprites.Click += new System.EventHandler(this.sprites_Click);
             // 
             // LevelEditor
@@ -312,8 +346,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(300, 300);
-            this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.toolStrip1);
+            this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.vscroll);
             this.Controls.Add(this.hscroll);
             this.Controls.Add(this.canvas);
@@ -359,5 +393,7 @@
         private System.Windows.Forms.ToolStripMenuItem toolsTileSelect;
         private System.Windows.Forms.ToolStripButton tileSuggestButton;
         private System.Windows.Forms.ToolStripMenuItem toolsTileSuggest;
+        private System.Windows.Forms.ToolStripButton resizeLevelButton;
+        private System.Windows.Forms.ToolStripMenuItem toolsResizeLevel;
     }
 }

@@ -23,5 +23,9 @@ namespace Necrofy
                 gridView.GetType().GetMethod("MoveSplitterTo", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(gridView, new object[] { position });
             } catch { }
         }
+
+        public static int GetMaximumValue(this ScrollBar scrollBar) {
+            return scrollBar.Maximum - scrollBar.LargeChange + 1;
+        }
     }
 }

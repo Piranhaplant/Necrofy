@@ -211,5 +211,46 @@ namespace Necrofy
             objectData.data.AddInt16(0);
             data.AddPointer(MovableData.PointerSize.TwoBytes, objectData);
         }
+
+        public IEnumerable<LevelObject> GetAllObjects() {
+            foreach (Monster monster in monsters) {
+                yield return monster;
+            }
+            foreach (OneTimeMonster monster in oneTimeMonsters) {
+                yield return monster;
+            }
+            foreach (Item item in items) {
+                yield return item;
+            }
+            foreach (LevelMonster monster in levelMonsters) {
+                if (monster is LevelObject levelObjectMonster) {
+                    yield return levelObjectMonster;
+                }
+            }
+            yield return new Player1Position(this);
+            yield return new Player2Position(this);
+        }
+
+        private class Player1Position : LevelObject
+        {
+            private readonly Level level;
+            public Player1Position(Level level) {
+                this.level = level;
+            }
+
+            public ushort x { get => level.p1startX; set => level.p1startX = value; }
+            public ushort y { get => level.p1startY; set => level.p1startY = value; }
+        }
+
+        private class Player2Position : LevelObject
+        {
+            private readonly Level level;
+            public Player2Position(Level level) {
+                this.level = level;
+            }
+
+            public ushort x { get => level.p2startX; set => level.p2startX = value; }
+            public ushort y { get => level.p2startY; set => level.p2startY = value; }
+        }
     }
 }

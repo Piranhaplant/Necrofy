@@ -9,7 +9,7 @@ namespace Necrofy
     /// "Big" type monsters that are active during the entire level (big baby, UFO, etc.)
     /// Also includes special sprites that affect the level (palette fade and tile animation)
     /// </summary>
-    abstract class LevelMonster : LevelObject
+    abstract class LevelMonster
     {
         public int type { get; set; }
 
