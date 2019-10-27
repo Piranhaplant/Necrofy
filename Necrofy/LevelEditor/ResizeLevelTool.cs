@@ -150,6 +150,8 @@ namespace Necrofy
 
         protected override void DoneBeingUsed2() {
             resizing = false;
+            editor.scrollWrapper.ExpandingDrag = false;
+            editor.UpdateLevelSize();
         }
     }
 }

@@ -198,9 +198,6 @@ namespace Necrofy
                 toolMenuItems[tool].Checked = true;
 
                 SetCursor(Cursors.Default);
-                scrollWrapper.ExpandingDrag = false;
-                UpdateLevelSize();
-
                 RaiseSelectionChanged();
                 Repaint();
             }

@@ -78,7 +78,7 @@ namespace Necrofy
             }
 
             public void SetClientSize(int size) {
-                clientSize = size;
+                clientSize = size - 1;
                 UpdateSize();
             }
 
@@ -207,6 +207,7 @@ namespace Necrofy
         private void Control_MouseUp(object sender, MouseEventArgs e) {
             xDimension.MouseUp(e.X, e.Button);
             yDimension.MouseUp(e.Y, e.Button);
+            dragTimer.Stop();
         }
 
         private void DragTimer_Tick(object sender, EventArgs e) {

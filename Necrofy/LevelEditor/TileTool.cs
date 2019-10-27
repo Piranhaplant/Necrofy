@@ -169,15 +169,16 @@ namespace Necrofy
                     return;
                 }
 
+                ignoreMouse = true;
+                DoneBeingUsed2(); // Do this first so that the level size is reset for the ResizeLevelTool
+
                 Point center = editor.GetViewCenter();
                 pasteX = RoundToTile(center.X - pasteTiles.GetWidth() * 64 / 2) * 64;
                 pasteY = RoundToTile(center.Y - pasteTiles.GetHeight() * 64 / 2) * 64;
                 TranslatePath(pasteX, pasteY);
 
-                DoneBeingUsed2();
                 editor.tileSelection.Clear();
-                ignoreMouse = true;
-                editor.GenerateMouseMove();
+                editor.GenerateMouseMove(); // To update the cursor
             } catch (Exception) { }
         }
 

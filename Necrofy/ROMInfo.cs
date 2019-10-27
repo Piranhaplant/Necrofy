@@ -28,7 +28,7 @@ namespace Necrofy
             int levelCount = s.ReadInt16();
             s.Seek(ROMPointers.BonusLevelNums, SeekOrigin.Begin);
             int maxBonusLevel = levelCount;
-            // I am going to assume that there aren't any skipped level numbers
+            // Assume that there aren't any skipped level numbers
             for (int i = 0; i <= levelCount; i++) {
                 int bonusLevelNum = s.ReadInt16();
                 if (bonusLevelNum > maxBonusLevel)
