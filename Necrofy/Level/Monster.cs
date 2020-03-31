@@ -8,7 +8,7 @@ namespace Necrofy
     /// <summary>
     /// A spawn point for respawning monsters
     /// </summary>
-    class Monster : LevelObject
+    class Monster
     {
         public ushort x { get; set; }
         public ushort y { get; set; }

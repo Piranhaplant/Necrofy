@@ -189,7 +189,7 @@ namespace Necrofy
         private readonly ushort tileType;
 
         private ushort[,] oldTiles;
-        private readonly Dictionary<LevelObject, Point> oldPositions = new Dictionary<LevelObject, Point>();
+        private readonly Dictionary<WrappedLevelObject, Point> oldPositions = new Dictionary<WrappedLevelObject, Point>();
 
         public ResizeLevelAction(int startX, int startY, int endX, int endY, ushort tileType) {
             this.startX = startX;
@@ -202,7 +202,7 @@ namespace Necrofy
         public override void SetEditor(LevelEditor editor) {
             base.SetEditor(editor);
             oldTiles = level.background.Clone() as ushort[,];
-            foreach (LevelObject o in level.GetAllObjects()) {
+            foreach (WrappedLevelObject o in editor.level.GetAllObjects()) {
                 if (o.x < startX * 64 || o.x > endX * 64 || o.y < startY * 64 || o.y > endY * 64) {
                     oldPositions[o] = new Point(o.x, o.y);
                 }
@@ -211,11 +211,11 @@ namespace Necrofy
 
         protected override void Undo() {
             level.background = oldTiles;
-            foreach (LevelObject o in level.GetAllObjects()) {
+            foreach (WrappedLevelObject o in editor.level.GetAllObjects()) {
                 o.x = (ushort)Math.Max(0, o.x + startX * 64);
                 o.y = (ushort)Math.Max(0, o.y + startY * 64);
             }
-            foreach (KeyValuePair<LevelObject, Point> pair in oldPositions) {
+            foreach (KeyValuePair<WrappedLevelObject, Point> pair in oldPositions) {
                 pair.Key.x = (ushort)pair.Value.X;
                 pair.Key.y = (ushort)pair.Value.Y;
             }
@@ -234,7 +234,7 @@ namespace Necrofy
                     level.background[x - startX, y - startY] = oldTiles[x, y];
                 }
             }
-            foreach (LevelObject o in level.GetAllObjects()) {
+            foreach (WrappedLevelObject o in editor.level.GetAllObjects()) {
                 o.x = (ushort)Math.Max(0, Math.Min(level.width * 64, o.x - startX * 64));
                 o.y = (ushort)Math.Max(0, Math.Min(level.height * 64, o.y - startY * 64));
             }

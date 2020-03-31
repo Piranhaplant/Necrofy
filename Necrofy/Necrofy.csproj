@@ -127,6 +127,12 @@
     <Compile Include="LevelEditor\TileSuggestionTool.cs" />
     <Compile Include="LevelEditor\TileTool.cs" />
     <Compile Include="LevelEditor\Tool.cs" />
+    <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedItem.cs" />
+    <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedLevelObject.cs" />
+    <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedMonster.cs" />
+    <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedOneTimeMonster.cs" />
+    <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedPlayer2StartPosition.cs" />
+    <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedPlayer1StartPosition.cs" />
     <Compile Include="NewProjectDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -149,6 +155,7 @@
     </Compile>
     <Compile Include="ObjectBrowser\SpriteObjectBrowserContents.cs" />
     <Compile Include="ObjectBrowser\TilesetObjectBrowserContents.cs" />
+    <Compile Include="ObjectSelector.cs" />
     <Compile Include="ProjectBrowser.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -178,7 +185,6 @@
     <Compile Include="LevelJsonConverter.cs" />
     <Compile Include="Level\Level.cs" />
     <Compile Include="Level\LevelMonster.cs" />
-    <Compile Include="Level\LevelObject.cs" />
     <Compile Include="MovableData.cs" />
     <Compile Include="Level\PaletteFadeLevelMonster.cs" />
     <Compile Include="Level\PositionLevelMonster.cs" />
@@ -187,7 +193,7 @@
     <Compile Include="Log.cs" />
     <Compile Include="Level\Monster.cs" />
     <Compile Include="NStream.cs" />
-    <Compile Include="Level\OneTimeMonster.cs" />
+    <Compile Include="Level\OneShotMonster.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="ProjectSettings.cs" />
@@ -415,6 +421,7 @@
     <None Include="Icons\tile-select.png" />
     <None Include="Icons\map-resize.png" />
     <None Include="Icons\leaf.png" />
+    <None Include="Icons\zeke.png" />
     <Content Include="ProjectFiles\Patches\ROMExpand.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

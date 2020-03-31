@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -17,6 +18,8 @@ namespace Necrofy
         private SpritesAsset spritesAsset;
         private Color[] colors;
 
+        private LoadedSprite currentSprite = null;
+
         public SpriteViewer() {
             InitializeComponent();
         }
@@ -32,15 +35,27 @@ namespace Necrofy
         }
         
         private void numericUpDown1_ValueChanged(object sender, EventArgs e) {
-            LoadedSprite sprite = new LoadedSprite(spritesAsset.sprites[(int)numericUpDown1.Value], graphicsAsset.data, colors);
-            canvas1.BackgroundImage = sprite.image;
+            currentSprite = new LoadedSprite(spritesAsset.sprites[(int)numericUpDown1.Value], graphicsAsset.data, colors);
+            canvas1.Invalidate();
+        }
+
+        private void canvas1_Paint(object sender, PaintEventArgs e) {
+            if (currentSprite != null) {
+                e.Graphics.TranslateTransform(canvas1.Width / 2, canvas1.Height / 2);
+                e.Graphics.DrawImage(currentSprite.image, 0, 0);
+                e.Graphics.FillRectangle(Brushes.Red, currentSprite.anchorX, currentSprite.anchorY, 1, 1);
+            }
+        }
+
+        private void canvas1_SizeChanged(object sender, EventArgs e) {
+            canvas1.Invalidate();
         }
 
         public class LoadedSprite
         {
             public readonly Bitmap image;
-            private readonly int anchorX;
-            private readonly int anchorY;
+            public readonly int anchorX;
+            public readonly int anchorY;
 
             public LoadedSprite(Sprite sprite, byte[] graphics, Color[] colors) {
                 int minX = 0, maxX = 0, minY = 0, maxY = 0;
@@ -66,6 +81,10 @@ namespace Necrofy
                     SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 0 : 8), anchorY + t.yOffset + (t.yFlip ? 0 : 8), graphics, t.tileNum * 0x80 + 0x60, colors, t.palette * 0x10, t.xFlip, t.yFlip);
                 }
             }
+        }
+
+        private void getData_Click(object sender, EventArgs e) {
+            Clipboard.SetText(JsonConvert.SerializeObject(spritesAsset.sprites[(int)numericUpDown1.Value]));
         }
     }
 }

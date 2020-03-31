@@ -8,7 +8,7 @@ namespace Necrofy
     /// <summary>
     /// A monster that will not respawn once it is destroyed, or a victim
     /// </summary>
-    class OneTimeMonster : LevelObject
+    class OneShotMonster
     {
         public const int CreditHeadType = 0x15D52;
 
@@ -24,9 +24,9 @@ namespace Necrofy
         public ushort victimNumber { get; set; }
         public int type { get; set; }
 
-        public OneTimeMonster() { }
+        public OneShotMonster() { }
 
-        public OneTimeMonster(NStream s) {
+        public OneShotMonster(NStream s) {
             x = s.ReadInt16();
             y = s.ReadInt16();
             extra = s.ReadInt16();

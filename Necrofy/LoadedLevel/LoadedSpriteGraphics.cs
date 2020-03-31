@@ -45,7 +45,15 @@ namespace Necrofy
             if (sprites[type].TryGetValue(value, out LoadedSprite s)) {
                 s.Render(g, x, y);
             }
-            // TODO: Render unknown sprites
+            // TODO: unknown sprites
+        }
+
+        public Rectangle GetRectangle(SpriteDisplay.Key.Type type, int value, int x, int y) {
+            if (sprites[type].TryGetValue(value, out LoadedSprite s)) {
+                return s.GetRectangle(x, y);
+            }
+            // TODO: unknown sprites
+            return Rectangle.Empty;
         }
 
         public class LoadedSprite
@@ -81,6 +89,10 @@ namespace Necrofy
             }
 
             public Size Size => image.Size;
+
+            public Rectangle GetRectangle(int x, int y) {
+                return new Rectangle(x - anchorX, y - anchorY, image.Width, image.Height);
+            }
             
             public void Render(Graphics g, int x, int y) {
                 g.DrawImage(image, x - anchorX, y - anchorY);

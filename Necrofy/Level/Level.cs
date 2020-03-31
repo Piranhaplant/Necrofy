@@ -40,7 +40,7 @@ namespace Necrofy
         public ushort p2startY { get; set; }
 
         public List<Monster> monsters { get; set; }
-        public List<OneTimeMonster> oneTimeMonsters { get; set; }
+        public List<OneShotMonster> oneShotMonsters { get; set; }
         public List<Item> items { get; set; }
         public List<ushort> bonuses { get; set; }
         public List<LevelMonster> levelMonsters { get; set; }
@@ -55,7 +55,7 @@ namespace Necrofy
         /// <param name="s">A stream for the ROM file that is positioned at the beginning of the level</param>
         public Level(ROMInfo r, NStream s) {
             monsters = new List<Monster>();
-            oneTimeMonsters = new List<OneTimeMonster>();
+            oneShotMonsters = new List<OneShotMonster>();
             items = new List<Item>();
             bonuses = new List<ushort>();
             levelMonsters = new List<LevelMonster>();
@@ -76,7 +76,7 @@ namespace Necrofy
                     monsters.Add(m);
                 }
             });
-            AddAllObjects(s, () => oneTimeMonsters.Add(new OneTimeMonster(s)));
+            AddAllObjects(s, () => oneShotMonsters.Add(new OneShotMonster(s)));
             AddAllObjects(s, () => items.Add(new Item(s)));
 
             int width = s.ReadInt16();
@@ -175,7 +175,7 @@ namespace Necrofy
             }
 
             BuildAll(monsters, data, (o, d) => o.Build(d));
-            BuildAll(oneTimeMonsters, data, (o, d) => o.Build(d));
+            BuildAll(oneShotMonsters, data, (o, d) => o.Build(d));
             BuildAll(items, data, (o, d) => o.Build(d));
 
             data.data.AddInt16((ushort)width);
@@ -210,47 +210,6 @@ namespace Necrofy
             }
             objectData.data.AddInt16(0);
             data.AddPointer(MovableData.PointerSize.TwoBytes, objectData);
-        }
-
-        public IEnumerable<LevelObject> GetAllObjects() {
-            foreach (Monster monster in monsters) {
-                yield return monster;
-            }
-            foreach (OneTimeMonster monster in oneTimeMonsters) {
-                yield return monster;
-            }
-            foreach (Item item in items) {
-                yield return item;
-            }
-            foreach (LevelMonster monster in levelMonsters) {
-                if (monster is LevelObject levelObjectMonster) {
-                    yield return levelObjectMonster;
-                }
-            }
-            yield return new Player1Position(this);
-            yield return new Player2Position(this);
-        }
-
-        private class Player1Position : LevelObject
-        {
-            private readonly Level level;
-            public Player1Position(Level level) {
-                this.level = level;
-            }
-
-            public ushort x { get => level.p1startX; set => level.p1startX = value; }
-            public ushort y { get => level.p1startY; set => level.p1startY = value; }
-        }
-
-        private class Player2Position : LevelObject
-        {
-            private readonly Level level;
-            public Player2Position(Level level) {
-                this.level = level;
-            }
-
-            public ushort x { get => level.p2startX; set => level.p2startX = value; }
-            public ushort y { get => level.p2startY; set => level.p2startY = value; }
         }
     }
 }

@@ -73,6 +73,29 @@ namespace Necrofy
             return tile.LockBits(new Rectangle(0, 0, tile.Width, tile.Height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
         }
 
+        public IEnumerable<WrappedLevelObject> GetAllObjects(bool items = true, bool victims = true, bool oneShotMonsters = true, bool monsters = true, bool bossMonsters = true, bool players = true) {
+            if (items) {
+                foreach (Item i in Level.items) {
+                    yield return new WrappedItem(i, spriteGraphics);
+                }
+            }
+            if (monsters) {
+                foreach (Monster m in Level.monsters) {
+                    yield return new WrappedMonster(m, spriteGraphics);
+                }
+            }
+            foreach (OneShotMonster m in Level.oneShotMonsters) {
+                if (victims && m.victimNumber > 0 || oneShotMonsters && m.victimNumber == 0) {
+                    yield return new WrappedOneTimeMonster(m, spriteGraphics);
+                }
+            }
+            if (players) {
+                yield return new WrappedPlayer1StartPosition(spriteGraphics, Level);
+                yield return new WrappedPlayer2StartPosition(spriteGraphics, Level);
+            }
+            // TODO: use thie for rendering or make this match the rendering order
+        }
+
         public Level Level => levelAsset.level;
         public TilesetSuggestions TilesetSuggestions => tilesetSuggestionsAsset.data;
     }

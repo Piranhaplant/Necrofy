@@ -31,14 +31,14 @@ weapon_table:
 !i = 0
 while !i < !WEAPON_COUNT
 	dw !{WEAPON!{i}}
-    !i #= !i+1
+	!i #= !i+1
 endif
 
 special_table:
 !i = 0
 while !i < !SPECIAL_COUNT
 	dw !{SPECIAL!{i}}
-    !i #= !i+1
+	!i #= !i+1
 endif
 
 warnpc $80918E

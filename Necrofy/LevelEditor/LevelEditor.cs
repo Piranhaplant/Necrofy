@@ -237,8 +237,8 @@ namespace Necrofy
             level.spriteGraphics.Render(SpriteDisplay.Key.Type.Player, 0, e.Graphics, level.Level.p1startX, level.Level.p1startY);
             level.spriteGraphics.Render(SpriteDisplay.Key.Type.Player, 1, e.Graphics, level.Level.p2startX, level.Level.p2startY);
 
-            foreach (OneTimeMonster m in level.Level.oneTimeMonsters) {
-                if (m.type == OneTimeMonster.CreditHeadType) {
+            foreach (OneShotMonster m in level.Level.oneShotMonsters) {
+                if (m.type == OneShotMonster.CreditHeadType) {
                     level.spriteGraphics.Render(SpriteDisplay.Key.Type.CreditHead, m.extra, e.Graphics, m.x, m.y);
                 } else {
                     level.spriteGraphics.Render(SpriteDisplay.Key.Type.Pointer, m.type, e.Graphics, m.x, m.y);
@@ -345,6 +345,13 @@ namespace Necrofy
             ChangeTool(spriteTool);
         }
 
+        public bool ItemsEnabled => spritesItems.Checked;
+        public bool VictimsEnabled => spritesVictims.Checked;
+        public bool OneShotMonstersEnabled => spritesOneShotMonsters.Checked;
+        public bool MonstersEnabled => spritesMonsters.Checked;
+        public bool BossMonstersEnabled => spritesBossMonsters.Checked;
+        public bool PlayersEnabled => spritesPlayers.Checked;
+
         private void UpdateSpriteCategory(SpriteDisplay.Category category, bool enabled) {
             if (enabled) {
                 spriteObjectBrowserContents.AddCategory(category);
@@ -374,12 +381,17 @@ namespace Necrofy
             // TODO
         }
 
+        private void spritesPlayers_CheckedChanged(object sender, EventArgs e) {
+            // TODO
+        }
+
         private void spritesAll_Click(object sender, EventArgs e) {
             spritesItems.Checked = true;
             spritesVictims.Checked = true;
             spritesOneShotMonsters.Checked = true;
             spritesMonsters.Checked = true;
             spritesBossMonsters.Checked = true;
+            spritesPlayers.Checked = true;
         }
     }
 }

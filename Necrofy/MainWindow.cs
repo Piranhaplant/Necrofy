@@ -220,7 +220,8 @@ namespace Necrofy
             Editor_DirtyChanged(editor, e);
             Editor_SelectionChanged(editor, e);
             ObjectBrowser.Browser.Contents = activeEditor?.BrowserContents;
-            buildRunFromLevel.Enabled = activeEditor?.LevelNumber  != null;
+            buildRunFromLevel.Enabled = activeEditor?.LevelNumber != null;
+            fileClose.Enabled = activeEditor != null;
         }
 
         private void CreateProject(object sender, EventArgs e) {
@@ -269,6 +270,14 @@ namespace Necrofy
             foreach (EditorWindow editor in allDirtyEditors) {
                 editor.Save(project);
             }
+        }
+
+        private void CloseFile(object sender, EventArgs e) {
+            activeEditor?.Close();
+        }
+
+        private void Exit(object sender, EventArgs e) {
+            Close();
         }
 
         private void Undo(object sender, EventArgs e) {

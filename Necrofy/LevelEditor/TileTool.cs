@@ -191,9 +191,9 @@ namespace Necrofy
         }
 
         private void TranslatePath(int dx, int dy) {
-            Matrix scaleMatrix = new Matrix();
-            scaleMatrix.Translate(dx, dy);
-            pasteTilesPath.Transform(scaleMatrix);
+            Matrix matrix = new Matrix();
+            matrix.Translate(dx, dy);
+            pasteTilesPath.Transform(matrix);
         }
 
         private void CommitPaste() {
