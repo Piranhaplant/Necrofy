@@ -215,6 +215,9 @@ namespace Necrofy
                 }
 
                 editor.Displayed();
+                Text = Application.ProductName + " - " + editor.Text;
+            } else {
+                Text = Application.ProductName;
             }
             endToolStripSeparator.Visible = editorToolStripItems.Count > 0;
             Editor_DirtyChanged(editor, e);

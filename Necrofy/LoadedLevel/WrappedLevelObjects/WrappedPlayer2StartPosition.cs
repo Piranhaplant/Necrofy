@@ -8,9 +8,11 @@ namespace Necrofy
 {
     class WrappedPlayer2StartPosition : WrappedLevelObject<object>
     {
+        private static readonly object obj = new object(); // Use the same object all the time so that they are computed as equal
+
         private readonly Level level;
 
-        public WrappedPlayer2StartPosition(LoadedSpriteGraphics spriteGraphics, Level level) : base(new object(), spriteGraphics) {
+        public WrappedPlayer2StartPosition(LoadedSpriteGraphics spriteGraphics, Level level) : base(obj, spriteGraphics) {
             this.level = level;
         }
 

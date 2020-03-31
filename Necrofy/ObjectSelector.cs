@@ -20,6 +20,8 @@ namespace Necrofy
         private Rectangle selectionRectangle;
 
         private bool movingObjects = false;
+        private int totalMoveX;
+        private int totalMoveY;
 
         private int dragStartX;
         private int dragStartY;
@@ -67,6 +69,8 @@ namespace Necrofy
             movingObjects = false;
             dragStartX = x;
             dragStartY = y;
+            totalMoveX = 0;
+            totalMoveY = 0;
 
             if (!hitObjectFound) {
                 if (!addToSelection && !removeFromSelection) {
@@ -109,8 +113,23 @@ namespace Necrofy
                 }
                 host.SelectionChanged();
             } else if (movingObjects) {
-                // TODO
-                host.SelectionChanged();
+                int minX = int.MaxValue;
+                int minY = int.MaxValue;
+                foreach (T obj in selectedObjects) {
+                    minX = Math.Min(minX, obj.x);
+                    minY = Math.Min(minY, obj.y);
+                }
+
+                int newMoveX = x - dragStartX;
+                int newMoveY = y - dragStartY;
+                int dx = Math.Max(-minX, newMoveX - totalMoveX);
+                int dy = Math.Max(-minY, newMoveY - totalMoveY);
+
+                totalMoveX += dx;
+                totalMoveY += dy;
+
+                // TODO add snap
+                host.MoveSelectedObjects(dx, dy, 1);
             }
         }
 
@@ -125,11 +144,14 @@ namespace Necrofy
         {
             IEnumerable<T> GetObjects();
             void SelectionChanged();
+            void MoveSelectedObjects(int dx, int dy, int snap);
         }
     }
 
     public interface ISelectableObject
     {
         Rectangle Bounds { get; }
+        ushort x { get; }
+        ushort y { get; }
     }
 }
