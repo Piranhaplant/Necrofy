@@ -70,9 +70,6 @@ namespace Necrofy
             bool itemPlaced = false;
             foreach (Size obj in contents.Objects) {
                 int width = obj.Width;
-                if (contents.ListLayout) {
-                    width = canvas.Width;
-                }
                 if (x + width + padding * 2 > canvas.Width && itemPlaced) {
                     x = 0;
                     y += rowHeight + padding * 2;
@@ -91,7 +88,6 @@ namespace Necrofy
             if (contents == null) {
                 return;
             }
-            // TODO: only paint objects that are visible
             e.Graphics.TranslateTransform(scrollWrapper.LeftPosition, scrollWrapper.TopPosition);
             for (int i = 0; i < objectRects.Count; i++) {
                 Rectangle objectRect = objectRects[i];
@@ -99,11 +95,7 @@ namespace Necrofy
                     e.Graphics.FillRectangle(selectionBackgroundBrush, objectRect);
                     e.Graphics.DrawRectangle(selectionBorderPen, objectRect);
                 }
-                bool relayout = contents.PaintObject(i, e.Graphics, objectRect.X + padding, objectRect.Y + padding);
-                if (relayout) {
-                    LayoutObjects();
-                    return;
-                }
+                contents.PaintObject(i, e.Graphics, objectRect.X + padding, objectRect.Y + padding);
             }
         }
 

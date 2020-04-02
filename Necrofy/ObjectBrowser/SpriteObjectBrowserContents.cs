@@ -45,9 +45,8 @@ namespace Necrofy
             }
         }
 
-        public override bool PaintObject(int i, Graphics g, int x, int y) {
+        public override void PaintObject(int i, Graphics g, int x, int y) {
             sprites[i].RenderFromTopCorner(g, x, y);
-            return false;
         }
     }
 }

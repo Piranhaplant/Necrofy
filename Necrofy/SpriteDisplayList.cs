@@ -6,22 +6,16 @@ using System.Text;
 
 namespace Necrofy
 {
-    class SpriteDisplay
+    public class SpriteDisplayList
     {
-        public int spriteIndex;
+        public List<ImageSpriteDisplay> imageSprites;
+        public List<TextSpriteDisplay> textSprites;
+    }
+
+    public abstract class SpriteDisplay
+    {
         public Key key;
         public Category category;
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public int? overridePalette;
-
-        public SpriteDisplay() { }
-
-        public SpriteDisplay(int spriteIndex, Key.Type keyType, int keyValue, Category category, int? overridePalette = null) {
-            this.spriteIndex = spriteIndex;
-            this.key = new Key(keyType, keyValue);
-            this.category = category;
-            this.overridePalette = overridePalette;
-        }
 
         public class Key
         {
@@ -57,7 +51,7 @@ namespace Necrofy
                 CreditHead,
             }
         }
-        
+
         public enum Category
         {
             Item,
@@ -66,6 +60,19 @@ namespace Necrofy
             Victim,
             Player,
             CreditHead,
+            LevelMonster,
         }
+    }
+
+    public class ImageSpriteDisplay : SpriteDisplay
+    {
+        public int spriteIndex;
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public int? overridePalette;
+    }
+
+    public class TextSpriteDisplay : SpriteDisplay
+    {
+        public string text;
     }
 }

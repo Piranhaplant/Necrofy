@@ -139,11 +139,13 @@ namespace Necrofy
                 if (editor.Dirty) {
                     if (dirtyEditors.Add(editor)) {
                         editor.Text += "*";
+                        UpdateWindowText();
                         // TODO: fix "*" getting cut off if the name is too long
                     }
                 } else {
                     if (dirtyEditors.Remove(editor)) {
                         editor.Text = editor.Text.Substring(0, editor.Text.Length - 1);
+                        UpdateWindowText();
                     }
                 }
             }
@@ -215,16 +217,21 @@ namespace Necrofy
                 }
 
                 editor.Displayed();
-                Text = Application.ProductName + " - " + editor.Text;
-            } else {
-                Text = Application.ProductName;
             }
+            UpdateWindowText();
             endToolStripSeparator.Visible = editorToolStripItems.Count > 0;
             Editor_DirtyChanged(editor, e);
             Editor_SelectionChanged(editor, e);
             ObjectBrowser.Browser.Contents = activeEditor?.BrowserContents;
             buildRunFromLevel.Enabled = activeEditor?.LevelNumber != null;
             fileClose.Enabled = activeEditor != null;
+        }
+
+        private void UpdateWindowText() {
+            Text = Application.ProductName;
+            if (activeEditor != null) {
+                Text += " - " + activeEditor.Text;
+            }
         }
 
         private void CreateProject(object sender, EventArgs e) {

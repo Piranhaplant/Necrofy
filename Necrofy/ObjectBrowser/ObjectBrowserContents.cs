@@ -16,14 +16,7 @@ namespace Necrofy
         /// <param name="g">The graphics used to paint the object</param>
         /// <param name="x">The x position at which to paint</param>
         /// <param name="y">The y position at which to paint</param>
-        /// <returns>A boolean indicating whether the contents need to be laid out again</returns>
-        public abstract bool PaintObject(int i, Graphics g, int x, int y);
-        /// <summary>Gets whether objects will be displayed as a list instead of stacking them horizontally.</summary>
-        public virtual bool ListLayout {
-            get {
-                return false;
-            }
-        }
+        public abstract void PaintObject(int i, Graphics g, int x, int y);
         /// <summary>Invoked when there is a change to the list of objects</summary>
         public event EventHandler ObjectsChanged;
         protected void RaiseObjectsChangedEvent() {

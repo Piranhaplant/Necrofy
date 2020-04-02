@@ -79,9 +79,15 @@ namespace Necrofy
                     yield return new WrappedItem(i, spriteGraphics);
                 }
             }
-            if (monsters) {
-                foreach (Monster m in Level.monsters) {
-                    yield return new WrappedMonster(m, spriteGraphics);
+            if (players) {
+                yield return new WrappedPlayer1StartPosition(spriteGraphics, Level);
+                yield return new WrappedPlayer2StartPosition(spriteGraphics, Level);
+            }
+            if (bossMonsters) {
+                foreach (LevelMonster m in Level.levelMonsters) {
+                    if (m is PositionLevelMonster positionLevelMonster) {
+                        yield return new WrappedPositionLevelMonster(positionLevelMonster, spriteGraphics);
+                    }
                 }
             }
             foreach (OneShotMonster m in Level.oneShotMonsters) {
@@ -89,11 +95,11 @@ namespace Necrofy
                     yield return new WrappedOneTimeMonster(m, spriteGraphics);
                 }
             }
-            if (players) {
-                yield return new WrappedPlayer1StartPosition(spriteGraphics, Level);
-                yield return new WrappedPlayer2StartPosition(spriteGraphics, Level);
+            if (monsters) {
+                foreach (Monster m in Level.monsters) {
+                    yield return new WrappedMonster(m, spriteGraphics);
+                }
             }
-            // TODO: use thie for rendering or make this match the rendering order
         }
 
         public Level Level => levelAsset.level;

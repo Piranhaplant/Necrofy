@@ -33,5 +33,6 @@ namespace Necrofy
         public abstract Rectangle Bounds { get; }
         public abstract ushort x { get; set; }
         public abstract ushort y { get; set; }
+        public abstract void Render(Graphics g);
     }
 }

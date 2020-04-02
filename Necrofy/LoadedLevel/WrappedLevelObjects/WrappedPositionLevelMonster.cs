@@ -6,9 +6,9 @@ using System.Text;
 
 namespace Necrofy
 {
-    class WrappedMonster : WrappedLevelObject<Monster>
+    class WrappedPositionLevelMonster : WrappedLevelObject<PositionLevelMonster>
     {
-        public WrappedMonster(Monster monster, LoadedSpriteGraphics spriteGraphics) : base(monster, spriteGraphics) { }
+        public WrappedPositionLevelMonster(PositionLevelMonster monster, LoadedSpriteGraphics spriteGraphics) : base(monster, spriteGraphics) { }
 
         public override Rectangle Bounds => spriteGraphics.GetRectangle(SpriteDisplay.Key.Type.Pointer, wrappedObject.type, x, y);
 

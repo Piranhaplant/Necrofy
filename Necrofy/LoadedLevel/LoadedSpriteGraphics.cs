@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using Newtonsoft.Json;
 
 namespace Necrofy
@@ -12,7 +13,7 @@ namespace Necrofy
         public readonly PaletteAsset paletteAsset;
         public readonly GraphicsAsset graphicsAsset;
         public readonly SpritesAsset spritesAsset;
-        public readonly EditorAsset<SpriteDisplay[]> spriteDisplayAsset;
+        public readonly EditorAsset<SpriteDisplayList> spriteDisplayAsset;
 
         public readonly Dictionary<SpriteDisplay.Key.Type, Dictionary<int, LoadedSprite>> sprites;
         public readonly Dictionary<SpriteDisplay.Category, List<LoadedSprite>> spritesByCategory;
@@ -21,7 +22,7 @@ namespace Necrofy
             paletteAsset = PaletteAsset.FromProject(project, spritePaletteName);
             graphicsAsset = GraphicsAsset.FromProject(project, GraphicsAsset.SpritesName);
             spritesAsset = SpritesAsset.FromProject(project);
-            spriteDisplayAsset = EditorAsset<SpriteDisplay[]>.FromProject(project, "SpriteDisplay");
+            spriteDisplayAsset = EditorAsset<SpriteDisplayList>.FromProject(project, "SpriteDisplay");
 
             Color[] colors = SNESGraphics.SNESToRGB(paletteAsset.data, transparent: true);
 
@@ -34,11 +35,19 @@ namespace Necrofy
                 spritesByCategory[category] = new List<LoadedSprite>();
             }
 
-            foreach (SpriteDisplay spriteDisplay in spriteDisplayAsset.data) {
-                LoadedSprite s = new LoadedSprite(spritesAsset.sprites[spriteDisplay.spriteIndex], graphicsAsset.data, colors, spriteDisplay.overridePalette);
-                sprites[spriteDisplay.key.type][spriteDisplay.key.value] = s;
-                spritesByCategory[spriteDisplay.category].Add(s);
+            foreach (ImageSpriteDisplay spriteDisplay in spriteDisplayAsset.data.imageSprites) {
+                LoadedSprite s = new ImageLoadedSprite(spritesAsset.sprites[spriteDisplay.spriteIndex], graphicsAsset.data, colors, spriteDisplay.overridePalette);
+                AddLoadedSprite(spriteDisplay, s);
             }
+            foreach (TextSpriteDisplay spriteDisplay in spriteDisplayAsset.data.textSprites) {
+                LoadedSprite s = new TextLoadedSprite(spriteDisplay.text);
+                AddLoadedSprite(spriteDisplay, s);
+            }
+        }
+
+        private void AddLoadedSprite(SpriteDisplay spriteDisplay, LoadedSprite s) {
+            sprites[spriteDisplay.key.type][spriteDisplay.key.value] = s;
+            spritesByCategory[spriteDisplay.category].Add(s);
         }
 
         public void Render(SpriteDisplay.Key.Type type, int value, Graphics g, int x, int y) {
@@ -56,13 +65,21 @@ namespace Necrofy
             return Rectangle.Empty;
         }
 
-        public class LoadedSprite
+        public abstract class LoadedSprite
+        {
+            public abstract Size Size { get; }
+            public abstract Rectangle GetRectangle(int x, int y);
+            public abstract void Render(Graphics g, int x, int y);
+            public abstract void RenderFromTopCorner(Graphics g, int x, int y);
+        }
+
+        private class ImageLoadedSprite : LoadedSprite
         {
             private readonly Bitmap image;
             private readonly int anchorX;
             private readonly int anchorY;
 
-            public LoadedSprite(Sprite sprite, byte[] graphics, Color[] colors, int? overridePalette) {
+            public ImageLoadedSprite(Sprite sprite, byte[] graphics, Color[] colors, int? overridePalette) {
                 int minX = 0, maxX = 0, minY = 0, maxY = 0;
                 foreach (Sprite.Tile t in sprite.tiles) {
                     minX = Math.Min(minX, t.xOffset);
@@ -88,18 +105,50 @@ namespace Necrofy
                 }
             }
 
-            public Size Size => image.Size;
+            public override Size Size => image.Size;
 
-            public Rectangle GetRectangle(int x, int y) {
+            public override Rectangle GetRectangle(int x, int y) {
                 return new Rectangle(x - anchorX, y - anchorY, image.Width, image.Height);
             }
-            
-            public void Render(Graphics g, int x, int y) {
+
+            public override void Render(Graphics g, int x, int y) {
                 g.DrawImage(image, x - anchorX, y - anchorY);
             }
 
-            public void RenderFromTopCorner(Graphics g, int x, int y) {
+            public override void RenderFromTopCorner(Graphics g, int x, int y) {
                 g.DrawImage(image, x, y);
+            }
+        }
+
+        private class TextLoadedSprite : LoadedSprite
+        {
+            private static readonly Font font = SystemFonts.DefaultFont;
+            private const int padding = 2;
+
+            private readonly string text;
+            private Size textSize;
+
+            public TextLoadedSprite(string text) {
+                this.text = text;
+                Size s = TextRenderer.MeasureText(text, font);
+                textSize = new Size(s.Width + padding * 2, s.Height + padding * 2);
+            }
+
+            public override Size Size => textSize;
+
+            public override Rectangle GetRectangle(int x, int y) {
+                return new Rectangle(x - textSize.Width / 2, y - textSize.Height, textSize.Width, textSize.Height);
+            }
+
+            public override void Render(Graphics g, int x, int y) {
+                Rectangle r = GetRectangle(x, y);
+                g.FillRectangle(Brushes.Black, r);
+                g.DrawRectangle(Pens.White, r);
+                g.DrawString(text, font, Brushes.White, r.X + padding, r.Y + padding);
+            }
+
+            public override void RenderFromTopCorner(Graphics g, int x, int y) {
+                g.DrawString(text, font, Brushes.Black, x + padding, y + padding);
             }
         }
     }

@@ -131,8 +131,8 @@
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedLevelObject.cs" />
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedMonster.cs" />
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedOneTimeMonster.cs" />
-    <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedPlayer2StartPosition.cs" />
-    <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedPlayer1StartPosition.cs" />
+    <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedPlayerStartPosition.cs" />
+    <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedPositionLevelMonster.cs" />
     <Compile Include="NewProjectDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -222,7 +222,7 @@
     </Compile>
     <Compile Include="SNESGraphics.cs" />
     <Compile Include="Sprite.cs" />
-    <Compile Include="SpriteDisplay.cs" />
+    <Compile Include="SpriteDisplayList.cs" />
     <Compile Include="SpriteViewer.cs">
       <SubType>Form</SubType>
     </Compile>

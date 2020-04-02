@@ -51,6 +51,7 @@ namespace Necrofy
 
         public override void MouseUp(LevelMouseEventArgs e) {
             objectSelector.MouseUp();
+            editor.undoManager.ForceNoMerge();
         }
 
         public override void Paint(Graphics g) {

@@ -10,7 +10,7 @@ namespace Necrofy
     class TilesetObjectBrowserContents : ObjectBrowserContents
     {
         private static readonly Font font = new Font(FontFamily.GenericMonospace, 10);
-        private static Size fontSize = Size.Empty;
+        private static readonly Size fontSize = TextRenderer.MeasureText("0", font);
         private const int fontPadding = 2;
 
         private readonly LoadedLevel level;
@@ -50,16 +50,11 @@ namespace Necrofy
             }
         }
 
-        public override bool PaintObject(int i, Graphics g, int x, int y) {
-            if (fontSize.Width == 0) {
-                fontSize = TextRenderer.MeasureText(g, "0", font, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding);
-                return true;
-            }
+        public override void PaintObject(int i, Graphics g, int x, int y) {
             ushort tile = visibleTiles[i];
             g.DrawImage(level.tiles[tile], x, y);
             g.DrawString((tile / 0x10).ToString("X"), font, Brushes.Black, x + level.tiles[tile].Width + fontPadding, y);
             g.DrawString((tile % 0x10).ToString("X"), font, Brushes.Black, x + level.tiles[tile].Width + fontPadding, y + fontSize.Height);
-            return false;
         }
     }
 }

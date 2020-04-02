@@ -68,9 +68,10 @@ namespace Necrofy
             spriteObjectBrowserContents = new SpriteObjectBrowserContents(level.spriteGraphics);
             spriteObjectBrowserContents.SelectedIndexChanged += SpriteObjectBrowserContents_SelectedIndexChanged;
             spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.Item);
-            spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.Victim);
-            spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.OneTimeMonster);
+            spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.LevelMonster);
             spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.Monster);
+            spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.OneTimeMonster);
+            spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.Victim);
 
             toolTypeToObjectContents = new Dictionary<Tool.ObjectType, ObjectBrowserContents> {
                 { Tool.ObjectType.Sprites, spriteObjectBrowserContents },
@@ -234,23 +235,10 @@ namespace Necrofy
                 }
             }
 
-            level.spriteGraphics.Render(SpriteDisplay.Key.Type.Player, 0, e.Graphics, level.Level.p1startX, level.Level.p1startY);
-            level.spriteGraphics.Render(SpriteDisplay.Key.Type.Player, 1, e.Graphics, level.Level.p2startX, level.Level.p2startY);
-
-            foreach (OneShotMonster m in level.Level.oneShotMonsters) {
-                if (m.type == OneShotMonster.CreditHeadType) {
-                    level.spriteGraphics.Render(SpriteDisplay.Key.Type.CreditHead, m.extra, e.Graphics, m.x, m.y);
-                } else {
-                    level.spriteGraphics.Render(SpriteDisplay.Key.Type.Pointer, m.type, e.Graphics, m.x, m.y);
-                }
+            foreach (WrappedLevelObject obj in level.GetAllObjects().Reverse()) {
+                obj.Render(e.Graphics);
             }
-            foreach (Monster m in level.Level.monsters) {
-                level.spriteGraphics.Render(SpriteDisplay.Key.Type.Pointer, m.type, e.Graphics, m.x, m.y);
-            }
-            foreach (Item i in level.Level.items) {
-                level.spriteGraphics.Render(SpriteDisplay.Key.Type.Item, i.type, e.Graphics, i.x, i.y);
-            }
-
+            
             //for (int y = 0; y < level.Level.height; y++) {
             //    for (int x = 0; x < level.Level.width; x++) {
             //        e.Graphics.DrawImage(level.priorityTiles[level.Level.background[x, y]], x * 64, y * 64);
@@ -378,7 +366,7 @@ namespace Necrofy
         }
 
         private void spritesBossMonsters_CheckedChanged(object sender, EventArgs e) {
-            // TODO
+            UpdateSpriteCategory(SpriteDisplay.Category.LevelMonster, spritesBossMonsters.Checked);
         }
 
         private void spritesPlayers_CheckedChanged(object sender, EventArgs e) {

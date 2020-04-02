@@ -14,5 +14,9 @@ namespace Necrofy
 
         public override ushort x { get => wrappedObject.x; set => wrappedObject.x = value; }
         public override ushort y { get => wrappedObject.y; set => wrappedObject.y = value; }
+
+        public override void Render(Graphics g) {
+            spriteGraphics.Render(SpriteDisplay.Key.Type.Item, wrappedObject.type, g, x, y);
+        }
     }
 }
