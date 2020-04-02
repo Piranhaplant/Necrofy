@@ -92,7 +92,7 @@ namespace Necrofy
             }
             foreach (OneShotMonster m in Level.oneShotMonsters) {
                 if (victims && m.victimNumber > 0 || oneShotMonsters && m.victimNumber == 0) {
-                    yield return new WrappedOneTimeMonster(m, spriteGraphics);
+                    yield return new WrappedOneShotMonster(m, spriteGraphics);
                 }
             }
             if (monsters) {

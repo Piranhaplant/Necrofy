@@ -122,6 +122,7 @@
     <Compile Include="LevelEditor\PencilSelectTool.cs" />
     <Compile Include="LevelEditor\RectangleSelectTool.cs" />
     <Compile Include="LevelEditor\ResizeLevelTool.cs" />
+    <Compile Include="LevelEditor\SpriteClipboardContents.cs" />
     <Compile Include="LevelEditor\SpriteTool.cs" />
     <Compile Include="LevelEditor\TileSelectTool.cs" />
     <Compile Include="LevelEditor\TileSuggestionTool.cs" />
@@ -130,7 +131,7 @@
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedItem.cs" />
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedLevelObject.cs" />
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedMonster.cs" />
-    <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedOneTimeMonster.cs" />
+    <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedOneShotMonster.cs" />
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedPlayerStartPosition.cs" />
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedPositionLevelMonster.cs" />
     <Compile Include="NewProjectDialog.cs">

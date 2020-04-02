@@ -19,6 +19,20 @@ namespace Necrofy
         public override void Render(Graphics g) {
             spriteGraphics.Render(SpriteDisplay.Key.Type.Player, wrappedObject, g, x, y);
         }
+
+        public override bool Removable => false;
+
+        public override void Add(Level level) {
+            // Can't be added or removed
+        }
+
+        public override void Remove(Level level) {
+            // Can't be added or removed
+        }
+
+        public override void AddToClipboard(SpriteClipboardContents clipboard) {
+            // Can't be added or removed
+        }
     }
 
     class WrappedPlayer1StartPosition : WrappedPlayerStartPosition

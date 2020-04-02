@@ -51,6 +51,16 @@ namespace Necrofy
             host.SelectionChanged();
         }
 
+        public void SelectObjects(IEnumerable<T> objs) {
+            selectedObjects = new HashSet<T>(objs);
+            host.SelectionChanged();
+        }
+
+        public void UpdateSelection() {
+            selectedObjects = new HashSet<T>(selectedObjects.Intersect(host.GetObjects()));
+            host.SelectionChanged();
+        }
+
         public void MouseDown(int x, int y) {
             addToSelection = Control.ModifierKeys == Keys.Shift;
             removeFromSelection = Control.ModifierKeys == Keys.Alt;

@@ -34,5 +34,9 @@ namespace Necrofy
         public abstract ushort x { get; set; }
         public abstract ushort y { get; set; }
         public abstract void Render(Graphics g);
+        public abstract bool Removable { get; }
+        public abstract void Add(Level level);
+        public abstract void Remove(Level level);
+        public abstract void AddToClipboard(SpriteClipboardContents clipboard);
     }
 }

@@ -226,11 +226,5 @@ namespace Necrofy
             this.editor = editor;
         }
         public bool cancel;
-
-        protected void UpdateSelection() {
-            // TODO
-            //if (EdControl.t != null)
-            //    EdControl.t.UpdateSelection();
-        }
     }
 }

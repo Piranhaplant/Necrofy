@@ -18,5 +18,19 @@ namespace Necrofy
         public override void Render(Graphics g) {
             spriteGraphics.Render(SpriteDisplay.Key.Type.Pointer, wrappedObject.type, g, x, y);
         }
+
+        public override bool Removable => true;
+
+        public override void Add(Level level) {
+            level.monsters.Add(wrappedObject);
+        }
+
+        public override void Remove(Level level) {
+            level.monsters.Remove(wrappedObject);
+        }
+
+        public override void AddToClipboard(SpriteClipboardContents clipboard) {
+            clipboard.monsters.Add(wrappedObject);
+        }
     }
 }

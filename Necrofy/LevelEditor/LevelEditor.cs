@@ -131,6 +131,10 @@ namespace Necrofy
             scrollWrapper.SetClientSize(level.Level.width * 64 + LevelPadding * 2, level.Level.height * 64 + LevelPadding * 2);
         }
 
+        public void UpdateSpriteSelection() {
+            spriteTool.UpdateSelection();
+        }
+
         protected override UndoManager Setup() {
             undoManager = new UndoManager<LevelEditor>(mainWindow.UndoButton, mainWindow.RedoButton, this);
             ChangeTool(paintbrushTool);
