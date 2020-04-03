@@ -37,6 +37,7 @@ namespace Necrofy
         public void SelectionChanged() {
             editor.Repaint();
             editor.NonTileSelectionChanged();
+            editor.spriteObjectBrowserContents.SetHighlightedCategories(objectSelector.GetSelectedObjects().Select(o => o.Category));
         }
 
         public void MoveSelectedObjects(int dx, int dy, int snap) {
@@ -58,6 +59,12 @@ namespace Necrofy
         public override void MouseUp(LevelMouseEventArgs e) {
             objectSelector.MouseUp();
             editor.undoManager.ForceNoMerge();
+        }
+
+        public override void SpriteChanged() {
+            if (editor.spriteObjectBrowserContents.SelectedSprite != null) {
+                editor.undoManager.Do(new ChangeSpriteTypeAction(objectSelector.GetSelectedObjects(), (SpriteDisplay.Category)editor.spriteObjectBrowserContents.SelectedCategory, editor.spriteObjectBrowserContents.SelectedSprite));
+            }
         }
 
         public override void Paint(Graphics g) {

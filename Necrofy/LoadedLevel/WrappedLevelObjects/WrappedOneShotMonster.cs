@@ -14,6 +14,16 @@ namespace Necrofy
 
         public WrappedOneShotMonster(OneShotMonster monster, LoadedSpriteGraphics spriteGraphics) : base(monster, spriteGraphics) { }
 
+        public override SpriteDisplay.Category Category {
+            get {
+                if (Removable) {
+                    return SpriteDisplay.Category.OneShotMonster;
+                } else {
+                    return SpriteDisplay.Category.Victim;
+                }
+            }
+        }
+
         public override Rectangle Bounds {
             get {
                 if (wrappedObject.type == OneShotMonster.CreditHeadType) {
@@ -26,6 +36,7 @@ namespace Necrofy
 
         public override ushort x { get => wrappedObject.x; set => wrappedObject.x = value; }
         public override ushort y { get => wrappedObject.y; set => wrappedObject.y = value; }
+        public override int type { get => wrappedObject.type; set => wrappedObject.type = value; }
 
         public override void Render(Graphics g) {
             if (wrappedObject.type == OneShotMonster.CreditHeadType) {

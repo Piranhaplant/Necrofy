@@ -30,9 +30,11 @@ namespace Necrofy
 
     abstract class WrappedLevelObject : ISelectableObject
     {
+        public abstract SpriteDisplay.Category Category { get; }
         public abstract Rectangle Bounds { get; }
         public abstract ushort x { get; set; }
         public abstract ushort y { get; set; }
+        public abstract int type { get; set; }
         public abstract void Render(Graphics g);
         public abstract bool Removable { get; }
         public abstract void Add(Level level);

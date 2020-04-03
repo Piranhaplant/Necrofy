@@ -70,7 +70,7 @@ namespace Necrofy
             spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.Item);
             spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.LevelMonster);
             spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.Monster);
-            spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.OneTimeMonster);
+            spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.OneShotMonster);
             spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.Victim);
 
             toolTypeToObjectContents = new Dictionary<Tool.ObjectType, ObjectBrowserContents> {
@@ -351,6 +351,7 @@ namespace Necrofy
                 spriteObjectBrowserContents.RemoveCategory(category);
             }
             ChangeTool(spriteTool);
+            UpdateSpriteSelection();
         }
 
         private void spritesItems_CheckedChanged(object sender, EventArgs e) {
@@ -362,7 +363,7 @@ namespace Necrofy
         }
 
         private void spritesOneShotMonsters_CheckedChanged(object sender, EventArgs e) {
-            UpdateSpriteCategory(SpriteDisplay.Category.OneTimeMonster, spritesOneShotMonsters.Checked);
+            UpdateSpriteCategory(SpriteDisplay.Category.OneShotMonster, spritesOneShotMonsters.Checked);
         }
 
         private void spritesMonsters_CheckedChanged(object sender, EventArgs e) {
@@ -374,7 +375,8 @@ namespace Necrofy
         }
 
         private void spritesPlayers_CheckedChanged(object sender, EventArgs e) {
-            // TODO
+            // Players should never be displayed in the object picker, so always use false
+            UpdateSpriteCategory(SpriteDisplay.Category.Player, false);
         }
 
         private void spritesAll_Click(object sender, EventArgs e) {

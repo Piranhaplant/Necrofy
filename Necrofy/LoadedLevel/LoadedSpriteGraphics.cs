@@ -36,11 +36,11 @@ namespace Necrofy
             }
 
             foreach (ImageSpriteDisplay spriteDisplay in spriteDisplayAsset.data.imageSprites) {
-                LoadedSprite s = new ImageLoadedSprite(spritesAsset.sprites[spriteDisplay.spriteIndex], graphicsAsset.data, colors, spriteDisplay.overridePalette);
+                LoadedSprite s = new ImageLoadedSprite(spriteDisplay.key, spritesAsset.sprites[spriteDisplay.spriteIndex], graphicsAsset.data, colors, spriteDisplay.overridePalette);
                 AddLoadedSprite(spriteDisplay, s);
             }
             foreach (TextSpriteDisplay spriteDisplay in spriteDisplayAsset.data.textSprites) {
-                LoadedSprite s = new TextLoadedSprite(spriteDisplay.text);
+                LoadedSprite s = new TextLoadedSprite(spriteDisplay.key, spriteDisplay.text);
                 AddLoadedSprite(spriteDisplay, s);
             }
         }
@@ -67,10 +67,15 @@ namespace Necrofy
 
         public abstract class LoadedSprite
         {
+            public SpriteDisplay.Key Key { get; private set; }
             public abstract Size Size { get; }
             public abstract Rectangle GetRectangle(int x, int y);
             public abstract void Render(Graphics g, int x, int y);
             public abstract void RenderFromTopCorner(Graphics g, int x, int y);
+
+            public LoadedSprite(SpriteDisplay.Key key) {
+                Key = key;
+            }
         }
 
         private class ImageLoadedSprite : LoadedSprite
@@ -79,7 +84,7 @@ namespace Necrofy
             private readonly int anchorX;
             private readonly int anchorY;
 
-            public ImageLoadedSprite(Sprite sprite, byte[] graphics, Color[] colors, int? overridePalette) {
+            public ImageLoadedSprite(SpriteDisplay.Key key, Sprite sprite, byte[] graphics, Color[] colors, int? overridePalette) : base(key) {
                 int minX = 0, maxX = 0, minY = 0, maxY = 0;
                 foreach (Sprite.Tile t in sprite.tiles) {
                     minX = Math.Min(minX, t.xOffset);
@@ -128,7 +133,7 @@ namespace Necrofy
             private readonly string text;
             private Size textSize;
 
-            public TextLoadedSprite(string text) {
+            public TextLoadedSprite(SpriteDisplay.Key key, string text) : base(key) {
                 this.text = text;
                 Size s = TextRenderer.MeasureText(text, font);
                 textSize = new Size(s.Width + padding * 2, s.Height + padding * 2);

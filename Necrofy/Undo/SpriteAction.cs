@@ -117,4 +117,39 @@ namespace Necrofy
             }
         }
     }
+
+    class ChangeSpriteTypeAction : SpriteAction
+    {
+        private readonly int newType;
+        private readonly List<int> prevType = new List<int>();
+
+        public ChangeSpriteTypeAction(IEnumerable<WrappedLevelObject> objs, SpriteDisplay.Category category, SpriteDisplay.Key newType) : base(objs.Where(o => o.Category == category)) {
+            this.newType = newType.value;
+            foreach (WrappedLevelObject obj in objs) {
+                prevType.Add(obj.type);
+            }
+        }
+
+        protected override void Undo() {
+            for (int i = 0; i < objs.Count; i++) {
+                objs[i].type = prevType[i];
+            }
+        }
+
+        protected override void Redo() {
+            for (int i = 0; i < objs.Count; i++) {
+                objs[i].type = newType;
+            }
+        }
+        
+        // Not allowing merging because it gets complicated when there are multiple types of sprites selected at the same time
+
+        public override string ToString() {
+            if (objs.Count == 1) {
+                return "Change sprite";
+            } else {
+                return "Change " + objs.Count.ToString() + " sprites";
+            }
+        }
+    }
 }

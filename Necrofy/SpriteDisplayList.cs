@@ -56,7 +56,7 @@ namespace Necrofy
         {
             Item,
             Monster,
-            OneTimeMonster,
+            OneShotMonster,
             Victim,
             Player,
             CreditHead,

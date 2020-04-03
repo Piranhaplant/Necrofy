@@ -14,7 +14,10 @@ namespace Necrofy
             this.level = level;
         }
 
+        public override SpriteDisplay.Category Category => SpriteDisplay.Category.Player;
+
         public override Rectangle Bounds => spriteGraphics.GetRectangle(SpriteDisplay.Key.Type.Player, wrappedObject, x, y);
+        public override int type { get => wrappedObject; set { } }
 
         public override void Render(Graphics g) {
             spriteGraphics.Render(SpriteDisplay.Key.Type.Player, wrappedObject, g, x, y);

@@ -10,10 +10,13 @@ namespace Necrofy
     {
         public WrappedMonster(Monster monster, LoadedSpriteGraphics spriteGraphics) : base(monster, spriteGraphics) { }
 
+        public override SpriteDisplay.Category Category => SpriteDisplay.Category.Monster;
+
         public override Rectangle Bounds => spriteGraphics.GetRectangle(SpriteDisplay.Key.Type.Pointer, wrappedObject.type, x, y);
 
         public override ushort x { get => wrappedObject.x; set => wrappedObject.x = value; }
         public override ushort y { get => wrappedObject.y; set => wrappedObject.y = value; }
+        public override int type { get => wrappedObject.type; set => wrappedObject.type = value; }
 
         public override void Render(Graphics g) {
             spriteGraphics.Render(SpriteDisplay.Key.Type.Pointer, wrappedObject.type, g, x, y);

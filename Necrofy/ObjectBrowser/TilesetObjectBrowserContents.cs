@@ -39,7 +39,7 @@ namespace Necrofy
             SelectedIndex = -1;
         }
 
-        public int SelectedTile => SelectedIndex > -1 ? visibleTiles[SelectedIndex] : -1;
+        public int SelectedTile => SelectedIndex < 0 ? -1 : visibleTiles[SelectedIndex];
 
         public override IEnumerable<Size> Objects {
             get {

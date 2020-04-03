@@ -11,7 +11,8 @@ namespace Necrofy
 {
     public partial class ObjectBrowserControl : UserControl
     {
-        private static readonly Brush selectionBackgroundBrush = new SolidBrush(Color.FromArgb(209, 230, 255));
+        public static readonly Color selectedObjectColor = Color.FromArgb(209, 230, 255);
+        private static readonly Brush selectionBackgroundBrush = new SolidBrush(selectedObjectColor);
         private static readonly Pen selectionBorderPen = new Pen(Color.FromArgb(132, 172, 221));
         private const int padding = 8;
         
@@ -80,7 +81,7 @@ namespace Necrofy
                 rowHeight = Math.Max(rowHeight, obj.Height);
                 itemPlaced = true;
             }
-            int totalHeight = y + rowHeight + padding * 2;
+            int totalHeight = y + rowHeight + padding * 2 + 1;
             scrollWrapper.SetClientSize(canvas.Width, Math.Max(canvas.Height, totalHeight));
         }
 
