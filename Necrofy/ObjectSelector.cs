@@ -15,6 +15,8 @@ namespace Necrofy
         private bool addToSelection;
         private bool removeFromSelection;
 
+        private bool creating;
+
         private bool makingSelectionRectangle = false;
         private HashSet<T> baseSelectedObjects;
         private Rectangle selectionRectangle;
@@ -64,6 +66,7 @@ namespace Necrofy
         public void MouseDown(int x, int y) {
             addToSelection = Control.ModifierKeys == Keys.Shift;
             removeFromSelection = Control.ModifierKeys == Keys.Alt;
+            creating = Control.ModifierKeys == Keys.Control;
 
             T hitObject = default(T);
             bool hitObjectFound = false;
@@ -83,12 +86,21 @@ namespace Necrofy
             totalMoveY = 0;
 
             if (!hitObjectFound) {
-                if (!addToSelection && !removeFromSelection) {
+                if (!addToSelection && !removeFromSelection || creating) {
                     selectedObjects.Clear();
                 }
-                makingSelectionRectangle = true;
-                baseSelectedObjects = new HashSet<T>(selectedObjects);
-                selectionRectangle = Rectangle.Empty;
+                if (creating) {
+                    creating = false;
+                    T newObject = host.CreateObject(x, y);
+                    if (newObject != null) {
+                        movingObjects = true;
+                        selectedObjects.Add(newObject);
+                    }
+                } else {
+                    makingSelectionRectangle = true;
+                    baseSelectedObjects = new HashSet<T>(selectedObjects);
+                    selectionRectangle = Rectangle.Empty;
+                }
             } else if (selectedObjects.Contains(hitObject)) {
                 if (removeFromSelection) {
                     selectedObjects.Remove(hitObject);
@@ -123,6 +135,11 @@ namespace Necrofy
                 }
                 host.SelectionChanged();
             } else if (movingObjects) {
+                if (creating) {
+                    creating = false;
+                    selectedObjects = new HashSet<T>(host.CloneSelection());
+                    host.SelectionChanged();
+                }
                 int minX = int.MaxValue;
                 int minY = int.MaxValue;
                 foreach (T obj in selectedObjects) {
@@ -155,6 +172,8 @@ namespace Necrofy
             IEnumerable<T> GetObjects();
             void SelectionChanged();
             void MoveSelectedObjects(int dx, int dy, int snap);
+            T CreateObject(int x, int y);
+            IEnumerable<T> CloneSelection();
         }
     }
 

@@ -21,7 +21,6 @@ namespace Necrofy
                 editor.tileSelection.Clear();
             }
             editor.tileSelection.StartRect(e.TileX, e.TileY, addToSelection);
-            editor.undoManager.ForceNoMerge();
         }
 
         protected override void MouseMove2(LevelMouseEventArgs e) {

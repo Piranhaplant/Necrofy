@@ -322,16 +322,19 @@ namespace Necrofy
         }
 
         private void BuildProject(object sender, EventArgs e) {
+            // TODO prompt for saving
             project?.Build();
             // TODO tell the user that it finished
         }
 
         private void RunProject(object sender, EventArgs e) {
+            // TODO prompt for saving
             project?.Run();
         }
 
         private void RunFromLevel(object sender, EventArgs e) {
             if (activeEditor?.LevelNumber != null) {
+                // TODO prompt for saving
                 project?.RunFromLevel((int)activeEditor?.LevelNumber, savedRunSettings[currentRunSettings]);
             }
         }

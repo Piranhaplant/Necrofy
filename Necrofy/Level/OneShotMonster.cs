@@ -26,6 +26,14 @@ namespace Necrofy
 
         public OneShotMonster() { }
 
+        public OneShotMonster(ushort x, ushort y, ushort extra, ushort victimNumber, int type) {
+            this.x = x;
+            this.y = y;
+            this.extra = extra;
+            this.victimNumber = victimNumber;
+            this.type = type;
+        }
+
         public OneShotMonster(NStream s) {
             x = s.ReadInt16();
             y = s.ReadInt16();

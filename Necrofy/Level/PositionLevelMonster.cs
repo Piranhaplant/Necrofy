@@ -15,6 +15,11 @@ namespace Necrofy
 
         public PositionLevelMonster() { }
 
+        public PositionLevelMonster(ushort x, ushort y, int type) : base(type) {
+            this.x = x;
+            this.y = y;
+        }
+
         public PositionLevelMonster(int type, NStream s) : base(type) {
             x = s.ReadInt16();
             y = s.ReadInt16();

@@ -7,7 +7,7 @@ namespace Necrofy
 {
     abstract class SpriteAction : LevelEditorAction
     {
-        protected readonly List<WrappedLevelObject> objs;
+        public readonly List<WrappedLevelObject> objs;
 
         public SpriteAction(IEnumerable<WrappedLevelObject> objs) {
             this.objs = new List<WrappedLevelObject>(objs);
@@ -46,15 +46,18 @@ namespace Necrofy
                 objs[i].y = newY[i];
             }
         }
-
-        public override bool CanMerge => true;
-
-        public override void Merge(UndoAction<LevelEditor> action) {
-            MoveSpriteAction moveSpriteAction = (MoveSpriteAction)action;
-            for (int i = 0; i < objs.Count; i++) {
-                newX[i] = moveSpriteAction.newX[i];
-                newY[i] = moveSpriteAction.newY[i];
+        
+        public override bool Merge(UndoAction<LevelEditor> action) {
+            if (action is MoveSpriteAction moveSpriteAction) {
+                if (moveSpriteAction.objs.SequenceEqual(objs)) {
+                    for (int i = 0; i < objs.Count; i++) {
+                        newX[i] = moveSpriteAction.newX[i];
+                        newY[i] = moveSpriteAction.newY[i];
+                    }
+                    return true;
+                }
             }
+            return false;
         }
 
         public override string ToString() {
@@ -115,6 +118,15 @@ namespace Necrofy
             } else {
                 return "Add " + objs.Count.ToString() + " sprites";
             }
+        }
+
+        public override bool Merge(UndoAction<LevelEditor> action) {
+            if (action is MoveSpriteAction moveSpriteAction) {
+                if (moveSpriteAction.objs.SequenceEqual(objs)) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 

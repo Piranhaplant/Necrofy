@@ -145,7 +145,6 @@ namespace Necrofy
             resizing = false;
             editor.scrollWrapper.ExpandingDrag = false;
             editor.UpdateLevelSize();
-            editor.undoManager.ForceNoMerge();
         }
 
         protected override void DoneBeingUsed2() {

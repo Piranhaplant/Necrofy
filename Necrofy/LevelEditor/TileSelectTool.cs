@@ -17,7 +17,6 @@ namespace Necrofy
             prevX = -1;
             prevY = -1;
             MouseMove(e);
-            editor.undoManager.ForceNoMerge();
         }
 
         protected override void MouseMove2(LevelMouseEventArgs e) {

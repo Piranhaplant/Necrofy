@@ -19,7 +19,6 @@ namespace Necrofy
             prevY = -1;
             addingToSelection = Control.ModifierKeys != Keys.Alt;
             MouseMove(e);
-            editor.undoManager.ForceNoMerge();
         }
 
         protected override void MouseMove2(LevelMouseEventArgs e) {

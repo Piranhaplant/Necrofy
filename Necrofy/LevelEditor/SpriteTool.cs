@@ -43,6 +43,39 @@ namespace Necrofy
         public void MoveSelectedObjects(int dx, int dy, int snap) {
             editor.undoManager.Do(new MoveSpriteAction(objectSelector.GetSelectedObjects(), dx, dy, snap));
         }
+        
+        public WrappedLevelObject CreateObject(int x, int y) {
+            SpriteDisplay.Key selectedSprite = editor.spriteObjectBrowserContents.SelectedSprite;
+
+            WrappedLevelObject newObject = null;
+            if (x >= ushort.MinValue && y >= ushort.MinValue && x <= ushort.MaxValue && y <= ushort.MaxValue) {
+                switch (editor.spriteObjectBrowserContents.SelectedCategory) {
+                    case SpriteDisplay.Category.Item:
+                        newObject = new WrappedItem(new Item((ushort)x, (ushort)y, (byte)selectedSprite.value), editor.level.spriteGraphics);
+                        break;
+                    case SpriteDisplay.Category.Monster:
+                        newObject = new WrappedMonster(new Monster((ushort)x, (ushort)y, 0, 0, selectedSprite.value), editor.level.spriteGraphics);
+                        break;
+                    case SpriteDisplay.Category.OneShotMonster:
+                        newObject = new WrappedOneShotMonster(new OneShotMonster((ushort)x, (ushort)y, 0, 0, selectedSprite.value), editor.level.spriteGraphics);
+                        break;
+                    case SpriteDisplay.Category.LevelMonster:
+                        newObject = new WrappedPositionLevelMonster(new PositionLevelMonster((ushort)x, (ushort)y, selectedSprite.value), editor.level.spriteGraphics);
+                        break;
+                }
+            }
+            if (newObject != null) {
+                editor.undoManager.Do(new AddSpriteAction(new[] { newObject }));
+            }
+            return newObject;
+        }
+
+        public IEnumerable<WrappedLevelObject> CloneSelection() {
+            string serialized = JsonConvert.SerializeObject(SelectionToClipboard());
+            List<WrappedLevelObject> clone = ClipboardToList(JsonConvert.DeserializeObject<SpriteClipboardContents>(serialized));
+            editor.undoManager.Do(new AddSpriteAction(clone));
+            return clone;
+        }
 
         public void UpdateSelection() {
             objectSelector.UpdateSelection();
@@ -87,30 +120,14 @@ namespace Necrofy
         public override bool HasSelection => true;
 
         public override void Copy() {
-            SpriteClipboardContents contents = new SpriteClipboardContents();
-            foreach (WrappedLevelObject obj in objectSelector.GetSelectedObjects()) {
-                obj.AddToClipboard(contents);
-            }
+            SpriteClipboardContents contents = SelectionToClipboard();
             Clipboard.SetText(JsonConvert.SerializeObject(contents));
         }
 
         public override void Paste() {
             try {
                 SpriteClipboardContents contents = JsonConvert.DeserializeObject<SpriteClipboardContents>(Clipboard.GetText());
-
-                List<WrappedLevelObject> objs = new List<WrappedLevelObject>();
-                foreach (Item i in contents.items) {
-                    objs.Add(new WrappedItem(i, editor.level.spriteGraphics));
-                }
-                foreach (Monster m in contents.monsters) {
-                    objs.Add(new WrappedMonster(m, editor.level.spriteGraphics));
-                }
-                foreach (OneShotMonster m in contents.oneShotMonsters) {
-                    objs.Add(new WrappedOneShotMonster(m, editor.level.spriteGraphics));
-                }
-                foreach (PositionLevelMonster m in contents.bossMonsters) {
-                    objs.Add(new WrappedPositionLevelMonster(m, editor.level.spriteGraphics));
-                }
+                List<WrappedLevelObject> objs = ClipboardToList(contents);
 
                 int minx = ushort.MaxValue;
                 int miny = ushort.MaxValue;
@@ -134,6 +151,31 @@ namespace Necrofy
                 editor.undoManager.Do(new AddSpriteAction(objs));
                 objectSelector.SelectObjects(objs);
             } catch (Exception) { }
+        }
+
+        private SpriteClipboardContents SelectionToClipboard() {
+            SpriteClipboardContents contents = new SpriteClipboardContents();
+            foreach (WrappedLevelObject obj in objectSelector.GetSelectedObjects()) {
+                obj.AddToClipboard(contents);
+            }
+            return contents;
+        }
+
+        private List<WrappedLevelObject> ClipboardToList(SpriteClipboardContents contents) {
+            List<WrappedLevelObject> objs = new List<WrappedLevelObject>();
+            foreach (Item i in contents.items) {
+                objs.Add(new WrappedItem(i, editor.level.spriteGraphics));
+            }
+            foreach (Monster m in contents.monsters) {
+                objs.Add(new WrappedMonster(m, editor.level.spriteGraphics));
+            }
+            foreach (OneShotMonster m in contents.oneShotMonsters) {
+                objs.Add(new WrappedOneShotMonster(m, editor.level.spriteGraphics));
+            }
+            foreach (PositionLevelMonster m in contents.bossMonsters) {
+                objs.Add(new WrappedPositionLevelMonster(m, editor.level.spriteGraphics));
+            }
+            return objs;
         }
 
         public override void SelectAll() {

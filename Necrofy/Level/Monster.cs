@@ -18,6 +18,14 @@ namespace Necrofy
 
         public Monster() { }
 
+        public Monster(ushort x, ushort y, byte radius, byte delay, int type) {
+            this.x = x;
+            this.y = y;
+            this.radius = radius;
+            this.delay = delay;
+            this.type = type;
+        }
+
         public Monster(NStream s) {
             radius = (byte)s.ReadByte();
             x = s.ReadInt16();

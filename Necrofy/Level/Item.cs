@@ -16,6 +16,12 @@ namespace Necrofy
         
         public Item() { }
 
+        public Item(ushort x, ushort y, byte type) {
+            this.x = x;
+            this.y = y;
+            this.type = type;
+        }
+
         public Item(NStream s) {
             x = s.ReadInt16();
             y = s.ReadInt16();

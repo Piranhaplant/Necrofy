@@ -33,15 +33,18 @@ namespace Necrofy
                 level.background[points[i].X, points[i].Y] = tileType;
             }
         }
-
-        public override bool CanMerge => true;
-
-        public override void Merge(UndoAction<LevelEditor> action) {
-            PaintTileAction paintTileAction = (PaintTileAction)action;
-            if (!points.Contains(paintTileAction.points[0])) {
-                points.Add(paintTileAction.points[0]);
-                prevTileType.Add(paintTileAction.prevTileType[0]);
+        
+        public override bool Merge(UndoAction<LevelEditor> action) {
+            if (action is PaintTileAction paintTileAction) {
+                if (paintTileAction.tileType == tileType) {
+                    if (!points.Contains(paintTileAction.points[0])) {
+                        points.Add(paintTileAction.points[0]);
+                        prevTileType.Add(paintTileAction.prevTileType[0]);
+                    }
+                    return true;
+                }
             }
+            return false;
         }
 
         public override string ToString() {
@@ -74,11 +77,15 @@ namespace Necrofy
         protected override void Redo() {
             level.background[x, y] = tileType;
         }
-
-        public override bool CanMerge => true;
-
-        public override void Merge(UndoAction<LevelEditor> action) {
-            tileType = ((TileSuggestAction)action).tileType;
+        
+        public override bool Merge(UndoAction<LevelEditor> action) {
+            if (action is TileSuggestAction tileSuggestAction) {
+                if (tileSuggestAction.x == x && tileSuggestAction.y == y) {
+                    tileType = tileSuggestAction.tileType;
+                    return true;
+                }
+            }
+            return false;
         }
 
         public override string ToString() {
@@ -119,11 +126,15 @@ namespace Necrofy
                 level.background[points[i].X, points[i].Y] = tileType;
             }
         }
-
-        public override bool CanMerge => true;
-
-        public override void Merge(UndoAction<LevelEditor> action) {
-            tileType = ((FillSelectionAction)action).tileType;
+        
+        public override bool Merge(UndoAction<LevelEditor> action) {
+            if (action is FillSelectionAction fillSelectionAction) {
+                if (fillSelectionAction.points.SequenceEqual(points)) {
+                    tileType = fillSelectionAction.tileType;
+                    return true;
+                }
+            }
+            return false;
         }
 
         public override string ToString() {

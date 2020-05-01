@@ -22,17 +22,13 @@ namespace Necrofy
             redoActions = new ActionStack(this, redoButton, action => action.DoRedo());
         }
 
-        public void Do(UndoAction<T> action, bool performAction = true) {
+        public void Do(UndoAction<T> action) {
             action.SetEditor(editor);
             if (action.cancel) {
                 return;
             }
-            if (performAction) {
-                action.DoRedo();
-            }
-            if (merge && undoActions.Count > 0 && undoActions.Peek().CanMerge && undoActions.Peek().GetType() == action.GetType()) {
-                undoActions.Peek().Merge(action);
-            } else {
+            action.DoRedo();
+            if (!merge || undoActions.Count == 0 || !undoActions.Peek().Merge(action)) {
                 undoActions.Push(action);
             }
             if (undoActions.Count <= savePos) {
@@ -42,15 +38,7 @@ namespace Necrofy
             merge = true;
             InvokeDirtyChanged();
         }
-
-        public void Perform(UndoAction<T> action) {
-            action.SetEditor(editor);
-            if (action.cancel) {
-                return;
-            }
-            action.DoRedo();
-        }
-
+        
         public override bool Dirty {
             get {
                 return savePos != undoActions.Count;
@@ -217,11 +205,10 @@ namespace Necrofy
             this.Redo();
             this.AfterAction();
         }
-        protected virtual void Undo() { }
-        protected virtual void Redo() { }
+        protected abstract void Undo();
+        protected abstract void Redo();
         protected virtual void AfterAction() { }
-        public virtual bool CanMerge => false;
-        public virtual void Merge(UndoAction<T> action) { }
+        public virtual bool Merge(UndoAction<T> action) { return false; }
         public virtual void SetEditor(T editor) {
             this.editor = editor;
         }
