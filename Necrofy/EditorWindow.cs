@@ -29,15 +29,31 @@ namespace Necrofy
         public event EventHandler SelectionChanged;
         
         protected MainWindow mainWindow;
+        private Project project;
         private UndoManager undoManager;
 
         public EditorWindow() {
             DockAreas = DockAreas.Document;
             HideOnClose = false;
+            FormClosing += EditorWindow_FormClosing;
         }
 
-        public void Setup(MainWindow mainWindow) {
+        private void EditorWindow_FormClosing(object sender, FormClosingEventArgs e) {
+            if (Dirty && project != null) {
+                Activate();
+                // TODO: Fix the "*" appearing after the editor title
+                DialogResult result = MessageBox.Show("Save changes to \"" + Text + "\"?", "Save changes?", MessageBoxButtons.YesNoCancel);
+                if (result == DialogResult.Cancel) {
+                    e.Cancel = true;
+                } else if (result == DialogResult.Yes) {
+                    Save();
+                }
+            }
+        }
+
+        public void Setup(MainWindow mainWindow, Project project) {
             this.mainWindow = mainWindow;
+            this.project = project;
             mainWindow.ObjectBrowser.Browser.Contents = browserContents;
             undoManager = Setup();
             if (undoManager != null) {
@@ -53,7 +69,7 @@ namespace Necrofy
             undoManager?.RefreshItems();
         }
         
-        public void Save(Project project) {
+        public void Save() {
             DoSave(project);
             undoManager?.Clean();
         }

@@ -38,7 +38,7 @@ namespace Necrofy
             ObjectBrowser.Show(dockPanel, DockState.DockLeft);
 
             ProjectBrowser = new ProjectBrowser(this);
-            ProjectBrowser.Show(dockPanel, DockState.DockLeft);
+            ProjectBrowser.Show(dockPanel, DockState.DockRight);
 
             string recentProjectsString = Properties.Settings.Default.RecentProjects;
             if (recentProjectsString != "") {
@@ -127,7 +127,7 @@ namespace Necrofy
 
         public void ShowEditor(EditorWindow editor) {
             openEditors.Add(editor);
-            editor.Setup(this);
+            editor.Setup(this, project);
             editor.Show(dockPanel, DockState.Document);
             editor.DirtyChanged += Editor_DirtyChanged;
             editor.SelectionChanged += Editor_SelectionChanged;
@@ -173,7 +173,6 @@ namespace Necrofy
                 dirtyEditors.Remove(editor);
                 Editor_DirtyChanged(null, e); // Update the "save all" button state
                 if (openEditors.Count == 0) {
-                    ProjectBrowser.Activate();
                     undoButton.Enabled = false;
                     redoButton.Enabled = false;
                 }
@@ -271,14 +270,14 @@ namespace Necrofy
         }
 
         private void Save(object sender, EventArgs e) {
-            activeEditor?.Save(project);
+            activeEditor?.Save();
         }
 
         private void SaveAll(object sender, EventArgs e) {
             // Calling save on the editors will modify this set, so operate on a copy
             HashSet<EditorWindow> allDirtyEditors = new HashSet<EditorWindow>(dirtyEditors);
             foreach (EditorWindow editor in allDirtyEditors) {
-                editor.Save(project);
+                editor.Save();
             }
         }
 

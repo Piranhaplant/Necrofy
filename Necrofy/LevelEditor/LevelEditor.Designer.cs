@@ -29,8 +29,6 @@
             this.hscroll = new System.Windows.Forms.HScrollBar();
             this.vscroll = new System.Windows.Forms.VScrollBar();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.toolsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.paintbrushButton = new System.Windows.Forms.ToolStripButton();
             this.tileSuggestButton = new System.Windows.Forms.ToolStripButton();
             this.rectangleSelectButton = new System.Windows.Forms.ToolStripButton();
@@ -46,6 +44,8 @@
             this.spritesPlayers = new Necrofy.SeparateCheckToolStripMenuItem();
             this.spritesSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.spritesAll = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.toolsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsPaintbrush = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsTileSuggest = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsRectangleSelect = new System.Windows.Forms.ToolStripMenuItem();
@@ -112,31 +112,6 @@
             this.toolStrip1.TabIndex = 3;
             this.toolStrip1.Text = "toolStrip1";
             this.toolStrip1.Visible = false;
-            // 
-            // menuStrip1
-            // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolsMenu});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(300, 24);
-            this.menuStrip1.TabIndex = 4;
-            this.menuStrip1.Text = "menuStrip1";
-            this.menuStrip1.Visible = false;
-            // 
-            // toolsMenu
-            // 
-            this.toolsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolsPaintbrush,
-            this.toolsTileSuggest,
-            this.toolsRectangleSelect,
-            this.toolsPencilSelect,
-            this.toolsTileSelect,
-            this.toolsResizeLevel,
-            this.toolsSprites});
-            this.toolsMenu.Name = "toolsMenu";
-            this.toolsMenu.Size = new System.Drawing.Size(46, 20);
-            this.toolsMenu.Text = "&Tools";
             // 
             // paintbrushButton
             // 
@@ -288,6 +263,31 @@
             this.spritesAll.Size = new System.Drawing.Size(184, 22);
             this.spritesAll.Text = "All";
             this.spritesAll.Click += new System.EventHandler(this.spritesAll_Click);
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolsMenu});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(300, 24);
+            this.menuStrip1.TabIndex = 4;
+            this.menuStrip1.Text = "menuStrip1";
+            this.menuStrip1.Visible = false;
+            // 
+            // toolsMenu
+            // 
+            this.toolsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolsPaintbrush,
+            this.toolsTileSuggest,
+            this.toolsRectangleSelect,
+            this.toolsPencilSelect,
+            this.toolsTileSelect,
+            this.toolsResizeLevel,
+            this.toolsSprites});
+            this.toolsMenu.Name = "toolsMenu";
+            this.toolsMenu.Size = new System.Drawing.Size(46, 20);
+            this.toolsMenu.Text = "&Tools";
             // 
             // toolsPaintbrush
             // 

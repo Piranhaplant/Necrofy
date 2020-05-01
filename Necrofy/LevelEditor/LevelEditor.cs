@@ -96,7 +96,7 @@ namespace Necrofy
             
             Repaint();
         }
-
+        
         private void SetupTool(Tool tool, Keys shortcutKey, ToolStripMenuItem menuItem, ToolStripItem toolStripButton) {
             toolMenuItems[tool] = menuItem;
             toolShortcutKeys[shortcutKey] = tool;
@@ -138,7 +138,6 @@ namespace Necrofy
         protected override UndoManager Setup() {
             undoManager = new UndoManager<LevelEditor>(mainWindow.UndoButton, mainWindow.RedoButton, this);
             ChangeTool(paintbrushTool);
-            mainWindow.ObjectBrowser.Activate();
             return undoManager;
         }
 
