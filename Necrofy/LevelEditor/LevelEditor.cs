@@ -49,9 +49,10 @@ namespace Necrofy
         private readonly Dictionary<Keys, Tool> toolShortcutKeys = new Dictionary<Keys, Tool>();
         
         private Tool currentTool;
-
+        
         public LevelEditor(LoadedLevel level) {
             InitializeComponent();
+            FormClosed += LevelEditor_FormClosed;
 
             this.level = level;
             this.Text = level.levelAsset.DisplayText;
@@ -97,6 +98,11 @@ namespace Necrofy
             Repaint();
         }
         
+        private void LevelEditor_FormClosed(object sender, FormClosedEventArgs e) {
+            level.Dispose();
+            tileSelectionPath?.Dispose();
+        }
+
         private void SetupTool(Tool tool, Keys shortcutKey, ToolStripMenuItem menuItem, ToolStripItem toolStripButton) {
             toolMenuItems[tool] = menuItem;
             toolShortcutKeys[shortcutKey] = tool;

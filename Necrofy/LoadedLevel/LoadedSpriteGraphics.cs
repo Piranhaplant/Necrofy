@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace Necrofy
 {
-    class LoadedSpriteGraphics
+    class LoadedSpriteGraphics : IDisposable
     {
         public readonly PaletteAsset paletteAsset;
         public readonly GraphicsAsset graphicsAsset;
@@ -45,6 +45,12 @@ namespace Necrofy
             }
         }
 
+        public void Dispose() {
+            foreach (LoadedSprite s in sprites.Values.SelectMany(d => d.Values)) {
+                s.Dispose();
+            }
+        }
+
         private void AddLoadedSprite(SpriteDisplay spriteDisplay, LoadedSprite s) {
             sprites[spriteDisplay.key.type][spriteDisplay.key.value] = s;
             spritesByCategory[spriteDisplay.category].Add(s);
@@ -65,7 +71,7 @@ namespace Necrofy
             return Rectangle.Empty;
         }
 
-        public abstract class LoadedSprite
+        public abstract class LoadedSprite : IDisposable
         {
             public SpriteDisplay.Key Key { get; private set; }
             public string Description { get; private set; }
@@ -73,6 +79,7 @@ namespace Necrofy
             public abstract Rectangle GetRectangle(int x, int y);
             public abstract void Render(Graphics g, int x, int y);
             public abstract void RenderFromTopCorner(Graphics g, int x, int y);
+            public abstract void Dispose();
 
             public LoadedSprite(SpriteDisplay spriteDisplay) {
                 Key = spriteDisplay.key;
@@ -112,6 +119,10 @@ namespace Necrofy
                 }
             }
 
+            public override void Dispose() {
+                image.Dispose();
+            }
+
             public override Size Size => image.Size;
 
             public override Rectangle GetRectangle(int x, int y) {
@@ -139,6 +150,10 @@ namespace Necrofy
                 text = spriteDisplay.text;
                 Size s = TextRenderer.MeasureText(text, font);
                 textSize = new Size(s.Width + padding * 2, s.Height + padding * 2);
+            }
+
+            public override void Dispose() {
+                // Nothing to dispose
             }
 
             public override Size Size => textSize;

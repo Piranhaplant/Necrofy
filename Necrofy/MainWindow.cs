@@ -29,7 +29,7 @@ namespace Necrofy
         private EditorWindow activeEditor = null;
         private readonly List<ToolStripItem> editorToolStripItems = new List<ToolStripItem>();
         private readonly List<ToolStripItem> editorMenuStripItems = new List<ToolStripItem>();
-
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -262,7 +262,6 @@ namespace Necrofy
             Properties.Settings.Default.Save();
 
             ProjectBrowser.OpenProject(project);
-            ProjectBrowser.Activate();
 
             foreach (ToolStripMenuItem item in projectMenuItems) {
                 item.Enabled = true;

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Necrofy
 {
-    class LoadedLevel
+    class LoadedLevel : IDisposable
     {
         public readonly LevelAsset levelAsset;
         public readonly LoadedTilesetTilemap tilemap;
@@ -30,6 +30,13 @@ namespace Necrofy
             spriteGraphics = new LoadedSpriteGraphics(project, Level.spritePaletteName);
             tilesetSuggestionsAsset = TilesetSuggestionsAsset.FromProject(project, Level.tilesetTilemapName);
             RenderTiles();
+        }
+        
+        public void Dispose() {
+            foreach (Bitmap b in tiles.Union(priorityTiles).Union(solidOnlyTiles)) {
+                b.Dispose();
+            }
+            spriteGraphics.Dispose();
         }
 
         public void RenderTiles() {
