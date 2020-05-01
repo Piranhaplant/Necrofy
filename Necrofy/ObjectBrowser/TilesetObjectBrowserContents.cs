@@ -28,24 +28,24 @@ namespace Necrofy
                 for (ushort i = 0; i < level.tiles.Length; i++) {
                     visibleTiles.Add(i);
                 }
-                RaiseObjectsChangedEvent();
+                RaiseObjectsChangedEvent(scrollToTop: true);
                 SelectedIndex = selectedTile;
             }
         }
 
         public void ShowTiles(List<ushort> tiles) {
             visibleTiles = tiles;
-            RaiseObjectsChangedEvent();
+            RaiseObjectsChangedEvent(scrollToTop: true);
             SelectedIndex = -1;
         }
 
         public int SelectedTile => SelectedIndex < 0 ? -1 : visibleTiles[SelectedIndex];
 
-        public override IEnumerable<Size> Objects {
+        public override IEnumerable<ObjectBrowserObject> Objects {
             get {
                 foreach (ushort tile in visibleTiles) {
                     Bitmap bitmap = level.tiles[tile];
-                    yield return new Size(bitmap.Size.Width + fontSize.Width + fontPadding, bitmap.Size.Height);
+                    yield return new ObjectBrowserObject(new Size(bitmap.Size.Width + fontSize.Width + fontPadding, bitmap.Size.Height));
                 }
             }
         }

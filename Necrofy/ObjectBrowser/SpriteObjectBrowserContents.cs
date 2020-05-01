@@ -8,9 +8,6 @@ namespace Necrofy
 {
     class SpriteObjectBrowserContents : ObjectBrowserContents
     {
-        private static readonly Brush disabledOverlayBrush = new SolidBrush(Color.FromArgb(200, SystemColors.Control));
-        private static readonly Brush selectedDisabledOverlayBrush = new SolidBrush(Color.FromArgb(200, ObjectBrowserControl.selectedObjectColor));
-
         private readonly LoadedSpriteGraphics spriteGrahpics;
         private readonly HashSet<SpriteDisplay.Category> categories = new HashSet<SpriteDisplay.Category>();
         private readonly List<LoadedSpriteGraphics.LoadedSprite> sprites = new List<LoadedSpriteGraphics.LoadedSprite>();
@@ -38,7 +35,7 @@ namespace Necrofy
             if (highlighedCategories.Count == 0) {
                 highlighedCategories = null;
             }
-            RaiseObjectsChangedEvent();
+            RaiseObjectsChangedEvent(scrollToTop: false);
         }
 
         private void UpdateSpriteList() {
@@ -50,26 +47,23 @@ namespace Necrofy
                 sprites.AddRange(s);
                 categoryForSprites.AddRange(s.Select(o => category));
             }
-            RaiseObjectsChangedEvent();
+            RaiseObjectsChangedEvent(scrollToTop: true);
         }
 
         public SpriteDisplay.Key SelectedSprite => SelectedIndex < 0 ? null : sprites[SelectedIndex].Key;
         public SpriteDisplay.Category? SelectedCategory => SelectedIndex < 0 ? (SpriteDisplay.Category?)null : categoryForSprites[SelectedIndex];
 
-        public override IEnumerable<Size> Objects {
+        public override IEnumerable<ObjectBrowserObject> Objects {
             get {
-                foreach (LoadedSpriteGraphics.LoadedSprite sprite in sprites) {
-                    yield return sprite.Size;
+                for (int i = 0; i < sprites.Count; i++) {
+                    bool enabled = highlighedCategories == null || highlighedCategories.Contains(categoryForSprites[i]);
+                    yield return new ObjectBrowserObject(sprites[i].Size, sprites[i].Description, enabled);
                 }
             }
         }
 
         public override void PaintObject(int i, Graphics g, int x, int y) {
             sprites[i].RenderFromTopCorner(g, x, y);
-            if (highlighedCategories != null && !highlighedCategories.Contains(categoryForSprites[i])) {
-                Brush b = i == SelectedIndex ? selectedDisabledOverlayBrush : disabledOverlayBrush;
-                g.FillRectangle(b, new Rectangle(new Point(x, y), sprites[i].Size));
-            }
         }
     }
 }

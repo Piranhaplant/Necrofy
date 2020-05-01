@@ -9,16 +9,21 @@ using System.Windows.Forms;
 
 namespace Necrofy
 {
-    public partial class ObjectBrowserControl : UserControl
+    public partial class ObjectBrowserControl : UserControl, RegionToolTip.IClient
     {
-        public static readonly Color selectedObjectColor = Color.FromArgb(209, 230, 255);
+        private static readonly Color selectedObjectColor = Color.FromArgb(209, 230, 255);
         private static readonly Brush selectionBackgroundBrush = new SolidBrush(selectedObjectColor);
         private static readonly Pen selectionBorderPen = new Pen(Color.FromArgb(132, 172, 221));
+
+        private static readonly Brush disabledOverlayBrush = new SolidBrush(Color.FromArgb(200, SystemColors.Control));
+        private static readonly Brush selectedDisabledOverlayBrush = new SolidBrush(Color.FromArgb(200, selectedObjectColor));
+
+        private static readonly Bitmap infoImage = Properties.Resources.information_small;
         private const int padding = 8;
         
         private readonly ScrollWrapper scrollWrapper;
 
-        private readonly List<Rectangle> objectRects = new List<Rectangle>();
+        private readonly List<ObjectBrowserObject> objects = new List<ObjectBrowserObject>();
 
         private ObjectBrowserContents contents;
         public ObjectBrowserContents Contents {
@@ -35,10 +40,12 @@ namespace Necrofy
                 LayoutObjects();
             }
         }
-
-        private void Contents_ObjectsChanged(object sender, EventArgs e) {
+        
+        private void Contents_ObjectsChanged(object sender, ObjectsChangedEventArgs e) {
             LayoutObjects();
-            scrollWrapper.ScrollToPoint(0, 0);
+            if (e.ScrollToTop) {
+                scrollWrapper.ScrollToPoint(0, 0);
+            }
         }
 
         private void Contents_SelectedIndexChanged(object sender, EventArgs e) {
@@ -50,17 +57,18 @@ namespace Necrofy
             scrollWrapper = new ScrollWrapper(canvas, hScrollBar, vScrollBar, autoSize: false);
             scrollWrapper.Scrolled += scrollWrapper_Scrolled;
             LayoutObjects();
+            new RegionToolTip(this, toolTip, canvas);
         }
-
+        
         public void ScrollToSelection() {
-            if (contents != null && contents.SelectedIndex >= 0 && contents.SelectedIndex < objectRects.Count) {
-                Rectangle r = objectRects[contents.SelectedIndex];
+            if (contents != null && contents.SelectedIndex >= 0 && contents.SelectedIndex < objects.Count) {
+                Rectangle r = objects[contents.SelectedIndex].DisplayBounds;
                 scrollWrapper.ScrollToPoint(r.X + r.Width / 2, r.Y + r.Height / 2);
             }
         }
 
         private void LayoutObjects() {
-            objectRects.Clear();
+            objects.Clear();
             if (contents == null) {
                 scrollWrapper.SetClientSize(1, 1);
                 return;
@@ -69,16 +77,17 @@ namespace Necrofy
             int y = 0;
             int rowHeight = 0;
             bool itemPlaced = false;
-            foreach (Size obj in contents.Objects) {
-                int width = obj.Width;
+            objects.AddRange(contents.Objects);
+            foreach (ObjectBrowserObject obj in objects) {
+                int width = obj.Size.Width;
                 if (x + width + padding * 2 > canvas.Width && itemPlaced) {
                     x = 0;
                     y += rowHeight + padding * 2;
                     rowHeight = 0;
                 }
-                objectRects.Add(new Rectangle(x, y, width + padding * 2, obj.Height + padding * 2));
+                obj.DisplayBounds = new Rectangle(x, y, width + padding * 2, obj.Size.Height + padding * 2);
                 x += width + padding * 2;
-                rowHeight = Math.Max(rowHeight, obj.Height);
+                rowHeight = Math.Max(rowHeight, obj.Size.Height);
                 itemPlaced = true;
             }
             int totalHeight = y + rowHeight + padding * 2 + 1;
@@ -90,13 +99,20 @@ namespace Necrofy
                 return;
             }
             e.Graphics.TranslateTransform(scrollWrapper.LeftPosition, scrollWrapper.TopPosition);
-            for (int i = 0; i < objectRects.Count; i++) {
-                Rectangle objectRect = objectRects[i];
+            for (int i = 0; i < objects.Count; i++) {
+                ObjectBrowserObject obj = objects[i];
                 if (i == contents.SelectedIndex) {
-                    e.Graphics.FillRectangle(selectionBackgroundBrush, objectRect);
-                    e.Graphics.DrawRectangle(selectionBorderPen, objectRect);
+                    e.Graphics.FillRectangle(selectionBackgroundBrush, obj.DisplayBounds);
+                    e.Graphics.DrawRectangle(selectionBorderPen, obj.DisplayBounds);
                 }
-                contents.PaintObject(i, e.Graphics, objectRect.X + padding, objectRect.Y + padding);
+                contents.PaintObject(i, e.Graphics, obj.DisplayBounds.X + padding, obj.DisplayBounds.Y + padding);
+                if (!obj.Enabled) {
+                    Brush b = i == contents.SelectedIndex ? selectedDisabledOverlayBrush : disabledOverlayBrush;
+                    e.Graphics.FillRectangle(b, obj.DisplayBounds.X + padding, obj.DisplayBounds.Y + padding, obj.Size.Width, obj.Size.Height);
+                }
+                if (obj.Description != null) {
+                    e.Graphics.DrawImage(infoImage, obj.DisplayBounds.Right - infoImage.Width, obj.DisplayBounds.Bottom - infoImage.Height, infoImage.Width, infoImage.Height);
+                }
             }
         }
 
@@ -106,21 +122,33 @@ namespace Necrofy
             }
             int x = e.X - scrollWrapper.LeftPosition;
             int y = e.Y - scrollWrapper.TopPosition;
-            for (int i = 0; i < objectRects.Count; i++) {
-                if (objectRects[i].Contains(x, y)) {
+            for (int i = 0; i < objects.Count; i++) {
+                if (objects[i].DisplayBounds.Contains(x, y)) {
                     contents.SelectedIndex = i;
                     canvas.Invalidate();
                     return;
                 }
             }
         }
-
+        
         void scrollWrapper_Scrolled(object sender, EventArgs e) {
             canvas.Invalidate();
         }
 
         private void canvas_SizeChanged(object sender, EventArgs e) {
             LayoutObjects();
+        }
+
+        public string GetToolTipAtPoint(Point p) {
+            int x = p.X - scrollWrapper.LeftPosition;
+            int y = p.Y - scrollWrapper.TopPosition;
+            
+            foreach (ObjectBrowserObject obj in objects) {
+                if (obj.DisplayBounds.Contains(x, y)) {
+                    return obj.Description;
+                }
+            }
+            return null;
         }
     }
 }

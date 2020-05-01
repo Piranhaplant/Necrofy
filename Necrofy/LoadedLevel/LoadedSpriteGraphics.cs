@@ -36,11 +36,11 @@ namespace Necrofy
             }
 
             foreach (ImageSpriteDisplay spriteDisplay in spriteDisplayAsset.data.imageSprites) {
-                LoadedSprite s = new ImageLoadedSprite(spriteDisplay.key, spritesAsset.sprites[spriteDisplay.spriteIndex], graphicsAsset.data, colors, spriteDisplay.overridePalette);
+                LoadedSprite s = new ImageLoadedSprite(spriteDisplay, spritesAsset.sprites[spriteDisplay.spriteIndex], graphicsAsset.data, colors);
                 AddLoadedSprite(spriteDisplay, s);
             }
             foreach (TextSpriteDisplay spriteDisplay in spriteDisplayAsset.data.textSprites) {
-                LoadedSprite s = new TextLoadedSprite(spriteDisplay.key, spriteDisplay.text);
+                LoadedSprite s = new TextLoadedSprite(spriteDisplay);
                 AddLoadedSprite(spriteDisplay, s);
             }
         }
@@ -68,13 +68,15 @@ namespace Necrofy
         public abstract class LoadedSprite
         {
             public SpriteDisplay.Key Key { get; private set; }
+            public string Description { get; private set; }
             public abstract Size Size { get; }
             public abstract Rectangle GetRectangle(int x, int y);
             public abstract void Render(Graphics g, int x, int y);
             public abstract void RenderFromTopCorner(Graphics g, int x, int y);
 
-            public LoadedSprite(SpriteDisplay.Key key) {
-                Key = key;
+            public LoadedSprite(SpriteDisplay spriteDisplay) {
+                Key = spriteDisplay.key;
+                Description = spriteDisplay.description;
             }
         }
 
@@ -84,7 +86,7 @@ namespace Necrofy
             private readonly int anchorX;
             private readonly int anchorY;
 
-            public ImageLoadedSprite(SpriteDisplay.Key key, Sprite sprite, byte[] graphics, Color[] colors, int? overridePalette) : base(key) {
+            public ImageLoadedSprite(ImageSpriteDisplay spriteDisplay, Sprite sprite, byte[] graphics, Color[] colors) : base(spriteDisplay) {
                 int minX = 0, maxX = 0, minY = 0, maxY = 0;
                 foreach (Sprite.Tile t in sprite.tiles) {
                     minX = Math.Min(minX, t.xOffset);
@@ -102,7 +104,7 @@ namespace Necrofy
                 }
 
                 foreach (Sprite.Tile t in sprite.tiles) {
-                    int palette = overridePalette ?? t.palette;
+                    int palette = spriteDisplay.overridePalette ?? t.palette;
                     SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 8 : 0), anchorY + t.yOffset + 1 + (t.yFlip ? 8 : 0), graphics, t.tileNum * 0x80 + 0x00, colors, palette * 0x10, t.xFlip, t.yFlip);
                     SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 0 : 8), anchorY + t.yOffset + 1 + (t.yFlip ? 8 : 0), graphics, t.tileNum * 0x80 + 0x20, colors, palette * 0x10, t.xFlip, t.yFlip);
                     SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 8 : 0), anchorY + t.yOffset + 1 + (t.yFlip ? 0 : 8), graphics, t.tileNum * 0x80 + 0x40, colors, palette * 0x10, t.xFlip, t.yFlip);
@@ -133,8 +135,8 @@ namespace Necrofy
             private readonly string text;
             private Size textSize;
 
-            public TextLoadedSprite(SpriteDisplay.Key key, string text) : base(key) {
-                this.text = text;
+            public TextLoadedSprite(TextSpriteDisplay spriteDisplay) : base(spriteDisplay) {
+                text = spriteDisplay.text;
                 Size s = TextRenderer.MeasureText(text, font);
                 textSize = new Size(s.Width + padding * 2, s.Height + padding * 2);
             }

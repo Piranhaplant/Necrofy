@@ -154,6 +154,7 @@
     <Compile Include="ObjectBrowser\ObjectBrowserForm.Designer.cs">
       <DependentUpon>ObjectBrowserForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ObjectBrowser\ObjectBrowserObject.cs" />
     <Compile Include="ObjectBrowser\SpriteObjectBrowserContents.cs" />
     <Compile Include="ObjectBrowser\TilesetObjectBrowserContents.cs" />
     <Compile Include="ObjectSelector.cs" />
@@ -207,6 +208,7 @@
     <Compile Include="RecentFilesMenu.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="RegionToolTip.cs" />
     <Compile Include="ROMInfo.cs" />
     <Compile Include="ROMPointers.cs" />
     <Compile Include="RunSettings.cs" />
@@ -424,6 +426,7 @@
     <None Include="Icons\map-resize.png" />
     <None Include="Icons\leaf.png" />
     <None Include="Icons\zeke.png" />
+    <Content Include="Icons\information-small.png" />
     <Content Include="ProjectFiles\Patches\ROMExpand.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

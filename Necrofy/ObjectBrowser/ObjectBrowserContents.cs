@@ -10,7 +10,7 @@ namespace Necrofy
     public abstract class ObjectBrowserContents
     {
         /// <summary>Enumerates all objects to be displayed</summary>
-        public abstract IEnumerable<Size> Objects { get; }
+        public abstract IEnumerable<ObjectBrowserObject> Objects { get; }
         /// <summary>Paints the object at the given index</summary>
         /// <param name="i">The index of the object to paint</param>
         /// <param name="g">The graphics used to paint the object</param>
@@ -18,9 +18,9 @@ namespace Necrofy
         /// <param name="y">The y position at which to paint</param>
         public abstract void PaintObject(int i, Graphics g, int x, int y);
         /// <summary>Invoked when there is a change to the list of objects</summary>
-        public event EventHandler ObjectsChanged;
-        protected void RaiseObjectsChangedEvent() {
-            ObjectsChanged?.Invoke(this, EventArgs.Empty);
+        public event EventHandler<ObjectsChangedEventArgs> ObjectsChanged;
+        protected void RaiseObjectsChangedEvent(bool scrollToTop) {
+            ObjectsChanged?.Invoke(this, new ObjectsChangedEventArgs(scrollToTop));
         }
 
         /// <summary>Invoked when there is a change to the selected object</summary>
@@ -37,6 +37,15 @@ namespace Necrofy
                     SelectedIndexChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
+        }
+    }
+
+    public class ObjectsChangedEventArgs : EventArgs
+    {
+        public bool ScrollToTop { get; private set; }
+
+        public ObjectsChangedEventArgs(bool scrollToTop) {
+            ScrollToTop = scrollToTop;
         }
     }
 }

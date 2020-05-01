@@ -28,8 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.vScrollBar = new System.Windows.Forms.VScrollBar();
             this.hScrollBar = new System.Windows.Forms.HScrollBar();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.canvas = new Necrofy.Canvas();
             this.SuspendLayout();
             // 
@@ -79,5 +81,6 @@
         private System.Windows.Forms.VScrollBar vScrollBar;
         private Canvas canvas;
         private System.Windows.Forms.HScrollBar hScrollBar;
+        private System.Windows.Forms.ToolTip toolTip;
     }
 }

@@ -16,6 +16,8 @@ namespace Necrofy
     {
         public Key key;
         public Category category;
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string description;
 
         public class Key
         {
