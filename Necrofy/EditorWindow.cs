@@ -25,6 +25,17 @@ namespace Necrofy
             }
         }
 
+        private string title = "";
+        public string Title {
+            get {
+                return title;
+            }
+            set {
+                title = value;
+                UpdateText();
+            }
+        }
+
         public event EventHandler DirtyChanged;
         public event EventHandler SelectionChanged;
         
@@ -41,8 +52,7 @@ namespace Necrofy
         private void EditorWindow_FormClosing(object sender, FormClosingEventArgs e) {
             if (Dirty && project != null) {
                 Activate();
-                // TODO: Fix the "*" appearing after the editor title
-                DialogResult result = MessageBox.Show("Save changes to \"" + Text + "\"?", "Save changes?", MessageBoxButtons.YesNoCancel);
+                DialogResult result = MessageBox.Show("Save changes to \"" + Title + "\"?", "Save changes?", MessageBoxButtons.YesNoCancel);
                 if (result == DialogResult.Cancel) {
                     e.Cancel = true;
                 } else if (result == DialogResult.Yes) {
@@ -57,8 +67,15 @@ namespace Necrofy
             mainWindow.ObjectBrowser.Browser.Contents = browserContents;
             undoManager = Setup();
             if (undoManager != null) {
-                undoManager.DirtyChanged += (sender, e) => DirtyChanged?.Invoke(this, e);
+                undoManager.DirtyChanged += (sender, e) => {
+                    UpdateText();
+                    DirtyChanged?.Invoke(this, e);
+                };
             }
+        }
+
+        private void UpdateText() {
+            Text = (Dirty ? "*" : "") + title;
         }
 
         protected virtual UndoManager Setup() {

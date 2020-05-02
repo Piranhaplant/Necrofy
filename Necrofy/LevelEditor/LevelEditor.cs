@@ -55,7 +55,7 @@ namespace Necrofy
             FormClosed += LevelEditor_FormClosed;
 
             this.level = level;
-            this.Text = level.levelAsset.DisplayText;
+            Title = level.levelAsset.DisplayText;
 
             scrollWrapper = new ScrollWrapper(canvas, hscroll, vscroll);
             scrollWrapper.Scrolled += scrollWrapper_Scrolled;

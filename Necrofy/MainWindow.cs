@@ -165,22 +165,16 @@ namespace Necrofy
             editor.Show(dockPanel, DockState.Document);
             editor.DirtyChanged += Editor_DirtyChanged;
             editor.SelectionChanged += Editor_SelectionChanged;
+            editor.TextChanged += Editor_TextChanged;
         }
 
         private void Editor_DirtyChanged(object sender, EventArgs e) {
-            EditorWindow editor = (EditorWindow)sender;
+            EditorWindow editor = sender as EditorWindow;
             if (editor != null) {
                 if (editor.Dirty) {
-                    if (dirtyEditors.Add(editor)) {
-                        editor.Text += "*";
-                        UpdateWindowText();
-                        // TODO: fix "*" getting cut off if the name is too long
-                    }
+                    dirtyEditors.Add(editor);
                 } else {
-                    if (dirtyEditors.Remove(editor)) {
-                        editor.Text = editor.Text.Substring(0, editor.Text.Length - 1);
-                        UpdateWindowText();
-                    }
+                    dirtyEditors.Remove(editor);
                 }
             }
             if (editor == activeEditor) {
@@ -198,6 +192,12 @@ namespace Necrofy
 
                 editSelectAll.Enabled = activeEditor?.HasSelection ?? false;
                 editSelectNone.Enabled = activeEditor?.HasSelection ?? false;
+            }
+        }
+
+        private void Editor_TextChanged(object sender, EventArgs e) {
+            if (sender == activeEditor) {
+                UpdateWindowText();
             }
         }
 
@@ -263,7 +263,7 @@ namespace Necrofy
         private void UpdateWindowText() {
             Text = Application.ProductName;
             if (activeEditor != null) {
-                Text += " - " + activeEditor.Text;
+                Text += " - " + activeEditor.Title;
             }
         }
 
