@@ -57,6 +57,7 @@
             this.fileSaveAll = new System.Windows.Forms.ToolStripMenuItem();
             this.fileClose = new System.Windows.Forms.ToolStripMenuItem();
             this.fileSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.recentProjects = new Necrofy.RecentFilesMenu();
             this.fileSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.fileExit = new System.Windows.Forms.ToolStripMenuItem();
             this.editMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -76,8 +77,12 @@
             this.buildRunFromLevel = new System.Windows.Forms.ToolStripMenuItem();
             this.buildRunSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.debugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.windowMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.windowProject = new System.Windows.Forms.ToolStripMenuItem();
+            this.windowObjects = new System.Windows.Forms.ToolStripMenuItem();
+            this.windowSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.windowRestore = new System.Windows.Forms.ToolStripMenuItem();
             this.openProjectDialog = new System.Windows.Forms.OpenFileDialog();
-            this.recentProjects = new Necrofy.RecentFilesMenu();
             this.toolStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -282,7 +287,8 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileMenu,
             this.editMenu,
-            this.buildMenu});
+            this.buildMenu,
+            this.windowMenu});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1061, 24);
@@ -363,6 +369,17 @@
             // 
             this.fileSeparator2.Name = "fileSeparator2";
             this.fileSeparator2.Size = new System.Drawing.Size(192, 6);
+            // 
+            // recentProjects
+            // 
+            this.recentProjects.Files = ((System.Collections.Generic.IEnumerable<string>)(resources.GetObject("recentProjects.Files")));
+            this.recentProjects.MaxItems = 10;
+            this.recentProjects.MaxLength = 60;
+            this.recentProjects.Name = "recentProjects";
+            this.recentProjects.Separator = this.fileSeparator3;
+            this.recentProjects.Size = new System.Drawing.Size(195, 22);
+            this.recentProjects.Text = "Recent Projects";
+            this.recentProjects.FileClicked += new Necrofy.RecentFilesMenu.FileClickedDelegate(this.recentProjects_FileClicked);
             // 
             // fileSeparator3
             // 
@@ -537,21 +554,47 @@
             this.debugToolStripMenuItem.Text = "Debug";
             this.debugToolStripMenuItem.Click += new System.EventHandler(this.debugToolStripMenuItem_Click);
             // 
+            // windowMenu
+            // 
+            this.windowMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.windowProject,
+            this.windowObjects,
+            this.windowSeparator1,
+            this.windowRestore});
+            this.windowMenu.Name = "windowMenu";
+            this.windowMenu.Size = new System.Drawing.Size(63, 20);
+            this.windowMenu.Text = "Window";
+            // 
+            // windowProject
+            // 
+            this.windowProject.Name = "windowProject";
+            this.windowProject.Size = new System.Drawing.Size(193, 22);
+            this.windowProject.Text = "Project";
+            this.windowProject.Click += new System.EventHandler(this.windowProject_Click);
+            // 
+            // windowObjects
+            // 
+            this.windowObjects.Name = "windowObjects";
+            this.windowObjects.Size = new System.Drawing.Size(193, 22);
+            this.windowObjects.Text = "Objects";
+            this.windowObjects.Click += new System.EventHandler(this.windowObjects_Click);
+            // 
+            // windowSeparator1
+            // 
+            this.windowSeparator1.Name = "windowSeparator1";
+            this.windowSeparator1.Size = new System.Drawing.Size(190, 6);
+            // 
+            // windowRestore
+            // 
+            this.windowRestore.Name = "windowRestore";
+            this.windowRestore.Size = new System.Drawing.Size(193, 22);
+            this.windowRestore.Text = "Restore Default Layout";
+            this.windowRestore.Click += new System.EventHandler(this.windowRestore_Click);
+            // 
             // openProjectDialog
             // 
             this.openProjectDialog.Filter = "Necrofy project files (*.nfyp)|*.nfyp|All Files (*.*)|*.*";
             this.openProjectDialog.Title = "Open Project";
-            // 
-            // recentProjects
-            // 
-            this.recentProjects.Files = ((System.Collections.Generic.IEnumerable<string>)(resources.GetObject("recentProjects.Files")));
-            this.recentProjects.MaxItems = 10;
-            this.recentProjects.MaxLength = 60;
-            this.recentProjects.Name = "recentProjects";
-            this.recentProjects.Separator = this.fileSeparator3;
-            this.recentProjects.Size = new System.Drawing.Size(195, 22);
-            this.recentProjects.Text = "Recent Projects";
-            this.recentProjects.FileClicked += new Necrofy.RecentFilesMenu.FileClickedDelegate(this.recentProjects_FileClicked);
             // 
             // MainWindow
             // 
@@ -565,6 +608,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainWindow";
             this.Text = "Necrofy";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainWindow_FormClosed);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
@@ -625,6 +669,11 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem debugToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fileClose;
+        private System.Windows.Forms.ToolStripMenuItem windowMenu;
+        private System.Windows.Forms.ToolStripMenuItem windowProject;
+        private System.Windows.Forms.ToolStripMenuItem windowObjects;
+        private System.Windows.Forms.ToolStripSeparator windowSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem windowRestore;
     }
 }
 

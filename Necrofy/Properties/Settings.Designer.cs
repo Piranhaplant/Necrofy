@@ -58,5 +58,17 @@ namespace Necrofy.Properties {
                 this["CurrentRunSettingsName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DockLayout {
+            get {
+                return ((string)(this["DockLayout"]));
+            }
+            set {
+                this["DockLayout"] = value;
+            }
+        }
     }
 }

@@ -35,10 +35,23 @@ namespace Necrofy
             InitializeComponent();
 
             ObjectBrowser = new ObjectBrowserForm();
-            ObjectBrowser.Show(dockPanel, DockState.DockLeft);
-
             ProjectBrowser = new ProjectBrowser(this);
-            ProjectBrowser.Show(dockPanel, DockState.DockRight);
+
+            string dockLayout = Properties.Settings.Default.DockLayout;
+            if (!string.IsNullOrEmpty(dockLayout)) {
+                Dictionary<string, DockContent> allPanels = new DockContent[] { ObjectBrowser, ProjectBrowser }.ToDictionary(o => o.GetType().FullName);
+                using (MemoryStream s = new MemoryStream(Encoding.UTF8.GetBytes(dockLayout))) {
+                    dockPanel.LoadFromXml(s, persistString => {
+                        if (allPanels.TryGetValue(persistString, out DockContent panel)) {
+                            return panel;
+                        }
+                        return null;
+                    });
+                }
+            } else {
+                UseDefaultDockLayout();
+            }
+            menuStrip1.SendToBack(); // Deserializing the dock panel layout sometimes messes this order up
 
             string recentProjectsString = Properties.Settings.Default.RecentProjects;
             if (recentProjectsString != "") {
@@ -58,6 +71,27 @@ namespace Necrofy
             ToolBarMenuLinker.Link(runProjectButton, buildRunProject);
             ToolBarMenuLinker.Link(runFromLevelButton, buildRunFromLevel);
             projectMenuItems = new List<ToolStripMenuItem>() { buildBuildProject, buildRunProject };
+        }
+
+        private void MainWindow_FormClosed(object sender, FormClosedEventArgs e) {
+            foreach (EditorWindow editor in new List<EditorWindow>(openEditors)) {
+                editor.Close();
+            }
+            using (MemoryStream s = new MemoryStream()) {
+                dockPanel.SaveAsXml(s, Encoding.UTF8);
+                string xml = Encoding.UTF8.GetString(s.ToArray());
+                Properties.Settings.Default.DockLayout = xml;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void UseDefaultDockLayout() {
+            ObjectBrowser.Show(dockPanel, DockState.DockLeft);
+            ProjectBrowser.Show(dockPanel, DockState.DockRight);
+            dockPanel.DockBottomPortion = 200;
+            dockPanel.DockLeftPortion = 220;
+            dockPanel.DockRightPortion = 200;
+            dockPanel.DockTopPortion = 200;
         }
 
         private void LoadRunSettings() {
@@ -383,6 +417,24 @@ namespace Necrofy
             if (project == null)
                 return;
             new SpriteViewer().Show(project);
+        }
+
+        private void windowProject_Click(object sender, EventArgs e) {
+            if (ProjectBrowser.DockState == DockState.Hidden) {
+                ProjectBrowser.Show();
+            }
+            ProjectBrowser.Activate();
+        }
+
+        private void windowObjects_Click(object sender, EventArgs e) {
+            if (ProjectBrowser.DockState == DockState.Hidden) {
+                ObjectBrowser.Show();
+            }
+            ObjectBrowser.Activate();
+        }
+
+        private void windowRestore_Click(object sender, EventArgs e) {
+            UseDefaultDockLayout();
         }
     }
 }
