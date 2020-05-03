@@ -27,18 +27,18 @@ namespace Necrofy
         }
 
         public Monster(NStream s) {
-            radius = (byte)s.ReadByte();
+            delay = (byte)s.ReadByte();
             x = s.ReadInt16();
             y = s.ReadInt16();
-            delay = (byte)s.ReadByte();
+            radius = (byte)s.ReadByte();
             type = s.ReadPointer();
         }
 
         public void Build(MovableData data) {
-            data.data.Add(radius);
+            data.data.Add(delay);
             data.data.AddInt16(x);
             data.data.AddInt16(y);
-            data.data.Add(delay);
+            data.data.Add(radius);
             data.data.AddPointer(type);
         }
     }

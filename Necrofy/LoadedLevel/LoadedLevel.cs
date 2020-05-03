@@ -81,14 +81,15 @@ namespace Necrofy
         }
 
         public IEnumerable<WrappedLevelObject> GetAllObjects(bool items = true, bool victims = true, bool oneShotMonsters = true, bool monsters = true, bool bossMonsters = true, bool players = true) {
-            if (items) {
-                foreach (Item i in Level.items) {
-                    yield return new WrappedItem(i, spriteGraphics);
+            if (monsters) {
+                foreach (Monster m in Level.monsters) {
+                    yield return new WrappedMonster(m, spriteGraphics);
                 }
             }
-            if (players) {
-                yield return new WrappedPlayer1StartPosition(spriteGraphics, Level);
-                yield return new WrappedPlayer2StartPosition(spriteGraphics, Level);
+            foreach (OneShotMonster m in Level.oneShotMonsters) {
+                if (victims && m.victimNumber > 0 || oneShotMonsters && m.victimNumber == 0) {
+                    yield return new WrappedOneShotMonster(m, spriteGraphics);
+                }
             }
             if (bossMonsters) {
                 foreach (LevelMonster m in Level.levelMonsters) {
@@ -97,14 +98,13 @@ namespace Necrofy
                     }
                 }
             }
-            foreach (OneShotMonster m in Level.oneShotMonsters) {
-                if (victims && m.victimNumber > 0 || oneShotMonsters && m.victimNumber == 0) {
-                    yield return new WrappedOneShotMonster(m, spriteGraphics);
-                }
+            if (players) {
+                yield return new WrappedPlayer1StartPosition(spriteGraphics, Level);
+                yield return new WrappedPlayer2StartPosition(spriteGraphics, Level);
             }
-            if (monsters) {
-                foreach (Monster m in Level.monsters) {
-                    yield return new WrappedMonster(m, spriteGraphics);
+            if (items) {
+                foreach (Item i in Level.items) {
+                    yield return new WrappedItem(i, spriteGraphics);
                 }
             }
         }

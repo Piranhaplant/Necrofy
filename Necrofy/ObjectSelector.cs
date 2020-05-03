@@ -70,7 +70,7 @@ namespace Necrofy
 
             T hitObject = default(T);
             bool hitObjectFound = false;
-            foreach (T obj in host.GetObjects()) {
+            foreach (T obj in host.GetObjects().Reverse()) {
                 if (obj.Bounds.Contains(x, y)) {
                     hitObject = obj;
                     hitObjectFound = true;

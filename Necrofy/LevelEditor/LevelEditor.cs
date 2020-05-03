@@ -257,7 +257,7 @@ namespace Necrofy
                 }
             }
 
-            foreach (WrappedLevelObject obj in level.GetAllObjects().Reverse()) {
+            foreach (WrappedLevelObject obj in level.GetAllObjects()) {
                 obj.Render(e.Graphics);
             }
             
