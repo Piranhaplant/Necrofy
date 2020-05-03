@@ -26,24 +26,33 @@ namespace Necrofy
 
         public MoveSpriteAction(IEnumerable<WrappedLevelObject> objs, int dx, int dy, int snap) : base(objs) {
             foreach (WrappedLevelObject obj in objs) {
-                prevX.Add(obj.x);
-                prevY.Add(obj.y);
-                newX.Add((ushort)((obj.x + dx) / snap * snap));
-                newY.Add((ushort)((obj.y + dy) / snap * snap));
+                prevX.Add(obj.X);
+                prevY.Add(obj.Y);
+                newX.Add((ushort)((obj.X + dx) / snap * snap));
+                newY.Add((ushort)((obj.Y + dy) / snap * snap));
+            }
+        }
+
+        public MoveSpriteAction(IEnumerable<WrappedLevelObject> objs, ushort? x, ushort? y) : base(objs) {
+            foreach (WrappedLevelObject obj in objs) {
+                prevX.Add(obj.X);
+                prevY.Add(obj.Y);
+                newX.Add(x == null ? obj.X : (ushort)x);
+                newY.Add(y == null ? obj.Y : (ushort)y);
             }
         }
 
         protected override void Undo() {
             for (int i = 0; i < objs.Count; i++) {
-                objs[i].x = prevX[i];
-                objs[i].y = prevY[i];
+                objs[i].X = prevX[i];
+                objs[i].Y = prevY[i];
             }
         }
 
         protected override void Redo() {
             for (int i = 0; i < objs.Count; i++) {
-                objs[i].x = newX[i];
-                objs[i].y = newY[i];
+                objs[i].X = newX[i];
+                objs[i].Y = newY[i];
             }
         }
         
@@ -135,22 +144,29 @@ namespace Necrofy
         private readonly int newType;
         private readonly List<int> prevType = new List<int>();
 
-        public ChangeSpriteTypeAction(IEnumerable<WrappedLevelObject> objs, SpriteDisplay.Category category, SpriteDisplay.Key newType) : base(objs.Where(o => o.Category == category)) {
-            this.newType = newType.value;
+        public ChangeSpriteTypeAction(IEnumerable<WrappedLevelObject> objs, SpriteDisplay.Category category, int newType) : base(objs.Where(o => o.Category == category)) {
+            this.newType = newType;
             foreach (WrappedLevelObject obj in objs) {
-                prevType.Add(obj.type);
+                prevType.Add(obj.Type);
+            }
+        }
+
+        public ChangeSpriteTypeAction(IEnumerable<WrappedLevelObject> objs, int newType) : base(objs) {
+            this.newType = newType;
+            foreach (WrappedLevelObject obj in objs) {
+                prevType.Add(obj.Type);
             }
         }
 
         protected override void Undo() {
             for (int i = 0; i < objs.Count; i++) {
-                objs[i].type = prevType[i];
+                objs[i].Type = prevType[i];
             }
         }
 
         protected override void Redo() {
             for (int i = 0; i < objs.Count; i++) {
-                objs[i].type = newType;
+                objs[i].Type = newType;
             }
         }
         
@@ -161,6 +177,84 @@ namespace Necrofy
                 return "Change sprite";
             } else {
                 return "Change " + objs.Count.ToString() + " sprites";
+            }
+        }
+    }
+
+    abstract class ChangeSpritePropertyAction<ObjectType, PropertyType> : LevelEditorAction where ObjectType : WrappedLevelObject
+    {
+        protected readonly List<ObjectType> objs;
+        private readonly PropertyType newValue;
+        private readonly List<PropertyType> oldValues = new List<PropertyType>();
+
+        public ChangeSpritePropertyAction(IEnumerable<WrappedLevelObject> objs, PropertyType newValue) {
+            this.objs = new List<ObjectType>(objs.Select(o => o as ObjectType).Where(o => o != null));
+            this.newValue = newValue;
+            foreach (ObjectType o in this.objs) {
+                oldValues.Add(GetProperty(o));
+            }
+        }
+
+        protected abstract PropertyType GetProperty(ObjectType obj);
+        protected abstract void SetProperty(ObjectType obj, PropertyType value);
+
+        protected override void Redo() {
+            for (int i = 0; i < objs.Count; i++) {
+                SetProperty(objs[i], newValue);
+            }
+        }
+
+        protected override void Undo() {
+            for (int i = 0; i < objs.Count; i++) {
+                SetProperty(objs[i], oldValues[i]);
+            }
+        }
+    }
+
+    class ChangeMonsterRadiusAction : ChangeSpritePropertyAction<WrappedMonster, byte>
+    {
+        public ChangeMonsterRadiusAction(IEnumerable<WrappedLevelObject> objs, byte newValue) : base(objs, newValue) { }
+
+        protected override byte GetProperty(WrappedMonster obj) => obj.Radius;
+        protected override void SetProperty(WrappedMonster obj, byte value) => obj.Radius = value;
+
+        public override string ToString() {
+            if (objs.Count == 1) {
+                return "Change monster radius";
+            } else {
+                return "Change " + objs.Count.ToString() + " monsters' radii";
+            }
+        }
+    }
+
+    class ChangeMonsterDelayAction : ChangeSpritePropertyAction<WrappedMonster, byte>
+    {
+        public ChangeMonsterDelayAction(IEnumerable<WrappedLevelObject> objs, byte newValue) : base(objs, newValue) { }
+
+        protected override byte GetProperty(WrappedMonster obj) => obj.Delay;
+        protected override void SetProperty(WrappedMonster obj, byte value) => obj.Delay = value;
+
+        public override string ToString() {
+            if (objs.Count == 1) {
+                return "Change monster delay";
+            } else {
+                return "Change " + objs.Count.ToString() + " monsters' delays";
+            }
+        }
+    }
+
+    class ChangeOneShotMonsterExtraAction : ChangeSpritePropertyAction<WrappedOneShotMonster, ushort>
+    {
+        public ChangeOneShotMonsterExtraAction(IEnumerable<WrappedLevelObject> objs, ushort newValue) : base(objs, newValue) { }
+
+        protected override ushort GetProperty(WrappedOneShotMonster obj) => obj.Extra;
+        protected override void SetProperty(WrappedOneShotMonster obj, ushort value) => obj.Extra = value;
+
+        public override string ToString() {
+            if (objs.Count == 1) {
+                return "Change one-shot monster extra";
+            } else {
+                return "Change " + objs.Count.ToString() + " one-shot monsters' extras";
             }
         }
     }

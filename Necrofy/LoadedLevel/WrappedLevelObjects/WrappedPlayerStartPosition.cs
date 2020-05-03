@@ -16,11 +16,11 @@ namespace Necrofy
 
         public override SpriteDisplay.Category Category => SpriteDisplay.Category.Player;
 
-        public override Rectangle Bounds => spriteGraphics.GetRectangle(SpriteDisplay.Key.Type.Player, wrappedObject, x, y);
-        public override int type { get => wrappedObject; set { } }
+        public override Rectangle Bounds => spriteGraphics.GetRectangle(SpriteDisplay.Key.Type.Player, wrappedObject, X, Y);
+        public override int Type { get => wrappedObject; set { } }
 
         public override void Render(Graphics g) {
-            spriteGraphics.Render(SpriteDisplay.Key.Type.Player, wrappedObject, g, x, y);
+            spriteGraphics.Render(SpriteDisplay.Key.Type.Player, wrappedObject, g, X, Y);
         }
 
         public override bool Removable => false;
@@ -42,15 +42,15 @@ namespace Necrofy
     {
         public WrappedPlayer1StartPosition(LoadedSpriteGraphics spriteGraphics, Level level) : base(0, spriteGraphics, level) { }
         
-        public override ushort x { get => level.p1startX; set => level.p1startX = value; }
-        public override ushort y { get => level.p1startY; set => level.p1startY = value; }
+        public override ushort X { get => level.p1startX; set => level.p1startX = value; }
+        public override ushort Y { get => level.p1startY; set => level.p1startY = value; }
     }
 
     class WrappedPlayer2StartPosition : WrappedPlayerStartPosition
     {
         public WrappedPlayer2StartPosition(LoadedSpriteGraphics spriteGraphics, Level level) : base(1, spriteGraphics, level) { }
 
-        public override ushort x { get => level.p2startX; set => level.p2startX = value; }
-        public override ushort y { get => level.p2startY; set => level.p2startY = value; }
+        public override ushort X { get => level.p2startX; set => level.p2startX = value; }
+        public override ushort Y { get => level.p2startY; set => level.p2startY = value; }
     }
 }

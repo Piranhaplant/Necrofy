@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,8 @@ namespace Necrofy
 {
     class WrappedOneShotMonster : WrappedLevelObject<OneShotMonster>
     {
+        public const string ExtraProperty = "Extra";
+
         private static readonly StringFormat victimNumberFormat = new StringFormat() {
             Alignment = StringAlignment.Center
         };
@@ -27,22 +30,37 @@ namespace Necrofy
         public override Rectangle Bounds {
             get {
                 if (wrappedObject.type == OneShotMonster.CreditHeadType) {
-                    return spriteGraphics.GetRectangle(SpriteDisplay.Key.Type.CreditHead, wrappedObject.extra, x, y);
+                    return spriteGraphics.GetRectangle(SpriteDisplay.Key.Type.CreditHead, wrappedObject.extra, X, Y);
                 } else {
-                    return spriteGraphics.GetRectangle(SpriteDisplay.Key.Type.Pointer, wrappedObject.type, x, y);
+                    return spriteGraphics.GetRectangle(SpriteDisplay.Key.Type.Pointer, wrappedObject.type, X, Y);
                 }
             }
         }
 
-        public override ushort x { get => wrappedObject.x; set => wrappedObject.x = value; }
-        public override ushort y { get => wrappedObject.y; set => wrappedObject.y = value; }
-        public override int type { get => wrappedObject.type; set => wrappedObject.type = value; }
+        public override ushort X { get => wrappedObject.x; set => wrappedObject.x = value; }
+        public override ushort Y { get => wrappedObject.y; set => wrappedObject.y = value; }
+        public override int Type { get => wrappedObject.type; set => wrappedObject.type = value; }
+        [Browsable(false)]
+        public ushort Extra { get => wrappedObject.extra; set => wrappedObject.extra = value; }
+
+        // Properties used in the property browser
+        private string browsableExtra = null;
+        private string browsablePointer = null;
+        public override void ClearBrowsableProperties() {
+            base.ClearBrowsableProperties();
+            browsableExtra = null;
+            browsablePointer = null;
+        }
+        [DisplayName(ExtraProperty)]
+        public string BrowsableExtra { get => browsableExtra ?? wrappedObject.extra.ToString(); set => browsableExtra = value; }
+        [DisplayName(PointerProperty)]
+        public string BrowsablePointer { get => browsablePointer ?? PropertyBrowser.PointerToString(Type); set => browsablePointer = value; }
 
         public override void Render(Graphics g) {
             if (wrappedObject.type == OneShotMonster.CreditHeadType) {
-                spriteGraphics.Render(SpriteDisplay.Key.Type.CreditHead, wrappedObject.extra, g, x, y);
+                spriteGraphics.Render(SpriteDisplay.Key.Type.CreditHead, wrappedObject.extra, g, X, Y);
             } else {
-                spriteGraphics.Render(SpriteDisplay.Key.Type.Pointer, wrappedObject.type, g, x, y);
+                spriteGraphics.Render(SpriteDisplay.Key.Type.Pointer, wrappedObject.type, g, X, Y);
             }
             if (wrappedObject.victimNumber > 0) {
                 Rectangle bounds = Bounds;

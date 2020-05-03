@@ -26,6 +26,7 @@ namespace Necrofy
 
         public virtual void TileChanged() { }
         public virtual void SpriteChanged() { }
+        public virtual void PropertyBrowserPropertyChanged(PropertyValueChangedEventArgs e) { }
 
         public virtual bool CanCopy => false;
         public virtual bool CanPaste => false;
@@ -39,6 +40,17 @@ namespace Necrofy
         public virtual void SelectNone() { }
 
         public virtual void DoneBeingUsed() { }
+
+        private object[] propertyBrowserObjects = null;
+        public object[] PropertyBrowserObjects {
+            get {
+                return propertyBrowserObjects;
+            }
+            protected set {
+                propertyBrowserObjects = value;
+                editor.SetPropertyBrowserObjects(propertyBrowserObjects);
+            }
+        }
         
         public enum ObjectType
         {

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -38,6 +39,7 @@ namespace Necrofy
             editor.Repaint();
             editor.NonTileSelectionChanged();
             editor.spriteObjectBrowserContents.SetHighlightedCategories(objectSelector.GetSelectedObjects().Select(o => o.Category));
+            PropertyBrowserObjects = objectSelector.GetSelectedObjects().ToArray();
         }
 
         public void MoveSelectedObjects(int dx, int dy, int snap) {
@@ -96,7 +98,66 @@ namespace Necrofy
 
         public override void SpriteChanged() {
             if (editor.spriteObjectBrowserContents.SelectedSprite != null) {
-                editor.undoManager.Do(new ChangeSpriteTypeAction(objectSelector.GetSelectedObjects(), (SpriteDisplay.Category)editor.spriteObjectBrowserContents.SelectedCategory, editor.spriteObjectBrowserContents.SelectedSprite));
+                editor.undoManager.Do(new ChangeSpriteTypeAction(objectSelector.GetSelectedObjects(), (SpriteDisplay.Category)editor.spriteObjectBrowserContents.SelectedCategory, editor.spriteObjectBrowserContents.SelectedSprite.value));
+            }
+        }
+
+        public override void PropertyBrowserPropertyChanged(PropertyValueChangedEventArgs e) {
+            string value = e.ChangedItem.Value as string;
+            foreach (WrappedLevelObject o in objectSelector.GetSelectedObjects()) {
+                o.ClearBrowsableProperties();
+            }
+            if (value != null) {
+                value = value.Trim();
+                switch (e.ChangedItem.Label) {
+                    case WrappedLevelObject.XProperty:
+                        ParsePositionProperty(value, o => o.X,
+                            dx => new MoveSpriteAction(objectSelector.GetSelectedObjects(), dx, 0, 1),
+                            x => new MoveSpriteAction(objectSelector.GetSelectedObjects(), x, null));
+                        break;
+                    case WrappedLevelObject.YProperty:
+                        ParsePositionProperty(value, o => o.Y,
+                            dy => new MoveSpriteAction(objectSelector.GetSelectedObjects(), 0, dy, 1),
+                            y => new MoveSpriteAction(objectSelector.GetSelectedObjects(), null, y));
+                        break;
+                    case WrappedLevelObject.PointerProperty:
+                        if (ROMPointers.ParsePointer(value, out int pointer)) {
+                            editor.undoManager.Do(new ChangeSpriteTypeAction(objectSelector.GetSelectedObjects().Where(o => o.Category != SpriteDisplay.Category.Item && o.Category != SpriteDisplay.Category.Player), pointer));
+                        }
+                        break;
+                    case WrappedItem.TypeProperty:
+                        if (byte.TryParse(value, out byte type)) {
+                            editor.undoManager.Do(new ChangeSpriteTypeAction(objectSelector.GetSelectedObjects(), SpriteDisplay.Category.Item, type));
+                        }
+                        break;
+                    case WrappedMonster.RadiusProperty:
+                        if (byte.TryParse(value, out byte radius)) {
+                            editor.undoManager.Do(new ChangeMonsterRadiusAction(objectSelector.GetSelectedObjects(), radius));
+                        }
+                        break;
+                    case WrappedMonster.DelayProperty:
+                        if (byte.TryParse(value, out byte delay)) {
+                            editor.undoManager.Do(new ChangeMonsterDelayAction(objectSelector.GetSelectedObjects(), delay));
+                        }
+                        break;
+                    case WrappedOneShotMonster.ExtraProperty:
+                        if (ushort.TryParse(value, out ushort extra)) {
+                            editor.undoManager.Do(new ChangeOneShotMonsterExtraAction(objectSelector.GetSelectedObjects(), extra));
+                        }
+                        break;
+                }
+            }
+        }
+
+        private void ParsePositionProperty(string value, Func<WrappedLevelObject, ushort> getter, Func<int, MoveSpriteAction> deltaMoveGetter, Func<ushort, MoveSpriteAction> absoluteMoveGetter) {
+            if (int.TryParse(value, out int intValue)) {
+                if (value.StartsWith("+") || value.StartsWith("-")) {
+                    int min = objectSelector.GetSelectedObjects().Min(getter);
+                    int max = objectSelector.GetSelectedObjects().Max(getter);
+                    editor.undoManager.Do(deltaMoveGetter(Math.Max(-min, Math.Min(ushort.MaxValue - max, intValue))));
+                } else if (intValue >= ushort.MinValue && intValue <= ushort.MaxValue) {
+                    editor.undoManager.Do(absoluteMoveGetter((ushort)intValue));
+                }
             }
         }
 
@@ -129,23 +190,17 @@ namespace Necrofy
                 SpriteClipboardContents contents = JsonConvert.DeserializeObject<SpriteClipboardContents>(Clipboard.GetText());
                 List<WrappedLevelObject> objs = ClipboardToList(contents);
 
-                int minx = ushort.MaxValue;
-                int miny = ushort.MaxValue;
-                int maxx = 0;
-                int maxy = 0;
-                foreach (WrappedLevelObject obj in objs) {
-                    minx = Math.Min(minx, obj.x);
-                    miny = Math.Min(miny, obj.y);
-                    maxx = Math.Max(maxx, obj.x);
-                    maxy = Math.Max(maxy, obj.y);
-                }
+                int minx = objs.Min(o => o.X);
+                int miny = objs.Min(o => o.Y);
+                int maxx = objs.Max(o => o.X);
+                int maxy = objs.Max(o => o.Y);
 
                 Point center = editor.GetViewCenter();
                 int dx = Math.Max(-minx, center.X - (maxx + minx) / 2);
                 int dy = Math.Max(-miny, center.Y - (maxy + miny) / 2);
                 foreach (WrappedLevelObject obj in objs) {
-                    obj.x = (ushort)(obj.x + dx);
-                    obj.y = (ushort)(obj.y + dy);
+                    obj.X = (ushort)(obj.X + dx);
+                    obj.Y = (ushort)(obj.Y + dy);
                 }
 
                 editor.undoManager.Do(new AddSpriteAction(objs));

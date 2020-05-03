@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Globalization;
 
 namespace Necrofy
 {
@@ -41,9 +42,9 @@ namespace Necrofy
         /// <param name="s">The stream</param>
         /// <param name="bank">The LoROM bank of the pointer. This should be between 0x80 and 0xff.</param>
         /// <returns>The pointer as a PC address or -1 if the end of the stream was reached or there was an invalid pointer at the current position.</returns>
-        public static int ReadRelativePointer(this Stream s, int bank) {
+        public static int ReadRelativePointer(this Stream s, byte bank) {
             int address = s.ReadInt16();
-            if (address < 0x8000 | bank < 0x80)
+            if (address < 0x8000 || bank < 0x80)
                 return -1;
             return (bank - 0x80) * 0x8000 + address - 0x8000;
         }
@@ -60,7 +61,7 @@ namespace Necrofy
         /// <summary>Moves the stream position to the address specified in the 2-byte SNES LoROM pointer relative to the given bank.</summary>
         /// <param name="s">The stream</param>
         /// <param name="bank">The LoROM bank of the pointer. This should be between 0x80 and 0xff.</param>
-        public static void GoToRelativePointer(this Stream s, int bank) {
+        public static void GoToRelativePointer(this Stream s, byte bank) {
             int pointer = s.ReadRelativePointer(bank);
             if (pointer < 0)
                 throw new Exception(string.Format("Cannot move stream to invalid pointer. Found at {0:X}", s.Position - 2));
@@ -70,7 +71,7 @@ namespace Necrofy
         /// <summary>Moves the stream position to the address specified in the 2-byte SNES LoROM pointer relative to the bank the stream is positioned in.</summary>
         /// <param name="s">The stream</param>
         public static void GoToRelativePointer(this Stream s) {
-            int bank = (int)s.Position / 0x8000 + 0x80;
+            byte bank = (byte)(s.Position / 0x8000 + 0x80);
             s.GoToRelativePointer(bank);
         }
 
@@ -87,7 +88,7 @@ namespace Necrofy
         /// <summary>Moves the stream position to the address specified in the 2-byte SNES LoROM pointer relative to the given bank and pushes the position after the pointer.</summary>
         /// <param name="s">The stream</param>
         /// <param name="bank">The LoROM bank of the pointer. This should be between 0x80 and 0xff.</param>
-        public static void GoToRelativePointerPush(this NStream s, int bank) {
+        public static void GoToRelativePointerPush(this NStream s, byte bank) {
             int pointer = s.ReadRelativePointer(bank);
             if (pointer < 0)
                 throw new Exception(string.Format("Cannot move stream to invalid pointer. Found at {0:X}", s.Position - 2));
@@ -98,7 +99,7 @@ namespace Necrofy
         /// <summary>Moves the stream position to the address specified in the 2-byte SNES LoROM pointer relative to the bank the stream is positioned in and pushes the position after the pointer.</summary>
         /// <param name="s">The stream</param>
         public static void GoToRelativePointerPush(this NStream s) {
-            int bank = (int)s.Position / 0x8000 + 0x80;
+            byte bank = (byte)(s.Position / 0x8000 + 0x80);
             s.GoToRelativePointerPush(bank);
         }
 
@@ -222,6 +223,34 @@ namespace Necrofy
             int value = s.ReadPointer();
             s.Seek(-4, SeekOrigin.Current);
             return value;
+        }
+
+        /// <summary>Tries to parse the given string as either a hexadecimal or SNES LoROM pointer</summary>
+        /// <param name="value">The value to parse</param>
+        /// <param name="pointer">The parsed pointer</param>
+        /// <returns>true if the pointer was parsed successfully</returns>
+        public static bool ParsePointer(string value, out int pointer) {
+            if (value.StartsWith("$")) {
+                string strippedValue = value.Replace(":", "").Replace("$", "");
+                if (int.TryParse(strippedValue, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out int parsedValue)) {
+                    int bank = parsedValue / 0x10000;
+                    int address = parsedValue % 0x10000;
+                    if (bank >= 0x80 && bank < 0x100 && address >= 0x8000) {
+                        pointer = (bank - 0x80) * 0x8000 + address - 0x8000;
+                        return true;
+                    }
+                }
+            } else {
+                string strippedValue = value.StartsWith("0x") ? value.Substring(2) : value;
+                if (int.TryParse(strippedValue, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out int parsedValue)) {
+                    if (parsedValue < 0x80 * 0x8000) {
+                        pointer = parsedValue;
+                        return true;
+                    }
+                }
+            }
+            pointer = -1;
+            return false;
         }
     }
 }

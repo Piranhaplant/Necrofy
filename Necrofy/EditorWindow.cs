@@ -25,6 +25,19 @@ namespace Necrofy
             }
         }
 
+        private object[] propertyBrowserObjects = null;
+        public object[] PropertyBrowserObjects {
+            get {
+                return propertyBrowserObjects;
+            }
+            protected set {
+                propertyBrowserObjects = value;
+                if (mainWindow != null) {
+                    mainWindow.PropertyBrowser.SetObjects(propertyBrowserObjects);
+                }
+            }
+        }
+
         private string title = "";
         public string Title {
             get {
@@ -42,6 +55,7 @@ namespace Necrofy
         protected MainWindow mainWindow;
         private Project project;
         private UndoManager undoManager;
+        private bool prevDirty = false;
 
         public EditorWindow() {
             DockAreas = DockAreas.Document;
@@ -52,7 +66,7 @@ namespace Necrofy
         private void EditorWindow_FormClosing(object sender, FormClosingEventArgs e) {
             if (Dirty && project != null) {
                 Activate();
-                DialogResult result = MessageBox.Show("Save changes to \"" + Title + "\"?", "Save changes?", MessageBoxButtons.YesNoCancel);
+                DialogResult result = MessageBox.Show($"Save changes to \"{Title}\"?", "Save changes?", MessageBoxButtons.YesNoCancel);
                 if (result == DialogResult.Cancel) {
                     e.Cancel = true;
                 } else if (result == DialogResult.Yes) {
@@ -68,8 +82,11 @@ namespace Necrofy
             undoManager = Setup();
             if (undoManager != null) {
                 undoManager.DirtyChanged += (sender, e) => {
-                    UpdateText();
-                    DirtyChanged?.Invoke(this, e);
+                    if (Dirty != prevDirty) {
+                        prevDirty = Dirty;
+                        UpdateText();
+                        DirtyChanged?.Invoke(this, e);
+                    }
                 };
             }
         }
@@ -117,6 +134,8 @@ namespace Necrofy
         public virtual void Delete() { }
         public virtual void SelectAll() { }
         public virtual void SelectNone() { }
+        
+        public virtual void PropertyBrowserPropertyChanged(PropertyValueChangedEventArgs e) { }
 
         // Level number used for the "run from level" feature
         public virtual int? LevelNumber => null;

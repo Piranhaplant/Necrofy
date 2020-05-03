@@ -70,5 +70,17 @@ namespace Necrofy.Properties {
                 this["DockLayout"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool hexPointers {
+            get {
+                return ((bool)(this["hexPointers"]));
+            }
+            set {
+                this["hexPointers"] = value;
+            }
+        }
     }
 }

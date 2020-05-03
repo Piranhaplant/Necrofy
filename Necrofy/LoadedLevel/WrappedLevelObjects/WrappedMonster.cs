@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -8,18 +9,42 @@ namespace Necrofy
 {
     class WrappedMonster : WrappedLevelObject<Monster>
     {
+        public const string RadiusProperty = "Radius";
+        public const string DelayProperty = "Delay";
+
         public WrappedMonster(Monster monster, LoadedSpriteGraphics spriteGraphics) : base(monster, spriteGraphics) { }
 
         public override SpriteDisplay.Category Category => SpriteDisplay.Category.Monster;
 
-        public override Rectangle Bounds => spriteGraphics.GetRectangle(SpriteDisplay.Key.Type.Pointer, wrappedObject.type, x, y);
+        public override Rectangle Bounds => spriteGraphics.GetRectangle(SpriteDisplay.Key.Type.Pointer, wrappedObject.type, X, Y);
 
-        public override ushort x { get => wrappedObject.x; set => wrappedObject.x = value; }
-        public override ushort y { get => wrappedObject.y; set => wrappedObject.y = value; }
-        public override int type { get => wrappedObject.type; set => wrappedObject.type = value; }
+        public override ushort X { get => wrappedObject.x; set => wrappedObject.x = value; }
+        public override ushort Y { get => wrappedObject.y; set => wrappedObject.y = value; }
+        public override int Type { get => wrappedObject.type; set => wrappedObject.type = value; }
+        [Browsable(false)]
+        public byte Radius { get => wrappedObject.radius; set => wrappedObject.radius = value; }
+        [Browsable(false)]
+        public byte Delay { get => wrappedObject.delay; set => wrappedObject.delay = value; }
 
+        // Properties used in the property browser
+        private string browsableRadius = null;
+        private string browsableDelay = null;
+        private string browsablePointer = null;
+        public override void ClearBrowsableProperties() {
+            base.ClearBrowsableProperties();
+            browsableRadius = null;
+            browsableDelay = null;
+            browsablePointer = null;
+        }
+        [DisplayName(RadiusProperty)]
+        public string BrowsableRadius { get => browsableRadius ?? wrappedObject.radius.ToString(); set => browsableRadius = value; }
+        [DisplayName(DelayProperty)]
+        public string BrowsableDelay { get => browsableDelay ?? wrappedObject.delay.ToString(); set => browsableDelay = value; }
+        [DisplayName(PointerProperty)]
+        public string BrowsablePointer { get => browsablePointer ?? PropertyBrowser.PointerToString(Type); set => browsablePointer = value; }
+        
         public override void Render(Graphics g) {
-            spriteGraphics.Render(SpriteDisplay.Key.Type.Pointer, wrappedObject.type, g, x, y);
+            spriteGraphics.Render(SpriteDisplay.Key.Type.Pointer, wrappedObject.type, g, X, Y);
         }
 
         public override bool Removable => true;

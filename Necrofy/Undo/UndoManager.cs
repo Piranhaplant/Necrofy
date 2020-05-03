@@ -49,12 +49,7 @@ namespace Necrofy
             savePos = undoActions.Count;
             InvokeDirtyChanged();
         }
-
-        public override void ForceDirty() {
-            savePos = -1;
-            InvokeDirtyChanged();
-        }
-
+        
         public override void ForceNoMerge() {
             merge = false;
         }
@@ -186,7 +181,6 @@ namespace Necrofy
 
         public abstract bool Dirty { get; }
         public abstract void Clean();
-        public abstract void ForceDirty();
         public abstract void ForceNoMerge();
         public abstract void UndoLast();
         public abstract void RedoLast();

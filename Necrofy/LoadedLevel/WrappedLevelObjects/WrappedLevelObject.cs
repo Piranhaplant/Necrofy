@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -15,7 +16,19 @@ namespace Necrofy
             this.wrappedObject = wrappedObject;
             this.spriteGraphics = spriteGraphics;
         }
-        
+
+        // Properties used in the property browser
+        private string browsableX = null;
+        private string browsableY = null;
+        public override void ClearBrowsableProperties() {
+            browsableX = null;
+            browsableY = null;
+        }
+        [DisplayName(XProperty)]
+        public string BrowsableX { get => browsableX ?? X.ToString(); set => browsableX = value; }
+        [DisplayName(YProperty)]
+        public string BrowsableY { get => browsableY ?? Y.ToString(); set => browsableY = value; }
+
         public override int GetHashCode() {
             return wrappedObject.GetHashCode();
         }
@@ -30,15 +43,26 @@ namespace Necrofy
 
     abstract class WrappedLevelObject : ISelectableObject
     {
+        public const string XProperty = "X";
+        public const string YProperty = "Y";
+        public const string PointerProperty = "Pointer";
+
         public abstract SpriteDisplay.Category Category { get; }
+        [Browsable(false)]
         public abstract Rectangle Bounds { get; }
-        public abstract ushort x { get; set; }
-        public abstract ushort y { get; set; }
-        public abstract int type { get; set; }
-        public abstract void Render(Graphics g);
+        [Browsable(false)]
+        public abstract ushort X { get; set; }
+        [Browsable(false)]
+        public abstract ushort Y { get; set; }
+        [Browsable(false)]
+        public abstract int Type { get; set; }
+        [Browsable(false)]
         public abstract bool Removable { get; }
+
+        public abstract void Render(Graphics g);
         public abstract void Add(Level level);
         public abstract void Remove(Level level);
         public abstract void AddToClipboard(SpriteClipboardContents clipboard);
+        public abstract void ClearBrowsableProperties();
     }
 }

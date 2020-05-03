@@ -214,8 +214,8 @@ namespace Necrofy
             base.SetEditor(editor);
             oldTiles = level.background.Clone() as ushort[,];
             foreach (WrappedLevelObject o in editor.level.GetAllObjects()) {
-                if (o.x < startX * 64 || o.x > endX * 64 || o.y < startY * 64 || o.y > endY * 64) {
-                    oldPositions[o] = new Point(o.x, o.y);
+                if (o.X < startX * 64 || o.X > endX * 64 || o.Y < startY * 64 || o.Y > endY * 64) {
+                    oldPositions[o] = new Point(o.X, o.Y);
                 }
             }
         }
@@ -223,12 +223,12 @@ namespace Necrofy
         protected override void Undo() {
             level.background = oldTiles;
             foreach (WrappedLevelObject o in editor.level.GetAllObjects()) {
-                o.x = (ushort)Math.Max(0, o.x + startX * 64);
-                o.y = (ushort)Math.Max(0, o.y + startY * 64);
+                o.X = (ushort)Math.Max(0, o.X + startX * 64);
+                o.Y = (ushort)Math.Max(0, o.Y + startY * 64);
             }
             foreach (KeyValuePair<WrappedLevelObject, Point> pair in oldPositions) {
-                pair.Key.x = (ushort)pair.Value.X;
-                pair.Key.y = (ushort)pair.Value.Y;
+                pair.Key.X = (ushort)pair.Value.X;
+                pair.Key.Y = (ushort)pair.Value.Y;
             }
             editor.tileSelection.Resize(-startX, -startY, oldTiles.GetWidth() - startX, oldTiles.GetHeight() - startY);
         }
@@ -246,8 +246,8 @@ namespace Necrofy
                 }
             }
             foreach (WrappedLevelObject o in editor.level.GetAllObjects()) {
-                o.x = (ushort)Math.Max(0, Math.Min(level.width * 64, o.x - startX * 64));
-                o.y = (ushort)Math.Max(0, Math.Min(level.height * 64, o.y - startY * 64));
+                o.X = (ushort)Math.Max(0, Math.Min(level.width * 64, o.X - startX * 64));
+                o.Y = (ushort)Math.Max(0, Math.Min(level.height * 64, o.Y - startY * 64));
             }
             editor.tileSelection.Resize(startX, startY, endX, endY);
         }

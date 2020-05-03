@@ -83,6 +83,7 @@
             this.windowSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.windowRestore = new System.Windows.Forms.ToolStripMenuItem();
             this.openProjectDialog = new System.Windows.Forms.OpenFileDialog();
+            this.windowProperties = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -559,6 +560,7 @@
             this.windowMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.windowProject,
             this.windowObjects,
+            this.windowProperties,
             this.windowSeparator1,
             this.windowRestore});
             this.windowMenu.Name = "windowMenu";
@@ -595,6 +597,13 @@
             // 
             this.openProjectDialog.Filter = "Necrofy project files (*.nfyp)|*.nfyp|All Files (*.*)|*.*";
             this.openProjectDialog.Title = "Open Project";
+            // 
+            // windowProperties
+            // 
+            this.windowProperties.Name = "windowProperties";
+            this.windowProperties.Size = new System.Drawing.Size(193, 22);
+            this.windowProperties.Text = "Properties";
+            this.windowProperties.Click += new System.EventHandler(this.windowProperties_Click);
             // 
             // MainWindow
             // 
@@ -674,6 +683,7 @@
         private System.Windows.Forms.ToolStripMenuItem windowObjects;
         private System.Windows.Forms.ToolStripSeparator windowSeparator1;
         private System.Windows.Forms.ToolStripMenuItem windowRestore;
+        private System.Windows.Forms.ToolStripMenuItem windowProperties;
     }
 }
 

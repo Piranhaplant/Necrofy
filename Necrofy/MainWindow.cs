@@ -21,6 +21,7 @@ namespace Necrofy
 
         public ObjectBrowserForm ObjectBrowser { get; private set; }
         public ProjectBrowser ProjectBrowser { get; private set; }
+        public PropertyBrowser PropertyBrowser { get; private set; }
 
         private readonly List<ToolStripMenuItem> projectMenuItems;
 
@@ -36,10 +37,12 @@ namespace Necrofy
 
             ObjectBrowser = new ObjectBrowserForm();
             ProjectBrowser = new ProjectBrowser(this);
+            PropertyBrowser = new PropertyBrowser();
+            PropertyBrowser.PropertyChanged += PropertyBrowser_PropertyChanged;
 
             string dockLayout = Properties.Settings.Default.DockLayout;
             if (!string.IsNullOrEmpty(dockLayout)) {
-                Dictionary<string, DockContent> allPanels = new DockContent[] { ObjectBrowser, ProjectBrowser }.ToDictionary(o => o.GetType().FullName);
+                Dictionary<string, DockContent> allPanels = new DockContent[] { ObjectBrowser, ProjectBrowser, PropertyBrowser }.ToDictionary(o => o.GetType().FullName);
                 using (MemoryStream s = new MemoryStream(Encoding.UTF8.GetBytes(dockLayout))) {
                     dockPanel.LoadFromXml(s, persistString => {
                         if (allPanels.TryGetValue(persistString, out DockContent panel)) {
@@ -74,9 +77,6 @@ namespace Necrofy
         }
 
         private void MainWindow_FormClosed(object sender, FormClosedEventArgs e) {
-            foreach (EditorWindow editor in new List<EditorWindow>(openEditors)) {
-                editor.Close();
-            }
             using (MemoryStream s = new MemoryStream()) {
                 dockPanel.SaveAsXml(s, Encoding.UTF8);
                 string xml = Encoding.UTF8.GetString(s.ToArray());
@@ -88,6 +88,7 @@ namespace Necrofy
         private void UseDefaultDockLayout() {
             ObjectBrowser.Show(dockPanel, DockState.DockLeft);
             ProjectBrowser.Show(dockPanel, DockState.DockRight);
+            PropertyBrowser.Show(ProjectBrowser.Pane, DockAlignment.Bottom, 0.2);
             dockPanel.DockBottomPortion = 200;
             dockPanel.DockLeftPortion = 220;
             dockPanel.DockRightPortion = 200;
@@ -256,6 +257,7 @@ namespace Necrofy
             Editor_DirtyChanged(editor, e);
             Editor_SelectionChanged(editor, e);
             ObjectBrowser.Browser.Contents = activeEditor?.BrowserContents;
+            PropertyBrowser.SetObjects(activeEditor?.PropertyBrowserObjects);
             buildRunFromLevel.Enabled = activeEditor?.LevelNumber != null;
             fileClose.Enabled = activeEditor != null;
         }
@@ -265,6 +267,10 @@ namespace Necrofy
             if (activeEditor != null) {
                 Text += " - " + activeEditor.Title;
             }
+        }
+
+        private void PropertyBrowser_PropertyChanged(object sender, PropertyValueChangedEventArgs e) {
+            activeEditor?.PropertyBrowserPropertyChanged(e);
         }
 
         private void CreateProject(object sender, EventArgs e) {
@@ -420,17 +426,22 @@ namespace Necrofy
         }
 
         private void windowProject_Click(object sender, EventArgs e) {
-            if (ProjectBrowser.DockState == DockState.Hidden) {
-                ProjectBrowser.Show();
-            }
-            ProjectBrowser.Activate();
+            ShowDockContent(ProjectBrowser);
         }
 
         private void windowObjects_Click(object sender, EventArgs e) {
-            if (ProjectBrowser.DockState == DockState.Hidden) {
-                ObjectBrowser.Show();
+            ShowDockContent(ObjectBrowser);
+        }
+
+        private void windowProperties_Click(object sender, EventArgs e) {
+            ShowDockContent(PropertyBrowser);
+        }
+
+        private void ShowDockContent(DockContent dockContent) {
+            if (dockContent.DockState == DockState.Hidden) {
+                dockContent.Show();
             }
-            ObjectBrowser.Activate();
+            dockContent.Activate();
         }
 
         private void windowRestore_Click(object sender, EventArgs e) {

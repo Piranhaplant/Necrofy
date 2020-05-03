@@ -140,12 +140,8 @@ namespace Necrofy
                     selectedObjects = new HashSet<T>(host.CloneSelection());
                     host.SelectionChanged();
                 }
-                int minX = int.MaxValue;
-                int minY = int.MaxValue;
-                foreach (T obj in selectedObjects) {
-                    minX = Math.Min(minX, obj.x);
-                    minY = Math.Min(minY, obj.y);
-                }
+                int minX = selectedObjects.Min(o => o.X);
+                int minY = selectedObjects.Min(o => o.Y);
 
                 int newMoveX = x - dragStartX;
                 int newMoveY = y - dragStartY;
@@ -154,7 +150,7 @@ namespace Necrofy
 
                 totalMoveX += dx;
                 totalMoveY += dy;
-
+                
                 // TODO add snap
                 host.MoveSelectedObjects(dx, dy, 1);
             }
@@ -180,7 +176,7 @@ namespace Necrofy
     public interface ISelectableObject
     {
         Rectangle Bounds { get; }
-        ushort x { get; }
-        ushort y { get; }
+        ushort X { get; }
+        ushort Y { get; }
     }
 }

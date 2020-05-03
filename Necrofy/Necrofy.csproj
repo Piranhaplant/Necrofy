@@ -157,6 +157,12 @@
     <Compile Include="ObjectBrowser\ObjectBrowserObject.cs" />
     <Compile Include="ObjectBrowser\SpriteObjectBrowserContents.cs" />
     <Compile Include="ObjectBrowser\TilesetObjectBrowserContents.cs" />
+    <Compile Include="PropertyBrowser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PropertyBrowser.Designer.cs">
+      <DependentUpon>PropertyBrowser.cs</DependentUpon>
+    </Compile>
     <Compile Include="ObjectSelector.cs" />
     <Compile Include="ProjectBrowser.cs">
       <SubType>Form</SubType>
@@ -251,6 +257,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ObjectBrowser\ObjectBrowserForm.resx">
       <DependentUpon>ObjectBrowserForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PropertyBrowser.resx">
+      <DependentUpon>PropertyBrowser.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ProjectBrowser.resx">
       <DependentUpon>ProjectBrowser.cs</DependentUpon>

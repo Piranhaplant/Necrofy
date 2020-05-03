@@ -11,6 +11,7 @@ namespace Necrofy
 
         protected override void AfterAction() {
             editor.Repaint();
+            editor.RefreshPropertyBrowser();
         }
 
         public override void SetEditor(LevelEditor editor) {
