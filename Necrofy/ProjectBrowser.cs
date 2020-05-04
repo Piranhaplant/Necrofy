@@ -46,6 +46,14 @@ namespace Necrofy
             tree.Nodes.Clear();
             if (project != null) {
                 PopulateTree(tree.Nodes, project.path);
+                if (project.settings.FolderStates != null) {
+                    LoadFolderStates(tree.Nodes, project.settings.FolderStates);
+                } else {
+                    tree.Nodes[LevelAsset.Folder]?.Expand();
+                }
+                if (tree.Nodes.Count > 0) {
+                    tree.SelectedNode = tree.Nodes[0]; // Scroll to the top regardless of what folders were opened
+                }
             }
         }
 
@@ -54,6 +62,7 @@ namespace Necrofy
             Array.Sort(dirs, NumericStringComparer.instance);
             foreach (string dir in dirs) {
                 TreeNode child = parent.Add(Path.GetFileName(dir));
+                child.Name = child.Text;
                 child.ImageIndex = FolderImageIndex;
                 child.SelectedImageIndex = FolderImageIndex;
 
@@ -69,8 +78,41 @@ namespace Necrofy
                 Asset.NameInfo info = Asset.GetInfo(project, project.GetRelativePath(file));
                 if (info != null) {
                     TreeNode child = parent.Add(info.DisplayName);
+                    child.Name = child.Text;
                     SetImage(child, info.Category);
                     child.Tag = info;
+                }
+            }
+        }
+
+        private void LoadFolderStates(TreeNodeCollection parent, List<ProjectSettings.FolderState> folderStates) {
+            foreach (ProjectSettings.FolderState folderState in folderStates) {
+                TreeNode node = parent[folderState.Name];
+                if (node != null) {
+                    if (folderState.Expanded) {
+                        node.Expand();
+                    }
+                    if (folderState.Children != null) {
+                        LoadFolderStates(node.Nodes, folderState.Children);
+                    }
+                }
+            }
+        }
+
+        public void SaveFolderStates() {
+            project.settings.FolderStates = new List<ProjectSettings.FolderState>();
+            SaveFolderStates(tree.Nodes, project.settings.FolderStates);
+        }
+
+        private void SaveFolderStates(TreeNodeCollection parent, List<ProjectSettings.FolderState> folderStates) {
+            foreach (TreeNode n in parent) {
+                if (n.Nodes.Count > 0) {
+                    ProjectSettings.FolderState folderState = new ProjectSettings.FolderState();
+                    folderState.Name = n.Name;
+                    folderState.Expanded = n.IsExpanded;
+                    folderState.Children = new List<ProjectSettings.FolderState>();
+                    folderStates.Add(folderState);
+                    SaveFolderStates(n.Nodes, folderState.Children);
                 }
             }
         }
@@ -90,15 +132,16 @@ namespace Necrofy
             if (!e.Node.IsSelected) {
                 return;
             }
-            Asset.NameInfo info = e.Node.Tag as Asset.NameInfo;
-            EditorWindow editor = info?.GetEditor(project);
-            if (editor != null) {
-                if (!displayIcons.ContainsKey(info.Category)) {
-                    displayIcons[info.Category] = Icon.FromHandle(displayImages[info.Category].GetHicon());
-                }
-                editor.Icon = displayIcons[info.Category];
-                mainWindow.ShowEditor(editor);
+            if (e.Node.Tag is Asset.NameInfo info) {
+                mainWindow.OpenAsset(info);
             }
+        }
+
+        public Icon GetEditorIcon(AssetCategory assetCategory) {
+            if (!displayIcons.ContainsKey(assetCategory)) {
+                displayIcons[assetCategory] = Icon.FromHandle(displayImages[assetCategory].GetHicon());
+            }
+            return displayIcons[assetCategory];
         }
 
         private void SetImage(TreeNode node, AssetCategory category) {

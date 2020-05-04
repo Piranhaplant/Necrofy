@@ -31,8 +31,7 @@ namespace Necrofy
         private readonly List<ToolStripItem> editorToolStripItems = new List<ToolStripItem>();
         private readonly List<ToolStripItem> editorMenuStripItems = new List<ToolStripItem>();
         
-        public MainWindow()
-        {
+        public MainWindow() {
             InitializeComponent();
 
             ObjectBrowser = new ObjectBrowserForm();
@@ -83,6 +82,7 @@ namespace Necrofy
                 Properties.Settings.Default.DockLayout = xml;
                 Properties.Settings.Default.Save();
             }
+            CloseProject(closeEditors: false);
         }
 
         private void UseDefaultDockLayout() {
@@ -160,13 +160,22 @@ namespace Necrofy
         public ToolStripSplitButton UndoButton => undoButton;
         public ToolStripSplitButton RedoButton => redoButton;
 
-        public void ShowEditor(EditorWindow editor) {
-            openEditors.Add(editor);
-            editor.Setup(this, project);
-            editor.Show(dockPanel, DockState.Document);
-            editor.DirtyChanged += Editor_DirtyChanged;
-            editor.SelectionChanged += Editor_SelectionChanged;
-            editor.TextChanged += Editor_TextChanged;
+        public void OpenAsset(Asset.NameInfo assetInfo) {
+            EditorWindow existingEditor = openEditors.Where(e => e.AssetInfo.Equals(assetInfo)).FirstOrDefault();
+            if (existingEditor != null) {
+                existingEditor.Activate();
+                return;
+            }
+            EditorWindow editor = assetInfo.GetEditor(project);
+            if (editor != null) {
+                editor.Icon = ProjectBrowser.GetEditorIcon(assetInfo.Category);
+                openEditors.Add(editor);
+                editor.Setup(this, project);
+                editor.Show(dockPanel, DockState.Document);
+                editor.DirtyChanged += Editor_DirtyChanged;
+                editor.SelectionChanged += Editor_SelectionChanged;
+                editor.TextChanged += Editor_TextChanged;
+            }
         }
 
         private void Editor_DirtyChanged(object sender, EventArgs e) {
@@ -215,7 +224,7 @@ namespace Necrofy
         }
 
         private void dockPanel_ActiveDocumentChanged(object sender, EventArgs e) {
-            EditorWindow editor = dockPanel.ActiveContent as EditorWindow;
+            EditorWindow editor = dockPanel.ActiveDocument as EditorWindow;
 
             if (activeEditor != null) {
                 if (activeEditor.EditorMenuStrip != null) {
@@ -273,10 +282,29 @@ namespace Necrofy
             activeEditor?.PropertyBrowserPropertyChanged(e);
         }
 
+        private bool CloseProject(bool closeEditors) {
+            if (project != null) {
+                if (closeEditors) {
+                    foreach (EditorWindow editor in new List<EditorWindow>(openEditors)) {
+                        editor.Close();
+                        if (editor.Visible) {
+                            return true;
+                        }
+                    }
+                }
+                ProjectBrowser.SaveFolderStates();
+                project.settings.OpenFiles = openEditors.Select(e => e.AssetInfo.GetFilename("")).ToList();
+                project.WriteSettings();
+            }
+            return false;
+        }
+
         private void CreateProject(object sender, EventArgs e) {
             NewProjectDialog newProjectDialog = new NewProjectDialog();
             if (newProjectDialog.ShowDialog() == DialogResult.OK) {
-                // TODO: close already open project if there is one
+                if (CloseProject(closeEditors: true)) {
+                    return;
+                }
                 project = new Project(newProjectDialog.BaseROM, newProjectDialog.ProjectLocation);
                 ProjectReady();
             }
@@ -284,14 +312,18 @@ namespace Necrofy
 
         private void OpenProject(object sender, EventArgs e) {
             if (openProjectDialog.ShowDialog() == DialogResult.OK) {
-                // TODO: close already open project if there is one
+                if (CloseProject(closeEditors: true)) {
+                    return;
+                }
                 project = new Project(openProjectDialog.FileName);
                 ProjectReady();
             }
         }
 
         private void recentProjects_FileClicked(string file) {
-            // TODO: close already open project if there is one
+            if (CloseProject(closeEditors: true)) {
+                return;
+            }
             project = new Project(file);
             ProjectReady();
         }
@@ -302,6 +334,15 @@ namespace Necrofy
             Properties.Settings.Default.Save();
 
             ProjectBrowser.OpenProject(project);
+
+            if (project.settings.OpenFiles != null) {
+                foreach (string filename in project.settings.OpenFiles) {
+                    Asset.NameInfo info = Asset.GetInfo(project, filename);
+                    if (info != null) {
+                        OpenAsset(info);
+                    }
+                }
+            }
 
             foreach (ToolStripMenuItem item in projectMenuItems) {
                 item.Enabled = true;

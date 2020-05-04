@@ -214,8 +214,8 @@ namespace Necrofy
                 return null;
             }
 
-            /// <summary>Gets the filename for the asset and creates any intermediate directories if they don't exist</summary>
-            public string GetFilename(string projectDir) {
+            /// <summary>Gets the filename for the asset, optionally creating any intermediate directories if they don't exist</summary>
+            public string GetFilename(string projectDir, bool createDirectories = false) {
                 PathParts parts = GetPathParts();
                 string directory = projectDir;
                 if (parts.topFolder != null) {
@@ -224,7 +224,7 @@ namespace Necrofy
                 if (parts.subFolder != null) {
                     directory = Path.Combine(directory, parts.subFolder);
                 }
-                if (!Directory.Exists(directory)) {
+                if (createDirectories && !Directory.Exists(directory)) {
                     Directory.CreateDirectory(directory);
                 }
                 string filename = parts.name;
@@ -260,6 +260,17 @@ namespace Necrofy
                 throw new IOException("Could not find asset " + parts);
             }
 
+            public override bool Equals(object obj) {
+                if (obj is NameInfo nameInfo) {
+                    return nameInfo.GetPathParts().Equals(GetPathParts());
+                }
+                return false;
+            }
+
+            public override int GetHashCode() {
+                return GetPathParts().GetHashCode();
+            }
+
             /// <summary>Different parts of an asset path that are used to convert to and from filenames</summary>
             public class PathParts
             {
@@ -276,6 +287,26 @@ namespace Necrofy
                     this.name = name;
                     this.fileExtension = fileExtension;
                     this.pointer = pointer;
+                }
+
+                public override bool Equals(object obj) {
+                    var parts = obj as PathParts;
+                    return parts != null &&
+                           topFolder == parts.topFolder &&
+                           subFolder == parts.subFolder &&
+                           name == parts.name &&
+                           fileExtension == parts.fileExtension &&
+                           EqualityComparer<int?>.Default.Equals(pointer, parts.pointer);
+                }
+
+                public override int GetHashCode() {
+                    var hashCode = 930186977;
+                    hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(topFolder);
+                    hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(subFolder);
+                    hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(name);
+                    hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(fileExtension);
+                    hashCode = hashCode * -1521134295 + EqualityComparer<int?>.Default.GetHashCode(pointer);
+                    return hashCode;
                 }
 
                 public override string ToString() {

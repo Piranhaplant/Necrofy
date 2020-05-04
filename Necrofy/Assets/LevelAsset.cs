@@ -9,6 +9,9 @@ namespace Necrofy
 {
     class LevelAsset : Asset
     {
+        public const string Folder = "Levels";
+        private const string Extension = "json";
+
         private const AssetCategory AssetCat = AssetCategory.Level;
 
         public static void RegisterLoader() {
@@ -37,7 +40,7 @@ namespace Necrofy
         }
 
         public override void WriteFile(Project project) {
-            File.WriteAllText(nameInfo.GetFilename(project.path), JsonConvert.SerializeObject(level));
+            File.WriteAllText(nameInfo.GetFilename(project.path, createDirectories: true), JsonConvert.SerializeObject(level));
         }
 
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
@@ -94,9 +97,6 @@ namespace Necrofy
 
         class LevelNameInfo : NameInfo
         {
-            private const string Folder = "Levels";
-            private const string Extension = "json";
-
             public readonly int levelNum;
             private readonly Func<LevelNameInfo, string> displayNameGetter;
             private string displayName = null;
@@ -124,7 +124,7 @@ namespace Necrofy
             }
 
             public override EditorWindow GetEditor(Project project) {
-                return new LevelEditor(new LoadedLevel(project, levelNum));
+                return new LevelEditor(this, new LoadedLevel(project, levelNum));
             }
 
             public static LevelNameInfo FromPath(PathParts parts, Func<LevelNameInfo, string> displayNameGetter) {

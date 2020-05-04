@@ -50,7 +50,7 @@ namespace Necrofy
         
         private Tool currentTool;
         
-        public LevelEditor(LoadedLevel level) {
+        public LevelEditor(Asset.NameInfo assetInfo, LoadedLevel level) : base(assetInfo) {
             InitializeComponent();
             FormClosed += LevelEditor_FormClosed;
 

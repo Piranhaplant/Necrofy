@@ -64,7 +64,7 @@ namespace Necrofy
             return path;
         }
 
-        private void WriteSettings() {
+        public void WriteSettings() {
             File.WriteAllText(SettingsPath, JsonConvert.SerializeObject(settings));
         }
 

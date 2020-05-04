@@ -31,8 +31,9 @@ namespace Necrofy
             // Assume that there aren't any skipped level numbers
             for (int i = 0; i <= levelCount; i++) {
                 int bonusLevelNum = s.ReadInt16();
-                if (bonusLevelNum > maxBonusLevel)
+                if (bonusLevelNum > maxBonusLevel) {
                     maxBonusLevel = bonusLevelNum;
+                }
             }
             s.Seek(ROMPointers.LevelPointers + 2, SeekOrigin.Begin); // Skip past the first 2 bytes which indicate how many levels there are
 
@@ -51,10 +52,11 @@ namespace Necrofy
 
             // Load all levels. Even if they aren't going to be used, this is still necessary to track the space used by them.
             for (int i = 0; i <= maxBonusLevel; i++) {
-                if (fullLevelPointers)
+                if (fullLevelPointers) {
                     s.GoToPointerPush();
-                else
+                } else {
                     s.GoToRelativePointerPush();
+                }
                 Level level = new Level(this, s);
                 assets.Add(new LevelAsset(i, level));
                 s.PopPosition();

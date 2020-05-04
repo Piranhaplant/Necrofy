@@ -49,6 +49,8 @@ namespace Necrofy
             }
         }
 
+        public Asset.NameInfo AssetInfo { get; private set; }
+
         public event EventHandler DirtyChanged;
         public event EventHandler SelectionChanged;
         
@@ -57,7 +59,8 @@ namespace Necrofy
         private UndoManager undoManager;
         private bool prevDirty = false;
 
-        public EditorWindow() {
+        public EditorWindow(Asset.NameInfo assetInfo) {
+            AssetInfo = assetInfo;
             DockAreas = DockAreas.Document;
             HideOnClose = false;
             FormClosing += EditorWindow_FormClosing;

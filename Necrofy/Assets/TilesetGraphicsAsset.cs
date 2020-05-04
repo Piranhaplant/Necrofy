@@ -32,7 +32,7 @@ namespace Necrofy
         }
 
         public override void WriteFile(Project project) {
-            File.WriteAllBytes(nameInfo.GetFilename(project.path), data);
+            File.WriteAllBytes(nameInfo.GetFilename(project.path, createDirectories: true), data);
         }
 
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
