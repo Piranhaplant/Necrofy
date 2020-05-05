@@ -59,8 +59,7 @@ namespace Necrofy
         private UndoManager undoManager;
         private bool prevDirty = false;
 
-        public EditorWindow(Asset.NameInfo assetInfo) {
-            AssetInfo = assetInfo;
+        public EditorWindow() {
             DockAreas = DockAreas.Document;
             HideOnClose = false;
             FormClosing += EditorWindow_FormClosing;
@@ -78,9 +77,10 @@ namespace Necrofy
             }
         }
 
-        public void Setup(MainWindow mainWindow, Project project) {
+        public void Setup(MainWindow mainWindow, Project project, Asset.NameInfo assetInfo) {
             this.mainWindow = mainWindow;
             this.project = project;
+            AssetInfo = assetInfo;
             mainWindow.ObjectBrowser.Browser.Contents = browserContents;
             undoManager = Setup();
             if (undoManager != null) {

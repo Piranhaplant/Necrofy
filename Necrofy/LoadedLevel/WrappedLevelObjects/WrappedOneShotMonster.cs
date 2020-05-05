@@ -11,6 +11,8 @@ namespace Necrofy
     {
         public const string ExtraProperty = "Extra";
 
+        private static readonly Font victimNumberFont = SystemFonts.DefaultFont;
+
         private static readonly StringFormat victimNumberFormat = new StringFormat() {
             Alignment = StringAlignment.Center
         };
@@ -66,8 +68,8 @@ namespace Necrofy
                 Rectangle bounds = Bounds;
                 int x = bounds.X + bounds.Width / 2;
                 int y = bounds.Bottom + 4;
-                g.DrawString(wrappedObject.victimNumber.ToString(), SystemFonts.DefaultFont, Brushes.Black, x + 1, y + 1, victimNumberFormat);
-                g.DrawString(wrappedObject.victimNumber.ToString(), SystemFonts.DefaultFont, Brushes.White, x, y, victimNumberFormat);
+                g.DrawString(wrappedObject.victimNumber.ToString(), victimNumberFont, Brushes.Black, x + 1, y + 1, victimNumberFormat);
+                g.DrawString(wrappedObject.victimNumber.ToString(), victimNumberFont, Brushes.White, x, y, victimNumberFormat);
             }
         }
 

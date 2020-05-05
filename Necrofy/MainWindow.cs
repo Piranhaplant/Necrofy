@@ -170,7 +170,7 @@ namespace Necrofy
             if (editor != null) {
                 editor.Icon = ProjectBrowser.GetEditorIcon(assetInfo.Category);
                 openEditors.Add(editor);
-                editor.Setup(this, project);
+                editor.Setup(this, project, assetInfo);
                 editor.Show(dockPanel, DockState.Document);
                 editor.DirtyChanged += Editor_DirtyChanged;
                 editor.SelectionChanged += Editor_SelectionChanged;

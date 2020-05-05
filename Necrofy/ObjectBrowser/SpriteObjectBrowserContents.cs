@@ -12,7 +12,7 @@ namespace Necrofy
         private readonly HashSet<SpriteDisplay.Category> categories = new HashSet<SpriteDisplay.Category>();
         private readonly List<LoadedSpriteGraphics.LoadedSprite> sprites = new List<LoadedSpriteGraphics.LoadedSprite>();
         private readonly List<SpriteDisplay.Category> categoryForSprites = new List<SpriteDisplay.Category>();
-        private HashSet<SpriteDisplay.Category> highlighedCategories;
+        private HashSet<SpriteDisplay.Category> highlighedCategories = new HashSet<SpriteDisplay.Category>();
         
         public SpriteObjectBrowserContents(LoadedSpriteGraphics spriteGrahpics) {
             this.spriteGrahpics = spriteGrahpics;
@@ -30,12 +30,11 @@ namespace Necrofy
             }
         }
 
-        public void SetHighlightedCategories(IEnumerable<SpriteDisplay.Category> c) {
-            highlighedCategories = new HashSet<SpriteDisplay.Category>(c);
-            if (highlighedCategories.Count == 0) {
-                highlighedCategories = null;
+        public void SetHighlightedCategories(IEnumerable<SpriteDisplay.Category> categories) {
+            if (!highlighedCategories.SetEquals(categories)) {
+                highlighedCategories = new HashSet<SpriteDisplay.Category>(categories);
+                RaiseObjectsChangedEvent(scrollToTop: false);
             }
-            RaiseObjectsChangedEvent(scrollToTop: false);
         }
 
         private void UpdateSpriteList() {
@@ -56,7 +55,7 @@ namespace Necrofy
         public override IEnumerable<ObjectBrowserObject> Objects {
             get {
                 for (int i = 0; i < sprites.Count; i++) {
-                    bool enabled = highlighedCategories == null || highlighedCategories.Contains(categoryForSprites[i]);
+                    bool enabled = highlighedCategories.Count == 0 || highlighedCategories.Contains(categoryForSprites[i]);
                     yield return new ObjectBrowserObject(sprites[i].Size, sprites[i].Description, enabled);
                 }
             }

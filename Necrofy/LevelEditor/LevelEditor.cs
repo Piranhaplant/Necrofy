@@ -50,7 +50,7 @@ namespace Necrofy
         
         private Tool currentTool;
         
-        public LevelEditor(Asset.NameInfo assetInfo, LoadedLevel level) : base(assetInfo) {
+        public LevelEditor(LoadedLevel level) {
             InitializeComponent();
             FormClosed += LevelEditor_FormClosed;
 
@@ -137,8 +137,10 @@ namespace Necrofy
         }
 
         public void GenerateMouseMove() {
-            Point mousePosition = PointToClient(MousePosition);
-            canvas_MouseMove(this, new MouseEventArgs(MouseButtons, 0, mousePosition.X, mousePosition.Y, 0));
+            if (currentTool != null) {
+                Point mousePosition = PointToClient(MousePosition);
+                DoMouseMove(new MouseEventArgs(MouseButtons, 0, mousePosition.X, mousePosition.Y, 0));
+            }
         }
 
         public void UpdateLevelSize() {
@@ -260,7 +262,7 @@ namespace Necrofy
             foreach (WrappedLevelObject obj in level.GetAllObjects()) {
                 obj.Render(e.Graphics);
             }
-            
+
             //for (int y = 0; y < level.Level.height; y++) {
             //    for (int x = 0; x < level.Level.width; x++) {
             //        e.Graphics.DrawImage(level.priorityTiles[level.Level.background[x, y]], x * 64, y * 64);
@@ -307,6 +309,10 @@ namespace Necrofy
             }
             pMouseX = e.X;
             pMouseY = e.Y;
+            DoMouseMove(e);
+        }
+
+        private void DoMouseMove(MouseEventArgs e) {
             if (TransformMouseArgs(e, out LevelMouseEventArgs args)) {
                 currentTool.MouseMove(args);
             }

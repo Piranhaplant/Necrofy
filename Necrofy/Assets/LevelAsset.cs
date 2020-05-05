@@ -124,7 +124,7 @@ namespace Necrofy
             }
 
             public override EditorWindow GetEditor(Project project) {
-                return new LevelEditor(this, new LoadedLevel(project, levelNum));
+                return new LevelEditor(new LoadedLevel(project, levelNum));
             }
 
             public static LevelNameInfo FromPath(PathParts parts, Func<LevelNameInfo, string> displayNameGetter) {

@@ -35,11 +35,16 @@ namespace Necrofy
                 players: editor.PlayersEnabled);
         }
 
+        private HashSet<WrappedLevelObject> prevSelectedObjects = new HashSet<WrappedLevelObject>();
+
         public void SelectionChanged() {
             editor.Repaint();
-            editor.NonTileSelectionChanged();
-            editor.spriteObjectBrowserContents.SetHighlightedCategories(objectSelector.GetSelectedObjects().Select(o => o.Category));
-            PropertyBrowserObjects = objectSelector.GetSelectedObjects().ToArray();
+            if (!prevSelectedObjects.SetEquals(objectSelector.GetSelectedObjects())) {
+                prevSelectedObjects = new HashSet<WrappedLevelObject>(objectSelector.GetSelectedObjects());
+                editor.NonTileSelectionChanged();
+                editor.spriteObjectBrowserContents.SetHighlightedCategories(objectSelector.GetSelectedObjects().Select(o => o.Category));
+                PropertyBrowserObjects = objectSelector.GetSelectedObjects().ToArray();
+            }
         }
 
         public void MoveSelectedObjects(int dx, int dy, int snap) {
