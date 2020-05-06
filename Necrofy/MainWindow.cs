@@ -59,25 +59,7 @@ namespace Necrofy
             }
 
             LoadRunSettings();
-            
-            ToolBarMenuLinker.Link(saveButton, fileSave);
-            ToolBarMenuLinker.Link(saveAllButton, fileSaveAll);
-            ToolBarMenuLinker.Link(cutButton, editCut);
-            ToolBarMenuLinker.Link(copyButton, editCopy);
-            ToolBarMenuLinker.Link(pasteButton, editPaste);
-            ToolBarMenuLinker.Link(undoButton, editUndo);
-            ToolBarMenuLinker.Link(redoButton, editRedo);
-            ToolBarMenuLinker.Link(buildProjectButton, buildBuildProject);
-            ToolBarMenuLinker.Link(runProjectButton, buildRunProject);
-            ToolBarMenuLinker.Link(runFromLevelButton, buildRunFromLevel);
 
-            ToolBarMenuLinker.Link(paintbrushButton, toolsPaintbrush);
-            ToolBarMenuLinker.Link(tileSuggestButton, toolsTileSuggest);
-            ToolBarMenuLinker.Link(rectangleSelectButton, toolsRectangleSelect);
-            ToolBarMenuLinker.Link(pencilSelectButton, toolsPencilSelect);
-            ToolBarMenuLinker.Link(tileSelectButton, toolsTileSelect);
-            ToolBarMenuLinker.Link(resizeLevelButton, toolsResizeLevel);
-            ToolBarMenuLinker.Link(spritesButton, toolsSprites);
             projectMenuItems = new List<ToolStripMenuItem>() { buildBuildProject, buildRunProject };
             HideAllEditorToolStripItems();
         }

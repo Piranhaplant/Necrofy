@@ -109,6 +109,7 @@
             this.spritesAll = new System.Windows.Forms.ToolStripMenuItem();
             this.recentProjects = new Necrofy.RecentFilesMenu();
             this.toolStripGrouper = new Necrofy.ToolStripGrouper(this.components);
+            this.toolBarMenuLinker = new Necrofy.ToolBarMenuLinker(this.components);
             this.toolStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -417,6 +418,7 @@
             // fileNewProject
             // 
             this.fileNewProject.Image = global::Necrofy.Properties.Resources.document__pencil;
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.fileNewProject, this.createProjectButton);
             this.fileNewProject.Name = "fileNewProject";
             this.fileNewProject.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
             this.fileNewProject.Size = new System.Drawing.Size(195, 22);
@@ -426,6 +428,7 @@
             // fileOpenProject
             // 
             this.fileOpenProject.Image = global::Necrofy.Properties.Resources.folder_horizontal_open;
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.fileOpenProject, this.openProjectButton);
             this.fileOpenProject.Name = "fileOpenProject";
             this.fileOpenProject.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
             this.fileOpenProject.Size = new System.Drawing.Size(195, 22);
@@ -441,6 +444,7 @@
             // 
             this.fileSave.Enabled = false;
             this.fileSave.Image = global::Necrofy.Properties.Resources.disk;
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.fileSave, this.saveButton);
             this.fileSave.Name = "fileSave";
             this.fileSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.fileSave.Size = new System.Drawing.Size(195, 22);
@@ -451,6 +455,7 @@
             // 
             this.fileSaveAll.Enabled = false;
             this.fileSaveAll.Image = global::Necrofy.Properties.Resources.disks;
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.fileSaveAll, this.saveAllButton);
             this.fileSaveAll.Name = "fileSaveAll";
             this.fileSaveAll.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.S)));
@@ -506,6 +511,7 @@
             // 
             this.editUndo.Enabled = false;
             this.editUndo.Image = global::Necrofy.Properties.Resources.arrow_return_180;
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.editUndo, this.undoButton);
             this.editUndo.Name = "editUndo";
             this.editUndo.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
             this.editUndo.Size = new System.Drawing.Size(211, 22);
@@ -516,6 +522,7 @@
             // 
             this.editRedo.Enabled = false;
             this.editRedo.Image = global::Necrofy.Properties.Resources.arrow_return;
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.editRedo, this.redoButton);
             this.editRedo.Name = "editRedo";
             this.editRedo.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
             this.editRedo.Size = new System.Drawing.Size(211, 22);
@@ -531,6 +538,7 @@
             // 
             this.editCut.Enabled = false;
             this.editCut.Image = global::Necrofy.Properties.Resources.scissors;
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.editCut, this.cutButton);
             this.editCut.Name = "editCut";
             this.editCut.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
             this.editCut.Size = new System.Drawing.Size(211, 22);
@@ -541,6 +549,7 @@
             // 
             this.editCopy.Enabled = false;
             this.editCopy.Image = global::Necrofy.Properties.Resources.document_copy;
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.editCopy, this.copyButton);
             this.editCopy.Name = "editCopy";
             this.editCopy.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
             this.editCopy.Size = new System.Drawing.Size(211, 22);
@@ -551,6 +560,7 @@
             // 
             this.editPaste.Enabled = false;
             this.editPaste.Image = global::Necrofy.Properties.Resources.clipboard_paste;
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.editPaste, this.pasteButton);
             this.editPaste.Name = "editPaste";
             this.editPaste.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
             this.editPaste.Size = new System.Drawing.Size(211, 22);
@@ -607,6 +617,7 @@
             // 
             this.buildBuildProject.Enabled = false;
             this.buildBuildProject.Image = global::Necrofy.Properties.Resources.compile;
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.buildBuildProject, this.buildProjectButton);
             this.buildBuildProject.Name = "buildBuildProject";
             this.buildBuildProject.Size = new System.Drawing.Size(210, 22);
             this.buildBuildProject.Text = "&Build Project";
@@ -616,6 +627,7 @@
             // 
             this.buildRunProject.Enabled = false;
             this.buildRunProject.Image = global::Necrofy.Properties.Resources.control;
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.buildRunProject, this.runProjectButton);
             this.buildRunProject.Name = "buildRunProject";
             this.buildRunProject.Size = new System.Drawing.Size(210, 22);
             this.buildRunProject.Text = "&Run Project";
@@ -625,6 +637,7 @@
             // 
             this.buildRunFromLevel.Enabled = false;
             this.buildRunFromLevel.Image = global::Necrofy.Properties.Resources.control_cursor;
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.buildRunFromLevel, this.runFromLevelButton);
             this.buildRunFromLevel.Name = "buildRunFromLevel";
             this.buildRunFromLevel.ShortcutKeys = System.Windows.Forms.Keys.F5;
             this.buildRunFromLevel.Size = new System.Drawing.Size(210, 22);
@@ -666,6 +679,7 @@
             this.toolsPaintbrush.CheckState = System.Windows.Forms.CheckState.Checked;
             this.toolsPaintbrush.Image = global::Necrofy.Properties.Resources.paint_brush;
             this.toolStripGrouper.SetItemType(this.toolsPaintbrush, Necrofy.ToolStripGrouper.ItemType.PaintbrushTool);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsPaintbrush, this.paintbrushButton);
             this.toolsPaintbrush.Name = "toolsPaintbrush";
             this.toolsPaintbrush.ShortcutKeyDisplayString = "";
             this.toolsPaintbrush.Size = new System.Drawing.Size(180, 22);
@@ -675,6 +689,7 @@
             // 
             this.toolsTileSuggest.Image = global::Necrofy.Properties.Resources.light_bulb;
             this.toolStripGrouper.SetItemType(this.toolsTileSuggest, Necrofy.ToolStripGrouper.ItemType.TileSuggestTool);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsTileSuggest, this.tileSuggestButton);
             this.toolsTileSuggest.Name = "toolsTileSuggest";
             this.toolsTileSuggest.ShortcutKeyDisplayString = "";
             this.toolsTileSuggest.Size = new System.Drawing.Size(180, 22);
@@ -684,6 +699,7 @@
             // 
             this.toolsRectangleSelect.Image = global::Necrofy.Properties.Resources.selection_select;
             this.toolStripGrouper.SetItemType(this.toolsRectangleSelect, Necrofy.ToolStripGrouper.ItemType.RectangleSelectTool);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsRectangleSelect, this.rectangleSelectButton);
             this.toolsRectangleSelect.Name = "toolsRectangleSelect";
             this.toolsRectangleSelect.ShortcutKeyDisplayString = "";
             this.toolsRectangleSelect.Size = new System.Drawing.Size(180, 22);
@@ -693,6 +709,7 @@
             // 
             this.toolsPencilSelect.Image = global::Necrofy.Properties.Resources.pencil_select;
             this.toolStripGrouper.SetItemType(this.toolsPencilSelect, Necrofy.ToolStripGrouper.ItemType.PencilSelectTool);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsPencilSelect, this.pencilSelectButton);
             this.toolsPencilSelect.Name = "toolsPencilSelect";
             this.toolsPencilSelect.ShortcutKeyDisplayString = "";
             this.toolsPencilSelect.Size = new System.Drawing.Size(180, 22);
@@ -702,6 +719,7 @@
             // 
             this.toolsTileSelect.Image = global::Necrofy.Properties.Resources.tile_select;
             this.toolStripGrouper.SetItemType(this.toolsTileSelect, Necrofy.ToolStripGrouper.ItemType.TileSelectTool);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsTileSelect, this.tileSelectButton);
             this.toolsTileSelect.Name = "toolsTileSelect";
             this.toolsTileSelect.ShortcutKeyDisplayString = "";
             this.toolsTileSelect.Size = new System.Drawing.Size(180, 22);
@@ -711,6 +729,7 @@
             // 
             this.toolsResizeLevel.Image = global::Necrofy.Properties.Resources.map_resize;
             this.toolStripGrouper.SetItemType(this.toolsResizeLevel, Necrofy.ToolStripGrouper.ItemType.ResizeLevelTool);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsResizeLevel, this.resizeLevelButton);
             this.toolsResizeLevel.Name = "toolsResizeLevel";
             this.toolsResizeLevel.ShortcutKeyDisplayString = "";
             this.toolsResizeLevel.Size = new System.Drawing.Size(180, 22);
@@ -720,6 +739,7 @@
             // 
             this.toolsSprites.Image = global::Necrofy.Properties.Resources.leaf;
             this.toolStripGrouper.SetItemType(this.toolsSprites, Necrofy.ToolStripGrouper.ItemType.SpriteTool);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsSprites, this.spritesButton);
             this.toolsSprites.Name = "toolsSprites";
             this.toolsSprites.ShortcutKeyDisplayString = "";
             this.toolsSprites.Size = new System.Drawing.Size(180, 22);
@@ -986,6 +1006,7 @@
         private System.Windows.Forms.ToolStripSeparator spritesSeparator;
         private System.Windows.Forms.ToolStripMenuItem spritesAll;
         private ToolStripGrouper toolStripGrouper;
+        private ToolBarMenuLinker toolBarMenuLinker;
     }
 }
 

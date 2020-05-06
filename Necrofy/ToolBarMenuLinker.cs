@@ -1,14 +1,48 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
 namespace Necrofy
 {
-    class ToolBarMenuLinker
+    [ProvideProperty("LinkedToolBarItem", typeof(ToolStripMenuItem))]
+    public partial class ToolBarMenuLinker : Component, IExtenderProvider
     {
-        public static void Link(ToolStripItem toolBarItem, ToolStripMenuItem menuItem) {
+        private readonly Dictionary<ToolStripMenuItem, ToolStripItem> links = new Dictionary<ToolStripMenuItem, ToolStripItem>();
+
+        public ToolBarMenuLinker() {
+            InitializeComponent();
+        }
+
+        public ToolBarMenuLinker(IContainer container) {
+            container.Add(this);
+
+            InitializeComponent();
+        }
+
+        public bool CanExtend(object extendee) {
+            return extendee is ToolStripMenuItem;
+        }
+
+        [DefaultValue(null)]
+        public ToolStripItem GetLinkedToolBarItem(ToolStripMenuItem item) {
+            if (links.TryGetValue(item, out ToolStripItem linkedItem)) {
+                return linkedItem;
+            }
+            return null;
+        }
+
+        public void SetLinkedToolBarItem(ToolStripMenuItem item, ToolStripItem linkedItem) {
+            links[item] = linkedItem;
+            if (!DesignMode) {
+                Link(linkedItem, item);
+            }
+        }
+
+        private static void Link(ToolStripItem toolBarItem, ToolStripMenuItem menuItem) {
             Link(() => toolBarItem.Enabled, v => toolBarItem.Enabled = v, a => toolBarItem.EnabledChanged += a,
                  () => menuItem.Enabled, v => menuItem.Enabled = v, a => menuItem.EnabledChanged += a);
             if (toolBarItem is ToolStripButton button) {

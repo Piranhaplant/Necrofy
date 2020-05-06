@@ -134,6 +134,12 @@
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedOneShotMonster.cs" />
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedPlayerStartPosition.cs" />
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedPositionLevelMonster.cs" />
+    <Compile Include="ToolBarMenuLinker.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ToolBarMenuLinker.Designer.cs">
+      <DependentUpon>ToolBarMenuLinker.cs</DependentUpon>
+    </Compile>
     <Compile Include="ToolStripGrouper.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -245,7 +251,6 @@
       <DependentUpon>SpriteViewer.cs</DependentUpon>
     </Compile>
     <Compile Include="TilesetSuggestions.cs" />
-    <Compile Include="ToolBarMenuLinker.cs" />
     <Compile Include="TupleList.cs" />
     <Compile Include="Undo\LevelEditorAction.cs" />
     <Compile Include="Undo\SpriteAction.cs" />
