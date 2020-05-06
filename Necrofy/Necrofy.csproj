@@ -134,6 +134,12 @@
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedOneShotMonster.cs" />
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedPlayerStartPosition.cs" />
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedPositionLevelMonster.cs" />
+    <Compile Include="ToolStripGrouper.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ToolStripGrouper.Designer.cs">
+      <DependentUpon>ToolStripGrouper.cs</DependentUpon>
+    </Compile>
     <Compile Include="NewProjectDialog.cs">
       <SubType>Form</SubType>
     </Compile>

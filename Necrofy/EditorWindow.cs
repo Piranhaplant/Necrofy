@@ -9,9 +9,6 @@ namespace Necrofy
 {
     class EditorWindow : DockContent
     {
-        public MenuStrip EditorMenuStrip { get; set; }
-        public ToolStrip EditorToolStrip { get; set; }
-
         private ObjectBrowserContents browserContents = null;
         public ObjectBrowserContents BrowserContents {
             get {
@@ -126,6 +123,10 @@ namespace Necrofy
         protected void RaiseSelectionChanged() {
             SelectionChanged?.Invoke(this, EventArgs.Empty);
         }
+
+        public virtual ToolStripGrouper.ItemSet ToolStripItemSet => ToolStripGrouper.ItemSet.None;
+        public virtual void ToolStripItemClicked(ToolStripGrouper.ItemType item) { }
+        public virtual void ToolStripItemCheckedChanged(ToolStripGrouper.ItemType item) { }
 
         public virtual bool CanCopy => false;
         public virtual bool CanPaste => false;

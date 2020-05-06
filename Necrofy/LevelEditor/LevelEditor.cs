@@ -35,19 +35,17 @@ namespace Necrofy
             DashOffset = 0,
             DashPattern = new float[] { 4f, 4f },
         };
-
-        private readonly PaintbrushTool paintbrushTool;
-        private readonly TileSuggestionTool tileSuggestionTool;
-        private readonly RectangleSelectTool rectangleSelectTool;
-        private readonly PencilSelectTool pencilSelectTool;
-        private readonly TileSelectTool tileSelectTool;
-        private readonly ResizeLevelTool resizeLevelTool;
-        private readonly SpriteTool spriteTool;
-
-        private readonly Dictionary<Tool, ToolStripMenuItem> toolMenuItems = new Dictionary<Tool, ToolStripMenuItem>();
-        private readonly Dictionary<Tool.ObjectType, ObjectBrowserContents> toolTypeToObjectContents;
-        private readonly Dictionary<Keys, Tool> toolShortcutKeys = new Dictionary<Keys, Tool>();
         
+        private readonly SpriteTool spriteTool;
+        
+        private readonly Dictionary<Tool.ObjectType, ObjectBrowserContents> toolTypeToObjectContents;
+
+        private readonly Dictionary<Keys, Tool> toolShortcutKeys = new Dictionary<Keys, Tool>();
+        private readonly Dictionary<ToolStripGrouper.ItemType, Tool> toolForItemType = new Dictionary<ToolStripGrouper.ItemType, Tool>();
+        private readonly Dictionary<Tool, ToolStripGrouper.ItemType> itemTypeForTool = new Dictionary<Tool, ToolStripGrouper.ItemType>();
+
+        public override ToolStripGrouper.ItemSet ToolStripItemSet => ToolStripGrouper.ItemSet.LevelEditor;
+
         private Tool currentTool;
         
         public LevelEditor(LoadedLevel level) {
@@ -78,23 +76,17 @@ namespace Necrofy
                 { Tool.ObjectType.Sprites, spriteObjectBrowserContents },
                 { Tool.ObjectType.Tiles, tilesetObjectBrowserContents },
             };
-
-            paintbrushTool = new PaintbrushTool(this);
-            tileSuggestionTool = new TileSuggestionTool(this);
-            rectangleSelectTool = new RectangleSelectTool(this);
-            pencilSelectTool = new PencilSelectTool(this);
-            tileSelectTool = new TileSelectTool(this);
-            resizeLevelTool = new ResizeLevelTool(this);
-            spriteTool = new SpriteTool(this);
-
-            SetupTool(paintbrushTool, Keys.P, toolsPaintbrush, paintbrushButton);
-            SetupTool(tileSuggestionTool, Keys.S, toolsTileSuggest, tileSuggestButton);
-            SetupTool(rectangleSelectTool, Keys.R, toolsRectangleSelect, rectangleSelectButton);
-            SetupTool(pencilSelectTool, Keys.C, toolsPencilSelect, pencilSelectButton);
-            SetupTool(tileSelectTool, Keys.T, toolsTileSelect, tileSelectButton);
-            SetupTool(resizeLevelTool, Keys.L, toolsResizeLevel, resizeLevelButton);
-            SetupTool(spriteTool, Keys.I, toolsSprites, spritesButton);
             
+            // TODO: Display shortcut keys on the menu
+            SetupTool(new PaintbrushTool(this), ToolStripGrouper.ItemType.PaintbrushTool, Keys.P);
+            SetupTool(new TileSuggestionTool(this), ToolStripGrouper.ItemType.TileSuggestTool, Keys.S);
+            SetupTool(new RectangleSelectTool(this), ToolStripGrouper.ItemType.RectangleSelectTool, Keys.R);
+            SetupTool(new PencilSelectTool(this), ToolStripGrouper.ItemType.PencilSelectTool, Keys.C);
+            SetupTool(new TileSelectTool(this), ToolStripGrouper.ItemType.TileSelectTool, Keys.T);
+            SetupTool(new ResizeLevelTool(this), ToolStripGrouper.ItemType.ResizeLevelTool, Keys.L);
+            spriteTool = new SpriteTool(this);
+            SetupTool(spriteTool, ToolStripGrouper.ItemType.SpriteTool, Keys.I);
+
             Repaint();
         }
         
@@ -103,11 +95,15 @@ namespace Necrofy
             tileSelectionPath?.Dispose();
         }
 
-        private void SetupTool(Tool tool, Keys shortcutKey, ToolStripMenuItem menuItem, ToolStripItem toolStripButton) {
-            toolMenuItems[tool] = menuItem;
-            toolShortcutKeys[shortcutKey] = tool;
-            ToolBarMenuLinker.Link(toolStripButton, menuItem);
-            menuItem.ShortcutKeyDisplayString = shortcutKey.ToString();
+        private void SetupTool(Tool tool, ToolStripGrouper.ItemType itemType, Keys shortcutKeys) {
+            toolShortcutKeys[shortcutKeys] = tool;
+            toolForItemType[itemType] = tool;
+            itemTypeForTool[tool] = itemType;
+        }
+
+        protected override UndoManager Setup() {
+            undoManager = new UndoManager<LevelEditor>(mainWindow.UndoButton, mainWindow.RedoButton, this);
+            return undoManager;
         }
 
         public void ScrollObjectBrowserToSelection() {
@@ -151,14 +147,18 @@ namespace Necrofy
             spriteTool.UpdateSelection();
         }
 
-        protected override UndoManager Setup() {
-            undoManager = new UndoManager<LevelEditor>(mainWindow.UndoButton, mainWindow.RedoButton, this);
-            ChangeTool(paintbrushTool);
-            return undoManager;
-        }
-
         public override void Displayed() {
             base.Displayed();
+            foreach (ToolStripGrouper.ItemType type in spriteCategoryForMenuItem.Keys) {
+                mainWindow.GetToolStripItem(type).Checked = spriteCategoryEnabled[spriteCategoryForMenuItem[type]];
+            }
+            foreach (ToolStripGrouper.ItemType type in toolForItemType.Keys) {
+                if (mainWindow.GetToolStripItem(type).Checked) {
+                    ChangeTool(toolForItemType[type]);
+                    return;
+                }
+            }
+            ChangeTool(spriteTool);
         }
 
         protected override void DoSave(Project project) {
@@ -213,10 +213,10 @@ namespace Necrofy
                 BrowserContents = toolTypeToObjectContents[tool.objectType];
                 PropertyBrowserObjects = tool.PropertyBrowserObjects;
                 
-                foreach (ToolStripMenuItem menuItem in toolMenuItems.Values) {
-                    menuItem.Checked = false;
+                foreach (ToolStripGrouper.ItemType type in toolForItemType.Keys) {
+                    mainWindow.GetToolStripItem(type).Checked = false;
                 }
-                toolMenuItems[tool].Checked = true;
+                mainWindow.GetToolStripItem(itemTypeForTool[tool]).Checked = true;
 
                 SetCursor(Cursors.Default);
                 RaiseSelectionChanged();
@@ -347,83 +347,58 @@ namespace Necrofy
             currentTool.KeyUp(e);
         }
 
-        private void paintbrush_Click(object sender, EventArgs e) {
-            ChangeTool(paintbrushTool);
+        public override void ToolStripItemClicked(ToolStripGrouper.ItemType item) {
+            if (toolForItemType.TryGetValue(item, out Tool tool)) {
+                ChangeTool(tool);
+            } else if (item == ToolStripGrouper.ItemType.SpritesAll) {
+                foreach (ToolStripGrouper.ItemType type in spriteCategoryForMenuItem.Keys) {
+                    mainWindow.GetToolStripItem(type).Checked = true;
+                }
+            }
         }
 
-        private void tileSuggest_Click(object sender, EventArgs e) {
-            ChangeTool(tileSuggestionTool);
+        private readonly Dictionary<ToolStripGrouper.ItemType, SpriteDisplay.Category> spriteCategoryForMenuItem =
+            new Dictionary<ToolStripGrouper.ItemType, SpriteDisplay.Category>() {
+                { ToolStripGrouper.ItemType.SpritesItems, SpriteDisplay.Category.Item },
+                { ToolStripGrouper.ItemType.SpritesVictims, SpriteDisplay.Category.Victim },
+                { ToolStripGrouper.ItemType.SpritesOneShotMonsters, SpriteDisplay.Category.OneShotMonster },
+                { ToolStripGrouper.ItemType.SpritesMonsters, SpriteDisplay.Category.Monster },
+                { ToolStripGrouper.ItemType.SpritesBossMonsters, SpriteDisplay.Category.LevelMonster },
+                { ToolStripGrouper.ItemType.SpritesPlayers, SpriteDisplay.Category.Player }
+            };
+
+        private readonly Dictionary<SpriteDisplay.Category, bool> spriteCategoryEnabled =
+            new Dictionary<SpriteDisplay.Category, bool>() {
+                { SpriteDisplay.Category.Item, true },
+                { SpriteDisplay.Category.Victim, true },
+                { SpriteDisplay.Category.OneShotMonster, true },
+                { SpriteDisplay.Category.Monster, true },
+                { SpriteDisplay.Category.LevelMonster, true },
+                { SpriteDisplay.Category.Player, true }
+            };
+
+        public override void ToolStripItemCheckedChanged(ToolStripGrouper.ItemType item) {
+            if (spriteCategoryForMenuItem.TryGetValue(item, out SpriteDisplay.Category category)) {
+                UpdateSpriteCategory(category, mainWindow.GetToolStripItem(item).Checked);
+            }
         }
 
-        private void rectangleSelect_Click(object sender, EventArgs e) {
-            ChangeTool(rectangleSelectTool);
-        }
-
-        private void pencilSelect_Click(object sender, EventArgs e) {
-            ChangeTool(pencilSelectTool);
-        }
-
-        private void tileSelect_Click(object sender, EventArgs e) {
-            ChangeTool(tileSelectTool);
-        }
-
-        private void resizeLevel_Click(object sender, EventArgs e) {
-            ChangeTool(resizeLevelTool);
-        }
-
-        private void sprites_Click(object sender, EventArgs e) {
-            ChangeTool(spriteTool);
-        }
-
-        public bool ItemsEnabled => spritesItems.Checked;
-        public bool VictimsEnabled => spritesVictims.Checked;
-        public bool OneShotMonstersEnabled => spritesOneShotMonsters.Checked;
-        public bool MonstersEnabled => spritesMonsters.Checked;
-        public bool BossMonstersEnabled => spritesBossMonsters.Checked;
-        public bool PlayersEnabled => spritesPlayers.Checked;
+        public bool ItemsEnabled => spriteCategoryEnabled[SpriteDisplay.Category.Item];
+        public bool VictimsEnabled => spriteCategoryEnabled[SpriteDisplay.Category.Victim];
+        public bool OneShotMonstersEnabled => spriteCategoryEnabled[SpriteDisplay.Category.OneShotMonster];
+        public bool MonstersEnabled => spriteCategoryEnabled[SpriteDisplay.Category.Monster];
+        public bool BossMonstersEnabled => spriteCategoryEnabled[SpriteDisplay.Category.LevelMonster];
+        public bool PlayersEnabled => spriteCategoryEnabled[SpriteDisplay.Category.Player];
 
         private void UpdateSpriteCategory(SpriteDisplay.Category category, bool enabled) {
-            if (enabled) {
+            spriteCategoryEnabled[category] = enabled;
+            if (enabled && category != SpriteDisplay.Category.Player) {
                 spriteObjectBrowserContents.AddCategory(category);
             } else {
                 spriteObjectBrowserContents.RemoveCategory(category);
             }
             ChangeTool(spriteTool);
             UpdateSpriteSelection();
-        }
-
-        private void spritesItems_CheckedChanged(object sender, EventArgs e) {
-            UpdateSpriteCategory(SpriteDisplay.Category.Item, spritesItems.Checked);
-        }
-
-        private void spritesVictims_CheckedChanged(object sender, EventArgs e) {
-            UpdateSpriteCategory(SpriteDisplay.Category.Victim, spritesVictims.Checked);
-        }
-
-        private void spritesOneShotMonsters_CheckedChanged(object sender, EventArgs e) {
-            UpdateSpriteCategory(SpriteDisplay.Category.OneShotMonster, spritesOneShotMonsters.Checked);
-        }
-
-        private void spritesMonsters_CheckedChanged(object sender, EventArgs e) {
-            UpdateSpriteCategory(SpriteDisplay.Category.Monster, spritesMonsters.Checked);
-        }
-
-        private void spritesBossMonsters_CheckedChanged(object sender, EventArgs e) {
-            UpdateSpriteCategory(SpriteDisplay.Category.LevelMonster, spritesBossMonsters.Checked);
-        }
-
-        private void spritesPlayers_CheckedChanged(object sender, EventArgs e) {
-            // Players should never be displayed in the object picker, so always use false
-            UpdateSpriteCategory(SpriteDisplay.Category.Player, false);
-        }
-
-        private void spritesAll_Click(object sender, EventArgs e) {
-            spritesItems.Checked = true;
-            spritesVictims.Checked = true;
-            spritesOneShotMonsters.Checked = true;
-            spritesMonsters.Checked = true;
-            spritesBossMonsters.Checked = true;
-            spritesPlayers.Checked = true;
         }
     }
 }

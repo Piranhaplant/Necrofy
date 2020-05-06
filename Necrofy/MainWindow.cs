@@ -28,8 +28,6 @@ namespace Necrofy
         private readonly HashSet<EditorWindow> openEditors = new HashSet<EditorWindow>();
         private readonly HashSet<EditorWindow> dirtyEditors = new HashSet<EditorWindow>();
         private EditorWindow activeEditor = null;
-        private readonly List<ToolStripItem> editorToolStripItems = new List<ToolStripItem>();
-        private readonly List<ToolStripItem> editorMenuStripItems = new List<ToolStripItem>();
         
         public MainWindow() {
             InitializeComponent();
@@ -72,7 +70,16 @@ namespace Necrofy
             ToolBarMenuLinker.Link(buildProjectButton, buildBuildProject);
             ToolBarMenuLinker.Link(runProjectButton, buildRunProject);
             ToolBarMenuLinker.Link(runFromLevelButton, buildRunFromLevel);
+
+            ToolBarMenuLinker.Link(paintbrushButton, toolsPaintbrush);
+            ToolBarMenuLinker.Link(tileSuggestButton, toolsTileSuggest);
+            ToolBarMenuLinker.Link(rectangleSelectButton, toolsRectangleSelect);
+            ToolBarMenuLinker.Link(pencilSelectButton, toolsPencilSelect);
+            ToolBarMenuLinker.Link(tileSelectButton, toolsTileSelect);
+            ToolBarMenuLinker.Link(resizeLevelButton, toolsResizeLevel);
+            ToolBarMenuLinker.Link(spritesButton, toolsSprites);
             projectMenuItems = new List<ToolStripMenuItem>() { buildBuildProject, buildRunProject };
+            HideAllEditorToolStripItems();
         }
 
         private void MainWindow_FormClosed(object sender, FormClosedEventArgs e) {
@@ -95,6 +102,12 @@ namespace Necrofy
             dockPanel.DockTopPortion = 200;
         }
 
+        private void HideAllEditorToolStripItems() {
+            foreach (ToolStripItem item in toolStripGrouper.GetAllSetItems()) {
+                item.Visible = false;
+            }
+        }
+        
         private void LoadRunSettings() {
             if (string.IsNullOrEmpty(Properties.Settings.Default.SavedRunSettings)) {
                 SetDefaultRunSettings();
@@ -227,42 +240,17 @@ namespace Necrofy
             EditorWindow editor = dockPanel.ActiveDocument as EditorWindow;
 
             if (activeEditor != null) {
-                if (activeEditor.EditorMenuStrip != null) {
-                    foreach (ToolStripItem item in editorMenuStripItems) {
-                        // Item is automatically removed from the existing tools strip when it is added to a different one
-                        activeEditor.EditorMenuStrip.Items.Add(item);
-                    }
-                }
-                if (activeEditor.EditorToolStrip != null) {
-                    foreach (ToolStripItem item in editorToolStripItems) {
-                        activeEditor.EditorToolStrip.Items.Add(item);
-                    }
-                }
+                HideAllEditorToolStripItems();
             }
-            editorMenuStripItems.Clear();
-            editorToolStripItems.Clear();
 
             activeEditor = editor;
             if (editor != null) {
-                if (editor.EditorMenuStrip != null) {
-                    while (editor.EditorMenuStrip.Items.Count > 0) {
-                        ToolStripItem item = editor.EditorMenuStrip.Items[0];
-                        menuStrip1.Items.Add(item);
-                        editorMenuStripItems.Add(item);
-                    }
+                foreach (ToolStripItem item in toolStripGrouper.GetItemsInSet(editor.ToolStripItemSet)) {
+                    item.Visible = true;
                 }
-                if (editor.EditorToolStrip != null) {
-                    while (editor.EditorToolStrip.Items.Count > 0) {
-                        ToolStripItem item = editor.EditorToolStrip.Items[0];
-                        toolStrip1.Items.Add(item);
-                        editorToolStripItems.Add(item);
-                    }
-                }
-
                 editor.Displayed();
             }
             UpdateWindowText();
-            endToolStripSeparator.Visible = editorToolStripItems.Count > 0;
             Editor_DirtyChanged(editor, e);
             Editor_SelectionChanged(editor, e);
             ObjectBrowser.Browser.Contents = activeEditor?.BrowserContents;
@@ -355,8 +343,7 @@ namespace Necrofy
 
         private void SaveAll(object sender, EventArgs e) {
             // Calling save on the editors will modify this set, so operate on a copy
-            HashSet<EditorWindow> allDirtyEditors = new HashSet<EditorWindow>(dirtyEditors);
-            foreach (EditorWindow editor in allDirtyEditors) {
+            foreach (EditorWindow editor in new HashSet<EditorWindow>(dirtyEditors)) {
                 editor.Save();
             }
         }
@@ -487,6 +474,18 @@ namespace Necrofy
 
         private void windowRestore_Click(object sender, EventArgs e) {
             UseDefaultDockLayout();
+        }
+
+        private void toolStripGrouper_ItemClick(object sender, ToolStripGrouper.ItemEventArgs e) {
+            activeEditor?.ToolStripItemClicked(e.Type);
+        }
+
+        private void toolStripGrouper_ItemCheckedChanged(object sender, ToolStripGrouper.ItemEventArgs e) {
+            activeEditor?.ToolStripItemCheckedChanged(e.Type);
+        }
+
+        public ToolStripGrouper.ItemProxy GetToolStripItem(ToolStripGrouper.ItemType type) {
+            return toolStripGrouper.GetItem(type);
         }
     }
 }

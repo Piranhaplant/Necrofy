@@ -9,6 +9,7 @@ namespace Necrofy
     /// <summary>Provides information for displaying a particular type of object in an <see cref="ObjectBrowser"/></summary>
     public abstract class ObjectBrowserContents
     {
+        // TODO: Store the browser scroll position here
         /// <summary>Enumerates all objects to be displayed</summary>
         public abstract IEnumerable<ObjectBrowserObject> Objects { get; }
         /// <summary>Paints the object at the given index</summary>
