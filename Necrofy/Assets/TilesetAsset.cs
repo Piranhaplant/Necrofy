@@ -9,13 +9,13 @@ namespace Necrofy
     abstract class TilesetAsset : Asset
     {
         private const string Folder = "Tilesets";
-        private const string NameSeparator = "/";
+        public const string NameSeparator = "/";
 
         protected const string Castle = "Castle";
         protected const string Grass = "Grass";
-        protected const string Desert = "Desert";
-        protected const string Office = "Office";
-        protected const string Mall = "Mall";
+        protected const string Sand = "Sand";
+        protected const string Office = "Office+Cave";
+        protected const string Mall = "Mall+Factory";
 
         protected abstract class TilesetNameInfo : NameInfo
         {

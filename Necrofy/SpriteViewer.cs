@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace Necrofy
 {
-    public partial class SpriteViewer : Form
+    partial class SpriteViewer : Form
     {
         private PaletteAsset paletteAsset;
         private GraphicsAsset graphicsAsset;

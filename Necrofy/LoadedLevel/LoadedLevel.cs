@@ -10,12 +10,8 @@ namespace Necrofy
     class LoadedLevel : IDisposable
     {
         public readonly LevelAsset levelAsset;
-        public readonly LoadedTilesetTilemap tilemap;
-        public readonly LoadedTilesetCollision collision;
-        public readonly LoadedTilesetGraphics graphics;
-        public readonly LoadedTilesetPalette palette;
-        public readonly LoadedSpriteGraphics spriteGraphics;
-        public readonly TilesetSuggestionsAsset tilesetSuggestionsAsset;
+        public LoadedSpriteGraphics spriteGraphics;
+        public TilesetSuggestionsAsset tilesetSuggestionsAsset;
 
         public Bitmap[] tiles;
         public Bitmap[] priorityTiles;
@@ -23,13 +19,9 @@ namespace Necrofy
 
         public LoadedLevel(Project project, int levelNum) {
             levelAsset = LevelAsset.FromProject(project, levelNum);
-            tilemap = new LoadedTilesetTilemap(project, Level.tilesetTilemapName);
-            collision = new LoadedTilesetCollision(project, Level.tilesetCollisionName);
-            graphics = new LoadedTilesetGraphics(project, Level.tilesetGraphicsName);
-            palette = new LoadedTilesetPalette(project, Level.paletteName);
-            spriteGraphics = new LoadedSpriteGraphics(project, Level.spritePaletteName);
-            tilesetSuggestionsAsset = TilesetSuggestionsAsset.FromProject(project, Level.tilesetTilemapName);
-            RenderTiles();
+            LoadSprites(project);
+            LoadTilesetSuggestions(project);
+            LoadTiles(project);
         }
         
         public void Dispose() {
@@ -39,22 +31,36 @@ namespace Necrofy
             spriteGraphics.Dispose();
         }
 
-        public void RenderTiles() {
+        public void LoadSprites(Project project) {
+            spriteGraphics = new LoadedSpriteGraphics(project, Level.spritePaletteName);
+        }
+
+        public void LoadTilesetSuggestions(Project project) {
+            // TODO Error handling on tileset suggestings not being found
+            tilesetSuggestionsAsset = TilesetSuggestionsAsset.FromProject(project, Level.tilesetTilemapName);
+        }
+
+        public void LoadTiles(Project project) {
+            LoadedTilesetTilemap tilemap = new LoadedTilesetTilemap(project, Level.tilesetTilemapName);
+            LoadedTilesetCollision collision = new LoadedTilesetCollision(project, Level.tilesetCollisionName);
+            LoadedTilesetGraphics graphics = new LoadedTilesetGraphics(project, Level.tilesetGraphicsName);
+            LoadedTilesetPalette palette = new LoadedTilesetPalette(project, Level.paletteName);
+
             tiles = new Bitmap[tilemap.tiles.Length];
             priorityTiles = new Bitmap[tilemap.tiles.Length];
             solidOnlyTiles = new Bitmap[tilemap.tiles.Length];
 
             for (int i = 0; i < tiles.Length; i++) {
-                BitmapData curTile = CreateTile(tiles, i);
-                BitmapData curPriorityTile = CreateTile(priorityTiles, i, transparent: true);
-                BitmapData curSolidOnlyTile = CreateTile(solidOnlyTiles, i);
+                BitmapData curTile = CreateTile(tiles, i, palette);
+                BitmapData curPriorityTile = CreateTile(priorityTiles, i, palette, transparent: true);
+                BitmapData curSolidOnlyTile = CreateTile(solidOnlyTiles, i, palette);
 
                 for (int y = 0; y < 8; y++) {
                     for (int x = 0; x < 8; x++) {
                         int tileNum = tilemap.tiles[i][x, y].tileNum;
-                        if (tileNum <= Level.hiddenTilesStart) {
+                        if (tileNum <= Level.visibleTilesEnd) {
                             SNESGraphics.DrawTile(curTile, x * 8, y * 8, tilemap.tiles[i][x, y], graphics.linearGraphics);
-                            if (tileNum < Level.tilePriorityEnd) {
+                            if (tileNum < Level.priorityTileCount) {
                                 SNESGraphics.DrawTile(curPriorityTile, x * 8, y * 8, tilemap.tiles[i][x, y], graphics.linearGraphics);
                             }
                             if ((collision.tiles[tileNum] & 1) > 0 && (collision.tiles[tileNum] & 0x100) == 0) {
@@ -70,7 +76,7 @@ namespace Necrofy
             }
         }
 
-        private BitmapData CreateTile(Bitmap[] allTiles, int i, bool transparent = false) {
+        private BitmapData CreateTile(Bitmap[] allTiles, int i, LoadedTilesetPalette palette, bool transparent = false) {
             Bitmap tile = new Bitmap(64, 64, PixelFormat.Format8bppIndexed);
             allTiles[i] = tile;
             SNESGraphics.FillPalette(tile, palette.colors);

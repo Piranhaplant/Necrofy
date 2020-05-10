@@ -9,7 +9,7 @@ namespace Necrofy
 {
     class TilesetGraphicsAsset : TilesetAsset
     {
-        private const AssetCategory AssetCat = AssetCategory.Graphics;
+        private const AssetCategory AssetCat = AssetCategory.TilesetGraphics;
 
         public static void RegisterLoader() {
             AddCreator(new TilesetGraphicsCreator());
@@ -62,7 +62,7 @@ namespace Necrofy
                 return new List<DefaultParams>() {
                     new DefaultParams(0xc8000, new TilesetGraphicsNameInfo(Castle)),
                     new DefaultParams(0xc0000, new TilesetGraphicsNameInfo(Grass)),
-                    new DefaultParams(0xc4000, new TilesetGraphicsNameInfo(Desert)),
+                    new DefaultParams(0xc4000, new TilesetGraphicsNameInfo(Sand)),
                     new DefaultParams(0xd0000, new TilesetGraphicsNameInfo(Office)),
                     new DefaultParams(0xcc000, new TilesetGraphicsNameInfo(Mall))
                 };

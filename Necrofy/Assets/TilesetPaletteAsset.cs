@@ -9,7 +9,7 @@ namespace Necrofy
 {
     class TilesetPaletteAsset : TilesetAsset
     {
-        private const AssetCategory AssetCat = AssetCategory.Palette;
+        private const AssetCategory AssetCat = AssetCategory.TilesetPalette;
 
         public static void RegisterLoader() {
             AddCreator(new TilesetPaletteCreator());
@@ -65,24 +65,24 @@ namespace Necrofy
                     new DefaultParams(0xf1176, new TilesetPaletteNameInfo(Grass, "Winter")),
                     new DefaultParams(0xf1276, new TilesetPaletteNameInfo(Grass, "Night")),
 
-                    new DefaultParams(0xf1476, new TilesetPaletteNameInfo(Desert, "Pyramid")),
-                    new DefaultParams(0xf1576, new TilesetPaletteNameInfo(Desert, "Beach")),
-                    new DefaultParams(0xf1676, new TilesetPaletteNameInfo(Desert, "DarkBeach")),
-                    new DefaultParams(0xf1776, new TilesetPaletteNameInfo(Desert, "Cave")),
+                    new DefaultParams(0xf1476, new TilesetPaletteNameInfo(Sand, "Pyramid")),
+                    new DefaultParams(0xf1576, new TilesetPaletteNameInfo(Sand, "Beach")),
+                    new DefaultParams(0xf1676, new TilesetPaletteNameInfo(Sand, "Dark Beach")),
+                    new DefaultParams(0xf1776, new TilesetPaletteNameInfo(Sand, "Mines")),
 
                     new DefaultParams(0xf1876, new TilesetPaletteNameInfo(Castle, "Normal")),
                     new DefaultParams(0xf1976, new TilesetPaletteNameInfo(Castle, "Night")),
                     new DefaultParams(0xf1a76, new TilesetPaletteNameInfo(Castle, "Bright")),
                     new DefaultParams(0xf1b76, new TilesetPaletteNameInfo(Castle, "Dark")),
 
-                    new DefaultParams(0xf1c76, new TilesetPaletteNameInfo(Mall, "Normal")),
-                    new DefaultParams(0xf1d76, new TilesetPaletteNameInfo(Mall, "Alternate")),
+                    new DefaultParams(0xf1c76, new TilesetPaletteNameInfo(Mall, "Mall")),
+                    new DefaultParams(0xf1d76, new TilesetPaletteNameInfo(Mall, "Factory")),
 
                     new DefaultParams(0xf1e76, new TilesetPaletteNameInfo(Office, "Normal")),
-                    new DefaultParams(0xf1f76, new TilesetPaletteNameInfo(Office, "DarkFireCave")),
+                    new DefaultParams(0xf1f76, new TilesetPaletteNameInfo(Office, "Dark Fire Cave")),
                     new DefaultParams(0xf2076, new TilesetPaletteNameInfo(Office, "Light")),
                     new DefaultParams(0xf2176, new TilesetPaletteNameInfo(Office, "Dark")),
-                    new DefaultParams(0xf2276, new TilesetPaletteNameInfo(Office, "FireCave")),
+                    new DefaultParams(0xf2276, new TilesetPaletteNameInfo(Office, "Fire Cave")),
                 };
             }
 

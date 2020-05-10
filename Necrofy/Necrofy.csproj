@@ -118,6 +118,7 @@
     </Compile>
     <Compile Include="Extensions.cs" />
     <Compile Include="LevelEditor\LevelMouseEventArgs.cs" />
+    <Compile Include="LevelEditor\LevelSettingsPresets.cs" />
     <Compile Include="LevelEditor\PaintbrushTool.cs" />
     <Compile Include="LevelEditor\PencilSelectTool.cs" />
     <Compile Include="LevelEditor\RectangleSelectTool.cs" />
@@ -128,6 +129,12 @@
     <Compile Include="LevelEditor\TileSuggestionTool.cs" />
     <Compile Include="LevelEditor\TileTool.cs" />
     <Compile Include="LevelEditor\Tool.cs" />
+    <Compile Include="LevelEditor\LevelSettingsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LevelEditor\LevelSettingsDialog.Designer.cs">
+      <DependentUpon>LevelSettingsDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedItem.cs" />
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedLevelObject.cs" />
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedMonster.cs" />
@@ -260,6 +267,9 @@
     <EmbeddedResource Include="Canvas.resx">
       <DependentUpon>Canvas.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="LevelEditor\LevelSettingsDialog.resx">
+      <DependentUpon>LevelSettingsDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="NewProjectDialog.resx">
       <DependentUpon>NewProjectDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -293,22 +303,25 @@
       <DependentUpon>SpriteViewer.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="ProjectFiles\Editor\LevelSettingsPresets.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="ProjectFiles\Editor\SpriteDisplay.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="ProjectFiles\Tilesets\Castle\suggestions.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="ProjectFiles\Tilesets\Desert\suggestions.json">
+    <None Include="ProjectFiles\Tilesets\Sand\suggestions.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="ProjectFiles\Tilesets\Grass\suggestions.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="ProjectFiles\Tilesets\Mall\suggestions.json">
+    <None Include="ProjectFiles\Tilesets\Mall+Factory\suggestions.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="ProjectFiles\Tilesets\Office\suggestions.json">
+    <None Include="ProjectFiles\Tilesets\Office+Cave\suggestions.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Properties\Settings.settings">

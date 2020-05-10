@@ -22,10 +22,13 @@ namespace Necrofy
             { AssetCategory.Collision, Resources.block },
             { AssetCategory.Editor, Resources.gear },
             { AssetCategory.Graphics, Resources.image },
+            { AssetCategory.TilesetGraphics, Resources.image },
             { AssetCategory.Level, Resources.map },
             { AssetCategory.Palette, Resources.color },
+            { AssetCategory.TilesetPalette, Resources.color },
             { AssetCategory.Sprites, Resources.layout_4 },
             { AssetCategory.Tilemap, Resources.layout_4 },
+            { AssetCategory.TilesetTilemap, Resources.layout_4 },
         };
         private readonly Dictionary<AssetCategory, int> displayImageIndexes = new Dictionary<AssetCategory, int>();
         private readonly Dictionary<AssetCategory, Icon> displayIcons = new Dictionary<AssetCategory, Icon>();
@@ -45,7 +48,7 @@ namespace Necrofy
             this.project = project;
             tree.Nodes.Clear();
             if (project != null) {
-                PopulateTree(tree.Nodes, project.path);
+                PopulateTree(tree.Nodes, project.AssetTree);
                 if (project.settings.FolderStates != null) {
                     LoadFolderStates(tree.Nodes, project.settings.FolderStates);
                 } else {
@@ -57,31 +60,21 @@ namespace Necrofy
             }
         }
 
-        private void PopulateTree(TreeNodeCollection parent, string path) {
-            string[] dirs = Directory.GetDirectories(path);
-            Array.Sort(dirs, NumericStringComparer.instance);
-            foreach (string dir in dirs) {
-                TreeNode child = parent.Add(Path.GetFileName(dir));
+        private void PopulateTree(TreeNodeCollection parent, Project.Folder folder) {
+            foreach (Project.Folder subFolder in folder.Folders) {
+                TreeNode child = parent.Add(subFolder.Name);
                 child.Name = child.Text;
                 child.ImageIndex = FolderImageIndex;
                 child.SelectedImageIndex = FolderImageIndex;
 
-                PopulateTree(child.Nodes, dir);
-                if (child.Nodes.Count == 0) {
-                    child.Remove();
-                }
+                PopulateTree(child.Nodes, subFolder);
             }
-
-            string[] files = Directory.GetFiles(path);
-            Array.Sort(files, NumericStringComparer.instance);
-            foreach (string file in files) {
-                Asset.NameInfo info = Asset.GetInfo(project, project.GetRelativePath(file));
-                if (info != null) {
-                    TreeNode child = parent.Add(info.DisplayName);
-                    child.Name = child.Text;
-                    SetImage(child, info.Category);
-                    child.Tag = info;
-                }
+            
+            foreach (Asset.NameInfo info in folder.Assets) {
+                TreeNode child = parent.Add(info.DisplayName);
+                child.Name = child.Text;
+                SetImage(child, info.Category);
+                child.Tag = info;
             }
         }
 

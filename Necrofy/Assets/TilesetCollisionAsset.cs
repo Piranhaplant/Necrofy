@@ -62,7 +62,7 @@ namespace Necrofy
                 return new List<DefaultParams>() {
                     new DefaultParams(0xe6aab, new TilesetCollisionNameInfo(Castle)),
                     new DefaultParams(0xdf4d1, new TilesetCollisionNameInfo(Grass)),
-                    new DefaultParams(0xdf8d1, new TilesetCollisionNameInfo(Desert)),
+                    new DefaultParams(0xdf8d1, new TilesetCollisionNameInfo(Sand)),
                     new DefaultParams(0xe72ab, new TilesetCollisionNameInfo(Office)),
                     new DefaultParams(0xe6eab, new TilesetCollisionNameInfo(Mall))
                 };

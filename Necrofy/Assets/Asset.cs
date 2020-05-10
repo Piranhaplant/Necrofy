@@ -20,6 +20,9 @@ namespace Necrofy
         Graphics,
         Palette,
         Tilemap,
+        TilesetGraphics,
+        TilesetPalette,
+        TilesetTilemap,
         Level,
     }
     

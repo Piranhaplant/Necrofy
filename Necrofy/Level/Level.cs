@@ -31,9 +31,9 @@ namespace Necrofy
         /// <summary>The number corresponding to which extra sounds are loaded in the level</summary>
         public ushort sounds { get; set; }
         /// <summary>Tiles numbered strictly less than this value will be displayed on top of sprites</summary>
-        public ushort tilePriorityEnd { get; set; }
+        public ushort priorityTileCount { get; set; }
         /// <summary>Tiles numbered strictly greater than this value will not be displayed</summary>
-        public ushort hiddenTilesStart { get; set; }
+        public ushort visibleTilesEnd { get; set; }
         public ushort p1startX { get; set; }
         public ushort p1startY { get; set; }
         public ushort p2startX { get; set; }
@@ -81,8 +81,8 @@ namespace Necrofy
 
             int width = s.ReadInt16();
             int height = s.ReadInt16();
-            tilePriorityEnd = s.ReadInt16();
-            hiddenTilesStart = s.ReadInt16();
+            priorityTileCount = s.ReadInt16();
+            visibleTilesEnd = s.ReadInt16();
             p1startX = s.ReadInt16();
             p1startY = s.ReadInt16();
             p2startX = s.ReadInt16();
@@ -180,8 +180,8 @@ namespace Necrofy
 
             data.data.AddInt16((ushort)width);
             data.data.AddInt16((ushort)height);
-            data.data.AddInt16(tilePriorityEnd);
-            data.data.AddInt16(hiddenTilesStart);
+            data.data.AddInt16(priorityTileCount);
+            data.data.AddInt16(visibleTilesEnd);
             data.data.AddInt16(p1startX);
             data.data.AddInt16(p1startY);
             data.data.AddInt16(p2startX);

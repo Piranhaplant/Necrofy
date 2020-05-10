@@ -10,19 +10,14 @@ namespace Necrofy
 {
     class LoadedSpriteGraphics : IDisposable
     {
-        public readonly PaletteAsset paletteAsset;
-        public readonly GraphicsAsset graphicsAsset;
-        public readonly SpritesAsset spritesAsset;
-        public readonly EditorAsset<SpriteDisplayList> spriteDisplayAsset;
-
         public readonly Dictionary<SpriteDisplay.Key.Type, Dictionary<int, LoadedSprite>> sprites;
         public readonly Dictionary<SpriteDisplay.Category, List<LoadedSprite>> spritesByCategory;
 
         public LoadedSpriteGraphics(Project project, string spritePaletteName) {
-            paletteAsset = PaletteAsset.FromProject(project, spritePaletteName);
-            graphicsAsset = GraphicsAsset.FromProject(project, GraphicsAsset.SpritesName);
-            spritesAsset = SpritesAsset.FromProject(project);
-            spriteDisplayAsset = EditorAsset<SpriteDisplayList>.FromProject(project, "SpriteDisplay");
+            PaletteAsset paletteAsset = PaletteAsset.FromProject(project, spritePaletteName);
+            GraphicsAsset graphicsAsset = GraphicsAsset.FromProject(project, GraphicsAsset.SpritesName);
+            SpritesAsset spritesAsset = SpritesAsset.FromProject(project);
+            EditorAsset<SpriteDisplayList> spriteDisplayAsset = EditorAsset<SpriteDisplayList>.FromProject(project, "SpriteDisplay");
 
             Color[] colors = SNESGraphics.SNESToRGB(paletteAsset.data, transparent: true);
 

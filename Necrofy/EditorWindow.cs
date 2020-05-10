@@ -51,8 +51,8 @@ namespace Necrofy
         public event EventHandler DirtyChanged;
         public event EventHandler SelectionChanged;
         
-        protected MainWindow mainWindow;
-        private Project project;
+        protected MainWindow mainWindow { get; private set; }
+        protected Project project { get; private set; }
         private UndoManager undoManager;
         private bool prevDirty = false;
 

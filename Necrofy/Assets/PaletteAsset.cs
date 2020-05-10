@@ -8,6 +8,8 @@ namespace Necrofy
 {
     class PaletteAsset : Asset
     {
+        public const string SpritePaletteName = "Sprites";
+
         private const AssetCategory AssetCat = AssetCategory.Palette;
 
         public static void RegisterLoader() {
@@ -63,8 +65,8 @@ namespace Necrofy
 
             public override List<DefaultParams> GetDefaults() {
                 return new List<DefaultParams>() {
-                    new DefaultParams(0xf0f76, new PaletteNameInfo("Sprites", 0xf0f76)),
-                    new DefaultParams(0xf0e96, new PaletteNameInfo("Copyright", 0xf0e96), 0x20)
+                    new DefaultParams(0xf0f76, new PaletteNameInfo(SpritePaletteName, 0xf0f76)),
+                    new DefaultParams(0xf0e96, new PaletteNameInfo("Copyright", 0xf0e76))
                 };
             }
 

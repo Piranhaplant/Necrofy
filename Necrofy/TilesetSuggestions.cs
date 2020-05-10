@@ -8,10 +8,13 @@ namespace Necrofy
 {
     class TilesetSuggestions
     {
+        public ushort PriorityTileCount { get; private set; }
         private readonly Dictionary<Direction, List<Category>> directions = new Dictionary<Direction, List<Category>>();
 
         public TilesetSuggestions(string json) {
             JsonData data = JsonConvert.DeserializeObject<JsonData>(json);
+            PriorityTileCount = data.priorityTileCount;
+
             Dictionary<string, Category> nameToCategory = new Dictionary<string, Category>();
 
             ReadDirection(data.left, Direction.Left, nameToCategory);
@@ -76,6 +79,7 @@ namespace Necrofy
 
         private class JsonData
         {
+            public ushort priorityTileCount;
             public List<Category> left;
             public List<Category> top;
             public List<Category> right;

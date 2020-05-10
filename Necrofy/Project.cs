@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace Necrofy
 {
     /// <summary>Manages aspects of a ROM hack project including creation, modification, and building.</summary>
-    public class Project
+    class Project
     {
         public const string baseROMFilename = "base.sfc";
         public const string buildFilename = "build.sfc";
@@ -21,6 +21,9 @@ namespace Necrofy
         public readonly string settingsFilename;
         public string SettingsPath => Path.Combine(path, settingsFilename);
         public readonly ProjectSettings settings;
+
+        public Folder AssetTree { get; private set; }
+        private readonly List<Asset.NameInfo> allAssets = new List<Asset.NameInfo>();
 
         /// <summary>Creates a new project from the given base ROM.</summary>
         /// <param name="baseROM">The path to a ROM that the files in the project will be extracted from.</param>
@@ -47,6 +50,7 @@ namespace Necrofy
             settingsFilename = "project.nfyp";
             settings = new ProjectSettings();
             WriteSettings();
+            ReadAssets();
         }
 
         /// <summary>Loads an existing project from the given settings file.</summary>
@@ -55,6 +59,7 @@ namespace Necrofy
             path = FixPath(Path.GetDirectoryName(settingsFile));
             settingsFilename = Path.GetFileName(settingsFile);
             settings = JsonConvert.DeserializeObject<ProjectSettings>(File.ReadAllText(settingsFile));
+            ReadAssets();
         }
 
         private static string FixPath(string path) {
@@ -64,6 +69,39 @@ namespace Necrofy
             return path;
         }
 
+        private void ReadAssets() {
+            AssetTree = ReadAssets(path) ?? new Folder("", Enumerable.Empty<Folder>(), Enumerable.Empty<Asset.NameInfo>());
+        }
+
+        private Folder ReadAssets(string folder) {
+            List<Folder> subFolders = new List<Folder>();
+            List<Asset.NameInfo> assets = new List<Asset.NameInfo>();
+
+            string[] dirs = Directory.GetDirectories(folder);
+            Array.Sort(dirs, NumericStringComparer.instance);
+            foreach (string dir in dirs) {
+                Folder subFolder = ReadAssets(dir);
+                if (subFolder != null) {
+                    subFolders.Add(subFolder);
+                }
+            }
+
+            string[] files = Directory.GetFiles(folder);
+            Array.Sort(files, NumericStringComparer.instance);
+            foreach (string file in files) {
+                Asset.NameInfo info = Asset.GetInfo(this, GetRelativePath(file));
+                if (info != null) {
+                    assets.Add(info);
+                    allAssets.Add(info);
+                }
+            }
+
+            if (subFolders.Count > 0 || assets.Count > 0) {
+                return new Folder(Path.GetFileName(folder), subFolders, assets);
+            }
+            return null;
+        }
+
         public void WriteSettings() {
             File.WriteAllText(SettingsPath, JsonConvert.SerializeObject(settings));
         }
@@ -71,6 +109,10 @@ namespace Necrofy
         public string GetRelativePath(string filename) {
             Debug.Assert(filename.StartsWith(path));
             return filename.Substring(path.Length);
+        }
+
+        public IEnumerable<Asset.NameInfo> GetAssetsInCategory(AssetCategory category) {
+            return allAssets.Where(a => a.Category == category);
         }
 
         /// <summary>Builds the project</summary>
@@ -177,6 +219,19 @@ namespace Necrofy
             };
             Process p = Process.Start(processInfo);
             p.WaitForExit();
+        }
+
+        public class Folder
+        {
+            public string Name { get; private set; }
+            public IEnumerable<Folder> Folders { get; private set; }
+            public IEnumerable<Asset.NameInfo> Assets { get; private set; }
+
+            public Folder(string name, IEnumerable<Folder> folders, IEnumerable<Asset.NameInfo> assets) {
+                Name = name;
+                Folders = folders;
+                Assets = assets;
+            }
         }
     }
 }

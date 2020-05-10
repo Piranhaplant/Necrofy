@@ -188,6 +188,7 @@ namespace Necrofy
         public enum ItemType
         {
             None,
+            LevelSettings,
             PaintbrushTool,
             TileSuggestTool,
             RectangleSelectTool,

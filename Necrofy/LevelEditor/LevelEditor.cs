@@ -354,6 +354,8 @@ namespace Necrofy
                 foreach (ToolStripGrouper.ItemType type in spriteCategoryForMenuItem.Keys) {
                     mainWindow.GetToolStripItem(type).Checked = true;
                 }
+            } else if (item == ToolStripGrouper.ItemType.LevelSettings) {
+                new LevelSettingsDialog(project, this).ShowDialog();
             }
         }
 
