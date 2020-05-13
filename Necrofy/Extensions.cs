@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -26,6 +27,11 @@ namespace Necrofy
 
         public static int GetMaximumValue(this ScrollBar scrollBar) {
             return scrollBar.Maximum - scrollBar.LargeChange + 1;
+        }
+
+        public static T JsonClone<T>(this T obj, params JsonConverter[] converters) {
+            string json = JsonConvert.SerializeObject(obj);
+            return JsonConvert.DeserializeObject<T>(json, converters);
         }
     }
 }

@@ -16,7 +16,9 @@ namespace Necrofy
         public string displayName { get; set; }
         /// <summary>The background tiles making up the level</summary>
         public ushort[,] background { get; set; }
+        [JsonIgnore]
         public int width => background.GetWidth();
+        [JsonIgnore]
         public int height => background.GetHeight();
 
         public string tilesetTilemapName { get; set; }
@@ -151,7 +153,7 @@ namespace Necrofy
         public MovableData Build(ROMInfo rom) {
             MovableData data = new MovableData();
 
-            data.data.AddPointer(rom.GetAssetPointer(AssetCategory.Tilemap, tilesetTilemapName));
+            data.data.AddPointer(rom.GetAssetPointer(AssetCategory.TilesetTilemap, tilesetTilemapName));
 
             MovableData backgroundData = new MovableData();
             int width = this.width;
@@ -164,8 +166,8 @@ namespace Necrofy
             data.AddPointer(MovableData.PointerSize.FourBytes, backgroundData);
 
             data.data.AddPointer(rom.GetAssetPointer(AssetCategory.Collision, tilesetCollisionName));
-            data.data.AddPointer(rom.GetAssetPointer(AssetCategory.Graphics, tilesetGraphicsName));
-            data.data.AddPointer(rom.GetAssetPointer(AssetCategory.Palette, paletteName));
+            data.data.AddPointer(rom.GetAssetPointer(AssetCategory.TilesetGraphics, tilesetGraphicsName));
+            data.data.AddPointer(rom.GetAssetPointer(AssetCategory.TilesetPalette, paletteName));
             data.data.AddPointer(rom.GetAssetPointer(AssetCategory.Palette, spritePaletteName));
             if (paletteAnimationPtr > 0) {
                 data.data.AddPointer(paletteAnimationPtr);

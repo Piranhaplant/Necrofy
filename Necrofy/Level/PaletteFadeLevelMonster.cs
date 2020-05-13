@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,20 +25,24 @@ namespace Necrofy
                     s.PopPosition();
                     return m;
                 },
-                () => new PaletteFadeLevelMonster());
+                () => new PaletteFadeLevelMonster("", ""));
         }
 
-        public PaletteFadeLevelMonster() { }
+        [JsonConstructor]
+        public PaletteFadeLevelMonster(string bgPal, string spritePal) : base(Type) {
+            this.bgPal = bgPal;
+            this.spritePal = spritePal;
+        }
 
         public PaletteFadeLevelMonster(ROMInfo r, NStream s) : base(Type) {
-            bgPal = PaletteAsset.GetAssetName(s, r, s.ReadPointer());
+            bgPal = TilesetPaletteAsset.GetAssetName(s, r, s.ReadPointer());
             spritePal = PaletteAsset.GetAssetName(s, r, s.ReadPointer());
         }
 
         public override void Build(MovableData data, ROMInfo rom) {
             data.data.AddPointer(type);
             MovableData paletteData = new MovableData();
-            paletteData.data.AddPointer(rom.GetAssetPointer(AssetCategory.Palette, bgPal));
+            paletteData.data.AddPointer(rom.GetAssetPointer(AssetCategory.TilesetPalette, bgPal));
             paletteData.data.AddPointer(rom.GetAssetPointer(AssetCategory.Palette, spritePal));
             data.AddPointer(MovableData.PointerSize.FourBytes, paletteData);
         }

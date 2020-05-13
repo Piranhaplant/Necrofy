@@ -247,6 +247,10 @@ namespace Necrofy
             canvas.Invalidate();
         }
 
+        public void RepaintObjectBrowser() {
+            mainWindow.ObjectBrowser.Invalidate(true);
+        }
+
         private void canvas_Paint(object sender, PaintEventArgs e) {
             if (level == null) {
                 return;
@@ -307,12 +311,12 @@ namespace Necrofy
             if (e.X == pMouseX && e.Y == pMouseY) {
                 return;
             }
-            pMouseX = e.X;
-            pMouseY = e.Y;
             DoMouseMove(e);
         }
 
         private void DoMouseMove(MouseEventArgs e) {
+            pMouseX = e.X;
+            pMouseY = e.Y;
             if (TransformMouseArgs(e, out LevelMouseEventArgs args)) {
                 currentTool.MouseMove(args);
             }

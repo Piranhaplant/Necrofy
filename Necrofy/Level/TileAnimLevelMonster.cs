@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,10 +23,13 @@ namespace Necrofy
                     s.PopPosition();
                     return m;
                 },
-                () => new TileAnimLevelMonster());
+                () => new TileAnimLevelMonster(new List<Entry>()));
         }
 
-        public TileAnimLevelMonster() { }
+        [JsonConstructor]
+        public TileAnimLevelMonster(List<Entry> entries) : base(Type) {
+            this.entries = entries;
+        }
 
         public TileAnimLevelMonster(NStream s) : base(Type) {
             entries = new List<Entry>();
@@ -76,6 +80,20 @@ namespace Necrofy
                 } else {
                     data.data.AddInt16(0xfffe);
                 }
+            }
+
+            public override bool Equals(object obj) {
+                var entry = obj as Entry;
+                return entry != null &&
+                       tiles.SequenceEqual(entry.tiles) &&
+                       loop == entry.loop;
+            }
+
+            public override int GetHashCode() {
+                var hashCode = 465692521;
+                hashCode = hashCode * -1521134295 + EqualityComparer<List<ushort>>.Default.GetHashCode(tiles);
+                hashCode = hashCode * -1521134295 + loop.GetHashCode();
+                return hashCode;
             }
         }
     }

@@ -10,8 +10,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Necrofy</RootNamespace>
     <AssemblyName>Necrofy</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
@@ -39,6 +40,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -48,6 +50,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -58,6 +61,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>bin\Release\</OutputPath>
@@ -67,6 +71,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -75,6 +80,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -118,7 +124,28 @@
     </Compile>
     <Compile Include="Extensions.cs" />
     <Compile Include="LevelEditor\LevelMouseEventArgs.cs" />
-    <Compile Include="LevelEditor\LevelSettingsPresets.cs" />
+    <Compile Include="LevelEditor\LevelSettings\LevelMonsterList.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="LevelEditor\LevelSettings\LevelMonsterRow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LevelEditor\LevelSettings\LevelMonsterRow.Designer.cs">
+      <DependentUpon>LevelMonsterRow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LevelEditor\LevelSettings\LevelSettingsPresets.cs" />
+    <Compile Include="LevelEditor\LevelSettings\PaletteFadeRow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LevelEditor\LevelSettings\PaletteFadeRow.Designer.cs">
+      <DependentUpon>PaletteFadeRow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LevelEditor\LevelSettings\TileAnimationRow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LevelEditor\LevelSettings\TileAnimationRow.Designer.cs">
+      <DependentUpon>TileAnimationRow.cs</DependentUpon>
+    </Compile>
     <Compile Include="LevelEditor\PaintbrushTool.cs" />
     <Compile Include="LevelEditor\PencilSelectTool.cs" />
     <Compile Include="LevelEditor\RectangleSelectTool.cs" />
@@ -129,10 +156,10 @@
     <Compile Include="LevelEditor\TileSuggestionTool.cs" />
     <Compile Include="LevelEditor\TileTool.cs" />
     <Compile Include="LevelEditor\Tool.cs" />
-    <Compile Include="LevelEditor\LevelSettingsDialog.cs">
+    <Compile Include="LevelEditor\LevelSettings\LevelSettingsDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LevelEditor\LevelSettingsDialog.Designer.cs">
+    <Compile Include="LevelEditor\LevelSettings\LevelSettingsDialog.Designer.cs">
       <DependentUpon>LevelSettingsDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedItem.cs" />
@@ -267,8 +294,17 @@
     <EmbeddedResource Include="Canvas.resx">
       <DependentUpon>Canvas.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LevelEditor\LevelSettingsDialog.resx">
+    <EmbeddedResource Include="LevelEditor\LevelSettings\LevelMonsterRow.resx">
+      <DependentUpon>LevelMonsterRow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LevelEditor\LevelSettings\LevelSettingsDialog.resx">
       <DependentUpon>LevelSettingsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LevelEditor\LevelSettings\PaletteFadeRow.resx">
+      <DependentUpon>PaletteFadeRow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LevelEditor\LevelSettings\TileAnimationRow.resx">
+      <DependentUpon>TileAnimationRow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NewProjectDialog.resx">
       <DependentUpon>NewProjectDialog.cs</DependentUpon>

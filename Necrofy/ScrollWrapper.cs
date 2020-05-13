@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Necrofy
@@ -28,9 +30,6 @@ namespace Necrofy
         }
         
         public bool ExpandingDrag { get; set; }
-        private readonly Timer dragTimer = new Timer() {
-            Interval = 7,
-        };
 
         public ScrollWrapper(Control control, HScrollBar hscroll, VScrollBar vscroll, bool autoSize = true) {
             this.control = control;
@@ -47,7 +46,6 @@ namespace Necrofy
             control.MouseMove += Control_MouseMove;
             control.MouseUp += Control_MouseUp;
             control.MouseWheel += Control_MouseWheel;
-            dragTimer.Tick += DragTimer_Tick;
         }
 
         private void Dimension_Scrolled(object sender, EventArgs e) {
@@ -145,7 +143,7 @@ namespace Necrofy
                 }
 
                 if (delta != 0) {
-                    int newValue = scrollBar.Value + delta * 3;
+                    int newValue = scrollBar.Value + delta * 4;
                     if (expanding) {
                         if (newValue < scrollBar.Minimum) {
                             scrollBar.Minimum = newValue;
@@ -195,31 +193,44 @@ namespace Necrofy
             yDimension.MouseDown(e.Y, e.Button);
         }
 
+        private CancellationTokenSource dragCancel = new CancellationTokenSource();
+
         void Control_MouseMove(object sender, MouseEventArgs e) {
             bool scrollingDrag = false;
             scrollingDrag |= xDimension.MouseMove(e.X, e.Button);
             scrollingDrag |= yDimension.MouseMove(e.Y, e.Button);
             if (scrollingDrag) {
-                dragTimer.Start();
+                DoScrollingDrag(dragCancel.Token);
             }
+        }
+
+        private bool doingScrollingDrag = false;
+
+        private async void DoScrollingDrag(CancellationToken cancellationToken) {
+            if (doingScrollingDrag) {
+                return;
+            }
+            doingScrollingDrag = true;
+            while (true) {
+                Point mousePos = control.PointToClient(Control.MousePosition);
+                bool scrollingDrag = false;
+                scrollingDrag |= xDimension.ScrollingDrag(mousePos.X, ExpandingDrag);
+                scrollingDrag |= yDimension.ScrollingDrag(mousePos.Y, ExpandingDrag);
+                if (!scrollingDrag || cancellationToken.IsCancellationRequested) {
+                    break;
+                }
+                await Task.Delay(10);
+            }
+            doingScrollingDrag = false;
         }
 
         private void Control_MouseUp(object sender, MouseEventArgs e) {
             xDimension.MouseUp(e.X, e.Button);
             yDimension.MouseUp(e.Y, e.Button);
-            dragTimer.Stop();
+            dragCancel.Cancel();
+            dragCancel = new CancellationTokenSource();
         }
-
-        private void DragTimer_Tick(object sender, EventArgs e) {
-            Point mousePos = control.PointToClient(Control.MousePosition);
-            bool scrollingDrag = false;
-            scrollingDrag |= xDimension.ScrollingDrag(mousePos.X, ExpandingDrag);
-            scrollingDrag |= yDimension.ScrollingDrag(mousePos.Y, ExpandingDrag);
-            if (!scrollingDrag) {
-                dragTimer.Stop();
-            }
-        }
-
+        
         void Control_MouseWheel(object sender, MouseEventArgs e) {
             if (!yDimension.MouseWheel(e.Delta)) {
                 xDimension.MouseWheel(e.Delta);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -48,7 +49,7 @@ namespace Necrofy
             if (blankLoaders.ContainsKey(type)) {
                 return blankLoaders[type]();
             }
-            return new PositionLevelMonster();
+            return new PositionLevelMonster(0, 0, 0);
         }
 
         // Have to init all of the loaders here since the static constructors of the subclasses won't be called
@@ -57,8 +58,7 @@ namespace Necrofy
             TileAnimLevelMonster.RegisterLoader();
         }
 
-        public LevelMonster() { }
-
+        [JsonConstructor]
         public LevelMonster(int type) {
             this.type = type;
         }

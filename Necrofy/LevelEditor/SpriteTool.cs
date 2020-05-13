@@ -78,8 +78,7 @@ namespace Necrofy
         }
 
         public IEnumerable<WrappedLevelObject> CloneSelection() {
-            string serialized = JsonConvert.SerializeObject(SelectionToClipboard());
-            List<WrappedLevelObject> clone = ClipboardToList(JsonConvert.DeserializeObject<SpriteClipboardContents>(serialized));
+            List<WrappedLevelObject> clone = ClipboardToList(SelectionToClipboard().JsonClone());
             editor.undoManager.Do(new AddSpriteAction(clone));
             return clone;
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,8 +17,7 @@ namespace Necrofy
         public byte delay { get; set; }
         public int type { get; set; }
 
-        public Monster() { }
-
+        [JsonConstructor]
         public Monster(ushort x, ushort y, byte radius, byte delay, int type) {
             this.x = x;
             this.y = y;

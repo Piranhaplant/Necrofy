@@ -25,6 +25,7 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            this.components = new System.ComponentModel.Container();
             this.tilesLabel = new System.Windows.Forms.Label();
             this.tilesSelector = new System.Windows.Forms.ComboBox();
             this.okButton = new System.Windows.Forms.Button();
@@ -56,11 +57,23 @@
             this.spritesGroup = new System.Windows.Forms.GroupBox();
             this.spritePaletteSelector = new System.Windows.Forms.ComboBox();
             this.spritePaletteAuto = new System.Windows.Forms.CheckBox();
+            this.bonusesGroup = new System.Windows.Forms.GroupBox();
+            this.bonusList = new System.Windows.Forms.CheckedListBox();
+            this.levelEffectsGroup = new System.Windows.Forms.GroupBox();
+            this.levelMonsterList = new Necrofy.LevelMonsterList();
+            this.addLevelEffect = new System.Windows.Forms.Button();
+            this.addLevelEffectMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.addPaletteFade = new System.Windows.Forms.ToolStripMenuItem();
+            this.addTileAnimation = new System.Windows.Forms.ToolStripMenuItem();
+            this.removeLevelEffect = new System.Windows.Forms.Button();
             this.tilesetGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.visibleEndSelector)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.prioritySelector)).BeginInit();
             this.audioGroup.SuspendLayout();
             this.spritesGroup.SuspendLayout();
+            this.bonusesGroup.SuspendLayout();
+            this.levelEffectsGroup.SuspendLayout();
+            this.addLevelEffectMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // tilesLabel
@@ -85,7 +98,7 @@
             // okButton
             // 
             this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.okButton.Location = new System.Drawing.Point(581, 462);
+            this.okButton.Location = new System.Drawing.Point(423, 490);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 23);
             this.okButton.TabIndex = 2;
@@ -96,7 +109,7 @@
             // applyButton
             // 
             this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.applyButton.Location = new System.Drawing.Point(500, 462);
+            this.applyButton.Location = new System.Drawing.Point(342, 490);
             this.applyButton.Name = "applyButton";
             this.applyButton.Size = new System.Drawing.Size(75, 23);
             this.applyButton.TabIndex = 3;
@@ -108,7 +121,7 @@
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(419, 462);
+            this.cancelButton.Location = new System.Drawing.Point(261, 490);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 4;
@@ -388,13 +401,106 @@
             this.spritePaletteAuto.Text = "Auto";
             this.spritePaletteAuto.UseVisualStyleBackColor = true;
             // 
+            // bonusesGroup
+            // 
+            this.bonusesGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.bonusesGroup.Controls.Add(this.bonusList);
+            this.bonusesGroup.Location = new System.Drawing.Point(314, 12);
+            this.bonusesGroup.Name = "bonusesGroup";
+            this.bonusesGroup.Size = new System.Drawing.Size(183, 375);
+            this.bonusesGroup.TabIndex = 11;
+            this.bonusesGroup.TabStop = false;
+            this.bonusesGroup.Text = "Bonuses";
+            // 
+            // bonusList
+            // 
+            this.bonusList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.bonusList.CheckOnClick = true;
+            this.bonusList.FormattingEnabled = true;
+            this.bonusList.Location = new System.Drawing.Point(6, 19);
+            this.bonusList.Name = "bonusList";
+            this.bonusList.Size = new System.Drawing.Size(171, 349);
+            this.bonusList.TabIndex = 12;
+            // 
+            // levelEffectsGroup
+            // 
+            this.levelEffectsGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.levelEffectsGroup.Controls.Add(this.levelMonsterList);
+            this.levelEffectsGroup.Location = new System.Drawing.Point(12, 393);
+            this.levelEffectsGroup.Name = "levelEffectsGroup";
+            this.levelEffectsGroup.Size = new System.Drawing.Size(485, 90);
+            this.levelEffectsGroup.TabIndex = 12;
+            this.levelEffectsGroup.TabStop = false;
+            this.levelEffectsGroup.Text = "Level Effects";
+            // 
+            // levelMonsterList
+            // 
+            this.levelMonsterList.AutoScroll = true;
+            this.levelMonsterList.Location = new System.Drawing.Point(6, 19);
+            this.levelMonsterList.Name = "levelMonsterList";
+            this.levelMonsterList.Size = new System.Drawing.Size(473, 65);
+            this.levelMonsterList.TabIndex = 33;
+            this.levelMonsterList.SelectedRowChanged += new System.EventHandler(this.levelMonsterList_SelectedRowChanged);
+            // 
+            // addLevelEffect
+            // 
+            this.addLevelEffect.Image = global::Necrofy.Properties.Resources.plus;
+            this.addLevelEffect.Location = new System.Drawing.Point(91, 387);
+            this.addLevelEffect.Name = "addLevelEffect";
+            this.addLevelEffect.Size = new System.Drawing.Size(23, 23);
+            this.addLevelEffect.TabIndex = 33;
+            this.addLevelEffect.UseVisualStyleBackColor = true;
+            this.addLevelEffect.Click += new System.EventHandler(this.addLevelEffect_Click);
+            // 
+            // addLevelEffectMenu
+            // 
+            this.addLevelEffectMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addPaletteFade,
+            this.addTileAnimation});
+            this.addLevelEffectMenu.Name = "addLevelEffectMenu";
+            this.addLevelEffectMenu.Size = new System.Drawing.Size(152, 48);
+            // 
+            // addPaletteFade
+            // 
+            this.addPaletteFade.Name = "addPaletteFade";
+            this.addPaletteFade.Size = new System.Drawing.Size(151, 22);
+            this.addPaletteFade.Text = "Palette Fade";
+            this.addPaletteFade.Click += new System.EventHandler(this.addPaletteFade_Click);
+            // 
+            // addTileAnimation
+            // 
+            this.addTileAnimation.Name = "addTileAnimation";
+            this.addTileAnimation.Size = new System.Drawing.Size(151, 22);
+            this.addTileAnimation.Text = "Tile Animation";
+            this.addTileAnimation.Click += new System.EventHandler(this.addTileAnimation_Click);
+            // 
+            // removeLevelEffect
+            // 
+            this.removeLevelEffect.Enabled = false;
+            this.removeLevelEffect.Image = global::Necrofy.Properties.Resources.minus;
+            this.removeLevelEffect.Location = new System.Drawing.Point(120, 387);
+            this.removeLevelEffect.Name = "removeLevelEffect";
+            this.removeLevelEffect.Size = new System.Drawing.Size(23, 23);
+            this.removeLevelEffect.TabIndex = 34;
+            this.removeLevelEffect.UseVisualStyleBackColor = true;
+            this.removeLevelEffect.Click += new System.EventHandler(this.removeLevelEffect_Click);
+            // 
             // LevelSettingsDialog
             // 
             this.AcceptButton = this.okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(668, 497);
+            this.ClientSize = new System.Drawing.Size(510, 525);
+            this.Controls.Add(this.removeLevelEffect);
+            this.Controls.Add(this.addLevelEffect);
+            this.Controls.Add(this.levelEffectsGroup);
+            this.Controls.Add(this.bonusesGroup);
             this.Controls.Add(this.spritesGroup);
             this.Controls.Add(this.audioGroup);
             this.Controls.Add(this.tilesetGroup);
@@ -414,6 +520,9 @@
             this.audioGroup.PerformLayout();
             this.spritesGroup.ResumeLayout(false);
             this.spritesGroup.PerformLayout();
+            this.bonusesGroup.ResumeLayout(false);
+            this.levelEffectsGroup.ResumeLayout(false);
+            this.addLevelEffectMenu.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -451,5 +560,14 @@
         private System.Windows.Forms.GroupBox spritesGroup;
         private System.Windows.Forms.ComboBox spritePaletteSelector;
         private System.Windows.Forms.CheckBox spritePaletteAuto;
+        private System.Windows.Forms.GroupBox bonusesGroup;
+        private System.Windows.Forms.CheckedListBox bonusList;
+        private System.Windows.Forms.GroupBox levelEffectsGroup;
+        private LevelMonsterList levelMonsterList;
+        private System.Windows.Forms.Button addLevelEffect;
+        private System.Windows.Forms.ContextMenuStrip addLevelEffectMenu;
+        private System.Windows.Forms.ToolStripMenuItem addPaletteFade;
+        private System.Windows.Forms.ToolStripMenuItem addTileAnimation;
+        private System.Windows.Forms.Button removeLevelEffect;
     }
 }

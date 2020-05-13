@@ -13,7 +13,10 @@ namespace Necrofy
     {
         public List<Word> words { get; set; }
 
-        public TitlePage() { }
+        [JsonConstructor]
+        public TitlePage(List<Word> words) {
+            this.words = words;
+        }
 
         public TitlePage(NStream s) {
             words = new List<Word>();
@@ -60,7 +63,13 @@ namespace Necrofy
             [JsonIgnore]
             public bool last { get; private set; }
 
-            public Word() { }
+            [JsonConstructor]
+            public Word(byte x, byte y, byte palette) {
+                this.x = x;
+                this.y = y;
+                this.palette = palette;
+                chars = new List<byte>();
+            }
 
             public Word(NStream s) {
                 chars = new List<byte>();

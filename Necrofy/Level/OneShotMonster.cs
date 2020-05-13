@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,8 +25,7 @@ namespace Necrofy
         public ushort victimNumber { get; set; }
         public int type { get; set; }
 
-        public OneShotMonster() { }
-
+        [JsonConstructor]
         public OneShotMonster(ushort x, ushort y, ushort extra, ushort victimNumber, int type) {
             this.x = x;
             this.y = y;

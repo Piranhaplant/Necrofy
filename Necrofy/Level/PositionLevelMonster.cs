@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,8 +14,7 @@ namespace Necrofy
         public ushort x { get; set; }
         public ushort y { get; set; }
 
-        public PositionLevelMonster() { }
-
+        [JsonConstructor]
         public PositionLevelMonster(ushort x, ushort y, int type) : base(type) {
             this.x = x;
             this.y = y;

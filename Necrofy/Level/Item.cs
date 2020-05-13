@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace Necrofy
 {
@@ -14,8 +15,7 @@ namespace Necrofy
         public ushort y { get; set; }
         public byte type { get; set; }
         
-        public Item() { }
-
+        [JsonConstructor]
         public Item(ushort x, ushort y, byte type) {
             this.x = x;
             this.y = y;
