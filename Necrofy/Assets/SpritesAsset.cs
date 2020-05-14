@@ -85,7 +85,7 @@ namespace Necrofy
             public override AssetCategory Category => AssetCat;
 
             protected override PathParts GetPathParts() {
-                return new PathParts(Folder, null, FileName, Extension, null);
+                return new PathParts(Folder, null, FileName, Extension, null, false);
             }
 
             public static SpritesNameInfo FromPath(PathParts parts) {

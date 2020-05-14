@@ -120,7 +120,7 @@ namespace Necrofy
             public override AssetCategory Category => AssetCat;
 
             protected override PathParts GetPathParts() {
-                return new PathParts(Folder, null, levelNum.ToString(), Extension, null);
+                return new PathParts(Folder, null, levelNum.ToString(), Extension, null, false);
             }
 
             public override EditorWindow GetEditor(Project project) {

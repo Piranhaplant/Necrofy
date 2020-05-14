@@ -39,11 +39,6 @@ namespace Necrofy
         /// <summary>Reserves any space that will be needed by this asset before inserting into a ROM.</summary>
         /// <param name="freespace">The freespace</param>
         public virtual void ReserveSpace(Freespace freespace) { }
-        protected void ReserveSpace(Freespace freespace, int? pointer, int length) {
-            if (pointer != null) {
-                freespace.Reserve((int)pointer, length);
-            }
-        }
         /// <summary>Inserts the asset into the given ROM</summary>
         /// <param name="rom">The ROM</param>
         /// <param name="romInfo">The ROM info</param>
@@ -197,10 +192,15 @@ namespace Necrofy
                     pathParts.fileExtension = fileName.Substring(dotIndex + 1);
                     fileName = fileName.Substring(0, dotIndex);
                 }
-                Match m = Regex.Match(fileName, "^(.*)@([0-9A-Fa-f]{6})$");
+                Match m = Regex.Match(fileName, "^([^@]*)(@[0-9A-Fa-f]{6})?(#)?$");
                 if (m.Success) {
                     fileName = m.Groups[1].Value;
-                    pathParts.pointer = Convert.ToInt32(m.Groups[2].Value, 16);
+                    if (m.Groups[2].Length > 0) {
+                        pathParts.pointer = Convert.ToInt32(m.Groups[2].Value.Substring(1), 16);
+                    }
+                    if (m.Groups[3].Length > 0) {
+                        pathParts.compressed = true;
+                    }
                 }
                 pathParts.name = fileName;
 
@@ -234,6 +234,9 @@ namespace Necrofy
                 if (parts.pointer != null) {
                     filename += "@" + parts.pointer.Value.ToString("X6");
                 }
+                if (parts.compressed) {
+                    filename += "#";
+                }
                 if (parts.fileExtension != null) {
                     filename += "." + parts.fileExtension;
                 }
@@ -250,7 +253,7 @@ namespace Necrofy
                 if (parts.subFolder != null) {
                     directory = Path.Combine(directory, parts.subFolder);
                 }
-                string regex = "^" + Regex.Escape(parts.name) + "(@[0-9A-Fa-f]{6})?";
+                string regex = "^" + Regex.Escape(parts.name) + "(@[0-9A-Fa-f]{6})?#?";
                 if (parts.fileExtension != null) {
                     regex += Regex.Escape("." + parts.fileExtension);
                 }
@@ -282,14 +285,16 @@ namespace Necrofy
                 public string name;
                 public string fileExtension;
                 public int? pointer;
+                public bool compressed;
 
                 public PathParts() { }
-                public PathParts(string topFolder, string subFolder, string name, string fileExtension, int? pointer) {
+                public PathParts(string topFolder, string subFolder, string name, string fileExtension, int? pointer, bool compressed) {
                     this.topFolder = topFolder;
                     this.subFolder = subFolder;
                     this.name = name;
                     this.fileExtension = fileExtension;
                     this.pointer = pointer;
+                    this.compressed = compressed;
                 }
 
                 public override bool Equals(object obj) {
@@ -299,16 +304,18 @@ namespace Necrofy
                            subFolder == parts.subFolder &&
                            name == parts.name &&
                            fileExtension == parts.fileExtension &&
-                           EqualityComparer<int?>.Default.Equals(pointer, parts.pointer);
+                           EqualityComparer<int?>.Default.Equals(pointer, parts.pointer) &&
+                           compressed == parts.compressed;
                 }
 
                 public override int GetHashCode() {
-                    var hashCode = 930186977;
+                    var hashCode = 1762610141;
                     hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(topFolder);
                     hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(subFolder);
                     hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(name);
                     hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(fileExtension);
                     hashCode = hashCode * -1521134295 + EqualityComparer<int?>.Default.GetHashCode(pointer);
+                    hashCode = hashCode * -1521134295 + compressed.GetHashCode();
                     return hashCode;
                 }
 
@@ -326,6 +333,9 @@ namespace Necrofy
                     if (pointer != null) {
                         builder.Append("@");
                         builder.Append(pointer.Value.ToString("X6"));
+                    }
+                    if (compressed) {
+                        builder.Append("#");
                     }
                     if (fileExtension != null) {
                         builder.Append(".");

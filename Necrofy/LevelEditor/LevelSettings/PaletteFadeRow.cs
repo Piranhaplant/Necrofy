@@ -24,7 +24,7 @@ namespace Necrofy
             tilesetPaletteSelector.SelectedIndexChanged += TilesetPaletteSelector_SelectedIndexChanged;
 
             spritePaletteSelector.Items.AddRange(levelSettings.project.GetAssetsInCategory(AssetCategory.Palette).Select(a => a.Name).ToArray());
-            if (paletteFade.spritePal == PaletteAsset.SpritePaletteName) {
+            if (paletteFade.spritePal == PaletteAsset.SpritesName) {
                 spritePaletteSelector.SelectedIndex = 0;
             } else {
                 spritePaletteSelector.SelectedItem = paletteFade.spritePal;
@@ -50,7 +50,7 @@ namespace Necrofy
         private void SpritePaletteSelector_SelectedIndexChanged(object sender, EventArgs e) {
             if (spritePaletteSelector.SelectedIndex > -1) {
                 if (spritePaletteSelector.SelectedIndex == 0) {
-                    paletteFade.spritePal = PaletteAsset.SpritePaletteName;
+                    paletteFade.spritePal = PaletteAsset.SpritesName;
                 } else {
                     paletteFade.spritePal = (string)spritePaletteSelector.SelectedItem;
                 }

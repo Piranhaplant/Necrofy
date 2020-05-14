@@ -8,7 +8,8 @@ namespace Necrofy
 {
     class PaletteAsset : Asset
     {
-        public const string SpritePaletteName = "Sprites";
+        public const string SpritesName = "Sprites";
+        public const string LevelTitleName = "Level Title";
 
         private const AssetCategory AssetCat = AssetCategory.Palette;
 
@@ -37,7 +38,9 @@ namespace Necrofy
         }
 
         public override void ReserveSpace(Freespace freespace) {
-            ReserveSpace(freespace, nameInfo.pointer, data.Length);
+            if (nameInfo.pointer != null) {
+                freespace.Reserve((int)nameInfo.pointer, data.Length);
+            }
         }
 
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
@@ -65,8 +68,9 @@ namespace Necrofy
 
             public override List<DefaultParams> GetDefaults() {
                 return new List<DefaultParams>() {
-                    new DefaultParams(0xf0f76, new PaletteNameInfo(SpritePaletteName, 0xf0f76)),
-                    new DefaultParams(0xf0e96, new PaletteNameInfo("Copyright", 0xf0e76))
+                    new DefaultParams(0xf0f76, new PaletteNameInfo(SpritesName, 0xf0f76)),
+                    new DefaultParams(0x1f08c, new PaletteNameInfo(LevelTitleName, 0x1f08c)),
+                    new DefaultParams(0xf0e76, new PaletteNameInfo("Copyright", 0xf0e76))
                 };
             }
 
@@ -98,7 +102,7 @@ namespace Necrofy
             public override AssetCategory Category => AssetCat;
 
             protected override PathParts GetPathParts() {
-                return new PathParts(Folder, null, name, Extension, pointer);
+                return new PathParts(Folder, null, name, Extension, pointer, false);
             }
 
             public static PaletteNameInfo FromPath(PathParts parts) {

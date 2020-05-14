@@ -105,8 +105,9 @@ namespace Necrofy
                     formatByte = 0;
                     formatBitCount = 0;
                     formatByteIndex = result.Count;
-                    // if (dataIndex < data.Length) // TODO: I think this should be here, but it needs to be tested
-                    result.Add(0); // Make a placeholder for the next one
+                    if (dataIndex < data.Length) {
+                        result.Add(0); // Make a placeholder for the next one
+                    }
                 }
             }
             
@@ -135,8 +136,9 @@ namespace Necrofy
         // Gets the byte that will be in the dictionary at dictReadIndex given that matchLen bytes from data will have been written at dictWriteIndex
         private static byte GetDictByte(byte[] dict, int dictWriteIndex, int dictReadIndex, byte[] data, int index, int matchLen) {
             // Make dictWriteIndex larger so we can ignore the wrapping
-            if (dictWriteIndex < dictReadIndex)
+            if (dictWriteIndex < dictReadIndex) {
                 dictWriteIndex += dict.Length;
+            }
             // The actual position we are reading from the dictionary
             int readIndex = dictReadIndex + matchLen;
             // If the byte we are reading has been overwritten from data

@@ -68,7 +68,7 @@ namespace Necrofy
             public override AssetCategory Category => AssetCat;
 
             protected override PathParts GetPathParts() {
-                return new PathParts(Folder, null, name, Extension, null);
+                return new PathParts(Folder, null, name, Extension, null, false);
             }
 
             public static EditorNameInfo FromPath(PathParts parts) {

@@ -29,7 +29,6 @@ namespace Necrofy
 
         public override void WriteFile(Project project) {
             // TODO: data would need to be converted back to JSON format first
-            //File.WriteAllText(nameInfo.GetFilename(project.path), JsonConvert.SerializeObject(data));
             throw new NotImplementedException();
         }
 

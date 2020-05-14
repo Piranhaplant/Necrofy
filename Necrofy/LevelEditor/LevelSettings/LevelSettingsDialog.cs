@@ -56,7 +56,7 @@ namespace Necrofy
 
             spritePaletteSelector.Items.AddRange(project.GetAssetsInCategory(AssetCategory.Palette).Select(a => a.Name).ToArray());
             spritePaletteSelector.SelectedItem = level.Level.spritePaletteName;
-            SetupAutoCheckBox(spritePaletteAuto, spritePaletteSelector, level.Level.spritePaletteName == PaletteAsset.SpritePaletteName);
+            SetupAutoCheckBox(spritePaletteAuto, spritePaletteSelector, level.Level.spritePaletteName == PaletteAsset.SpritesName);
 
             if (presets.music != null) {
                 musicSelector.Items.AddRange(presets.music.ToArray());
@@ -132,7 +132,7 @@ namespace Necrofy
         }
 
         private void addPaletteFade_Click(object sender, EventArgs e) {
-            PaletteFadeLevelMonster paletteFade = new PaletteFadeLevelMonster(GetFullPaletteName((string)tilesetPaletteSelector.Items[0]), PaletteAsset.SpritePaletteName);
+            PaletteFadeLevelMonster paletteFade = new PaletteFadeLevelMonster(GetFullPaletteName((string)tilesetPaletteSelector.Items[0]), PaletteAsset.SpritesName);
             levelMonsters.Add(paletteFade);
             levelMonsterList.AddRow(new PaletteFadeRow(paletteFade, this));
             levelMonsterList.ScrollToBottom();
@@ -205,7 +205,7 @@ namespace Necrofy
                 level.LoadTiles(project);
             }
 
-            string spritePaletteName = spritePaletteAuto.Checked ? PaletteAsset.SpritePaletteName : (string)spritePaletteSelector.SelectedItem;
+            string spritePaletteName = spritePaletteAuto.Checked ? PaletteAsset.SpritesName : (string)spritePaletteSelector.SelectedItem;
             if (level.Level.spritePaletteName != spritePaletteName) {
                 level.Level.spritePaletteName = spritePaletteName;
                 level.LoadSprites(project);

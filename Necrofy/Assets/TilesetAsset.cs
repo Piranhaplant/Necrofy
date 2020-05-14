@@ -40,7 +40,7 @@ namespace Necrofy
             public override string DisplayName => name;
 
             protected override PathParts GetPathParts() {
-                return new PathParts(Folder, tilesetName, name, extension, null);
+                return new PathParts(Folder, tilesetName, name, extension, null, false);
             }
 
             public static TilesetNameInfo FromPath(PathParts parts, string extension, Func<string, string, TilesetNameInfo> constructor) {
@@ -68,7 +68,7 @@ namespace Necrofy
             public override string DisplayName => name;
 
             protected override PathParts GetPathParts() {
-                return new PathParts(Folder, tilesetName, name, extension, null);
+                return new PathParts(Folder, tilesetName, name, extension, null, false);
             }
 
             public static TilesetFixedNameInfo FromPath(PathParts parts, string name, string extension, Func<string, TilesetFixedNameInfo> constructor) {
