@@ -5,39 +5,32 @@ using System.Text;
 
 namespace Necrofy
 {
-    class LoadedTilesetTilemap
+    class LoadedTilesetTilemap : LoadedTilemap
     {
-        public readonly TilesetTilemapAsset tilemapAsset;
-        public Tile[][,] tiles;
+        public new TileBlock[] tiles;
 
-        public LoadedTilesetTilemap(Project project, string tilesetTilemapName) {
-            tilemapAsset = TilesetTilemapAsset.FromProject(project, tilesetTilemapName);
-            
-            tiles = new Tile[0x100][,];
-            int i = 0;
-            for (int t = 0; t < tiles.Length; t++) {
-                tiles[t] = new Tile[8, 8];
-                for (int y = 0; y < 8; y++) {
-                    for (int x = 0; x < 8; x++) {
-                        tiles[t][x, y] = new Tile(tilemapAsset.data[i], tilemapAsset.data[i + 1]);
-                        i += 2;
-                    }
-                }
+        public LoadedTilesetTilemap(Project project, string tilesetTilemapName)
+            : base(TilesetTilemapAsset.FromProject(project, tilesetTilemapName).data) {
+            tiles = new TileBlock[0x100];
+            for (int i = 0; i < tiles.Length; i++) {
+                tiles[i] = new TileBlock(base.tiles, i);
             }
         }
 
-        public struct Tile
+        public class TileBlock
         {
-            public int tileNum;
-            public int palette;
-            public bool xFlip;
-            public bool yFlip;
+            private readonly Tile[] tiles;
+            private readonly int i;
 
-            public Tile(byte lowByte, byte highByte) {
-                tileNum = lowByte + ((highByte & 1) << 8);
-                palette = (highByte >> 2) & 7;
-                xFlip = ((highByte >> 6) & 1) > 0;
-                yFlip = ((highByte >> 7) & 1) > 0;
+            public Tile this[int x, int y] {
+                get {
+                    return tiles[x + y * 8 + i * 8 * 8];
+                }
+            }
+
+            public TileBlock(Tile[] tiles, int i) {
+                this.tiles = tiles;
+                this.i = i;
             }
         }
     }

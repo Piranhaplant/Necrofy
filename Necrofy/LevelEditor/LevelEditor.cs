@@ -77,7 +77,6 @@ namespace Necrofy
                 { Tool.ObjectType.Tiles, tilesetObjectBrowserContents },
             };
             
-            // TODO: Display shortcut keys on the menu
             SetupTool(new PaintbrushTool(this), ToolStripGrouper.ItemType.PaintbrushTool, Keys.P);
             SetupTool(new TileSuggestionTool(this), ToolStripGrouper.ItemType.TileSuggestTool, Keys.S);
             SetupTool(new RectangleSelectTool(this), ToolStripGrouper.ItemType.RectangleSelectTool, Keys.R);
@@ -358,6 +357,8 @@ namespace Necrofy
                 foreach (ToolStripGrouper.ItemType type in spriteCategoryForMenuItem.Keys) {
                     mainWindow.GetToolStripItem(type).Checked = true;
                 }
+            } else if (item == ToolStripGrouper.ItemType.LevelEditTitle) {
+                mainWindow.ShowEditor(new TitleEditor(level, project), assetInfo: null);
             } else if (item == ToolStripGrouper.ItemType.LevelSettings) {
                 new LevelSettingsDialog(project, this).ShowDialog();
             }

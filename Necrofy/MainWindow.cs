@@ -156,7 +156,7 @@ namespace Necrofy
         public ToolStripSplitButton RedoButton => redoButton;
 
         public void OpenAsset(Asset.NameInfo assetInfo) {
-            EditorWindow existingEditor = openEditors.Where(e => e.AssetInfo.Equals(assetInfo)).FirstOrDefault();
+            EditorWindow existingEditor = openEditors.Where(e => assetInfo.Equals(e.AssetInfo)).FirstOrDefault();
             if (existingEditor != null) {
                 existingEditor.Activate();
                 return;
@@ -164,13 +164,17 @@ namespace Necrofy
             EditorWindow editor = assetInfo.GetEditor(project);
             if (editor != null) {
                 editor.Icon = ProjectBrowser.GetEditorIcon(assetInfo.Category);
-                openEditors.Add(editor);
-                editor.Setup(this, project, assetInfo);
-                editor.Show(dockPanel, DockState.Document);
-                editor.DirtyChanged += Editor_DirtyChanged;
-                editor.SelectionChanged += Editor_SelectionChanged;
-                editor.TextChanged += Editor_TextChanged;
+                ShowEditor(editor, assetInfo);
             }
+        }
+
+        public void ShowEditor(EditorWindow editor, Asset.NameInfo assetInfo) {
+            openEditors.Add(editor);
+            editor.Setup(this, project, assetInfo);
+            editor.Show(dockPanel, DockState.Document);
+            editor.DirtyChanged += Editor_DirtyChanged;
+            editor.SelectionChanged += Editor_SelectionChanged;
+            editor.TextChanged += Editor_TextChanged;
         }
 
         private void Editor_DirtyChanged(object sender, EventArgs e) {
@@ -263,7 +267,7 @@ namespace Necrofy
                     }
                 }
                 ProjectBrowser.SaveFolderStates();
-                project.settings.OpenFiles = openEditors.Select(e => e.AssetInfo.GetFilename("")).ToList();
+                project.settings.OpenFiles = openEditors.Select(e => e.AssetInfo?.GetFilename("")).Where(e => e != null).ToList();
                 project.WriteSettings();
             }
             return false;

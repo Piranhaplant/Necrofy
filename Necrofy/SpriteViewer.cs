@@ -13,10 +13,9 @@ namespace Necrofy
 {
     partial class SpriteViewer : Form
     {
-        private PaletteAsset paletteAsset;
-        private GraphicsAsset graphicsAsset;
+        private LoadedPalette loadedPalette;
+        private LoadedGraphics loadedGraphics;
         private SpritesAsset spritesAsset;
-        private Color[] colors;
 
         private LoadedSprite currentSprite = null;
 
@@ -25,17 +24,16 @@ namespace Necrofy
         }
 
         public void Show(Project project) {
-            paletteAsset = PaletteAsset.FromProject(project, "Sprites");
-            graphicsAsset = GraphicsAsset.FromProject(project, GraphicsAsset.SpritesName);
+            loadedPalette = new LoadedPalette(project, "Sprites");
+            loadedGraphics = new LoadedGraphics(project, GraphicsAsset.SpritesName);
             spritesAsset = SpritesAsset.FromProject(project);
-            colors = SNESGraphics.SNESToRGB(paletteAsset.data, true);
 
             numericUpDown1.Maximum = spritesAsset.sprites.Length - 1;
             Show();
         }
         
         private void numericUpDown1_ValueChanged(object sender, EventArgs e) {
-            currentSprite = new LoadedSprite(spritesAsset.sprites[(int)numericUpDown1.Value], graphicsAsset.data, colors);
+            currentSprite = new LoadedSprite(spritesAsset.sprites[(int)numericUpDown1.Value], loadedGraphics.linearGraphics, loadedPalette.colors);
             canvas1.Invalidate();
         }
 
@@ -57,7 +55,7 @@ namespace Necrofy
             public readonly int anchorX;
             public readonly int anchorY;
 
-            public LoadedSprite(Sprite sprite, byte[] graphics, Color[] colors) {
+            public LoadedSprite(Sprite sprite, LoadedGraphics.LinearGraphics graphics, Color[] colors) {
                 int minX = 0, maxX = 0, minY = 0, maxY = 0;
                 foreach (Sprite.Tile t in sprite.tiles) {
                     minX = Math.Min(minX, t.xOffset);
@@ -75,10 +73,10 @@ namespace Necrofy
                 }
 
                 foreach (Sprite.Tile t in sprite.tiles) {
-                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 8 : 0), anchorY + t.yOffset + (t.yFlip ? 8 : 0), graphics, t.tileNum * 0x80 + 0x00, colors, t.palette * 0x10, t.xFlip, t.yFlip);
-                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 0 : 8), anchorY + t.yOffset + (t.yFlip ? 8 : 0), graphics, t.tileNum * 0x80 + 0x20, colors, t.palette * 0x10, t.xFlip, t.yFlip);
-                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 8 : 0), anchorY + t.yOffset + (t.yFlip ? 0 : 8), graphics, t.tileNum * 0x80 + 0x40, colors, t.palette * 0x10, t.xFlip, t.yFlip);
-                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 0 : 8), anchorY + t.yOffset + (t.yFlip ? 0 : 8), graphics, t.tileNum * 0x80 + 0x60, colors, t.palette * 0x10, t.xFlip, t.yFlip);
+                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 8 : 0), anchorY + t.yOffset + (t.yFlip ? 8 : 0), graphics[t.tileNum * 4 + 0], colors, t.palette * 0x10, t.xFlip, t.yFlip);
+                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 0 : 8), anchorY + t.yOffset + (t.yFlip ? 8 : 0), graphics[t.tileNum * 4 + 1], colors, t.palette * 0x10, t.xFlip, t.yFlip);
+                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 8 : 0), anchorY + t.yOffset + (t.yFlip ? 0 : 8), graphics[t.tileNum * 4 + 2], colors, t.palette * 0x10, t.xFlip, t.yFlip);
+                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 0 : 8), anchorY + t.yOffset + (t.yFlip ? 0 : 8), graphics[t.tileNum * 4 + 3], colors, t.palette * 0x10, t.xFlip, t.yFlip);
                 }
             }
         }

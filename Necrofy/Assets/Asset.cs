@@ -15,6 +15,7 @@ namespace Necrofy
     public enum AssetCategory
     {
         Editor,
+        Data,
         Sprites,
         Collision,
         Graphics,
@@ -147,10 +148,12 @@ namespace Necrofy
 
         // Have to init all of the loaders here since the static constructors of the subclasses won't be called
         static Asset() {
+            DataAsset.RegisterLoader();
             GraphicsAsset.RegisterLoader();
             LevelAsset.RegisterLoader();
             PaletteAsset.RegisterLoader();
             SpritesAsset.RegisterLoader();
+            TilemapAsset.RegisterLoader();
             TilesetCollisionAsset.RegisterLoader();
             TilesetGraphicsAsset.RegisterLoader();
             TilesetPaletteAsset.RegisterLoader();

@@ -7,12 +7,10 @@ namespace Necrofy
 {
     class LoadedTilesetCollision
     {
-        public readonly TilesetCollisionAsset collisionAsset;
-
-        public ushort[] tiles;
+        public readonly ushort[] tiles;
 
         public LoadedTilesetCollision(Project project, string tilesetCollisionName) {
-            collisionAsset = TilesetCollisionAsset.FromProject(project, tilesetCollisionName);
+            TilesetCollisionAsset collisionAsset = TilesetCollisionAsset.FromProject(project, tilesetCollisionName);
 
             tiles = new ushort[collisionAsset.data.Length / 2];
             for (int i = 0; i < tiles.Length; i++) {

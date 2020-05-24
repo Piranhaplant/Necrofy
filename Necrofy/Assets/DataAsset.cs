@@ -1,46 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.IO;
+using System.Threading.Tasks;
 
 namespace Necrofy
 {
-    class PaletteAsset : Asset
+    class DataAsset : Asset
     {
-        public const string SpritesName = "Sprites";
-        public const string LevelTitleName = "Level Title";
+        public const string LevelTitleCharsName = "Level Title Chars";
 
-        private const AssetCategory AssetCat = AssetCategory.Palette;
+        private const AssetCategory AssetCat = AssetCategory.Data;
 
         public static void RegisterLoader() {
-            AddCreator(new PaletteCreator());
-        }
-        
-        public static string GetAssetName(NStream romStream, ROMInfo romInfo, int pointer) {
-            return GetAssetName(romStream, romInfo, pointer, new PaletteCreator(), AssetCat);
+            AddCreator(new DataCreator());
         }
 
-        private readonly PaletteNameInfo nameInfo;
+        public static string GetAssetName(NStream romStream, ROMInfo romInfo, int pointer) {
+            return GetAssetName(romStream, romInfo, pointer, new DataCreator(), AssetCat);
+        }
+
+        private readonly DataNameInfo nameInfo;
         public readonly byte[] data;
 
-        public static PaletteAsset FromProject(Project project, string paletteName) {
-            return new PaletteCreator().FromProject(project, paletteName);
+        public static DataAsset FromProject(Project project, string dataName) {
+            return new DataCreator().FromProject(project, dataName);
         }
 
-        private PaletteAsset(PaletteNameInfo nameInfo, byte[] data) {
+        private DataAsset(DataNameInfo nameInfo, byte[] data) {
             this.nameInfo = nameInfo;
             this.data = data;
         }
 
         public override void WriteFile(Project project) {
             File.WriteAllBytes(nameInfo.GetFilename(project.path, createDirectories: true), data);
-        }
-
-        public override void ReserveSpace(Freespace freespace) {
-            if (nameInfo.pointer != null) {
-                freespace.Reserve((int)nameInfo.pointer, data.Length);
-            }
         }
 
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
@@ -50,48 +44,48 @@ namespace Necrofy
         protected override AssetCategory Category => nameInfo.Category;
         protected override string Name => nameInfo.Name;
 
-        class PaletteCreator : Creator
+        class DataCreator : Creator
         {
-            public PaletteAsset FromProject(Project project, string paletteName) {
-                NameInfo nameInfo = new PaletteNameInfo(paletteName, null);
+            public DataAsset FromProject(Project project, string dataName) {
+                NameInfo nameInfo = new DataNameInfo(dataName, null);
                 string filename = nameInfo.FindFilename(project.path);
-                return (PaletteAsset)FromFile(nameInfo, filename);
+                return (DataAsset)FromFile(nameInfo, filename);
             }
 
             public override NameInfo GetNameInfo(NameInfo.PathParts pathParts, Project project) {
-                return PaletteNameInfo.FromPath(pathParts);
+                return DataNameInfo.FromPath(pathParts);
             }
 
             public override Asset FromFile(NameInfo nameInfo, string filename) {
-                return new PaletteAsset((PaletteNameInfo)nameInfo, File.ReadAllBytes(filename));
+                return new DataAsset((DataNameInfo)nameInfo, File.ReadAllBytes(filename));
             }
 
             public override List<DefaultParams> GetDefaults() {
                 return new List<DefaultParams>() {
-                    new DefaultParams(0xf0f76, new PaletteNameInfo(SpritesName, 0xf0f76)),
-                    new DefaultParams(0x1f08c, new PaletteNameInfo(LevelTitleName, 0x1f08c)),
-                    new DefaultParams(0xf0e76, new PaletteNameInfo("Copyright", 0xf0e76))
+                    new DefaultParams(0x12f37, new DataNameInfo(LevelTitleCharsName, 0x12f37), 0xbc),
                 };
             }
 
             public override Asset FromRom(NameInfo nameInfo, NStream romStream, int? size) {
-                return new PaletteAsset((PaletteNameInfo)nameInfo, romStream.ReadBytes(0x100));
+                return new DataAsset((DataNameInfo)nameInfo, romStream.ReadBytes((int)size));
             }
 
             public override NameInfo GetNameInfoForName(string name) {
-                return new PaletteNameInfo(name, null);
+                return new DataNameInfo(name, null);
             }
+
+            public override bool AutoTrackFreespace => false;
         }
 
-        class PaletteNameInfo : NameInfo
+        class DataNameInfo : NameInfo
         {
-            private const string Folder = "Palettes";
-            private const string Extension = "plt";
+            private const string Folder = "Data";
+            private const string Extension = "bin";
 
             public readonly string name;
             public readonly int? pointer;
 
-            public PaletteNameInfo(string name, int? pointer) {
+            public DataNameInfo(string name, int? pointer) {
                 this.name = name;
                 this.pointer = pointer;
             }
@@ -104,11 +98,11 @@ namespace Necrofy
                 return new PathParts(Folder, null, name, Extension, pointer, false);
             }
 
-            public static PaletteNameInfo FromPath(PathParts parts) {
+            public static DataNameInfo FromPath(PathParts parts) {
                 if (parts.topFolder != Folder) return null;
                 if (parts.subFolder != null) return null;
                 if (parts.fileExtension != Extension) return null;
-                return new PaletteNameInfo(parts.name, parts.pointer);
+                return new DataNameInfo(parts.name, parts.pointer);
             }
         }
     }

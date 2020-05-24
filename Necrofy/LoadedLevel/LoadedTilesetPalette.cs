@@ -6,15 +6,9 @@ using System.Text;
 
 namespace Necrofy
 {
-    class LoadedTilesetPalette
+    class LoadedTilesetPalette : LoadedPalette
     {
-        public readonly TilesetPaletteAsset paletteAsset;
-        public Color[] colors;
-
-        public LoadedTilesetPalette(Project project, string paletteName) {
-            paletteAsset = TilesetPaletteAsset.FromProject(project, paletteName);
-
-            colors = SNESGraphics.SNESToRGB(paletteAsset.data);
-        }
+        public LoadedTilesetPalette(Project project, string paletteName)
+            : base(TilesetPaletteAsset.FromProject(project, paletteName).data, transparent: false) { }
     }
 }

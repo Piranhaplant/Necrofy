@@ -6,18 +6,9 @@ using System.Text;
 
 namespace Necrofy
 {
-    class LoadedTilesetGraphics
+    class LoadedTilesetGraphics : LoadedGraphics
     {
-        public readonly TilesetGraphicsAsset graphicsAsset;
-        public byte[][,] linearGraphics;
-
-        public LoadedTilesetGraphics(Project project, string tilesetGraphicsName) {
-            graphicsAsset = TilesetGraphicsAsset.FromProject(project, tilesetGraphicsName);
-
-            linearGraphics = new byte[0x200][,];
-            for (int i = 0; i < linearGraphics.Length; i++) {
-                linearGraphics[i] = SNESGraphics.PlanarToLinear(graphicsAsset.data, i * 0x20);
-            }
-        }
+        public LoadedTilesetGraphics(Project project, string tilesetGraphicsName)
+            : base(TilesetGraphicsAsset.FromProject(project, tilesetGraphicsName).data) { }
     }
 }

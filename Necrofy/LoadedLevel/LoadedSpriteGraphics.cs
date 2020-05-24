@@ -14,12 +14,10 @@ namespace Necrofy
         public readonly Dictionary<SpriteDisplay.Category, List<LoadedSprite>> spritesByCategory;
 
         public LoadedSpriteGraphics(Project project, string spritePaletteName) {
-            PaletteAsset paletteAsset = PaletteAsset.FromProject(project, spritePaletteName);
-            GraphicsAsset graphicsAsset = GraphicsAsset.FromProject(project, GraphicsAsset.SpritesName);
+            LoadedPalette loadedPalette = new LoadedPalette(project, spritePaletteName);
+            LoadedGraphics loadedGraphics = new LoadedGraphics(project, GraphicsAsset.SpritesName);
             SpritesAsset spritesAsset = SpritesAsset.FromProject(project);
             EditorAsset<SpriteDisplayList> spriteDisplayAsset = EditorAsset<SpriteDisplayList>.FromProject(project, "SpriteDisplay");
-
-            Color[] colors = SNESGraphics.SNESToRGB(paletteAsset.data, transparent: true);
 
             sprites = new Dictionary<SpriteDisplay.Key.Type, Dictionary<int, LoadedSprite>>();
             foreach (SpriteDisplay.Key.Type keyType in Enum.GetValues(typeof(SpriteDisplay.Key.Type))) {
@@ -31,7 +29,7 @@ namespace Necrofy
             }
 
             foreach (ImageSpriteDisplay spriteDisplay in spriteDisplayAsset.data.imageSprites) {
-                LoadedSprite s = new ImageLoadedSprite(spriteDisplay, spritesAsset.sprites[spriteDisplay.spriteIndex], graphicsAsset.data, colors);
+                LoadedSprite s = new ImageLoadedSprite(spriteDisplay, spritesAsset.sprites[spriteDisplay.spriteIndex], loadedGraphics.linearGraphics, loadedPalette.colors);
                 AddLoadedSprite(spriteDisplay, s);
             }
             foreach (TextSpriteDisplay spriteDisplay in spriteDisplayAsset.data.textSprites) {
@@ -88,7 +86,7 @@ namespace Necrofy
             private readonly int anchorX;
             private readonly int anchorY;
 
-            public ImageLoadedSprite(ImageSpriteDisplay spriteDisplay, Sprite sprite, byte[] graphics, Color[] colors) : base(spriteDisplay) {
+            public ImageLoadedSprite(ImageSpriteDisplay spriteDisplay, Sprite sprite, LoadedGraphics.LinearGraphics graphics, Color[] colors) : base(spriteDisplay) {
                 int minX = 0, maxX = 0, minY = 0, maxY = 0;
                 foreach (Sprite.Tile t in sprite.tiles) {
                     minX = Math.Min(minX, t.xOffset);
@@ -107,10 +105,10 @@ namespace Necrofy
 
                 foreach (Sprite.Tile t in sprite.tiles) {
                     int palette = spriteDisplay.overridePalette ?? t.palette;
-                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 8 : 0), anchorY + t.yOffset + 1 + (t.yFlip ? 8 : 0), graphics, t.tileNum * 0x80 + 0x00, colors, palette * 0x10, t.xFlip, t.yFlip);
-                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 0 : 8), anchorY + t.yOffset + 1 + (t.yFlip ? 8 : 0), graphics, t.tileNum * 0x80 + 0x20, colors, palette * 0x10, t.xFlip, t.yFlip);
-                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 8 : 0), anchorY + t.yOffset + 1 + (t.yFlip ? 0 : 8), graphics, t.tileNum * 0x80 + 0x40, colors, palette * 0x10, t.xFlip, t.yFlip);
-                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 0 : 8), anchorY + t.yOffset + 1 + (t.yFlip ? 0 : 8), graphics, t.tileNum * 0x80 + 0x60, colors, palette * 0x10, t.xFlip, t.yFlip);
+                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 8 : 0), anchorY + t.yOffset + 1 + (t.yFlip ? 8 : 0), graphics[t.tileNum * 4 + 0], colors, palette * 0x10, t.xFlip, t.yFlip);
+                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 0 : 8), anchorY + t.yOffset + 1 + (t.yFlip ? 8 : 0), graphics[t.tileNum * 4 + 1], colors, palette * 0x10, t.xFlip, t.yFlip);
+                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 8 : 0), anchorY + t.yOffset + 1 + (t.yFlip ? 0 : 8), graphics[t.tileNum * 4 + 2], colors, palette * 0x10, t.xFlip, t.yFlip);
+                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 0 : 8), anchorY + t.yOffset + 1 + (t.yFlip ? 0 : 8), graphics[t.tileNum * 4 + 3], colors, palette * 0x10, t.xFlip, t.yFlip);
                 }
             }
 

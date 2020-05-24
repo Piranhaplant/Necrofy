@@ -59,8 +59,7 @@ namespace Necrofy
             return result;
         }
 
-        public static void DrawTile(Bitmap bmp, int x, int y, byte[] gfx, int gfxindex, Color[] palette, int palIndex, bool xFlip, bool yFlip) {
-            byte[,] tile = PlanarToLinear(gfx, gfxindex);
+        public static void DrawTile(Bitmap bmp, int x, int y, byte[,] linearGraphics, Color[] palette, int palIndex, bool xFlip, bool yFlip) {
             int xStep = 1;
             int yStep = 1;
             if (xFlip) {
@@ -74,8 +73,9 @@ namespace Necrofy
             }
             for (int iy = 0; iy <= 7; iy++) {
                 for (int ix = 0; ix <= 7; ix++) {
-                    if (palette[palIndex + tile[ix, iy]].A > 0) {
-                        bmp.SetPixel(x, y, palette[palIndex + tile[ix, iy]]);
+                    Color c = palette[palIndex + linearGraphics[ix, iy]];
+                    if (c.A > 0) {
+                        bmp.SetPixel(x, y, c);
                     }
                     x += xStep;
                 }
@@ -83,14 +83,8 @@ namespace Necrofy
                 x = xOrig;
             }
         }
-
-        public static void DrawTile(Bitmap bmp, int x, int y, Stream s, Color[] palette, int palIndex, bool xFlip, bool yFlip) {
-            byte[] gfx = new byte[32];
-            s.Read(gfx, 0, 32);
-            DrawTile(bmp, x, y, gfx, 0, palette, palIndex, xFlip, yFlip);
-        }
-
-        public static void DrawTile(BitmapData bmp, int x, int y, LoadedTilesetTilemap.Tile tile, byte[][,] tiles) {
+        
+        public static void DrawTile(BitmapData bmp, int x, int y, LoadedTilemap.Tile tile, LoadedGraphics.LinearGraphics linearGraphics) {
             int palIndex = 0x10 * tile.palette;
             int xStep = 1;
             int yStep = 1;
@@ -105,7 +99,7 @@ namespace Necrofy
             }
             for (int iy = 0; iy <= 7; iy++) {
                 for (int ix = 0; ix <= 7; ix++) {
-                    Marshal.WriteByte(bmp.Scan0, y * bmp.Stride + x, (byte)(palIndex + tiles[tile.tileNum][ix, iy]));
+                    Marshal.WriteByte(bmp.Scan0, y * bmp.Stride + x, (byte)(palIndex + linearGraphics[tile.tileNum][ix, iy]));
                     x += xStep;
                 }
                 y += yStep;

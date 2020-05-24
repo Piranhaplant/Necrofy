@@ -99,11 +99,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Asset.cs" />
+    <Compile Include="Assets\DataAsset.cs" />
     <Compile Include="Assets\EditorAsset.cs" />
     <Compile Include="Assets\GraphicsAsset.cs" />
     <Compile Include="Assets\LevelAsset.cs" />
     <Compile Include="Assets\PaletteAsset.cs" />
     <Compile Include="Assets\SpritesAsset.cs" />
+    <Compile Include="Assets\TilemapAsset.cs" />
     <Compile Include="Assets\TilesetAsset.cs" />
     <Compile Include="Assets\TilesetCollisionAsset.cs" />
     <Compile Include="Assets\TilesetGraphicsAsset.cs" />
@@ -155,6 +157,18 @@
     <Compile Include="LevelEditor\TileSelectTool.cs" />
     <Compile Include="LevelEditor\TileSuggestionTool.cs" />
     <Compile Include="LevelEditor\TileTool.cs" />
+    <Compile Include="LevelEditor\TitleEditor\PageEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LevelEditor\TitleEditor\PageEditor.Designer.cs">
+      <DependentUpon>PageEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LevelEditor\TitleEditor\TitleEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LevelEditor\TitleEditor\TitleEditor.Designer.cs">
+      <DependentUpon>TitleEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="LevelEditor\Tool.cs" />
     <Compile Include="LevelEditor\LevelSettings\LevelSettingsDialog.cs">
       <SubType>Form</SubType>
@@ -162,6 +176,10 @@
     <Compile Include="LevelEditor\LevelSettings\LevelSettingsDialog.Designer.cs">
       <DependentUpon>LevelSettingsDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="LoadedLevel\LoadedGraphics.cs" />
+    <Compile Include="LoadedLevel\LoadedLevelTitleCharacters.cs" />
+    <Compile Include="LoadedLevel\LoadedPalette.cs" />
+    <Compile Include="LoadedLevel\LoadedTilemap.cs" />
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedItem.cs" />
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedLevelObject.cs" />
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedMonster.cs" />
@@ -305,6 +323,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="LevelEditor\LevelSettings\TileAnimationRow.resx">
       <DependentUpon>TileAnimationRow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LevelEditor\TitleEditor\PageEditor.resx">
+      <DependentUpon>PageEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LevelEditor\TitleEditor\TitleEditor.resx">
+      <DependentUpon>TitleEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NewProjectDialog.resx">
       <DependentUpon>NewProjectDialog.cs</DependentUpon>
@@ -495,6 +519,7 @@
     <None Include="Icons\map-resize.png" />
     <None Include="Icons\leaf.png" />
     <None Include="Icons\zeke.png" />
+    <None Include="Icons\document-binary.png" />
     <Content Include="Icons\information-small.png" />
     <Content Include="ProjectFiles\Patches\OtherExpand.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
