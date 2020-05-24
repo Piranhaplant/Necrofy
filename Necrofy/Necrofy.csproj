@@ -496,6 +496,9 @@
     <None Include="Icons\leaf.png" />
     <None Include="Icons\zeke.png" />
     <Content Include="Icons\information-small.png" />
+    <Content Include="ProjectFiles\Patches\OtherExpand.asm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="ProjectFiles\Patches\ROMExpand.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -167,9 +167,8 @@ namespace Necrofy
                 return newPointer;
             } else {
                 s.Seek((int)pointer, SeekOrigin.Begin);
-                int size = s.ReadInt16();
-                s.Seek(-2, SeekOrigin.Current);
-                if (size >= compressedData.Length) {
+                int size = s.PeekInt16();
+                if (compressedData.Length <= size) {
                     s.WriteInt16((ushort)compressedData.Length);
                     s.Write(compressedData, 0, compressedData.Length);
                 } else {

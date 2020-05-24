@@ -155,6 +155,7 @@ namespace Necrofy
             s.Close();
             
             Patch(outputROM, "ROMExpand.asm");
+            Patch(outputROM, "OtherExpand.asm");
         }
 
         public void Run() {
