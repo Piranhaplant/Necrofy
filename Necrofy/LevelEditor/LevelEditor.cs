@@ -18,6 +18,7 @@ namespace Necrofy
         private const int LevelPadding = 64;
 
         public readonly LoadedLevel level;
+        public TitleEditor titleEditor = null;
 
         public readonly TilesetObjectBrowserContents tilesetObjectBrowserContents;
         public readonly SpriteObjectBrowserContents spriteObjectBrowserContents;
@@ -87,6 +88,15 @@ namespace Necrofy
             SetupTool(spriteTool, ToolStripGrouper.ItemType.SpriteTool, Keys.I);
 
             Repaint();
+        }
+
+        protected override void CloseChildren(FormClosingEventArgs e) {
+            if (titleEditor != null) {
+                titleEditor.Close();
+                if (titleEditor != null && titleEditor.Visible) {
+                    e.Cancel = true;
+                }
+            }
         }
         
         private void LevelEditor_FormClosed(object sender, FormClosedEventArgs e) {
@@ -358,10 +368,20 @@ namespace Necrofy
                     mainWindow.GetToolStripItem(type).Checked = true;
                 }
             } else if (item == ToolStripGrouper.ItemType.LevelEditTitle) {
-                mainWindow.ShowEditor(new TitleEditor(level, project), assetInfo: null);
+                if (titleEditor == null) {
+                    titleEditor = new TitleEditor(this, project);
+                    titleEditor.FormClosed += TitleEditor_FormClosed;
+                    mainWindow.ShowEditor(titleEditor, assetInfo: null);
+                } else {
+                    titleEditor.Activate();
+                }
             } else if (item == ToolStripGrouper.ItemType.LevelSettings) {
                 new LevelSettingsDialog(project, this).ShowDialog();
             }
+        }
+
+        private void TitleEditor_FormClosed(object sender, FormClosedEventArgs e) {
+            titleEditor = null;
         }
 
         private readonly Dictionary<ToolStripGrouper.ItemType, SpriteDisplay.Category> spriteCategoryForMenuItem =

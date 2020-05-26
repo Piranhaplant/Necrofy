@@ -63,7 +63,9 @@ namespace Necrofy
         }
 
         private void EditorWindow_FormClosing(object sender, FormClosingEventArgs e) {
-            if (Dirty && project != null) {
+            CloseChildren(e);
+            if (!e.Cancel && Dirty && project != null) {
+                // TODO: when closing the whole form, this Activate() works correctly, but not when closing an individual window
                 Activate();
                 DialogResult result = MessageBox.Show($"Save changes to \"{Title}\"?", "Save changes?", MessageBoxButtons.YesNoCancel);
                 if (result == DialogResult.Cancel) {
@@ -123,6 +125,8 @@ namespace Necrofy
         protected void RaiseSelectionChanged() {
             SelectionChanged?.Invoke(this, EventArgs.Empty);
         }
+
+        protected virtual void CloseChildren(FormClosingEventArgs e) { }
 
         public virtual ToolStripGrouper.ItemSet ToolStripItemSet => ToolStripGrouper.ItemSet.None;
         public virtual void ToolStripItemClicked(ToolStripGrouper.ItemType item) { }

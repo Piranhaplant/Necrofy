@@ -29,6 +29,7 @@ namespace Necrofy
         public ObjectBrowserContents Contents {
             set {
                 if (contents != null) {
+                    contents.ScrollPosition = vScrollBar.Value;
                     contents.ObjectsChanged -= Contents_ObjectsChanged;
                     contents.SelectedIndexChanged -= Contents_SelectedIndexChanged;
                 }
@@ -38,6 +39,9 @@ namespace Necrofy
                     contents.SelectedIndexChanged += Contents_SelectedIndexChanged;
                 }
                 LayoutObjects();
+                if (contents != null && vScrollBar.Enabled) {
+                    vScrollBar.Value = Math.Min(vScrollBar.Maximum, contents.ScrollPosition);
+                }
             }
         }
         

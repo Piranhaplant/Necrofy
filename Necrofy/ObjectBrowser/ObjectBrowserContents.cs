@@ -39,6 +39,8 @@ namespace Necrofy
                 }
             }
         }
+
+        public int ScrollPosition { get; set; }
     }
 
     public class ObjectsChangedEventArgs : EventArgs

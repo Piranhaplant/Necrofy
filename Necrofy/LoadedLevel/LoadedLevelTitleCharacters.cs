@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Necrofy
 {
-    class LoadedLevelTitleCharacters
+    class LoadedLevelTitleCharacters : IDisposable
     {
         private static readonly int[] charWidthForRow = new int[] { 3, 2, 6 };
         private const int height = 6;
@@ -38,6 +38,14 @@ namespace Necrofy
                     }
                     image.UnlockBits(imageData);
                     images[i] = image;
+                }
+            }
+        }
+
+        public void Dispose() {
+            foreach (Bitmap b in images) {
+                if (b != null) {
+                    b.Dispose();
                 }
             }
         }
