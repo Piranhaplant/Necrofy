@@ -40,7 +40,6 @@ namespace Necrofy
 
         public override void PaintObject(int i, Graphics g, int x, int y) {
             Bitmap image = characterImages[i];
-            g.FillRectangle(Brushes.Black, x, y, image.Width, image.Height);
             SNESGraphics.DrawWithPlt(g, x, y, image, characters.loadedPalette.colors, palette * 0x10, 0x20);
         }
     }

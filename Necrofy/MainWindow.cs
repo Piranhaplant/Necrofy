@@ -64,6 +64,10 @@ namespace Necrofy
             HideAllEditorToolStripItems();
         }
 
+        private void MainWindow_FormClosing(object sender, FormClosingEventArgs e) {
+            ObjectBrowser.Browser.Contents = null; // Fixes a bug where the object browser would try to paint disposed images
+        }
+
         private void MainWindow_FormClosed(object sender, FormClosedEventArgs e) {
             using (MemoryStream s = new MemoryStream()) {
                 dockPanel.SaveAsXml(s, Encoding.UTF8);

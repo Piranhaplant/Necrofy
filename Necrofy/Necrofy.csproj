@@ -186,6 +186,7 @@
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedOneShotMonster.cs" />
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedPlayerStartPosition.cs" />
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedPositionLevelMonster.cs" />
+    <Compile Include="LevelEditor\TitleEditor\WrappedTitleWord.cs" />
     <Compile Include="ObjectBrowser\LevelTitleObjectBrowserContents.cs" />
     <Compile Include="ToolBarMenuLinker.cs">
       <SubType>Component</SubType>

@@ -14,7 +14,7 @@ namespace Necrofy
         public readonly Dictionary<SpriteDisplay.Category, List<LoadedSprite>> spritesByCategory;
 
         public LoadedSpriteGraphics(Project project, string spritePaletteName) {
-            LoadedPalette loadedPalette = new LoadedPalette(project, spritePaletteName);
+            LoadedPalette loadedPalette = new LoadedPalette(project, spritePaletteName, transparent: true);
             LoadedGraphics loadedGraphics = new LoadedGraphics(project, GraphicsAsset.SpritesName);
             SpritesAsset spritesAsset = SpritesAsset.FromProject(project);
             EditorAsset<SpriteDisplayList> spriteDisplayAsset = EditorAsset<SpriteDisplayList>.FromProject(project, "SpriteDisplay");

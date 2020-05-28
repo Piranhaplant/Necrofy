@@ -11,7 +11,7 @@ namespace Necrofy
     class LoadedLevelTitleCharacters : IDisposable
     {
         private static readonly int[] charWidthForRow = new int[] { 3, 2, 6 };
-        private const int height = 6;
+        public const int height = 6;
         private const int tilemapRowWidth = 0x80;
 
         public readonly LoadedPalette loadedPalette;
@@ -30,6 +30,7 @@ namespace Necrofy
                 if (tilemapY < charWidthForRow.Length) {
                     int width = charWidthForRow[tilemapY];
                     Bitmap image = new Bitmap(width * 8, height * 8, PixelFormat.Format8bppIndexed);
+                    SNESGraphics.FillPalette(image, loadedPalette.colors);
                     BitmapData imageData = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
                     for (int y = 0; y < height; y++) {
                         for (int x = 0; x < width; x++) {
@@ -40,6 +41,14 @@ namespace Necrofy
                     images[i] = image;
                 }
             }
+        }
+
+        public Bitmap GetImageForChar(byte c) {
+            int imageIndex = c - 0x20;
+            if (imageIndex >= 0 && imageIndex < images.Length) {
+                return images[imageIndex];
+            }
+            return null;
         }
 
         public void Dispose() {

@@ -10,6 +10,10 @@ namespace Necrofy
     class ObjectSelector<T> where T : ISelectableObject
     {
         private readonly IHost host;
+        private readonly int positionStep;
+        private readonly int width;
+        private readonly int height;
+
         private HashSet<T> selectedObjects = new HashSet<T>();
 
         private bool addToSelection;
@@ -28,8 +32,11 @@ namespace Necrofy
         private int dragStartX;
         private int dragStartY;
 
-        public ObjectSelector(IHost host) {
+        public ObjectSelector(IHost host, int positionStep = 1, int width = int.MaxValue, int height = int.MaxValue) {
             this.host = host;
+            this.positionStep = positionStep;
+            this.width = width;
+            this.height = height;
         }
 
         public HashSet<T> GetSelectedObjects() {
@@ -135,24 +142,32 @@ namespace Necrofy
                 }
                 host.SelectionChanged();
             } else if (movingObjects) {
-                if (creating) {
-                    creating = false;
-                    selectedObjects = new HashSet<T>(host.CloneSelection());
-                    host.SelectionChanged();
-                }
                 int minX = selectedObjects.Min(o => o.X);
                 int minY = selectedObjects.Min(o => o.Y);
+                int maxX = selectedObjects.Max(o => o.X);
+                int maxY = selectedObjects.Max(o => o.Y);
 
                 int newMoveX = x - dragStartX;
                 int newMoveY = y - dragStartY;
-                int dx = Math.Max(-minX, newMoveX - totalMoveX);
-                int dy = Math.Max(-minY, newMoveY - totalMoveY);
-
-                totalMoveX += dx;
-                totalMoveY += dy;
                 
-                // TODO add snap
-                host.MoveSelectedObjects(dx, dy, 1);
+                int dx = Math.Min(width - maxX, Math.Max(-minX, newMoveX - totalMoveX));
+                int dy = Math.Min(height - maxY, Math.Max(-minY, newMoveY - totalMoveY));
+                dx = (dx / positionStep) * positionStep;
+                dy = (dy / positionStep) * positionStep;
+
+                if (dx != 0 || dy != 0) {
+                    if (creating) {
+                        creating = false;
+                        selectedObjects = new HashSet<T>(host.CloneSelection());
+                        host.SelectionChanged();
+                    }
+
+                    totalMoveX += dx;
+                    totalMoveY += dy;
+
+                    // TODO add snap
+                    host.MoveSelectedObjects(dx, dy, 1);
+                }
             }
         }
 

@@ -16,7 +16,7 @@ namespace Necrofy
         private readonly LoadedLevelTitleCharacters characters;
 
         private LevelTitleObjectBrowserContents levelTitleContents;
-        private UndoManager<TitleEditor> undoManager;
+        public UndoManager<TitleEditor> undoManager;
 
         public TitleEditor(LevelEditor levelEditor, Project project) {
             InitializeComponent();
@@ -27,8 +27,8 @@ namespace Necrofy
             displayName.Text = level.displayName;
 
             characters = new LoadedLevelTitleCharacters(project);
-            pageEditor1.LoadPage(level.title1, characters);
-            pageEditor2.LoadPage(level.title2, characters);
+            pageEditor1.LoadPage(this, level.title1, characters);
+            pageEditor2.LoadPage(this, level.title2, characters);
 
             levelTitleContents = new LevelTitleObjectBrowserContents(characters);
             BrowserContents = levelTitleContents;
@@ -37,6 +37,17 @@ namespace Necrofy
             int defaultPalette = level.title1.words.Union(level.title2.words).Select(w => w.palette).FirstOrDefault();
             palette.SelectedItem = defaultPalette;
             applyToAll.Checked = level.title1.words.Union(level.title2.words).All(w => w.palette == defaultPalette);
+
+            pageEditor1.GotFocus += PageEditor1_GotFocus;
+            pageEditor2.GotFocus += PageEditor2_GotFocus;
+        }
+
+        private void PageEditor1_GotFocus(object sender, EventArgs e) {
+            pageEditor2.SelectNone();
+        }
+
+        private void PageEditor2_GotFocus(object sender, EventArgs e) {
+            pageEditor1.SelectNone();
         }
 
         public override int? LevelNumber => levelEditor.level.levelAsset.LevelNumber;
@@ -48,6 +59,19 @@ namespace Necrofy
         protected override UndoManager Setup() {
             undoManager = new UndoManager<TitleEditor>(mainWindow.UndoButton, mainWindow.RedoButton, this);
             return undoManager;
+        }
+
+        protected override void DoSave(Project project) {
+            Level level = levelEditor.level.Level;
+            level.displayName = displayName.Text;
+            level.title1 = pageEditor1.page;
+            level.title2 = pageEditor2.page;
+            levelEditor.undoManager.ForceDirty();
+        }
+
+        public void Repaint() {
+            pageEditor1.Invalidate();
+            pageEditor2.Invalidate();
         }
 
         private void palette_SelectedIndexChanged(object sender, EventArgs e) {
