@@ -163,6 +163,9 @@
     <Compile Include="LevelEditor\TitleEditor\PageEditor.Designer.cs">
       <DependentUpon>PageEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="LevelEditor\TitleEditor\PaletteComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="LevelEditor\TitleEditor\TitleEditor.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -52,7 +52,10 @@ namespace Necrofy
             levelTitleContents = new LevelTitleObjectBrowserContents(characters);
             BrowserContents = levelTitleContents;
 
-            palette.Items.AddRange(new object[] { (byte)0, (byte)2, (byte)4, (byte)6 });
+            palette.AddPalette(characters, 0);
+            palette.AddPalette(characters, 2);
+            palette.AddPalette(characters, 4);
+            palette.AddPalette(characters, 6);
             byte defaultPalette = level.title1.words.Union(level.title2.words).Select(w => w.palette).FirstOrDefault();
             SetPalette(defaultPalette);
             applyToAll.Checked = level.title1.words.Union(level.title2.words).All(w => w.palette == defaultPalette);
@@ -64,6 +67,7 @@ namespace Necrofy
         }
 
         private void TitleEditor_FormClosed(object sender, FormClosedEventArgs e) {
+            palette.Items.Clear(); // Fixes a bug where the items try to be painted after disposing
             characters.Dispose();
         }
 
@@ -111,11 +115,7 @@ namespace Necrofy
 
         private void SetPalette(byte value) {
             updatingData++;
-            if (palette.Items.Contains(value)) {
-                palette.SelectedItem = value;
-            } else {
-                palette.SelectedIndex = -1;
-            }
+            palette.SelectedPalette = value;
             updatingData--;
         }
 
@@ -209,12 +209,12 @@ namespace Necrofy
 
         private void palette_SelectedIndexChanged(object sender, EventArgs e) {
             if (palette.SelectedIndex > -1) {
-                levelTitleContents.SetPalette((byte)palette.SelectedItem);
+                levelTitleContents.SetPalette(palette.SelectedPalette);
                 if (updatingData == 0) {
                     if (applyToAll.Checked) {
-                        undoManager.Do(new ChangeWordPaletteAction(pageEditor1.AllWords.Union(pageEditor2.AllWords), (byte)palette.SelectedItem));
+                        undoManager.Do(new ChangeWordPaletteAction(pageEditor1.AllWords.Union(pageEditor2.AllWords), palette.SelectedPalette));
                     } else {
-                        undoManager.Do(new ChangeWordPaletteAction(activeEditor.SelectedWords, (byte)palette.SelectedItem));
+                        undoManager.Do(new ChangeWordPaletteAction(activeEditor.SelectedWords, palette.SelectedPalette));
                     }
                 }
             }

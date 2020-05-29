@@ -104,7 +104,7 @@ namespace Necrofy
             void DrawImage(int i, Bitmap image, bool wrapped, int xOffset = 0, int yOffset = 0) {
                 int x = CharXPositions[i] % ScreenWidth + xOffset;
                 int y = (word.y + CharXPositions[i] / ScreenWidth) * 8 + yOffset;
-                SNESGraphics.DrawWithPlt(g, x, y, image, loadedCharacters.loadedPalette.colors, word.palette * 0x10, 0x20);
+                loadedCharacters.DrawChar(g, x, y, word.chars[i], word.palette);
                 if (wrapped) {
                     g.FillRectangle(WrapAroundBrush, x, y, image.Width, image.Height);
                 }

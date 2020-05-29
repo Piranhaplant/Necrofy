@@ -183,7 +183,6 @@ namespace Necrofy
         private void PageEditor_MouseDown(object sender, MouseEventArgs e) {
             mouseDown = true;
 
-            textEditWord = null;
             if (mouseMode == MouseMode.Text) {
                 objectSelector.SelectNone();
                 SelectedWords = new HashSet<WrappedTitleWord>() { hoveredWord };
@@ -226,6 +225,7 @@ namespace Necrofy
         }
 
         public void SelectionChanged() {
+            textEditWord = null;
             SelectedWords = new HashSet<WrappedTitleWord>(objectSelector.GetSelectedObjects());
             Invalidate();
         }

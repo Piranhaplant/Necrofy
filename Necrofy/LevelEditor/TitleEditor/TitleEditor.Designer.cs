@@ -31,7 +31,7 @@
             this.displayName = new System.Windows.Forms.TextBox();
             this.displayNameLbl = new System.Windows.Forms.Label();
             this.paletteLbl = new System.Windows.Forms.Label();
-            this.palette = new System.Windows.Forms.ComboBox();
+            this.palette = new Necrofy.PaletteComboBox();
             this.applyToAll = new System.Windows.Forms.CheckBox();
             this.mainPanel = new System.Windows.Forms.Panel();
             this.screenBounds.SuspendLayout();
@@ -67,7 +67,7 @@
             // 
             this.displayName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.displayName.Location = new System.Drawing.Point(93, 1);
+            this.displayName.Location = new System.Drawing.Point(93, 18);
             this.displayName.Name = "displayName";
             this.displayName.Size = new System.Drawing.Size(404, 20);
             this.displayName.TabIndex = 1;
@@ -76,7 +76,7 @@
             // displayNameLbl
             // 
             this.displayNameLbl.AutoSize = true;
-            this.displayNameLbl.Location = new System.Drawing.Point(12, 4);
+            this.displayNameLbl.Location = new System.Drawing.Point(12, 21);
             this.displayNameLbl.Name = "displayNameLbl";
             this.displayNameLbl.Size = new System.Drawing.Size(75, 13);
             this.displayNameLbl.TabIndex = 2;
@@ -86,7 +86,7 @@
             // 
             this.paletteLbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.paletteLbl.AutoSize = true;
-            this.paletteLbl.Location = new System.Drawing.Point(503, 5);
+            this.paletteLbl.Location = new System.Drawing.Point(503, 21);
             this.paletteLbl.Name = "paletteLbl";
             this.paletteLbl.Size = new System.Drawing.Size(43, 13);
             this.paletteLbl.TabIndex = 3;
@@ -95,11 +95,14 @@
             // palette
             // 
             this.palette.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.palette.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.palette.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.palette.FormattingEnabled = true;
+            this.palette.ItemHeight = 48;
             this.palette.Location = new System.Drawing.Point(552, 0);
             this.palette.Name = "palette";
-            this.palette.Size = new System.Drawing.Size(71, 21);
+            this.palette.SelectedPalette = ((byte)(255));
+            this.palette.Size = new System.Drawing.Size(71, 54);
             this.palette.TabIndex = 4;
             this.palette.SelectedIndexChanged += new System.EventHandler(this.palette_SelectedIndexChanged);
             // 
@@ -109,7 +112,7 @@
             this.applyToAll.AutoSize = true;
             this.applyToAll.Checked = true;
             this.applyToAll.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.applyToAll.Location = new System.Drawing.Point(629, 4);
+            this.applyToAll.Location = new System.Drawing.Point(629, 20);
             this.applyToAll.Name = "applyToAll";
             this.applyToAll.Size = new System.Drawing.Size(77, 17);
             this.applyToAll.TabIndex = 5;
@@ -125,9 +128,9 @@
             this.mainPanel.AutoScroll = true;
             this.mainPanel.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.mainPanel.Controls.Add(this.screenBounds);
-            this.mainPanel.Location = new System.Drawing.Point(0, 20);
+            this.mainPanel.Location = new System.Drawing.Point(0, 54);
             this.mainPanel.Name = "mainPanel";
-            this.mainPanel.Size = new System.Drawing.Size(718, 404);
+            this.mainPanel.Size = new System.Drawing.Size(718, 370);
             this.mainPanel.TabIndex = 0;
             this.mainPanel.SizeChanged += new System.EventHandler(this.mainPanel_SizeChanged);
             // 
@@ -162,7 +165,7 @@
         private System.Windows.Forms.TextBox displayName;
         private System.Windows.Forms.Label displayNameLbl;
         private System.Windows.Forms.Label paletteLbl;
-        private System.Windows.Forms.ComboBox palette;
+        private PaletteComboBox palette;
         private System.Windows.Forms.CheckBox applyToAll;
         private System.Windows.Forms.Panel mainPanel;
     }
