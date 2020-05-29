@@ -10,6 +10,7 @@ namespace Necrofy
     {
         protected override void AfterAction() {
             editor.Repaint();
+            editor.RefreshPropertyBrowser();
         }
     }
 
@@ -29,6 +30,16 @@ namespace Necrofy
                 prevY.Add(word.Y);
                 newX.Add((byte)(word.X + dx));
                 newY.Add((byte)(word.Y + dy));
+            }
+        }
+
+        public MoveWordAction(IEnumerable<WrappedTitleWord> words, byte? x, byte? y) {
+            this.words = new List<WrappedTitleWord>(words);
+            foreach (WrappedTitleWord word in words) {
+                prevX.Add(word.X);
+                prevY.Add(word.Y);
+                newX.Add(x == null ? word.X : (byte)x);
+                newY.Add(y == null ? word.Y : (byte)y);
             }
         }
 

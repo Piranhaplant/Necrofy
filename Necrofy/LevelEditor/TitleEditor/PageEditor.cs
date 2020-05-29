@@ -35,8 +35,10 @@ namespace Necrofy
                 return _selectedWords;
             }
             private set {
-                _selectedWords = value;
-                SelectedWordsChanged?.Invoke(this, EventArgs.Empty);
+                if (!_selectedWords.SetEquals(value)) {
+                    _selectedWords = value;
+                    SelectedWordsChanged?.Invoke(this, EventArgs.Empty);
+                }
             }
         }
 
@@ -224,7 +226,7 @@ namespace Necrofy
         }
 
         public void SelectionChanged() {
-            SelectedWords = objectSelector.GetSelectedObjects();
+            SelectedWords = new HashSet<WrappedTitleWord>(objectSelector.GetSelectedObjects());
             Invalidate();
         }
 

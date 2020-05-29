@@ -63,20 +63,36 @@ namespace Necrofy
             pageEditor2.SelectedWordsChanged += SelectedWordsChanged;
         }
 
+        private void TitleEditor_FormClosed(object sender, FormClosedEventArgs e) {
+            characters.Dispose();
+        }
+
         private void PageEditor1_GotFocus(object sender, EventArgs e) {
             activeEditor = pageEditor1;
             pageEditor2.SelectNone();
+            SelectedWordsChanged(activeEditor, e);
         }
 
         private void PageEditor2_GotFocus(object sender, EventArgs e) {
             activeEditor = pageEditor2;
             pageEditor1.SelectNone();
+            SelectedWordsChanged(activeEditor, e);
         }
 
         private void SelectedWordsChanged(object sender, EventArgs e) {
             if (sender == activeEditor) {
                 UpdateSelectedPalette();
+                PropertyBrowserObjects = activeEditor.SelectedWords.ToArray();
             }
+        }
+
+        public void Repaint() {
+            pageEditor1.Invalidate();
+            pageEditor2.Invalidate();
+        }
+
+        public void RefreshPropertyBrowser() {
+            mainWindow.PropertyBrowser.RefreshProperties();
         }
 
         public void UpdateSelectedPalette() {
@@ -92,6 +108,7 @@ namespace Necrofy
                 palette.Enabled = applyToAll.Checked;
             }
         }
+
         private void SetPalette(byte value) {
             updatingData++;
             if (palette.Items.Contains(value)) {
@@ -102,11 +119,32 @@ namespace Necrofy
             updatingData--;
         }
 
-        public override int? LevelNumber => levelEditor.level.levelAsset.LevelNumber;
+        public override bool CanCopy => false; // TODO
+        public override bool CanPaste => true;
+        public override bool CanDelete => false; // TODO
+        public override bool HasSelection => true;
 
-        private void TitleEditor_FormClosed(object sender, FormClosedEventArgs e) {
-            characters.Dispose();
+        public override void Copy() {
+            // TODO
         }
+
+        public override void Paste() {
+            // TODO
+        }
+
+        public override void Delete() {
+            // TODO
+        }
+
+        public override void SelectAll() {
+            activeEditor.SelectAll();
+        }
+
+        public override void SelectNone() {
+            activeEditor.SelectNone();
+        }
+
+        public override int? LevelNumber => levelEditor.level.levelAsset.LevelNumber;
 
         protected override UndoManager Setup() {
             undoManager = new UndoManager<TitleEditor>(mainWindow.UndoButton, mainWindow.RedoButton, this);
@@ -122,9 +160,43 @@ namespace Necrofy
             // TODO: propogate new display name to UI
         }
 
-        public void Repaint() {
-            pageEditor1.Invalidate();
-            pageEditor2.Invalidate();
+        public override void PropertyBrowserPropertyChanged(PropertyValueChangedEventArgs e) {
+            string value = e.ChangedItem.Value as string;
+            foreach (WrappedTitleWord w in activeEditor.SelectedWords) {
+                w.ClearBrowsableProperties();
+            }
+            if (value != null) {
+                value = value.Trim();
+                switch (e.ChangedItem.Label) {
+                    case WrappedTitleWord.XProperty:
+                        ParsePositionProperty(value, o => o.X,
+                            dx => new MoveWordAction(activeEditor.SelectedWords, dx, 0),
+                            x => new MoveWordAction(activeEditor.SelectedWords, x, null));
+                        break;
+                    case WrappedTitleWord.YProperty:
+                        ParsePositionProperty(value, o => o.Y,
+                            dy => new MoveWordAction(activeEditor.SelectedWords, 0, dy),
+                            y => new MoveWordAction(activeEditor.SelectedWords, null, y));
+                        break;
+                    case WrappedTitleWord.PaletteProperty:
+                        if (byte.TryParse(value, out byte palette)) {
+                            undoManager.Do(new ChangeWordPaletteAction(activeEditor.SelectedWords, palette));
+                        }
+                        break;
+                }
+            }
+        }
+
+        private void ParsePositionProperty(string value, Func<WrappedTitleWord, byte> getter, Func<int, MoveWordAction> deltaMoveGetter, Func<byte, MoveWordAction> absoluteMoveGetter) {
+            if (int.TryParse(value, out int intValue)) {
+                if (value.StartsWith("+") || value.StartsWith("-")) {
+                    int min = activeEditor.SelectedWords.Min(getter);
+                    int max = activeEditor.SelectedWords.Max(getter);
+                    undoManager.Do(deltaMoveGetter(Math.Max(-min, Math.Min(byte.MaxValue - max, intValue))));
+                } else if (intValue >= byte.MinValue && intValue <= byte.MaxValue) {
+                    undoManager.Do(absoluteMoveGetter((byte)intValue));
+                }
+            }
         }
 
         private string prevDisplayName = "";
