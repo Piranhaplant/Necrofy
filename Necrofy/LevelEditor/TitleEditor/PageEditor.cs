@@ -14,10 +14,6 @@ namespace Necrofy
     partial class PageEditor : UserControl, ObjectSelector<WrappedTitleWord>.IHost
     {
         private static readonly Brush textSelectionBrush = new SolidBrush(Color.FromArgb(128, SystemColors.Highlight));
-        private static readonly Pen selectionBorderDashPen = new Pen(Color.Black) {
-            DashOffset = 0,
-            DashPattern = new float[] { 4f, 4f },
-        };
 
         private TitleEditor titleEditor;
         public TitlePage page;
@@ -27,9 +23,24 @@ namespace Necrofy
         private MouseMode mouseMode = MouseMode.None;
         private bool mouseDown = false;
 
-        private WrappedTitleWord hoveredWord = null;
-        private HashSet<WrappedTitleWord> selectedWords = new HashSet<WrappedTitleWord>();
         private readonly ObjectSelector<WrappedTitleWord> objectSelector;
+
+        private WrappedTitleWord hoveredWord = null;
+        private WrappedTitleWord textEditWord = null;
+
+        public event EventHandler SelectedWordsChanged;
+        private HashSet<WrappedTitleWord> _selectedWords = new HashSet<WrappedTitleWord>();
+        public HashSet<WrappedTitleWord> SelectedWords {
+            get {
+                return _selectedWords;
+            }
+            private set {
+                _selectedWords = value;
+                SelectedWordsChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public IEnumerable<WrappedTitleWord> AllWords => wrappedWords;
 
         private CancellationTokenSource caretBlinkCancel = new CancellationTokenSource();
         private bool caretBlinkOn = false;
@@ -85,6 +96,8 @@ namespace Necrofy
 
         public void SelectNone() {
             objectSelector.SelectNone();
+            TextSelectionStart = -1;
+            TextSelectionEnd = -1;
         }
 
         private async void DoCaretBlink(CancellationToken cancellationToken) {
@@ -97,31 +110,30 @@ namespace Necrofy
         }
 
         private int GetCaretPosition(int x) {
-            WrappedTitleWord word = selectedWords.FirstOrDefault();
-            if (x < word.CharXPositions[0]) {
+            if (x < textEditWord.CharXPositions[0]) {
                 return 0;
             }
-            for (int i = 0; i < word.CharXPositions.Count - 1; i++) {
-                if (x >= word.CharXPositions[i] && x < word.CharXPositions[i + 1]) {
-                    if (x < (word.CharXPositions[i] + word.CharXPositions[i + 1]) / 2) {
+            for (int i = 0; i < textEditWord.CharXPositions.Count - 1; i++) {
+                if (x >= textEditWord.CharXPositions[i] && x < textEditWord.CharXPositions[i + 1]) {
+                    if (x < (textEditWord.CharXPositions[i] + textEditWord.CharXPositions[i + 1]) / 2) {
                         return i;
                     } else {
                         return i + 1;
                     }
                 }
             }
-            return word.CharXPositions.Count - 1;
+            return textEditWord.CharXPositions.Count - 1;
         }
 
         private void PageEditor_Paint(object sender, PaintEventArgs e) {
             foreach (WrappedTitleWord word in wrappedWords) {
                 word.Render(e.Graphics);
-                if (selectedWords.Contains(word)) {
-                    e.Graphics.DrawRectangle(Pens.White, word.VisibleBounds);
+                if (SelectedWords.Contains(word) && word != textEditWord) {
+                    e.Graphics.DrawRectangleProper(Pens.White, word.VisibleBounds);
                 } else if (word == hoveredWord) {
-                    e.Graphics.DrawRectangle(Pens.Gray, word.VisibleBounds);
+                    e.Graphics.DrawRectangleProper(Pens.Gray, word.VisibleBounds);
                 }
-                if (TextSelectionEnd >= 0 && word == selectedWords.FirstOrDefault()) {
+                if (word == textEditWord) {
                     if (TextSelectionEnd != TextSelectionStart) {
                         int startX = word.CharXPositions[Math.Min(TextSelectionStart, TextSelectionEnd)];
                         int endX = word.CharXPositions[Math.Max(TextSelectionStart, TextSelectionEnd)];
@@ -134,11 +146,7 @@ namespace Necrofy
                 }
             }
 
-            Rectangle selectionRectangle = objectSelector.GetSelectionRectangle();
-            if (selectionRectangle != Rectangle.Empty) {
-                e.Graphics.DrawRectangle(Pens.White, selectionRectangle);
-                e.Graphics.DrawRectangle(selectionBorderDashPen, selectionRectangle);
-            }
+            objectSelector.DrawSelectionRectangle(e.Graphics);
         }
 
         private void PageEditor_MouseMove(object sender, MouseEventArgs e) {
@@ -152,16 +160,9 @@ namespace Necrofy
                 MouseMode prevMouseMode = mouseMode;
                 WrappedTitleWord prevHoveredWord = hoveredWord;
 
-                List<WrappedTitleWord> hitWords = wrappedWords.Where(w => w.MoveBounds.Contains(e.Location)).Reverse().ToList();
-                if (hitWords.Count > 1) {
-                    List<WrappedTitleWord> betterHitWords = hitWords.Where(w => w.VisibleBounds.Contains(e.Location)).ToList();
-                    if (betterHitWords.Count > 0) {
-                        hitWords = betterHitWords;
-                    }
-                }
-                hoveredWord = hitWords.FirstOrDefault();
-                mouseMode = MouseMode.None;
+                hoveredWord = wrappedWords.Where(w => w.MoveBounds.Contains(e.Location)).Reverse().OrderBy(w => e.Location.DistanceFrom(w.VisibleBounds)).FirstOrDefault();
 
+                mouseMode = MouseMode.None;
                 if (hoveredWord != null) {
                     if (hoveredWord.TextBounds.Contains(e.Location)) {
                         mouseMode = MouseMode.Text;
@@ -180,9 +181,11 @@ namespace Necrofy
         private void PageEditor_MouseDown(object sender, MouseEventArgs e) {
             mouseDown = true;
 
+            textEditWord = null;
             if (mouseMode == MouseMode.Text) {
                 objectSelector.SelectNone();
-                selectedWords = new HashSet<WrappedTitleWord>() { hoveredWord };
+                SelectedWords = new HashSet<WrappedTitleWord>() { hoveredWord };
+                textEditWord = hoveredWord;
                 TextSelectionStart = GetCaretPosition(e.X);
             } else {
                 TextSelectionStart = -1;
@@ -212,8 +215,8 @@ namespace Necrofy
         }
 
         private void PageEditor_LostFocus(object sender, EventArgs e) {
-            TextSelectionStart = -1;
-            TextSelectionEnd = -1;
+            textEditWord = null;
+            Invalidate();
         }
 
         public IEnumerable<WrappedTitleWord> GetObjects() {
@@ -221,12 +224,12 @@ namespace Necrofy
         }
 
         public void SelectionChanged() {
-            selectedWords = objectSelector.GetSelectedObjects();
+            SelectedWords = objectSelector.GetSelectedObjects();
             Invalidate();
         }
 
         public void MoveSelectedObjects(int dx, int dy, int snap) {
-            titleEditor.undoManager.Do(new MoveWordAction(selectedWords, dx / 8, dy / 8));
+            titleEditor.undoManager.Do(new MoveWordAction(SelectedWords, dx / 8, dy / 8));
         }
 
         public WrappedTitleWord CreateObject(int x, int y) {

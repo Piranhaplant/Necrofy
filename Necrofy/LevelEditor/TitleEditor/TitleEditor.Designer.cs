@@ -71,6 +71,7 @@
             this.displayName.Name = "displayName";
             this.displayName.Size = new System.Drawing.Size(404, 20);
             this.displayName.TabIndex = 1;
+            this.displayName.TextChanged += new System.EventHandler(this.displayName_TextChanged);
             // 
             // displayNameLbl
             // 
@@ -106,12 +107,15 @@
             // 
             this.applyToAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.applyToAll.AutoSize = true;
+            this.applyToAll.Checked = true;
+            this.applyToAll.CheckState = System.Windows.Forms.CheckState.Checked;
             this.applyToAll.Location = new System.Drawing.Point(629, 4);
             this.applyToAll.Name = "applyToAll";
             this.applyToAll.Size = new System.Drawing.Size(77, 17);
             this.applyToAll.TabIndex = 5;
             this.applyToAll.Text = "Apply to all";
             this.applyToAll.UseVisualStyleBackColor = true;
+            this.applyToAll.CheckedChanged += new System.EventHandler(this.applyToAll_CheckedChanged);
             // 
             // mainPanel
             // 

@@ -9,8 +9,10 @@ namespace Necrofy
 {
     class WrappedTitleWord : ISelectableObject
     {
+        private const int ScreenWidth = 0x100;
         private const int MoveAreaOutsideSize = 12;
         private const int MoveAreaInsideSize = 4;
+        private static readonly Brush WrapAroundBrush = new SolidBrush(Color.FromArgb(128, Color.Red));
 
         /// <summary>The visible bounds of the word</summary>
         public Rectangle VisibleBounds { get; private set; }
@@ -41,6 +43,15 @@ namespace Necrofy
             word.x = x;
             word.y = y;
             CalculateBounds();
+        }
+
+        public byte Palette {
+            get {
+                return word.palette;
+            }
+            set {
+                word.palette = value;
+            }
         }
 
         private readonly TitlePage.Word word;
@@ -76,10 +87,22 @@ namespace Necrofy
         }
 
         public void Render(Graphics g) {
+            void DrawImage(int i, Bitmap image, bool wrapped, int xOffset = 0, int yOffset = 0) {
+                int x = CharXPositions[i] % ScreenWidth + xOffset;
+                int y = (word.y + CharXPositions[i] / ScreenWidth) * 8 + yOffset;
+                SNESGraphics.DrawWithPlt(g, x, y, image, loadedCharacters.loadedPalette.colors, word.palette * 0x10, 0x20);
+                if (wrapped) {
+                    g.FillRectangle(WrapAroundBrush, x, y, image.Width, image.Height);
+                }
+            }
+
             for (int i = 0; i < word.chars.Count; i++) {
                 Bitmap image = loadedCharacters.GetImageForChar(word.chars[i]);
                 if (image != null) {
-                    SNESGraphics.DrawWithPlt(g, CharXPositions[i], word.y * 8, image, loadedCharacters.loadedPalette.colors, word.palette * 0x10, 0x20);
+                    DrawImage(i, image, wrapped: CharXPositions[i] >= ScreenWidth);
+                    if (CharXPositions[i] / ScreenWidth != CharXPositions[i + 1] / ScreenWidth) {
+                        DrawImage(i, image, wrapped: true, xOffset: -ScreenWidth, yOffset: 8);
+                    }
                 }
             }
         }

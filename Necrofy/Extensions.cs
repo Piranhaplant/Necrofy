@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -32,6 +33,16 @@ namespace Necrofy
         public static T JsonClone<T>(this T obj, params JsonConverter[] converters) {
             string json = JsonConvert.SerializeObject(obj);
             return JsonConvert.DeserializeObject<T>(json, converters);
+        }
+
+        public static int DistanceFrom(this Point point, Rectangle rect) {
+            int xDist = Math.Max(0, Math.Max(rect.X - point.X, point.X - rect.Right));
+            int yDist = Math.Max(0, Math.Max(rect.Y - point.Y, point.Y - rect.Bottom));
+            return xDist + yDist;
+        }
+
+        public static void DrawRectangleProper(this Graphics g, Pen pen, Rectangle rect) {
+            g.DrawRectangle(pen, rect.X, rect.Y, rect.Width - 1, rect.Height - 1);
         }
     }
 }

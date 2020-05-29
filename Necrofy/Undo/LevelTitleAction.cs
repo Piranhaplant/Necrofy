@@ -61,4 +61,72 @@ namespace Necrofy
             return "Move text";
         }
     }
+
+    class ChangeWordPaletteAction : LevelTitleAction
+    {
+        private readonly List<WrappedTitleWord> words;
+
+        private readonly List<byte> prevPalette = new List<byte>();
+        private readonly byte newPalette;
+
+        public ChangeWordPaletteAction(IEnumerable<WrappedTitleWord> words, byte palette) {
+            this.words = new List<WrappedTitleWord>(words);
+            newPalette = palette;
+            foreach (WrappedTitleWord word in words) {
+                prevPalette.Add(word.Palette);
+            }
+        }
+
+        protected override void Undo() {
+            for (int i = 0; i < words.Count; i++) {
+                words[i].Palette = prevPalette[i];
+            }
+        }
+
+        protected override void Redo() {
+            for (int i = 0; i < words.Count; i++) {
+                words[i].Palette = newPalette;
+            }
+        }
+
+        protected override void AfterAction() {
+            base.AfterAction();
+            editor.UpdateSelectedPalette();
+        }
+
+        public override string ToString() {
+            return "Change palette";
+        }
+    }
+
+    class ChangeDisplayNameAction : UndoAction<TitleEditor>
+    {
+        private readonly string prevValue;
+        private string newValue;
+
+        public ChangeDisplayNameAction(string prevValue, string value) {
+            this.prevValue = prevValue;
+            newValue = value;
+        }
+        
+        protected override void Undo() {
+            editor.DisplayName = prevValue;
+        }
+
+        protected override void Redo() {
+            editor.DisplayName = newValue;
+        }
+
+        public override bool Merge(UndoAction<TitleEditor> action) {
+            if (action is ChangeDisplayNameAction changeDisplayNameAction) {
+                newValue = changeDisplayNameAction.newValue;
+                return true;
+            }
+            return false;
+        }
+
+        public override string ToString() {
+            return "Change display name";
+        }
+    }
 }

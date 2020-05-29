@@ -13,7 +13,7 @@ namespace Necrofy
         private readonly List<Bitmap> characterImages = new List<Bitmap>();
         private readonly List<int> characterNumbers = new List<int>();
 
-        private int palette = 0;
+        private byte palette = 0;
 
         public LevelTitleObjectBrowserContents(LoadedLevelTitleCharacters characters) {
             this.characters = characters;
@@ -25,7 +25,7 @@ namespace Necrofy
             }
         }
 
-        public void SetPalette(int palette) {
+        public void SetPalette(byte palette) {
             this.palette = palette;
             RaiseObjectsChangedEvent(scrollToTop: false);
         }

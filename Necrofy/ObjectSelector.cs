@@ -9,6 +9,11 @@ namespace Necrofy
 {
     class ObjectSelector<T> where T : ISelectableObject
     {
+        private static readonly Pen selectionBorderDashPen = new Pen(Color.Black) {
+            DashOffset = 0,
+            DashPattern = new float[] { 4f, 4f },
+        };
+
         private readonly IHost host;
         private readonly int positionStep;
         private readonly int width;
@@ -32,7 +37,7 @@ namespace Necrofy
         private int dragStartX;
         private int dragStartY;
 
-        public ObjectSelector(IHost host, int positionStep = 1, int width = int.MaxValue, int height = int.MaxValue) {
+        public ObjectSelector(IHost host, int positionStep = 1, int width = ushort.MaxValue, int height = ushort.MaxValue) {
             this.host = host;
             this.positionStep = positionStep;
             this.width = width;
@@ -43,11 +48,16 @@ namespace Necrofy
             return selectedObjects;
         }
 
-        public Rectangle GetSelectionRectangle() {
+        public void DrawSelectionRectangle(Graphics g) {
             if (makingSelectionRectangle) {
-                return selectionRectangle;
+                if (selectionRectangle.Width == 0 || selectionRectangle.Height == 0) {
+                    g.DrawLine(Pens.White, selectionRectangle.X, selectionRectangle.Y, selectionRectangle.Right, selectionRectangle.Bottom);
+                    g.DrawLine(selectionBorderDashPen, selectionRectangle.X, selectionRectangle.Y, selectionRectangle.Right, selectionRectangle.Bottom);
+                } else {
+                    g.DrawRectangle(Pens.White, selectionRectangle);
+                    g.DrawRectangle(selectionBorderDashPen, selectionRectangle);
+                }
             }
-            return Rectangle.Empty;
         }
 
         public void SelectAll() {

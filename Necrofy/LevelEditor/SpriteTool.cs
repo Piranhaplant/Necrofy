@@ -166,11 +166,7 @@ namespace Necrofy
         }
 
         public override void Paint(Graphics g) {
-            Rectangle selectionRectangle = objectSelector.GetSelectionRectangle();
-            if (selectionRectangle != Rectangle.Empty) {
-                g.DrawRectangle(Pens.White, selectionRectangle);
-                g.DrawRectangle(selectionBorderDashPen, selectionRectangle);
-            }
+            objectSelector.DrawSelectionRectangle(g);
 
             foreach (WrappedLevelObject obj in objectSelector.GetSelectedObjects()) {
                 Rectangle bounds = obj.Bounds;
