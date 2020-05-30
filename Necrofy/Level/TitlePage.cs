@@ -143,12 +143,15 @@ namespace Necrofy
             return s;
         }
 
+        private static readonly Random random = new Random();
+
         public static List<byte> StringToBytes(string s) {
             List<byte> result = new List<byte>();
             for (int i = 0; i < s.Length;) {
                 bool found = false;
                 for (int subLen = Math.Min(s.Length - i, MaxStringLength); subLen > 0; subLen--) {
-                    if (StringToBytesMap.TryGetValue(s.Substring(i, subLen), out int bytes)) {
+                    if (StringToBytesMap.TryGetValue(s.Substring(i, subLen), out List<int> allBytes)) {
+                        int bytes = allBytes[random.Next(0, allBytes.Count)];
                         List<byte> newBytes = new List<byte>();
                         while (bytes > 0) {
                             newBytes.Add((byte)(bytes & 0xff));
@@ -168,7 +171,7 @@ namespace Necrofy
         }
 
         public static readonly Dictionary<int, string> BytesToStringMap;
-        public static readonly Dictionary<string, int> StringToBytesMap;
+        public static readonly Dictionary<string, List<int>> StringToBytesMap;
 
         public static readonly HashSet<char> ValidChars;
         public static readonly int MaxByteLength;
@@ -176,7 +179,6 @@ namespace Necrofy
         public static readonly byte SpaceCharValue;
 
         static TitlePage() {
-            // TODO: Test that these are all right
             TupleList<int, string> pairs = new TupleList<int, string>() {
                 {0x21, "nt"}, {0x22, "th"}, {0x23, "te"}, {0x24, "ste"}, {0x25, "it"}, {0x25, "lt"}, {0x26, "et"},
                 {0x27, "sti"}, {0x27, "stl"}, {0x2771, "str"}, {0x277a, "str"}, {0x2772, "sth"}, {0x276f, "stn"},
@@ -201,17 +203,21 @@ namespace Necrofy
                 }
             }
 
-            StringToBytesMap = new Dictionary<string, int>();
+            StringToBytesMap = new Dictionary<string, List<int>>();
             foreach (Tuple<int, string> t in pairs) {
                 if (!StringToBytesMap.ContainsKey(t.Item2)) {
-                    StringToBytesMap[t.Item2] = t.Item1;
+                    StringToBytesMap[t.Item2] = new List<int>();
+                }
+                List<int> list = StringToBytesMap[t.Item2];
+                if (list.Count == 0 || t.Item2 != " ") {
+                    list.Add(t.Item1);
                 }
             }
 
             ValidChars = new HashSet<char>(pairs.Select(p => p.Item2).SelectMany(s => s.ToCharArray()));
             MaxByteLength = pairs.Select(p => (p.Item1.ToString("X").Length + 1) / 2).Max();
             MaxStringLength = pairs.Select(p => p.Item2.Length).Max();
-            SpaceCharValue = (byte)StringToBytesMap[" "];
+            SpaceCharValue = (byte)StringToBytesMap[" "][0];
         }
     }
 }
