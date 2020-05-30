@@ -24,7 +24,6 @@ namespace Necrofy
         protected override void MouseMove2(LevelMouseEventArgs e) {
             if (e.MouseIsDown && (e.TileX != prevX || e.TileY != prevY)) {
                 editor.tileSelection.SetPoint(e.TileX, e.TileY, addingToSelection);
-                editor.tilesetObjectBrowserContents.SelectedIndex = -1;
             }
         }
 

@@ -35,11 +35,6 @@
             this.DoubleBuffered = true;
             this.Name = "PageEditor";
             this.Size = new System.Drawing.Size(256, 224);
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.PageEditor_Paint);
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.PageEditor_MouseDown);
-            this.MouseLeave += new System.EventHandler(this.PageEditor_MouseLeave);
-            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.PageEditor_MouseMove);
-            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.PageEditor_MouseUp);
             this.ResumeLayout(false);
 
         }

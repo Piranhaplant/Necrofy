@@ -33,10 +33,8 @@ namespace Necrofy
                 return selectedIndex;
             }
             set {
-                if (selectedIndex != value) {
-                    selectedIndex = value;
-                    SelectedIndexChanged?.Invoke(this, EventArgs.Empty);
-                }
+                selectedIndex = value;
+                SelectedIndexChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 

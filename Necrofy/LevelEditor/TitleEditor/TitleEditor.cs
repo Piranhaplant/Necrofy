@@ -51,6 +51,7 @@ namespace Necrofy
 
             levelTitleContents = new LevelTitleObjectBrowserContents(characters);
             BrowserContents = levelTitleContents;
+            levelTitleContents.SelectedIndexChanged += LevelTitleContents_SelectedIndexChanged;
 
             palette.AddPalette(characters, 0);
             palette.AddPalette(characters, 2);
@@ -60,8 +61,8 @@ namespace Necrofy
             SetPalette(defaultPalette);
             applyToAll.Checked = level.title1.words.Union(level.title2.words).All(w => w.palette == defaultPalette);
 
-            pageEditor1.GotFocus += PageEditor1_GotFocus;
-            pageEditor2.GotFocus += PageEditor2_GotFocus;
+            pageEditor1.Enter += PageEditor1_Enter;
+            pageEditor2.Enter += PageEditor2_Enter;
             pageEditor1.SelectedWordsChanged += SelectedWordsChanged;
             pageEditor2.SelectedWordsChanged += SelectedWordsChanged;
         }
@@ -71,13 +72,13 @@ namespace Necrofy
             characters.Dispose();
         }
 
-        private void PageEditor1_GotFocus(object sender, EventArgs e) {
+        private void PageEditor1_Enter(object sender, EventArgs e) {
             activeEditor = pageEditor1;
             pageEditor2.SelectNone();
             SelectedWordsChanged(activeEditor, e);
         }
 
-        private void PageEditor2_GotFocus(object sender, EventArgs e) {
+        private void PageEditor2_Enter(object sender, EventArgs e) {
             activeEditor = pageEditor2;
             pageEditor1.SelectNone();
             SelectedWordsChanged(activeEditor, e);
@@ -87,6 +88,12 @@ namespace Necrofy
             if (sender == activeEditor) {
                 UpdateSelectedPalette();
                 PropertyBrowserObjects = activeEditor.SelectedWords.ToArray();
+            }
+        }
+
+        private void LevelTitleContents_SelectedIndexChanged(object sender, EventArgs e) {
+            if (levelTitleContents.SelectedIndex >= 0) {
+                activeEditor.CharPressed(levelTitleContents.SelectedChar);
             }
         }
 
@@ -137,11 +144,19 @@ namespace Necrofy
         }
 
         public override void SelectAll() {
-            activeEditor.SelectAll();
+            if (displayName.Focused) {
+                displayName.SelectAll();
+            } else {
+                activeEditor.SelectAll();
+            }
         }
 
         public override void SelectNone() {
-            activeEditor.SelectNone();
+            if (displayName.Focused) {
+                displayName.SelectionLength = 0;
+            } else {
+                activeEditor.SelectNone();
+            }
         }
 
         public override int? LevelNumber => levelEditor.level.levelAsset.LevelNumber;

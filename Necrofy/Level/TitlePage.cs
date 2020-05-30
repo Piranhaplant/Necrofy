@@ -9,8 +9,7 @@ namespace Necrofy
     /// <summary>
     /// One of the two screens that are shown before a level is played
     /// </summary>
-    class TitlePage
-    {
+    class TitlePage {
         public List<Word> words { get; set; }
 
         [JsonConstructor]
@@ -54,8 +53,7 @@ namespace Necrofy
         /// <summary>
         /// One string of characters displayed on a TitlePage
         /// </summary>
-        public class Word
-        {
+        public class Word {
             public byte x { get; set; }
             public byte y { get; set; }
             public byte palette { get; set; }
@@ -99,66 +97,121 @@ namespace Necrofy
             }
 
             public override string ToString() {
-                StringBuilder result = new StringBuilder(chars.Count);
-                bool capitalize = true;
-                for (int i = 0; i < chars.Count; ) {
-                    int value = 0;
-                    int valueLength = 0;
-                    for (int j = i; j < chars.Count && j < i + maxByteLength; j++) {
-                        value = (value << 8) | chars[j];
-                        valueLength++;
-                    }
-                    bool found = false;
-                    while (valueLength > 0 && !found) {
-                        foreach (Tuple<string, int> t in characterMap) {
-                            if (t.Item2 == value) {
-                                string s = Capitalize(t.Item1, capitalize);
-                                capitalize = s == " ";
-                                result.Append(s);
-                                i += valueLength;
-                                found = true;
-                                break;
-                            }
-                        }
-                        value = value >> 8;
-                        valueLength--;
-                    }
-                    if (!found) {
-                        capitalize = false;
-                        result.Append("?");
-                        i++;
-                    }
-                }
-                return result.ToString();
-            }
-
-            private static string Capitalize(string s, bool capitalize) {
-                if (capitalize && s.Length > 0) {
-                    return s.Substring(0, 1).ToUpperInvariant() + s.Substring(1);
-                }
+                BytesToString(chars, 0, chars.Count, true, out string s);
                 return s;
             }
         }
 
-        // TODO: "a", "p" should be randomized too
-        // TODO: Test that these are all right
-        private static readonly TupleList<string, int> characterMap = new TupleList<string, int>() {
-            {"nt", 0x21}, {"th", 0x22}, {"te", 0x23}, {"ste", 0x24}, {"it", 0x25}, {"lt", 0x25}, {"et", 0x26},
-            {"sti", 0x27}, {"stl", 0x27}, {"str", 0x2771}, {"str", 0x277a}, {"sth", 0x2772}, {"stn", 0x276f},
-            {"rti", 0x28}, {"rtl", 0x28}, {"rtr", 0x2871}, {"rtr", 0x287a}, {"rth", 0x2872}, {"rtn", 0x286f},
-            {"to", 0x29}, {"nts", 0x2a77}, {"rty", 0x612b}, {"rty", 0x6a2b}, {"ctor", 0x2c7879},
-            {"ctoi", 0x2c78}, {"ctol", 0x2c78}, {"t", 0x2d}, {"nta", 0x7b2e}, {"ita", 0x2e}, {"lta", 0x2e},
-            {"pts", 0x2f77}, {"0", 0x30}, {"1", 0x31}, {"2", 0x32}, {"3", 0x33}, {"4", 0x34}, {"5", 0x35},
-            {"6", 0x36}, {"7", 0x37}, {"8", 0x38}, {"9", 0x39}, {"ro", 0x613a}, {"ro", 0x6a3a}, {"q", 0x3b},
-            {"a", 0x41}, {"b", 0x42}, {"c", 0x43}, {"d", 0x44}, {"e", 0x45}, {"f", 0x46}, {"g", 0x47}, {"h", 0x48},
-            {"a", 0x49}, {"j", 0x4a}, {"k", 0x4b}, {"l", 0x4c}, {"m", 0x4d}, {"n", 0x4e}, {"o", 0x4f}, {"p", 0x50},
-            {"r", 0x51}, {"r", 0x52}, {"s", 0x53}, {"p", 0x54}, {"u", 0x55}, {"ei", 0x56}, {"li", 0x57}, {"x", 0x58},
-            {"y", 0x59}, {"z", 0x5a}, {"re", 0x615b}, {"re", 0x6a5b}, {"rs", 0x615c}, {"rs", 0x6a5c},
-            {"htm", 0x73745d}, {"itm", 0x745d}, {"ltm", 0x745d}, {"e", 0x62}, {"e", 0x63}, {"i", 0x64}, {"l", 0x64},
-            {"o", 0x65}, {"s", 0x66}, {"!", 0x67}, {"fe", 0x6869}, {"fo", 0x687a}, {"r", 0x616b}, {"r", 0x6a6b},
-            {"le", 0x6c6d}, {"w", 0x6e6f}, {"i", 0x70}, {"v", 0x75}, {"ve", 0x7576}, {"vel", 0x757664}, {" ", 0x7e},
-            {" ", 0x7d}, {" ", 0x20}, {" ", 0x3c}};
-        private const int maxByteLength = 3;
-        private const int maxStringLength = 4;
+        public static bool BytesToString(List<byte> bytes, int start, int end, bool capitalize, out string result) {
+            StringBuilder builder = new StringBuilder();
+            bool success = true;
+
+            bool capitalizeNextChar = capitalize;
+            for (int i = start; i < end;) {
+                int value = 0;
+                int valueLength = 0;
+                for (int j = i; j < end && j < i + MaxByteLength; j++) {
+                    value = (value << 8) | bytes[j];
+                    valueLength++;
+                }
+                bool found = false;
+                while (valueLength > 0 && !found) {
+                    if (BytesToStringMap.TryGetValue(value, out string s)) {
+                        s = Capitalize(s, capitalizeNextChar);
+                        capitalizeNextChar = capitalize && s == " ";
+                        builder.Append(s);
+                        i += valueLength;
+                        found = true;
+                        break;
+                    }
+                    value = value >> 8;
+                    valueLength--;
+                }
+                if (!found) {
+                    success = false;
+                    i++;
+                }
+            }
+            result = builder.ToString();
+            return success;
+        }
+
+        private static string Capitalize(string s, bool capitalize) {
+            if (capitalize && s.Length > 0) {
+                return s.Substring(0, 1).ToUpperInvariant() + s.Substring(1);
+            }
+            return s;
+        }
+
+        public static List<byte> StringToBytes(string s) {
+            List<byte> result = new List<byte>();
+            for (int i = 0; i < s.Length;) {
+                bool found = false;
+                for (int subLen = Math.Min(s.Length - i, MaxStringLength); subLen > 0; subLen--) {
+                    if (StringToBytesMap.TryGetValue(s.Substring(i, subLen), out int bytes)) {
+                        List<byte> newBytes = new List<byte>();
+                        while (bytes > 0) {
+                            newBytes.Add((byte)(bytes & 0xff));
+                            bytes >>= 8;
+                        }
+                        result.AddRange(Enumerable.Reverse(newBytes));
+                        found = true;
+                        i += subLen;
+                        break;
+                    }
+                }
+                if (!found) {
+                    i++;
+                }
+            }
+            return result;
+        }
+
+        public static readonly Dictionary<int, string> BytesToStringMap;
+        public static readonly Dictionary<string, int> StringToBytesMap;
+
+        public static readonly HashSet<char> ValidChars;
+        public static readonly int MaxByteLength;
+        public static readonly int MaxStringLength;
+        public static readonly byte SpaceCharValue;
+
+        static TitlePage() {
+            // TODO: Test that these are all right
+            TupleList<int, string> pairs = new TupleList<int, string>() {
+                {0x21, "nt"}, {0x22, "th"}, {0x23, "te"}, {0x24, "ste"}, {0x25, "it"}, {0x25, "lt"}, {0x26, "et"},
+                {0x27, "sti"}, {0x27, "stl"}, {0x2771, "str"}, {0x277a, "str"}, {0x2772, "sth"}, {0x276f, "stn"},
+                {0x28, "rti"}, {0x28, "rtl"}, {0x2871, "rtr"}, {0x287a, "rtr"}, {0x2872, "rth"}, {0x286f, "rtn"},
+                {0x29, "to"}, {0x2a77, "nts"}, {0x612b, "rty"}, {0x6a2b, "rty"}, {0x2c7879, "ctor"},
+                {0x2c78, "ctoi"}, {0x2c78, "ctol"}, {0x2d, "t"}, {0x7b2e, "nta"}, {0x2e, "ita"}, {0x2e, "lta"},
+                {0x2f77, "pts"}, {0x30, "0"}, {0x31, "1"}, {0x32, "2"}, {0x33, "3"}, {0x34, "4"}, {0x35, "5"},
+                {0x36, "6"}, {0x37, "7"}, {0x38, "8"}, {0x39, "9"}, {0x613a, "ro"}, {0x6a3a, "ro"}, {0x3b, "q"},
+                {0x41, "a"}, {0x42, "b"}, {0x43, "c"}, {0x44, "d"}, {0x45, "e"}, {0x46, "f"}, {0x47, "g"}, {0x48, "h"},
+                {0x49, "a"}, {0x4a, "j"}, {0x4b, "k"}, {0x4c, "l"}, {0x4d, "m"}, {0x4e, "n"}, {0x4f, "o"}, {0x50, "p"},
+                {0x51, "r"}, {0x52, "r"}, {0x53, "s"}, {0x54, "p"}, {0x55, "u"}, {0x56, "ei"}, {0x57, "li"}, {0x58, "x"},
+                {0x59, "y"}, {0x5a, "z"}, {0x615b, "re"}, {0x6a5b, "re"}, {0x615c, "rs"}, {0x6a5c, "rs"},
+                {0x73745d, "htm"}, {0x745d, "itm"}, {0x745d, "ltm"}, {0x62, "e"}, {0x63, "e"}, {0x64, "i"}, {0x64, "l"},
+                {0x65, "o"}, {0x66, "s"}, {0x67, "!"}, {0x6869, "fe"}, {0x687a, "fo"}, {0x616b, "r"}, {0x6a6b, "r"},
+                {0x6c6d, "le"}, {0x6e6f, "w"}, {0x70, "i"}, {0x75, "v"}, {0x7576, "ve"}, {0x757664, "vel"}, {0x7d, " "},
+                {0x7c, " "}, {0x20, " "}, {0x3c, " "}};
+
+            BytesToStringMap = new Dictionary<int, string>();
+            foreach (Tuple<int, string> t in pairs) {
+                if (!BytesToStringMap.ContainsKey(t.Item1)) {
+                    BytesToStringMap[t.Item1] = t.Item2;
+                }
+            }
+
+            StringToBytesMap = new Dictionary<string, int>();
+            foreach (Tuple<int, string> t in pairs) {
+                if (!StringToBytesMap.ContainsKey(t.Item2)) {
+                    StringToBytesMap[t.Item2] = t.Item1;
+                }
+            }
+
+            ValidChars = new HashSet<char>(pairs.Select(p => p.Item2).SelectMany(s => s.ToCharArray()));
+            MaxByteLength = pairs.Select(p => (p.Item1.ToString("X").Length + 1) / 2).Max();
+            MaxStringLength = pairs.Select(p => p.Item2.Length).Max();
+            SpaceCharValue = (byte)StringToBytesMap[" "];
+        }
     }
 }

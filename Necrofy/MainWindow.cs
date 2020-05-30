@@ -63,12 +63,9 @@ namespace Necrofy
             projectMenuItems = new List<ToolStripMenuItem>() { buildBuildProject, buildRunProject };
             HideAllEditorToolStripItems();
         }
-
-        private void MainWindow_FormClosing(object sender, FormClosingEventArgs e) {
-            ObjectBrowser.Browser.Contents = null; // Fixes a bug where the object browser would try to paint disposed images
-        }
-
+        
         private void MainWindow_FormClosed(object sender, FormClosedEventArgs e) {
+            ObjectBrowser.Browser.Contents = null; // Fixes a bug where the object browser would try to paint disposed images
             using (MemoryStream s = new MemoryStream()) {
                 dockPanel.SaveAsXml(s, Encoding.UTF8);
                 string xml = Encoding.UTF8.GetString(s.ToArray());
@@ -225,7 +222,7 @@ namespace Necrofy
                 }
             }
         }
-
+        
         private void dockPanel_ActiveDocumentChanged(object sender, EventArgs e) {
             EditorWindow editor = dockPanel.ActiveDocument as EditorWindow;
 

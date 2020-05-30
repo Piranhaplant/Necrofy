@@ -67,6 +67,17 @@ namespace Necrofy
             }
         }
 
+        [Browsable(false)]
+        public IList<byte> Chars {
+            get {
+                return word.chars.AsReadOnly();
+            }
+            set {
+                word.chars = new List<byte>(value);
+                CalculateBounds();
+            }
+        }
+
         private readonly TitlePage.Word word;
         private readonly LoadedLevelTitleCharacters loadedCharacters;
 

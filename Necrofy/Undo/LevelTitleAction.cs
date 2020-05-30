@@ -110,6 +110,49 @@ namespace Necrofy
         }
     }
 
+    class ChangeWordTextAction : LevelTitleAction
+    {
+        private readonly PageEditor pageEditor;
+        private readonly WrappedTitleWord word;
+
+        private readonly List<byte> oldChars;
+        private List<byte> newChars;
+        private readonly int oldCaretPosition;
+        private int newCaretPosition;
+
+        public ChangeWordTextAction(PageEditor pageEditor, WrappedTitleWord word, List<byte> newChars, int oldCaretPosition) {
+            this.pageEditor = pageEditor;
+            this.word = word;
+            oldChars = new List<byte>(word.Chars);
+            this.newChars = newChars;
+            this.oldCaretPosition = oldCaretPosition;
+            newCaretPosition = pageEditor.CaretPosition;
+        }
+
+        protected override void Undo() {
+            word.Chars = oldChars;
+            pageEditor.SetCaretPosition(word, oldCaretPosition);
+        }
+
+        protected override void Redo() {
+            word.Chars = newChars;
+            pageEditor.SetCaretPosition(word, newCaretPosition);
+        }
+        
+        public override bool Merge(UndoAction<TitleEditor> action) {
+            if (action is ChangeWordTextAction changeWordTextAction && changeWordTextAction.word == word) {
+                newChars = changeWordTextAction.newChars;
+                newCaretPosition = changeWordTextAction.newCaretPosition;
+                return true;
+            }
+            return false;
+        }
+
+        public override string ToString() {
+            return "Change text";
+        }
+    }
+
     class ChangeDisplayNameAction : UndoAction<TitleEditor>
     {
         private readonly string prevValue;
