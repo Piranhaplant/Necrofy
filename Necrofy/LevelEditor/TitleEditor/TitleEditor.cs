@@ -88,6 +88,7 @@ namespace Necrofy
             if (sender == activeEditor) {
                 UpdateSelectedPalette();
                 PropertyBrowserObjects = activeEditor.SelectedWords.ToArray();
+                RaiseSelectionChanged();
             }
         }
 
@@ -126,21 +127,42 @@ namespace Necrofy
             updatingData--;
         }
 
-        public override bool CanCopy => false; // TODO
+        public byte SelectedPalette {
+            get {
+                if (palette.SelectedIndex >= 0) {
+                    return palette.SelectedPalette;
+                }
+                return 0;
+            }
+        }
+
+        public override bool CanCopy => activeEditor.CanCopy;
         public override bool CanPaste => true;
-        public override bool CanDelete => false; // TODO
+        public override bool CanDelete => CanCopy;
         public override bool HasSelection => true;
 
         public override void Copy() {
-            // TODO
+            if (displayName.Focused) {
+                displayName.Copy();
+            } else {
+                activeEditor.Copy();
+            }
         }
 
         public override void Paste() {
-            // TODO
+            if (displayName.Focused) {
+                displayName.Paste();
+            } else {
+                activeEditor.Paste();
+            }
         }
 
         public override void Delete() {
-            // TODO
+            if (displayName.Focused) {
+                // Do nothing
+            } else {
+                activeEditor.Delete();
+            }
         }
 
         public override void SelectAll() {
@@ -153,7 +175,7 @@ namespace Necrofy
 
         public override void SelectNone() {
             if (displayName.Focused) {
-                displayName.SelectionLength = 0;
+                displayName.DeselectAll();
             } else {
                 activeEditor.SelectNone();
             }
@@ -169,10 +191,21 @@ namespace Necrofy
         protected override void DoSave(Project project) {
             Level level = levelEditor.level.Level;
             level.displayName = displayName.Text;
-            level.title1 = pageEditor1.page;
-            level.title2 = pageEditor2.page;
+            level.title1 = RemoveEmptyWords(pageEditor1.page);
+            level.title2 = RemoveEmptyWords(pageEditor2.page);
             levelEditor.undoManager.ForceDirty();
             // TODO: propogate new display name to UI
+        }
+
+        private TitlePage RemoveEmptyWords(TitlePage page) {
+            TitlePage clone = page.JsonClone();
+            for (int i = 0; i < clone.words.Count; i++) {
+                if (clone.words[i].chars.Count == 0) {
+                    clone.words.RemoveAt(i);
+                    i--;
+                }
+            }
+            return clone;
         }
 
         public override void PropertyBrowserPropertyChanged(PropertyValueChangedEventArgs e) {
@@ -227,7 +260,7 @@ namespace Necrofy
                 levelTitleContents.SetPalette(palette.SelectedPalette);
                 if (updatingData == 0) {
                     if (applyToAll.Checked) {
-                        undoManager.Do(new ChangeWordPaletteAction(pageEditor1.AllWords.Union(pageEditor2.AllWords), palette.SelectedPalette));
+                        undoManager.Do(new ChangeWordPaletteAction(pageEditor1.SelectableWords.Union(pageEditor2.SelectableWords), palette.SelectedPalette));
                     } else {
                         undoManager.Do(new ChangeWordPaletteAction(activeEditor.SelectedWords, palette.SelectedPalette));
                     }

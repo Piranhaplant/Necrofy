@@ -16,7 +16,7 @@ namespace Necrofy
 
     class MoveWordAction : LevelTitleAction
     {
-        private readonly List<WrappedTitleWord> words;
+        public readonly List<WrappedTitleWord> words;
 
         private readonly List<byte> prevX = new List<byte>();
         private readonly List<byte> prevY = new List<byte>();
@@ -73,6 +73,68 @@ namespace Necrofy
         }
     }
 
+    class AddWordAdtion : LevelTitleAction
+    {
+        private readonly PageEditor pageEditor;
+        private readonly List<WrappedTitleWord> words;
+
+        public AddWordAdtion(PageEditor pageEditor, IEnumerable<WrappedTitleWord> words) {
+            this.pageEditor = pageEditor;
+            this.words = new List<WrappedTitleWord>(words);
+        }
+
+        protected override void Undo() {
+            pageEditor.RemoveWords(words);
+        }
+
+        protected override void Redo() {
+            pageEditor.AddWords(words);
+        }
+
+        public override bool Merge(UndoAction<TitleEditor> action) {
+            if (action is ChangeWordTextAction changeWordTextAction) {
+                if (words.Count == 1 && words[0] == changeWordTextAction.word) {
+                    return true;
+                }
+            }
+            if (action is MoveWordAction moveWordAction) {
+                if (words.SequenceEqual(moveWordAction.words)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public override string ToString() {
+            return "Add text";
+        }
+    }
+
+    class RemoveWordAction : LevelTitleAction
+    {
+        private readonly PageEditor pageEditor;
+        private readonly List<WrappedTitleWord> words;
+        private readonly List<int> zIndexes;
+
+        public RemoveWordAction(PageEditor pageEditor, IEnumerable<WrappedTitleWord> words) {
+            this.pageEditor = pageEditor;
+            this.words = new List<WrappedTitleWord>(words);
+            zIndexes = pageEditor.SortAndGetZIndexes(this.words);
+        }
+
+        protected override void Undo() {
+            pageEditor.AddWords(words, zIndexes);
+        }
+
+        protected override void Redo() {
+            pageEditor.RemoveWords(words);
+        }
+
+        public override string ToString() {
+            return "Remove text";
+        }
+    }
+
     class ChangeWordPaletteAction : LevelTitleAction
     {
         private readonly List<WrappedTitleWord> words;
@@ -113,7 +175,7 @@ namespace Necrofy
     class ChangeWordTextAction : LevelTitleAction
     {
         private readonly PageEditor pageEditor;
-        private readonly WrappedTitleWord word;
+        public readonly WrappedTitleWord word;
 
         private readonly List<byte> oldChars;
         private List<byte> newChars;

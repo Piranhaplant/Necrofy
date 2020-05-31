@@ -8,11 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
+using Newtonsoft.Json;
 
 namespace Necrofy
 {
-    partial class PageEditor : UserControl, ObjectSelector<WrappedTitleWord>.IHost
-    {
+    partial class PageEditor : UserControl, ObjectSelector<WrappedTitleWord>.IHost {
         private static readonly Brush textSelectionBrush = new SolidBrush(Color.FromArgb(128, SystemColors.Highlight));
 
         private TitleEditor titleEditor;
@@ -29,20 +29,13 @@ namespace Necrofy
         private WrappedTitleWord textEditWord = null;
 
         public event EventHandler SelectedWordsChanged;
-        private HashSet<WrappedTitleWord> _selectedWords = new HashSet<WrappedTitleWord>();
         public HashSet<WrappedTitleWord> SelectedWords {
             get {
-                return _selectedWords;
-            }
-            private set {
-                if (!_selectedWords.SetEquals(value)) {
-                    _selectedWords = value;
-                    SelectedWordsChanged?.Invoke(this, EventArgs.Empty);
-                }
+                return objectSelector.GetSelectedObjects();
             }
         }
 
-        public IEnumerable<WrappedTitleWord> AllWords => wrappedWords;
+        public IEnumerable<WrappedTitleWord> SelectableWords => wrappedWords.Where(w => w.Chars.Count > 0);
 
         private CancellationTokenSource caretBlinkCancel = new CancellationTokenSource();
         private bool caretBlinkOn = false;
@@ -71,6 +64,7 @@ namespace Necrofy
                 } else {
                     Invalidate();
                 }
+                SelectedWordsChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -80,8 +74,7 @@ namespace Necrofy
             }
         }
 
-        private enum MouseMode
-        {
+        private enum MouseMode {
             None,
             MoveWord,
             Text,
@@ -97,7 +90,7 @@ namespace Necrofy
             InitializeComponent();
             objectSelector = new ObjectSelector<WrappedTitleWord>(this, positionStep: 8, width: Width - 8, height: Height - 8);
         }
-        
+
         public void LoadPage(TitleEditor titleEditor, TitlePage originalPage, LoadedLevelTitleCharacters loadedCharacters) {
             this.titleEditor = titleEditor;
             page = originalPage.JsonClone();
@@ -120,7 +113,7 @@ namespace Necrofy
             TextSelectionStart = -1;
             TextSelectionEnd = -1;
         }
-        
+
         private async void DoCaretBlink(CancellationToken cancellationToken) {
             caretBlinkOn = false;
             while (!cancellationToken.IsCancellationRequested) {
@@ -172,14 +165,14 @@ namespace Necrofy
                     }
                     if (caretBlinkOn) {
                         int width = Math.Max(1, SystemInformation.CaretWidth);
-                        e.Graphics.FillRectangle(Brushes.White, word.CharXPositions[TextSelectionEnd] - width / 2, word.VisibleBounds.Y, width, word.VisibleBounds.Height);
+                        e.Graphics.FillRectangle(Brushes.White, word.CharXPositions[TextSelectionEnd], word.VisibleBounds.Y, width, word.VisibleBounds.Height);
                     }
                 }
             }
 
             objectSelector.DrawSelectionRectangle(e.Graphics);
         }
-
+        
         protected override void OnMouseMove(MouseEventArgs e) {
             base.OnMouseMove(e);
             if (mouseDown) {
@@ -192,7 +185,7 @@ namespace Necrofy
                 MouseMode prevMouseMode = mouseMode;
                 WrappedTitleWord prevHoveredWord = hoveredWord;
 
-                hoveredWord = wrappedWords.Where(w => w.MoveBounds.Contains(e.Location)).Reverse().OrderBy(w => e.Location.DistanceFrom(w.VisibleBounds)).FirstOrDefault();
+                hoveredWord = SelectableWords.Where(w => w.MoveBounds.Contains(e.Location)).Reverse().OrderBy(w => e.Location.DistanceFrom(w.VisibleBounds)).FirstOrDefault();
 
                 mouseMode = MouseMode.None;
                 if (hoveredWord != null) {
@@ -212,12 +205,14 @@ namespace Necrofy
 
         protected override void OnMouseDown(MouseEventArgs e) {
             base.OnMouseDown(e);
+            titleEditor.undoManager.ForceNoMerge();
             mouseDown = true;
 
             if (mouseMode == MouseMode.Text) {
                 objectSelector.SelectNone();
-                SelectedWords = new HashSet<WrappedTitleWord>() { hoveredWord };
                 textEditWord = hoveredWord;
+                keepTextEditWord = true;
+                objectSelector.SelectObjects(new[] { hoveredWord });
                 TextSelectionStart = GetCaretPosition(e.X);
             } else {
                 TextSelectionStart = -1;
@@ -230,7 +225,7 @@ namespace Necrofy
 
             Invalidate();
         }
-        
+
         protected override void OnMouseUp(MouseEventArgs e) {
             base.OnMouseUp(e);
             mouseDown = false;
@@ -238,16 +233,15 @@ namespace Necrofy
                 objectSelector.MouseUp();
             }
             OnMouseMove(e);
-            titleEditor.undoManager.ForceNoMerge();
             Invalidate();
         }
-        
+
         protected override void OnMouseLeave(EventArgs e) {
             base.OnMouseLeave(e);
             hoveredWord = null;
             Invalidate();
         }
-        
+
         protected override void OnDoubleClick(EventArgs e) {
             base.OnDoubleClick(e);
             if (textEditWord != null) {
@@ -322,7 +316,7 @@ namespace Necrofy
             } else if (code == Keys.Up || code == Keys.Down) {
                 return true;
             } else if (code == Keys.Delete) {
-                DoTextEdit(newChars => {
+                bool processed = DoTextEdit(newChars => {
                     if (TextSelectionStart == TextSelectionEnd) {
                         if (keyData.HasFlag(Keys.Control)) {
                             UpdateSubstring(newChars, TextSelectionEnd, FindWordBoundary(TextSelectionEnd, true), "");
@@ -345,7 +339,9 @@ namespace Necrofy
                         DeleteSelectedChars(newChars);
                     }
                 });
-                return true;
+                if (processed) {
+                    return true;
+                }
             } else if (code == Keys.Back) {
                 DoTextEdit(newChars => {
                     if (TextSelectionStart == TextSelectionEnd) {
@@ -391,7 +387,7 @@ namespace Necrofy
             Select();
         }
 
-        private void DoTextEdit(Action<List<byte>> action) {
+        private bool DoTextEdit(Action<List<byte>> action) {
             if (textEditWord != null) {
                 List<byte> newChars = new List<byte>(textEditWord.Chars);
                 int oldCaretPosition = CaretPosition;
@@ -401,7 +397,9 @@ namespace Necrofy
                 if (!newChars.SequenceEqual(textEditWord.Chars)) {
                     titleEditor.undoManager.Do(new ChangeWordTextAction(this, textEditWord, newChars, oldCaretPosition));
                 }
+                return true;
             }
+            return false;
         }
 
         private static int UpdateSubstring(List<byte> newChars, int start, int end, string newString) {
@@ -429,14 +427,117 @@ namespace Necrofy
             return Math.Max(0, Math.Min(textEditWord.Chars.Count, i + 1));
         }
 
-        public IEnumerable<WrappedTitleWord> GetObjects() {
-            return wrappedWords;
+        public bool CanCopy {
+            get {
+                if (textEditWord == null) {
+                    return SelectedWords.Count > 0;
+                } else {
+                    return TextSelectionStart != TextSelectionEnd;
+                }
+            }
         }
 
+        public void Copy() {
+            if (textEditWord == null) {
+                if (SelectedWords.Count > 0) {
+                    Clipboard.SetText(JsonConvert.SerializeObject(SelectedWords.Select(w => w.word)));
+                }
+            } else {
+                if (TextSelectionStart != TextSelectionEnd) {
+                    List<byte> chars = new List<byte>();
+                    int end = Math.Max(TextSelectionStart, TextSelectionEnd);
+                    for (int i = Math.Min(TextSelectionStart, TextSelectionEnd); i < end; i++) {
+                        chars.Add(textEditWord.Chars[i]);
+                    }
+                    Clipboard.SetText(JsonConvert.SerializeObject(chars));
+                }
+            }
+        }
+
+        public void Paste() {
+            try {
+                List<TitlePage.Word> words = JsonConvert.DeserializeObject<List<TitlePage.Word>>(Clipboard.GetText());
+                byte minX = words.Min(w => w.x);
+                byte minY = words.Min(w => w.y);
+                foreach (TitlePage.Word word in words) {
+                    word.x -= minX;
+                    word.y -= minY;
+                }
+
+                List<WrappedTitleWord> wrappedWords = words.Select(w => new WrappedTitleWord(w, loadedCharacters)).ToList();
+                titleEditor.undoManager.Do(new AddWordAdtion(this, wrappedWords));
+                objectSelector.SelectObjects(wrappedWords);
+                return;
+            } catch (Exception) { }
+
+            try {
+                List<byte> chars = JsonConvert.DeserializeObject<List<byte>>(Clipboard.GetText());
+                bool textEdit = DoTextEdit(newChars => {
+                    DeleteSelectedChars(newChars);
+                    newChars.InsertRange(TextSelectionEnd, chars);
+                    TextSelectionStart += chars.Count;
+                    TextSelectionEnd = TextSelectionStart;
+                });
+                if (!textEdit) {
+                    TitlePage.Word word = new TitlePage.Word(0, 0, titleEditor.SelectedPalette);
+                    word.chars = chars;
+                    WrappedTitleWord[] wrappedWords = new[] { new WrappedTitleWord(word, loadedCharacters) };
+                    titleEditor.undoManager.Do(new AddWordAdtion(this, wrappedWords));
+                    objectSelector.SelectObjects(wrappedWords);
+                }
+            } catch (Exception) { }
+        }
+
+        public void Delete() {
+            titleEditor.undoManager.Do(new RemoveWordAction(this, SelectedWords));
+        }
+
+        public List<int> SortAndGetZIndexes(List<WrappedTitleWord> words) {
+            words.Sort((a, b) => wrappedWords.IndexOf(a).CompareTo(wrappedWords.IndexOf(b)));
+            return words.Select(w => wrappedWords.IndexOf(w)).ToList();
+        }
+
+        public void AddWords(List<WrappedTitleWord> words, List<int> zIndexes = null) {
+            for (int i = 0; i < words.Count; i++) {
+                if (zIndexes == null) {
+                    page.words.Add(words[i].word);
+                    wrappedWords.Add(words[i]);
+                } else {
+                    page.words.Insert(zIndexes[i], words[i].word);
+                    wrappedWords.Insert(zIndexes[i], words[i]);
+                }
+            }
+        }
+
+        public void RemoveWords(List<WrappedTitleWord> words) {
+            foreach (WrappedTitleWord word in words) {
+                page.words.Remove(word.word);
+                wrappedWords.Remove(word);
+            }
+            if (!SelectableWords.Contains(textEditWord)) {
+                textEditWord = null;
+            }
+            keepTextEditWord = true;
+            objectSelector.UpdateSelection();
+        }
+        
+        public IEnumerable<WrappedTitleWord> GetObjects() {
+            return SelectableWords;
+        }
+
+        private bool keepTextEditWord = false;
+        private HashSet<WrappedTitleWord> prevSelectedWords = new HashSet<WrappedTitleWord>();
+
         public void SelectionChanged() {
-            textEditWord = null;
-            SelectedWords = new HashSet<WrappedTitleWord>(objectSelector.GetSelectedObjects());
+            if (!keepTextEditWord) {
+                textEditWord = null;
+            }
+            keepTextEditWord = false;
             Invalidate();
+            if (!prevSelectedWords.SetEquals(objectSelector.GetSelectedObjects())) {
+                SelectedWordsChanged?.Invoke(this, EventArgs.Empty);
+                prevSelectedWords = new HashSet<WrappedTitleWord>(SelectedWords);
+            }
         }
 
         public void MoveSelectedObjects(int dx, int dy, int snap) {
@@ -444,11 +545,23 @@ namespace Necrofy
         }
 
         public WrappedTitleWord CreateObject(int x, int y) {
-            throw new NotImplementedException();
+            TitlePage.Word word = new TitlePage.Word((byte)(x / 8), (byte)Math.Max(0, y / 8 - LoadedLevelTitleCharacters.height / 2), titleEditor.SelectedPalette);
+            WrappedTitleWord wrappedWord = new WrappedTitleWord(word, loadedCharacters);
+            titleEditor.undoManager.Do(new AddWordAdtion(this, new[] { wrappedWord }));
+
+            mouseMode = MouseMode.Text;
+            textEditWord = wrappedWord;
+            TextSelectionStart = 0;
+            TextSelectionEnd = 0;
+
+            keepTextEditWord = true;
+            return wrappedWord;
         }
 
         public IEnumerable<WrappedTitleWord> CloneSelection() {
-            throw new NotImplementedException();
+            List<WrappedTitleWord> clone = SelectedWords.Select(w => w.word).JsonClone().Select(w => new WrappedTitleWord(w, loadedCharacters)).ToList();
+            titleEditor.undoManager.Do(new AddWordAdtion(this, clone));
+            return clone;
         }
     }
 }

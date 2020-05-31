@@ -56,7 +56,7 @@ namespace Necrofy
 
         private class Item
         {
-            private static readonly byte[] displayChars = Encoding.ASCII.GetBytes("ABC");
+            private static readonly List<byte> displayChars = TitlePage.StringToBytes("abc");
 
             private readonly LoadedLevelTitleCharacters loadedCharacters;
             public readonly byte palette;

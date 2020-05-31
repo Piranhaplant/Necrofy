@@ -77,8 +77,8 @@ namespace Necrofy
                 CalculateBounds();
             }
         }
-
-        private readonly TitlePage.Word word;
+        
+        public readonly TitlePage.Word word;
         private readonly LoadedLevelTitleCharacters loadedCharacters;
 
         public WrappedTitleWord(TitlePage.Word word, LoadedLevelTitleCharacters loadedCharacters) {
