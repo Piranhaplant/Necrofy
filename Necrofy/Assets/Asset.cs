@@ -220,6 +220,9 @@ namespace Necrofy
                 return null;
             }
 
+            /// <summary>Called when the file contents located at this name have changed</summary>
+            public virtual void Refresh() { }
+
             /// <summary>Gets the filename for the asset, optionally creating any intermediate directories if they don't exist</summary>
             public string GetFilename(string projectDir, bool createDirectories = false) {
                 PathParts parts = GetPathParts();

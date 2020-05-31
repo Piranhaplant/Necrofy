@@ -170,6 +170,10 @@ namespace Necrofy
                         creating = false;
                         selectedObjects = new HashSet<T>(host.CloneSelection());
                         host.SelectionChanged();
+                        if (selectedObjects.Count == 0) {
+                            movingObjects = false;
+                            return;
+                        }
                     }
 
                     totalMoveX += dx;

@@ -112,6 +112,7 @@
     <Compile Include="Assets\TilesetPaletteAsset.cs" />
     <Compile Include="Assets\TilesetSuggestionsAsset.cs" />
     <Compile Include="Assets\TilesetTilemapAsset.cs" />
+    <Compile Include="AssetTree.cs" />
     <Compile Include="Canvas.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -526,6 +527,7 @@
     <None Include="Icons\leaf.png" />
     <None Include="Icons\zeke.png" />
     <None Include="Icons\document-binary.png" />
+    <None Include="Icons\blue-document-rename.png" />
     <Content Include="Icons\information-small.png" />
     <Content Include="ProjectFiles\Patches\OtherExpand.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -32,7 +32,6 @@ namespace Necrofy
             this.level = level;
         }
 
-        public string DisplayText => nameInfo.DisplayName;
         public int LevelNumber => nameInfo.levelNum;
 
         private static int GetPointerPosition(int levelNum) {
@@ -125,6 +124,10 @@ namespace Necrofy
 
             public override EditorWindow GetEditor(Project project) {
                 return new LevelEditor(new LoadedLevel(project, levelNum));
+            }
+
+            public override void Refresh() {
+                displayName = displayNameGetter(this);
             }
 
             public static LevelNameInfo FromPath(PathParts parts, Func<LevelNameInfo, string> displayNameGetter) {

@@ -54,7 +54,7 @@ namespace Necrofy
             FormClosed += LevelEditor_FormClosed;
 
             this.level = level;
-            Title = level.levelAsset.DisplayText;
+            UpdateTitle();
 
             scrollWrapper = new ScrollWrapper(canvas, hscroll, vscroll);
             scrollWrapper.Scrolled += scrollWrapper_Scrolled;
@@ -113,6 +113,10 @@ namespace Necrofy
         protected override UndoManager Setup() {
             undoManager = new UndoManager<LevelEditor>(mainWindow.UndoButton, mainWindow.RedoButton, this);
             return undoManager;
+        }
+
+        public void UpdateTitle() {
+            Title = level.levelAsset.LevelNumber.ToString() + " " + level.Level.displayName;
         }
 
         public void ScrollObjectBrowserToSelection() {

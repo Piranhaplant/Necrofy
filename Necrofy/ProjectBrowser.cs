@@ -36,6 +36,7 @@ namespace Necrofy
 
         private readonly MainWindow mainWindow;
         private Project project;
+        private readonly Dictionary<Asset.NameInfo, TreeNode> nodeForAsset = new Dictionary<Asset.NameInfo, TreeNode>();
 
         public ProjectBrowser(MainWindow mainWindow) {
             InitializeComponent();
@@ -48,8 +49,10 @@ namespace Necrofy
         public void OpenProject(Project project) {
             this.project = project;
             tree.Nodes.Clear();
+            nodeForAsset.Clear();
+
             if (project != null) {
-                PopulateTree(tree.Nodes, project.AssetTree);
+                PopulateTree(tree.Nodes, project.Assets.Root);
                 if (project.settings.FolderStates != null) {
                     LoadFolderStates(tree.Nodes, project.settings.FolderStates);
                 } else {
@@ -58,11 +61,12 @@ namespace Necrofy
                 if (tree.Nodes.Count > 0) {
                     tree.SelectedNode = tree.Nodes[0]; // Scroll to the top regardless of what folders were opened
                 }
+                project.Assets.AssetChanged += AssetChanged;
             }
         }
 
-        private void PopulateTree(TreeNodeCollection parent, Project.Folder folder) {
-            foreach (Project.Folder subFolder in folder.Folders) {
+        private void PopulateTree(TreeNodeCollection parent, AssetTree.Folder folder) {
+            foreach (AssetTree.Folder subFolder in folder.Folders) {
                 TreeNode child = parent.Add(subFolder.Name);
                 child.Name = child.Text;
                 child.ImageIndex = FolderImageIndex;
@@ -76,7 +80,16 @@ namespace Necrofy
                 child.Name = child.Text;
                 SetImage(child, info.Category);
                 child.Tag = info;
+                nodeForAsset[info] = child;
             }
+        }
+
+        private void AssetChanged(object sender, AssetEventArgs e) {
+            Invoke((MethodInvoker)delegate {
+                TreeNode node = nodeForAsset[e.Asset];
+                node.Text = e.Asset.DisplayName;
+                node.Name = node.Text;
+            });
         }
 
         private void LoadFolderStates(TreeNodeCollection parent, List<ProjectSettings.FolderState> folderStates) {

@@ -103,6 +103,16 @@ namespace Necrofy.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap blue_document_rename {
+            get {
+                object obj = ResourceManager.GetObject("blue-document-rename", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap boss_monster {
             get {
                 object obj = ResourceManager.GetObject("boss-monster", resourceCulture);

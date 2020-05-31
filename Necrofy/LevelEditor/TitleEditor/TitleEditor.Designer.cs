@@ -30,10 +30,10 @@
             this.pageEditor1 = new Necrofy.PageEditor();
             this.displayName = new System.Windows.Forms.TextBox();
             this.displayNameLbl = new System.Windows.Forms.Label();
-            this.paletteLbl = new System.Windows.Forms.Label();
             this.palette = new Necrofy.PaletteComboBox();
             this.applyToAll = new System.Windows.Forms.CheckBox();
             this.mainPanel = new System.Windows.Forms.Panel();
+            this.paletteLbl = new System.Windows.Forms.Label();
             this.screenBounds.SuspendLayout();
             this.mainPanel.SuspendLayout();
             this.SuspendLayout();
@@ -82,16 +82,6 @@
             this.displayNameLbl.TabIndex = 2;
             this.displayNameLbl.Text = "Display Name:";
             // 
-            // paletteLbl
-            // 
-            this.paletteLbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.paletteLbl.AutoSize = true;
-            this.paletteLbl.Location = new System.Drawing.Point(503, 21);
-            this.paletteLbl.Name = "paletteLbl";
-            this.paletteLbl.Size = new System.Drawing.Size(43, 13);
-            this.paletteLbl.TabIndex = 3;
-            this.paletteLbl.Text = "Palette:";
-            // 
             // palette
             // 
             this.palette.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -133,6 +123,16 @@
             this.mainPanel.Size = new System.Drawing.Size(718, 370);
             this.mainPanel.TabIndex = 0;
             this.mainPanel.SizeChanged += new System.EventHandler(this.mainPanel_SizeChanged);
+            // 
+            // paletteLbl
+            // 
+            this.paletteLbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.paletteLbl.AutoSize = true;
+            this.paletteLbl.Location = new System.Drawing.Point(503, 21);
+            this.paletteLbl.Name = "paletteLbl";
+            this.paletteLbl.Size = new System.Drawing.Size(43, 13);
+            this.paletteLbl.TabIndex = 3;
+            this.paletteLbl.Text = "Palette:";
             // 
             // TitleEditor
             // 

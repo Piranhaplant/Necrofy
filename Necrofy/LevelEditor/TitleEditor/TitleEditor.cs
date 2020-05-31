@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Necrofy.Properties;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,6 +13,8 @@ namespace Necrofy
 {
     partial class TitleEditor : EditorWindow
     {
+        private static Icon FormIcon;
+
         private readonly LevelEditor levelEditor;
         private readonly LoadedLevelTitleCharacters characters;
 
@@ -35,11 +38,16 @@ namespace Necrofy
 
         public TitleEditor(LevelEditor levelEditor, Project project) {
             InitializeComponent();
+            if (FormIcon == null) {
+                FormIcon = Icon.FromHandle(Resources.blue_document_rename.GetHicon());
+            }
+            Icon = FormIcon;
+
             activeEditor = pageEditor1;
 
             this.levelEditor = levelEditor;
             Level level = levelEditor.level.Level;
-            Title = "[Title] " + level.displayName;
+            UpdateTitle();
 
             updatingData++;
             displayName.Text = level.displayName;
@@ -96,6 +104,10 @@ namespace Necrofy
             if (levelTitleContents.SelectedIndex >= 0) {
                 activeEditor.CharPressed(levelTitleContents.SelectedChar);
             }
+        }
+
+        private void UpdateTitle() {
+            Title = "[Title] " + levelEditor.level.Level.displayName;
         }
 
         public void Repaint() {
@@ -194,7 +206,9 @@ namespace Necrofy
             level.title1 = RemoveEmptyWords(pageEditor1.page);
             level.title2 = RemoveEmptyWords(pageEditor2.page);
             levelEditor.undoManager.ForceDirty();
-            // TODO: propogate new display name to UI
+
+            UpdateTitle();
+            levelEditor.UpdateTitle();
         }
 
         private TitlePage RemoveEmptyWords(TitlePage page) {
