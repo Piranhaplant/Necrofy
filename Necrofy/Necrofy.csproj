@@ -528,7 +528,13 @@
     <None Include="Icons\zeke.png" />
     <None Include="Icons\document-binary.png" />
     <None Include="Icons\blue-document-rename.png" />
+    <None Include="Icons\arrow-090.png" />
+    <None Include="Icons\arrow-270.png" />
+    <None Include="Icons\arrow-stop-090.png" />
+    <None Include="Icons\arrow-stop-270.png" />
     <Content Include="Icons\information-small.png" />
+    <None Include="Icons\layers-alignment-center.png" />
+    <None Include="Icons\layers-alignment-middle.png" />
     <Content Include="ProjectFiles\Patches\OtherExpand.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

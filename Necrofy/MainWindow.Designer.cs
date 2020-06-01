@@ -33,28 +33,89 @@
             this.dockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.vS2012LightTheme1 = new WeifenLuo.WinFormsUI.Docking.VS2012LightTheme();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.levelToolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.fileMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.fileSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.fileClose = new System.Windows.Forms.ToolStripMenuItem();
+            this.fileSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.fileSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.fileExit = new System.Windows.Forms.ToolStripMenuItem();
+            this.editMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.editSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.editSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.editSelectAll = new System.Windows.Forms.ToolStripMenuItem();
+            this.editSelectNone = new System.Windows.Forms.ToolStripMenuItem();
+            this.buildMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.buildRunSettings = new System.Windows.Forms.ToolStripMenuItem();
+            this.debugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.levelMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.levelEditTitle = new System.Windows.Forms.ToolStripMenuItem();
+            this.levelSettings = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.windowMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.windowProject = new System.Windows.Forms.ToolStripMenuItem();
+            this.windowObjects = new System.Windows.Forms.ToolStripMenuItem();
+            this.windowProperties = new System.Windows.Forms.ToolStripMenuItem();
+            this.windowSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.windowRestore = new System.Windows.Forms.ToolStripMenuItem();
+            this.openProjectDialog = new System.Windows.Forms.OpenFileDialog();
+            this.levelTitleToolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.createProjectButton = new System.Windows.Forms.ToolStripButton();
             this.openProjectButton = new System.Windows.Forms.ToolStripButton();
             this.saveButton = new System.Windows.Forms.ToolStripButton();
             this.saveAllButton = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.cutButton = new System.Windows.Forms.ToolStripButton();
             this.copyButton = new System.Windows.Forms.ToolStripButton();
             this.pasteButton = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.undoButton = new System.Windows.Forms.ToolStripSplitButton();
             this.redoButton = new System.Windows.Forms.ToolStripSplitButton();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.buildProjectButton = new System.Windows.Forms.ToolStripButton();
             this.runProjectButton = new System.Windows.Forms.ToolStripButton();
             this.runFromLevelButton = new System.Windows.Forms.ToolStripButton();
-            this.levelToolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.paintbrushButton = new System.Windows.Forms.ToolStripButton();
             this.tileSuggestButton = new System.Windows.Forms.ToolStripButton();
             this.rectangleSelectButton = new System.Windows.Forms.ToolStripButton();
             this.pencilSelectButton = new System.Windows.Forms.ToolStripButton();
             this.tileSelectButton = new System.Windows.Forms.ToolStripButton();
             this.resizeLevelButton = new System.Windows.Forms.ToolStripButton();
+            this.centerHorizontallyButton = new System.Windows.Forms.ToolStripButton();
+            this.centerVerticallyButton = new System.Windows.Forms.ToolStripButton();
+            this.moveUpButton = new System.Windows.Forms.ToolStripButton();
+            this.moveDownButton = new System.Windows.Forms.ToolStripButton();
+            this.moveToFrontButton = new System.Windows.Forms.ToolStripButton();
+            this.moveToBackButton = new System.Windows.Forms.ToolStripButton();
+            this.fileNewProject = new System.Windows.Forms.ToolStripMenuItem();
+            this.fileOpenProject = new System.Windows.Forms.ToolStripMenuItem();
+            this.fileSave = new System.Windows.Forms.ToolStripMenuItem();
+            this.fileSaveAll = new System.Windows.Forms.ToolStripMenuItem();
+            this.editUndo = new System.Windows.Forms.ToolStripMenuItem();
+            this.editRedo = new System.Windows.Forms.ToolStripMenuItem();
+            this.editCut = new System.Windows.Forms.ToolStripMenuItem();
+            this.editCopy = new System.Windows.Forms.ToolStripMenuItem();
+            this.editPaste = new System.Windows.Forms.ToolStripMenuItem();
+            this.editDelete = new System.Windows.Forms.ToolStripMenuItem();
+            this.buildBuildProject = new System.Windows.Forms.ToolStripMenuItem();
+            this.buildRunProject = new System.Windows.Forms.ToolStripMenuItem();
+            this.buildRunFromLevel = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsPaintbrush = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsTileSuggest = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsRectangleSelect = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsPencilSelect = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsTileSelect = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsResizeLevel = new System.Windows.Forms.ToolStripMenuItem();
+            this.titleMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.titleCenterHorizontally = new System.Windows.Forms.ToolStripMenuItem();
+            this.titleCenterVertically = new System.Windows.Forms.ToolStripMenuItem();
+            this.titleSeparator = new System.Windows.Forms.ToolStripSeparator();
+            this.titleMoveUp = new System.Windows.Forms.ToolStripMenuItem();
+            this.titleMoveDown = new System.Windows.Forms.ToolStripMenuItem();
+            this.titleMoveToFront = new System.Windows.Forms.ToolStripMenuItem();
+            this.titleMoveToBack = new System.Windows.Forms.ToolStripMenuItem();
             this.spritesButton = new Necrofy.CheckableToolStripSplitButton();
             this.spritesItems = new Necrofy.SeparateCheckToolStripMenuItem();
             this.spritesVictims = new Necrofy.SeparateCheckToolStripMenuItem();
@@ -64,53 +125,8 @@
             this.spritesPlayers = new Necrofy.SeparateCheckToolStripMenuItem();
             this.spritesSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.spritesAll = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.fileMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.fileNewProject = new System.Windows.Forms.ToolStripMenuItem();
-            this.fileOpenProject = new System.Windows.Forms.ToolStripMenuItem();
-            this.fileSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.fileSave = new System.Windows.Forms.ToolStripMenuItem();
-            this.fileSaveAll = new System.Windows.Forms.ToolStripMenuItem();
-            this.fileClose = new System.Windows.Forms.ToolStripMenuItem();
-            this.fileSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.recentProjects = new Necrofy.RecentFilesMenu();
-            this.fileSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.fileExit = new System.Windows.Forms.ToolStripMenuItem();
-            this.editMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.editUndo = new System.Windows.Forms.ToolStripMenuItem();
-            this.editRedo = new System.Windows.Forms.ToolStripMenuItem();
-            this.editSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.editCut = new System.Windows.Forms.ToolStripMenuItem();
-            this.editCopy = new System.Windows.Forms.ToolStripMenuItem();
-            this.editPaste = new System.Windows.Forms.ToolStripMenuItem();
-            this.editDelete = new System.Windows.Forms.ToolStripMenuItem();
-            this.editSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.editSelectAll = new System.Windows.Forms.ToolStripMenuItem();
-            this.editSelectNone = new System.Windows.Forms.ToolStripMenuItem();
-            this.buildMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.buildBuildProject = new System.Windows.Forms.ToolStripMenuItem();
-            this.buildRunProject = new System.Windows.Forms.ToolStripMenuItem();
-            this.buildRunFromLevel = new System.Windows.Forms.ToolStripMenuItem();
-            this.buildRunSettings = new System.Windows.Forms.ToolStripMenuItem();
-            this.debugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.levelMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.levelEditTitle = new System.Windows.Forms.ToolStripMenuItem();
-            this.levelSettings = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolsMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolsPaintbrush = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolsTileSuggest = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolsRectangleSelect = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolsPencilSelect = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolsTileSelect = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolsResizeLevel = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsSprites = new System.Windows.Forms.ToolStripMenuItem();
-            this.windowMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.windowProject = new System.Windows.Forms.ToolStripMenuItem();
-            this.windowObjects = new System.Windows.Forms.ToolStripMenuItem();
-            this.windowProperties = new System.Windows.Forms.ToolStripMenuItem();
-            this.windowSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.windowRestore = new System.Windows.Forms.ToolStripMenuItem();
-            this.openProjectDialog = new System.Windows.Forms.OpenFileDialog();
             this.toolStripGrouper = new Necrofy.ToolStripGrouper(this.components);
             this.toolBarMenuLinker = new Necrofy.ToolBarMenuLinker(this.components);
             this.toolStrip1.SuspendLayout();
@@ -160,13 +176,280 @@
             this.pencilSelectButton,
             this.tileSelectButton,
             this.resizeLevelButton,
-            this.spritesButton});
+            this.spritesButton,
+            this.levelTitleToolStripSeparator,
+            this.centerHorizontallyButton,
+            this.centerVerticallyButton,
+            this.toolStripSeparator4,
+            this.moveUpButton,
+            this.moveDownButton,
+            this.moveToFrontButton,
+            this.moveToBackButton});
             this.toolStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1061, 25);
             this.toolStrip1.TabIndex = 4;
             this.toolStrip1.Text = "toolStrip1";
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
+            // 
+            // levelToolStripSeparator
+            // 
+            this.toolStripGrouper.SetItemSet(this.levelToolStripSeparator, Necrofy.ToolStripGrouper.ItemSet.LevelEditor);
+            this.levelToolStripSeparator.Name = "levelToolStripSeparator";
+            this.levelToolStripSeparator.Size = new System.Drawing.Size(6, 25);
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileMenu,
+            this.editMenu,
+            this.buildMenu,
+            this.levelMenu,
+            this.toolsMenu,
+            this.titleMenu,
+            this.windowMenu});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(1061, 24);
+            this.menuStrip1.TabIndex = 6;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // fileMenu
+            // 
+            this.fileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileNewProject,
+            this.fileOpenProject,
+            this.fileSeparator1,
+            this.fileSave,
+            this.fileSaveAll,
+            this.fileClose,
+            this.fileSeparator2,
+            this.recentProjects,
+            this.fileSeparator3,
+            this.fileExit});
+            this.fileMenu.Name = "fileMenu";
+            this.fileMenu.Size = new System.Drawing.Size(37, 20);
+            this.fileMenu.Text = "&File";
+            // 
+            // fileSeparator1
+            // 
+            this.fileSeparator1.Name = "fileSeparator1";
+            this.fileSeparator1.Size = new System.Drawing.Size(192, 6);
+            // 
+            // fileClose
+            // 
+            this.fileClose.Enabled = false;
+            this.fileClose.Name = "fileClose";
+            this.fileClose.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
+            this.fileClose.Size = new System.Drawing.Size(195, 22);
+            this.fileClose.Text = "&Close";
+            this.fileClose.Click += new System.EventHandler(this.CloseFile);
+            // 
+            // fileSeparator2
+            // 
+            this.fileSeparator2.Name = "fileSeparator2";
+            this.fileSeparator2.Size = new System.Drawing.Size(192, 6);
+            // 
+            // fileSeparator3
+            // 
+            this.fileSeparator3.Name = "fileSeparator3";
+            this.fileSeparator3.Size = new System.Drawing.Size(192, 6);
+            // 
+            // fileExit
+            // 
+            this.fileExit.Name = "fileExit";
+            this.fileExit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
+            this.fileExit.Size = new System.Drawing.Size(195, 22);
+            this.fileExit.Text = "E&xit";
+            this.fileExit.Click += new System.EventHandler(this.Exit);
+            // 
+            // editMenu
+            // 
+            this.editMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.editUndo,
+            this.editRedo,
+            this.editSeparator1,
+            this.editCut,
+            this.editCopy,
+            this.editPaste,
+            this.editDelete,
+            this.editSeparator2,
+            this.editSelectAll,
+            this.editSelectNone});
+            this.editMenu.Name = "editMenu";
+            this.editMenu.Size = new System.Drawing.Size(39, 20);
+            this.editMenu.Text = "&Edit";
+            // 
+            // editSeparator1
+            // 
+            this.editSeparator1.Name = "editSeparator1";
+            this.editSeparator1.Size = new System.Drawing.Size(208, 6);
+            // 
+            // editSeparator2
+            // 
+            this.editSeparator2.Name = "editSeparator2";
+            this.editSeparator2.Size = new System.Drawing.Size(208, 6);
+            // 
+            // editSelectAll
+            // 
+            this.editSelectAll.Enabled = false;
+            this.editSelectAll.Name = "editSelectAll";
+            this.editSelectAll.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
+            this.editSelectAll.Size = new System.Drawing.Size(211, 22);
+            this.editSelectAll.Text = "Select &All";
+            this.editSelectAll.Click += new System.EventHandler(this.SelectAll);
+            // 
+            // editSelectNone
+            // 
+            this.editSelectNone.Enabled = false;
+            this.editSelectNone.Name = "editSelectNone";
+            this.editSelectNone.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.A)));
+            this.editSelectNone.Size = new System.Drawing.Size(211, 22);
+            this.editSelectNone.Text = "Select &None";
+            this.editSelectNone.Click += new System.EventHandler(this.SelectNone);
+            // 
+            // buildMenu
+            // 
+            this.buildMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.buildBuildProject,
+            this.buildRunProject,
+            this.buildRunFromLevel,
+            this.buildRunSettings,
+            this.debugToolStripMenuItem});
+            this.buildMenu.Name = "buildMenu";
+            this.buildMenu.Size = new System.Drawing.Size(46, 20);
+            this.buildMenu.Text = "&Build";
+            // 
+            // buildRunSettings
+            // 
+            this.buildRunSettings.Name = "buildRunSettings";
+            this.buildRunSettings.Size = new System.Drawing.Size(210, 22);
+            this.buildRunSettings.Text = "Run From Level &Settings...";
+            this.buildRunSettings.Click += new System.EventHandler(this.RunFromLevelSettings);
+            // 
+            // debugToolStripMenuItem
+            // 
+            this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
+            this.debugToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.debugToolStripMenuItem.Text = "Debug";
+            this.debugToolStripMenuItem.Click += new System.EventHandler(this.debugToolStripMenuItem_Click);
+            // 
+            // levelMenu
+            // 
+            this.levelMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.levelEditTitle,
+            this.levelSettings});
+            this.toolStripGrouper.SetItemSet(this.levelMenu, Necrofy.ToolStripGrouper.ItemSet.LevelEditor);
+            this.levelMenu.Name = "levelMenu";
+            this.levelMenu.Size = new System.Drawing.Size(46, 20);
+            this.levelMenu.Text = "&Level";
+            // 
+            // levelEditTitle
+            // 
+            this.toolStripGrouper.SetItemType(this.levelEditTitle, Necrofy.ToolStripGrouper.ItemType.LevelEditTitle);
+            this.levelEditTitle.Name = "levelEditTitle";
+            this.levelEditTitle.Size = new System.Drawing.Size(128, 22);
+            this.levelEditTitle.Text = "Edit Title...";
+            // 
+            // levelSettings
+            // 
+            this.toolStripGrouper.SetItemType(this.levelSettings, Necrofy.ToolStripGrouper.ItemType.LevelSettings);
+            this.levelSettings.Name = "levelSettings";
+            this.levelSettings.Size = new System.Drawing.Size(128, 22);
+            this.levelSettings.Text = "&Settings...";
+            // 
+            // toolsMenu
+            // 
+            this.toolsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolsPaintbrush,
+            this.toolsTileSuggest,
+            this.toolsRectangleSelect,
+            this.toolsPencilSelect,
+            this.toolsTileSelect,
+            this.toolsResizeLevel,
+            this.toolsSprites});
+            this.toolStripGrouper.SetItemSet(this.toolsMenu, Necrofy.ToolStripGrouper.ItemSet.LevelEditor);
+            this.toolsMenu.Name = "toolsMenu";
+            this.toolsMenu.Size = new System.Drawing.Size(46, 20);
+            this.toolsMenu.Text = "&Tools";
+            // 
+            // windowMenu
+            // 
+            this.windowMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.windowProject,
+            this.windowObjects,
+            this.windowProperties,
+            this.windowSeparator1,
+            this.windowRestore});
+            this.windowMenu.Name = "windowMenu";
+            this.windowMenu.Size = new System.Drawing.Size(63, 20);
+            this.windowMenu.Text = "&Window";
+            // 
+            // windowProject
+            // 
+            this.windowProject.Name = "windowProject";
+            this.windowProject.Size = new System.Drawing.Size(193, 22);
+            this.windowProject.Text = "Pro&ject";
+            this.windowProject.Click += new System.EventHandler(this.windowProject_Click);
+            // 
+            // windowObjects
+            // 
+            this.windowObjects.Name = "windowObjects";
+            this.windowObjects.Size = new System.Drawing.Size(193, 22);
+            this.windowObjects.Text = "&Objects";
+            this.windowObjects.Click += new System.EventHandler(this.windowObjects_Click);
+            // 
+            // windowProperties
+            // 
+            this.windowProperties.Name = "windowProperties";
+            this.windowProperties.Size = new System.Drawing.Size(193, 22);
+            this.windowProperties.Text = "&Properties";
+            this.windowProperties.Click += new System.EventHandler(this.windowProperties_Click);
+            // 
+            // windowSeparator1
+            // 
+            this.windowSeparator1.Name = "windowSeparator1";
+            this.windowSeparator1.Size = new System.Drawing.Size(190, 6);
+            // 
+            // windowRestore
+            // 
+            this.windowRestore.Name = "windowRestore";
+            this.windowRestore.Size = new System.Drawing.Size(193, 22);
+            this.windowRestore.Text = "&Restore Default Layout";
+            this.windowRestore.Click += new System.EventHandler(this.windowRestore_Click);
+            // 
+            // openProjectDialog
+            // 
+            this.openProjectDialog.Filter = "Necrofy project files (*.nfyp)|*.nfyp|All Files (*.*)|*.*";
+            this.openProjectDialog.Title = "Open Project";
+            // 
+            // levelTitleToolStripSeparator
+            // 
+            this.toolStripGrouper.SetItemSet(this.levelTitleToolStripSeparator, Necrofy.ToolStripGrouper.ItemSet.LevelTitle);
+            this.levelTitleToolStripSeparator.Name = "levelTitleToolStripSeparator";
+            this.levelTitleToolStripSeparator.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripGrouper.SetItemSet(this.toolStripSeparator4, Necrofy.ToolStripGrouper.ItemSet.LevelTitle);
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
             // 
             // createProjectButton
             // 
@@ -210,11 +493,6 @@
             this.saveAllButton.Text = "Save All";
             this.saveAllButton.Click += new System.EventHandler(this.SaveAll);
             // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
             // cutButton
             // 
             this.cutButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -248,11 +526,6 @@
             this.pasteButton.Text = "Paste";
             this.pasteButton.Click += new System.EventHandler(this.Paste);
             // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
-            // 
             // undoButton
             // 
             this.undoButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -274,11 +547,6 @@
             this.redoButton.Size = new System.Drawing.Size(32, 22);
             this.redoButton.Text = "Redo";
             this.redoButton.ButtonClick += new System.EventHandler(this.Redo);
-            // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
             // 
             // buildProjectButton
             // 
@@ -312,12 +580,6 @@
             this.runFromLevelButton.Size = new System.Drawing.Size(23, 22);
             this.runFromLevelButton.Text = "Run From Level";
             this.runFromLevelButton.Click += new System.EventHandler(this.RunFromLevel);
-            // 
-            // levelToolStripSeparator
-            // 
-            this.toolStripGrouper.SetItemSet(this.levelToolStripSeparator, Necrofy.ToolStripGrouper.ItemSet.LevelEditor);
-            this.levelToolStripSeparator.Name = "levelToolStripSeparator";
-            this.levelToolStripSeparator.Size = new System.Drawing.Size(6, 25);
             // 
             // paintbrushButton
             // 
@@ -386,6 +648,347 @@
             this.resizeLevelButton.Name = "resizeLevelButton";
             this.resizeLevelButton.Size = new System.Drawing.Size(23, 22);
             this.resizeLevelButton.Text = "Resize Level";
+            // 
+            // centerHorizontallyButton
+            // 
+            this.centerHorizontallyButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.centerHorizontallyButton.Image = global::Necrofy.Properties.Resources.layers_alignment_center;
+            this.centerHorizontallyButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripGrouper.SetItemSet(this.centerHorizontallyButton, Necrofy.ToolStripGrouper.ItemSet.LevelTitle);
+            this.toolStripGrouper.SetItemType(this.centerHorizontallyButton, Necrofy.ToolStripGrouper.ItemType.CenterHorizontally);
+            this.centerHorizontallyButton.Name = "centerHorizontallyButton";
+            this.centerHorizontallyButton.Size = new System.Drawing.Size(23, 22);
+            this.centerHorizontallyButton.Text = "Center Horizontally";
+            // 
+            // centerVerticallyButton
+            // 
+            this.centerVerticallyButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.centerVerticallyButton.Image = global::Necrofy.Properties.Resources.layers_alignment_middle;
+            this.centerVerticallyButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripGrouper.SetItemSet(this.centerVerticallyButton, Necrofy.ToolStripGrouper.ItemSet.LevelTitle);
+            this.toolStripGrouper.SetItemType(this.centerVerticallyButton, Necrofy.ToolStripGrouper.ItemType.CenterVertically);
+            this.centerVerticallyButton.Name = "centerVerticallyButton";
+            this.centerVerticallyButton.Size = new System.Drawing.Size(23, 22);
+            this.centerVerticallyButton.Text = "Center Vertically";
+            // 
+            // moveUpButton
+            // 
+            this.moveUpButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.moveUpButton.Image = global::Necrofy.Properties.Resources.arrow_090;
+            this.moveUpButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripGrouper.SetItemSet(this.moveUpButton, Necrofy.ToolStripGrouper.ItemSet.LevelTitle);
+            this.toolStripGrouper.SetItemType(this.moveUpButton, Necrofy.ToolStripGrouper.ItemType.MoveUp);
+            this.moveUpButton.Name = "moveUpButton";
+            this.moveUpButton.Size = new System.Drawing.Size(23, 22);
+            this.moveUpButton.Text = "Move Up";
+            // 
+            // moveDownButton
+            // 
+            this.moveDownButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.moveDownButton.Image = global::Necrofy.Properties.Resources.arrow_270;
+            this.moveDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripGrouper.SetItemSet(this.moveDownButton, Necrofy.ToolStripGrouper.ItemSet.LevelTitle);
+            this.toolStripGrouper.SetItemType(this.moveDownButton, Necrofy.ToolStripGrouper.ItemType.MoveDown);
+            this.moveDownButton.Name = "moveDownButton";
+            this.moveDownButton.Size = new System.Drawing.Size(23, 22);
+            this.moveDownButton.Text = "Move Down";
+            // 
+            // moveToFrontButton
+            // 
+            this.moveToFrontButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.moveToFrontButton.Image = global::Necrofy.Properties.Resources.arrow_stop_090;
+            this.moveToFrontButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripGrouper.SetItemSet(this.moveToFrontButton, Necrofy.ToolStripGrouper.ItemSet.LevelTitle);
+            this.toolStripGrouper.SetItemType(this.moveToFrontButton, Necrofy.ToolStripGrouper.ItemType.MoveToFront);
+            this.moveToFrontButton.Name = "moveToFrontButton";
+            this.moveToFrontButton.Size = new System.Drawing.Size(23, 22);
+            this.moveToFrontButton.Text = "Move to Front";
+            // 
+            // moveToBackButton
+            // 
+            this.moveToBackButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.moveToBackButton.Image = global::Necrofy.Properties.Resources.arrow_stop_270;
+            this.moveToBackButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripGrouper.SetItemSet(this.moveToBackButton, Necrofy.ToolStripGrouper.ItemSet.LevelTitle);
+            this.toolStripGrouper.SetItemType(this.moveToBackButton, Necrofy.ToolStripGrouper.ItemType.MoveToBack);
+            this.moveToBackButton.Name = "moveToBackButton";
+            this.moveToBackButton.Size = new System.Drawing.Size(23, 22);
+            this.moveToBackButton.Text = "Move to Back";
+            // 
+            // fileNewProject
+            // 
+            this.fileNewProject.Image = global::Necrofy.Properties.Resources.document__pencil;
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.fileNewProject, this.createProjectButton);
+            this.fileNewProject.Name = "fileNewProject";
+            this.fileNewProject.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+            this.fileNewProject.Size = new System.Drawing.Size(195, 22);
+            this.fileNewProject.Text = "&New Project...";
+            this.fileNewProject.Click += new System.EventHandler(this.CreateProject);
+            // 
+            // fileOpenProject
+            // 
+            this.fileOpenProject.Image = global::Necrofy.Properties.Resources.folder_horizontal_open;
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.fileOpenProject, this.openProjectButton);
+            this.fileOpenProject.Name = "fileOpenProject";
+            this.fileOpenProject.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.fileOpenProject.Size = new System.Drawing.Size(195, 22);
+            this.fileOpenProject.Text = "&Open Project...";
+            this.fileOpenProject.Click += new System.EventHandler(this.OpenProject);
+            // 
+            // fileSave
+            // 
+            this.fileSave.Enabled = false;
+            this.fileSave.Image = global::Necrofy.Properties.Resources.disk;
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.fileSave, this.saveButton);
+            this.fileSave.Name = "fileSave";
+            this.fileSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.fileSave.Size = new System.Drawing.Size(195, 22);
+            this.fileSave.Text = "&Save";
+            this.fileSave.Click += new System.EventHandler(this.Save);
+            // 
+            // fileSaveAll
+            // 
+            this.fileSaveAll.Enabled = false;
+            this.fileSaveAll.Image = global::Necrofy.Properties.Resources.disks;
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.fileSaveAll, this.saveAllButton);
+            this.fileSaveAll.Name = "fileSaveAll";
+            this.fileSaveAll.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.S)));
+            this.fileSaveAll.Size = new System.Drawing.Size(195, 22);
+            this.fileSaveAll.Text = "Save &All";
+            this.fileSaveAll.Click += new System.EventHandler(this.SaveAll);
+            // 
+            // editUndo
+            // 
+            this.editUndo.Enabled = false;
+            this.editUndo.Image = global::Necrofy.Properties.Resources.arrow_return_180;
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.editUndo, this.undoButton);
+            this.editUndo.Name = "editUndo";
+            this.editUndo.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
+            this.editUndo.Size = new System.Drawing.Size(211, 22);
+            this.editUndo.Text = "&Undo";
+            this.editUndo.Click += new System.EventHandler(this.Undo);
+            // 
+            // editRedo
+            // 
+            this.editRedo.Enabled = false;
+            this.editRedo.Image = global::Necrofy.Properties.Resources.arrow_return;
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.editRedo, this.redoButton);
+            this.editRedo.Name = "editRedo";
+            this.editRedo.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
+            this.editRedo.Size = new System.Drawing.Size(211, 22);
+            this.editRedo.Text = "&Redo";
+            this.editRedo.Click += new System.EventHandler(this.Redo);
+            // 
+            // editCut
+            // 
+            this.editCut.Enabled = false;
+            this.editCut.Image = global::Necrofy.Properties.Resources.scissors;
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.editCut, this.cutButton);
+            this.editCut.Name = "editCut";
+            this.editCut.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
+            this.editCut.Size = new System.Drawing.Size(211, 22);
+            this.editCut.Text = "Cu&t";
+            this.editCut.Click += new System.EventHandler(this.Cut);
+            // 
+            // editCopy
+            // 
+            this.editCopy.Enabled = false;
+            this.editCopy.Image = global::Necrofy.Properties.Resources.document_copy;
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.editCopy, this.copyButton);
+            this.editCopy.Name = "editCopy";
+            this.editCopy.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
+            this.editCopy.Size = new System.Drawing.Size(211, 22);
+            this.editCopy.Text = "&Copy";
+            this.editCopy.Click += new System.EventHandler(this.Copy);
+            // 
+            // editPaste
+            // 
+            this.editPaste.Enabled = false;
+            this.editPaste.Image = global::Necrofy.Properties.Resources.clipboard_paste;
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.editPaste, this.pasteButton);
+            this.editPaste.Name = "editPaste";
+            this.editPaste.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
+            this.editPaste.Size = new System.Drawing.Size(211, 22);
+            this.editPaste.Text = "&Paste";
+            this.editPaste.Click += new System.EventHandler(this.Paste);
+            // 
+            // editDelete
+            // 
+            this.editDelete.Enabled = false;
+            this.editDelete.Image = global::Necrofy.Properties.Resources.cross_script;
+            this.editDelete.Name = "editDelete";
+            this.editDelete.ShortcutKeys = System.Windows.Forms.Keys.Delete;
+            this.editDelete.Size = new System.Drawing.Size(211, 22);
+            this.editDelete.Text = "&Delete";
+            this.editDelete.Click += new System.EventHandler(this.Delete);
+            // 
+            // buildBuildProject
+            // 
+            this.buildBuildProject.Enabled = false;
+            this.buildBuildProject.Image = global::Necrofy.Properties.Resources.compile;
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.buildBuildProject, this.buildProjectButton);
+            this.buildBuildProject.Name = "buildBuildProject";
+            this.buildBuildProject.Size = new System.Drawing.Size(210, 22);
+            this.buildBuildProject.Text = "&Build Project";
+            this.buildBuildProject.Click += new System.EventHandler(this.BuildProject);
+            // 
+            // buildRunProject
+            // 
+            this.buildRunProject.Enabled = false;
+            this.buildRunProject.Image = global::Necrofy.Properties.Resources.control;
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.buildRunProject, this.runProjectButton);
+            this.buildRunProject.Name = "buildRunProject";
+            this.buildRunProject.Size = new System.Drawing.Size(210, 22);
+            this.buildRunProject.Text = "&Run Project";
+            this.buildRunProject.Click += new System.EventHandler(this.RunProject);
+            // 
+            // buildRunFromLevel
+            // 
+            this.buildRunFromLevel.Enabled = false;
+            this.buildRunFromLevel.Image = global::Necrofy.Properties.Resources.control_cursor;
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.buildRunFromLevel, this.runFromLevelButton);
+            this.buildRunFromLevel.Name = "buildRunFromLevel";
+            this.buildRunFromLevel.ShortcutKeys = System.Windows.Forms.Keys.F5;
+            this.buildRunFromLevel.Size = new System.Drawing.Size(210, 22);
+            this.buildRunFromLevel.Text = "Run From &Level";
+            this.buildRunFromLevel.Click += new System.EventHandler(this.RunFromLevel);
+            // 
+            // toolsPaintbrush
+            // 
+            this.toolsPaintbrush.Checked = true;
+            this.toolsPaintbrush.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.toolsPaintbrush.Image = global::Necrofy.Properties.Resources.paint_brush;
+            this.toolStripGrouper.SetItemType(this.toolsPaintbrush, Necrofy.ToolStripGrouper.ItemType.PaintbrushTool);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsPaintbrush, this.paintbrushButton);
+            this.toolsPaintbrush.Name = "toolsPaintbrush";
+            this.toolsPaintbrush.ShortcutKeyDisplayString = "P";
+            this.toolsPaintbrush.Size = new System.Drawing.Size(174, 22);
+            this.toolsPaintbrush.Text = "&Paintbrush";
+            // 
+            // toolsTileSuggest
+            // 
+            this.toolsTileSuggest.Image = global::Necrofy.Properties.Resources.light_bulb;
+            this.toolStripGrouper.SetItemType(this.toolsTileSuggest, Necrofy.ToolStripGrouper.ItemType.TileSuggestTool);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsTileSuggest, this.tileSuggestButton);
+            this.toolsTileSuggest.Name = "toolsTileSuggest";
+            this.toolsTileSuggest.ShortcutKeyDisplayString = "S";
+            this.toolsTileSuggest.Size = new System.Drawing.Size(174, 22);
+            this.toolsTileSuggest.Text = "Tile &Suggest";
+            // 
+            // toolsRectangleSelect
+            // 
+            this.toolsRectangleSelect.Image = global::Necrofy.Properties.Resources.selection_select;
+            this.toolStripGrouper.SetItemType(this.toolsRectangleSelect, Necrofy.ToolStripGrouper.ItemType.RectangleSelectTool);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsRectangleSelect, this.rectangleSelectButton);
+            this.toolsRectangleSelect.Name = "toolsRectangleSelect";
+            this.toolsRectangleSelect.ShortcutKeyDisplayString = "R";
+            this.toolsRectangleSelect.Size = new System.Drawing.Size(174, 22);
+            this.toolsRectangleSelect.Text = "&Rectangle Select";
+            // 
+            // toolsPencilSelect
+            // 
+            this.toolsPencilSelect.Image = global::Necrofy.Properties.Resources.pencil_select;
+            this.toolStripGrouper.SetItemType(this.toolsPencilSelect, Necrofy.ToolStripGrouper.ItemType.PencilSelectTool);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsPencilSelect, this.pencilSelectButton);
+            this.toolsPencilSelect.Name = "toolsPencilSelect";
+            this.toolsPencilSelect.ShortcutKeyDisplayString = "C";
+            this.toolsPencilSelect.Size = new System.Drawing.Size(174, 22);
+            this.toolsPencilSelect.Text = "Pen&cil Select";
+            // 
+            // toolsTileSelect
+            // 
+            this.toolsTileSelect.Image = global::Necrofy.Properties.Resources.tile_select;
+            this.toolStripGrouper.SetItemType(this.toolsTileSelect, Necrofy.ToolStripGrouper.ItemType.TileSelectTool);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsTileSelect, this.tileSelectButton);
+            this.toolsTileSelect.Name = "toolsTileSelect";
+            this.toolsTileSelect.ShortcutKeyDisplayString = "T";
+            this.toolsTileSelect.Size = new System.Drawing.Size(174, 22);
+            this.toolsTileSelect.Text = "&Tile Select";
+            // 
+            // toolsResizeLevel
+            // 
+            this.toolsResizeLevel.Image = global::Necrofy.Properties.Resources.map_resize;
+            this.toolStripGrouper.SetItemType(this.toolsResizeLevel, Necrofy.ToolStripGrouper.ItemType.ResizeLevelTool);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsResizeLevel, this.resizeLevelButton);
+            this.toolsResizeLevel.Name = "toolsResizeLevel";
+            this.toolsResizeLevel.ShortcutKeyDisplayString = "L";
+            this.toolsResizeLevel.Size = new System.Drawing.Size(174, 22);
+            this.toolsResizeLevel.Text = "Resize &Level";
+            // 
+            // titleMenu
+            // 
+            this.titleMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.titleCenterHorizontally,
+            this.titleCenterVertically,
+            this.titleSeparator,
+            this.titleMoveUp,
+            this.titleMoveDown,
+            this.titleMoveToFront,
+            this.titleMoveToBack});
+            this.toolStripGrouper.SetItemSet(this.titleMenu, Necrofy.ToolStripGrouper.ItemSet.LevelTitle);
+            this.titleMenu.Name = "titleMenu";
+            this.titleMenu.Size = new System.Drawing.Size(41, 20);
+            this.titleMenu.Text = "&Title";
+            // 
+            // titleCenterHorizontally
+            // 
+            this.titleCenterHorizontally.Image = global::Necrofy.Properties.Resources.layers_alignment_center;
+            this.toolStripGrouper.SetItemType(this.titleCenterHorizontally, Necrofy.ToolStripGrouper.ItemType.CenterHorizontally);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.titleCenterHorizontally, this.centerHorizontallyButton);
+            this.titleCenterHorizontally.Name = "titleCenterHorizontally";
+            this.titleCenterHorizontally.Size = new System.Drawing.Size(176, 22);
+            this.titleCenterHorizontally.Text = "Center &Horizontally";
+            // 
+            // titleCenterVertically
+            // 
+            this.titleCenterVertically.Image = global::Necrofy.Properties.Resources.layers_alignment_middle;
+            this.toolStripGrouper.SetItemType(this.titleCenterVertically, Necrofy.ToolStripGrouper.ItemType.CenterVertically);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.titleCenterVertically, this.centerVerticallyButton);
+            this.titleCenterVertically.Name = "titleCenterVertically";
+            this.titleCenterVertically.Size = new System.Drawing.Size(176, 22);
+            this.titleCenterVertically.Text = "Center &Vertically";
+            // 
+            // titleSeparator
+            // 
+            this.titleSeparator.Name = "titleSeparator";
+            this.titleSeparator.Size = new System.Drawing.Size(173, 6);
+            // 
+            // titleMoveUp
+            // 
+            this.titleMoveUp.Image = global::Necrofy.Properties.Resources.arrow_090;
+            this.toolStripGrouper.SetItemType(this.titleMoveUp, Necrofy.ToolStripGrouper.ItemType.MoveUp);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.titleMoveUp, this.moveUpButton);
+            this.titleMoveUp.Name = "titleMoveUp";
+            this.titleMoveUp.Size = new System.Drawing.Size(176, 22);
+            this.titleMoveUp.Text = "Move &Up";
+            // 
+            // titleMoveDown
+            // 
+            this.titleMoveDown.Image = global::Necrofy.Properties.Resources.arrow_270;
+            this.toolStripGrouper.SetItemType(this.titleMoveDown, Necrofy.ToolStripGrouper.ItemType.MoveDown);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.titleMoveDown, this.moveDownButton);
+            this.titleMoveDown.Name = "titleMoveDown";
+            this.titleMoveDown.Size = new System.Drawing.Size(176, 22);
+            this.titleMoveDown.Text = "Move &Down";
+            // 
+            // titleMoveToFront
+            // 
+            this.titleMoveToFront.Image = global::Necrofy.Properties.Resources.arrow_stop_090;
+            this.toolStripGrouper.SetItemType(this.titleMoveToFront, Necrofy.ToolStripGrouper.ItemType.MoveToFront);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.titleMoveToFront, this.moveToFrontButton);
+            this.titleMoveToFront.Name = "titleMoveToFront";
+            this.titleMoveToFront.Size = new System.Drawing.Size(176, 22);
+            this.titleMoveToFront.Text = "Move to &Front";
+            // 
+            // titleMoveToBack
+            // 
+            this.titleMoveToBack.Image = global::Necrofy.Properties.Resources.arrow_stop_270;
+            this.toolStripGrouper.SetItemType(this.titleMoveToBack, Necrofy.ToolStripGrouper.ItemType.MoveToBack);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.titleMoveToBack, this.moveToBackButton);
+            this.titleMoveToBack.Name = "titleMoveToBack";
+            this.titleMoveToBack.Size = new System.Drawing.Size(176, 22);
+            this.titleMoveToBack.Text = "Move to &Back";
             // 
             // spritesButton
             // 
@@ -479,100 +1082,6 @@
             this.spritesAll.Size = new System.Drawing.Size(184, 22);
             this.spritesAll.Text = "All";
             // 
-            // menuStrip1
-            // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileMenu,
-            this.editMenu,
-            this.buildMenu,
-            this.levelMenu,
-            this.toolsMenu,
-            this.windowMenu});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1061, 24);
-            this.menuStrip1.TabIndex = 6;
-            this.menuStrip1.Text = "menuStrip1";
-            // 
-            // fileMenu
-            // 
-            this.fileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileNewProject,
-            this.fileOpenProject,
-            this.fileSeparator1,
-            this.fileSave,
-            this.fileSaveAll,
-            this.fileClose,
-            this.fileSeparator2,
-            this.recentProjects,
-            this.fileSeparator3,
-            this.fileExit});
-            this.fileMenu.Name = "fileMenu";
-            this.fileMenu.Size = new System.Drawing.Size(37, 20);
-            this.fileMenu.Text = "&File";
-            // 
-            // fileNewProject
-            // 
-            this.fileNewProject.Image = global::Necrofy.Properties.Resources.document__pencil;
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.fileNewProject, this.createProjectButton);
-            this.fileNewProject.Name = "fileNewProject";
-            this.fileNewProject.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.fileNewProject.Size = new System.Drawing.Size(195, 22);
-            this.fileNewProject.Text = "&New Project...";
-            this.fileNewProject.Click += new System.EventHandler(this.CreateProject);
-            // 
-            // fileOpenProject
-            // 
-            this.fileOpenProject.Image = global::Necrofy.Properties.Resources.folder_horizontal_open;
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.fileOpenProject, this.openProjectButton);
-            this.fileOpenProject.Name = "fileOpenProject";
-            this.fileOpenProject.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.fileOpenProject.Size = new System.Drawing.Size(195, 22);
-            this.fileOpenProject.Text = "&Open Project...";
-            this.fileOpenProject.Click += new System.EventHandler(this.OpenProject);
-            // 
-            // fileSeparator1
-            // 
-            this.fileSeparator1.Name = "fileSeparator1";
-            this.fileSeparator1.Size = new System.Drawing.Size(192, 6);
-            // 
-            // fileSave
-            // 
-            this.fileSave.Enabled = false;
-            this.fileSave.Image = global::Necrofy.Properties.Resources.disk;
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.fileSave, this.saveButton);
-            this.fileSave.Name = "fileSave";
-            this.fileSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.fileSave.Size = new System.Drawing.Size(195, 22);
-            this.fileSave.Text = "&Save";
-            this.fileSave.Click += new System.EventHandler(this.Save);
-            // 
-            // fileSaveAll
-            // 
-            this.fileSaveAll.Enabled = false;
-            this.fileSaveAll.Image = global::Necrofy.Properties.Resources.disks;
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.fileSaveAll, this.saveAllButton);
-            this.fileSaveAll.Name = "fileSaveAll";
-            this.fileSaveAll.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
-            | System.Windows.Forms.Keys.S)));
-            this.fileSaveAll.Size = new System.Drawing.Size(195, 22);
-            this.fileSaveAll.Text = "Save &All";
-            this.fileSaveAll.Click += new System.EventHandler(this.SaveAll);
-            // 
-            // fileClose
-            // 
-            this.fileClose.Enabled = false;
-            this.fileClose.Name = "fileClose";
-            this.fileClose.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
-            this.fileClose.Size = new System.Drawing.Size(195, 22);
-            this.fileClose.Text = "&Close";
-            this.fileClose.Click += new System.EventHandler(this.CloseFile);
-            // 
-            // fileSeparator2
-            // 
-            this.fileSeparator2.Name = "fileSeparator2";
-            this.fileSeparator2.Size = new System.Drawing.Size(192, 6);
-            // 
             // recentProjects
             // 
             this.recentProjects.Files = ((System.Collections.Generic.IEnumerable<string>)(resources.GetObject("recentProjects.Files")));
@@ -584,288 +1093,6 @@
             this.recentProjects.Text = "Recent Projects";
             this.recentProjects.FileClicked += new Necrofy.RecentFilesMenu.FileClickedDelegate(this.recentProjects_FileClicked);
             // 
-            // fileSeparator3
-            // 
-            this.fileSeparator3.Name = "fileSeparator3";
-            this.fileSeparator3.Size = new System.Drawing.Size(192, 6);
-            // 
-            // fileExit
-            // 
-            this.fileExit.Name = "fileExit";
-            this.fileExit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.fileExit.Size = new System.Drawing.Size(195, 22);
-            this.fileExit.Text = "E&xit";
-            this.fileExit.Click += new System.EventHandler(this.Exit);
-            // 
-            // editMenu
-            // 
-            this.editMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.editUndo,
-            this.editRedo,
-            this.editSeparator1,
-            this.editCut,
-            this.editCopy,
-            this.editPaste,
-            this.editDelete,
-            this.editSeparator2,
-            this.editSelectAll,
-            this.editSelectNone});
-            this.editMenu.Name = "editMenu";
-            this.editMenu.Size = new System.Drawing.Size(39, 20);
-            this.editMenu.Text = "&Edit";
-            // 
-            // editUndo
-            // 
-            this.editUndo.Enabled = false;
-            this.editUndo.Image = global::Necrofy.Properties.Resources.arrow_return_180;
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.editUndo, this.undoButton);
-            this.editUndo.Name = "editUndo";
-            this.editUndo.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-            this.editUndo.Size = new System.Drawing.Size(211, 22);
-            this.editUndo.Text = "&Undo";
-            this.editUndo.Click += new System.EventHandler(this.Undo);
-            // 
-            // editRedo
-            // 
-            this.editRedo.Enabled = false;
-            this.editRedo.Image = global::Necrofy.Properties.Resources.arrow_return;
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.editRedo, this.redoButton);
-            this.editRedo.Name = "editRedo";
-            this.editRedo.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
-            this.editRedo.Size = new System.Drawing.Size(211, 22);
-            this.editRedo.Text = "&Redo";
-            this.editRedo.Click += new System.EventHandler(this.Redo);
-            // 
-            // editSeparator1
-            // 
-            this.editSeparator1.Name = "editSeparator1";
-            this.editSeparator1.Size = new System.Drawing.Size(208, 6);
-            // 
-            // editCut
-            // 
-            this.editCut.Enabled = false;
-            this.editCut.Image = global::Necrofy.Properties.Resources.scissors;
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.editCut, this.cutButton);
-            this.editCut.Name = "editCut";
-            this.editCut.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
-            this.editCut.Size = new System.Drawing.Size(211, 22);
-            this.editCut.Text = "Cu&t";
-            this.editCut.Click += new System.EventHandler(this.Cut);
-            // 
-            // editCopy
-            // 
-            this.editCopy.Enabled = false;
-            this.editCopy.Image = global::Necrofy.Properties.Resources.document_copy;
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.editCopy, this.copyButton);
-            this.editCopy.Name = "editCopy";
-            this.editCopy.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this.editCopy.Size = new System.Drawing.Size(211, 22);
-            this.editCopy.Text = "&Copy";
-            this.editCopy.Click += new System.EventHandler(this.Copy);
-            // 
-            // editPaste
-            // 
-            this.editPaste.Enabled = false;
-            this.editPaste.Image = global::Necrofy.Properties.Resources.clipboard_paste;
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.editPaste, this.pasteButton);
-            this.editPaste.Name = "editPaste";
-            this.editPaste.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-            this.editPaste.Size = new System.Drawing.Size(211, 22);
-            this.editPaste.Text = "&Paste";
-            this.editPaste.Click += new System.EventHandler(this.Paste);
-            // 
-            // editDelete
-            // 
-            this.editDelete.Enabled = false;
-            this.editDelete.Image = global::Necrofy.Properties.Resources.cross_script;
-            this.editDelete.Name = "editDelete";
-            this.editDelete.ShortcutKeys = System.Windows.Forms.Keys.Delete;
-            this.editDelete.Size = new System.Drawing.Size(211, 22);
-            this.editDelete.Text = "&Delete";
-            this.editDelete.Click += new System.EventHandler(this.Delete);
-            // 
-            // editSeparator2
-            // 
-            this.editSeparator2.Name = "editSeparator2";
-            this.editSeparator2.Size = new System.Drawing.Size(208, 6);
-            // 
-            // editSelectAll
-            // 
-            this.editSelectAll.Enabled = false;
-            this.editSelectAll.Name = "editSelectAll";
-            this.editSelectAll.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
-            this.editSelectAll.Size = new System.Drawing.Size(211, 22);
-            this.editSelectAll.Text = "Select &All";
-            this.editSelectAll.Click += new System.EventHandler(this.SelectAll);
-            // 
-            // editSelectNone
-            // 
-            this.editSelectNone.Enabled = false;
-            this.editSelectNone.Name = "editSelectNone";
-            this.editSelectNone.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
-            | System.Windows.Forms.Keys.A)));
-            this.editSelectNone.Size = new System.Drawing.Size(211, 22);
-            this.editSelectNone.Text = "Select &None";
-            this.editSelectNone.Click += new System.EventHandler(this.SelectNone);
-            // 
-            // buildMenu
-            // 
-            this.buildMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.buildBuildProject,
-            this.buildRunProject,
-            this.buildRunFromLevel,
-            this.buildRunSettings,
-            this.debugToolStripMenuItem});
-            this.buildMenu.Name = "buildMenu";
-            this.buildMenu.Size = new System.Drawing.Size(46, 20);
-            this.buildMenu.Text = "&Build";
-            // 
-            // buildBuildProject
-            // 
-            this.buildBuildProject.Enabled = false;
-            this.buildBuildProject.Image = global::Necrofy.Properties.Resources.compile;
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.buildBuildProject, this.buildProjectButton);
-            this.buildBuildProject.Name = "buildBuildProject";
-            this.buildBuildProject.Size = new System.Drawing.Size(210, 22);
-            this.buildBuildProject.Text = "&Build Project";
-            this.buildBuildProject.Click += new System.EventHandler(this.BuildProject);
-            // 
-            // buildRunProject
-            // 
-            this.buildRunProject.Enabled = false;
-            this.buildRunProject.Image = global::Necrofy.Properties.Resources.control;
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.buildRunProject, this.runProjectButton);
-            this.buildRunProject.Name = "buildRunProject";
-            this.buildRunProject.Size = new System.Drawing.Size(210, 22);
-            this.buildRunProject.Text = "&Run Project";
-            this.buildRunProject.Click += new System.EventHandler(this.RunProject);
-            // 
-            // buildRunFromLevel
-            // 
-            this.buildRunFromLevel.Enabled = false;
-            this.buildRunFromLevel.Image = global::Necrofy.Properties.Resources.control_cursor;
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.buildRunFromLevel, this.runFromLevelButton);
-            this.buildRunFromLevel.Name = "buildRunFromLevel";
-            this.buildRunFromLevel.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.buildRunFromLevel.Size = new System.Drawing.Size(210, 22);
-            this.buildRunFromLevel.Text = "Run From &Level";
-            this.buildRunFromLevel.Click += new System.EventHandler(this.RunFromLevel);
-            // 
-            // buildRunSettings
-            // 
-            this.buildRunSettings.Name = "buildRunSettings";
-            this.buildRunSettings.Size = new System.Drawing.Size(210, 22);
-            this.buildRunSettings.Text = "Run From Level &Settings...";
-            this.buildRunSettings.Click += new System.EventHandler(this.RunFromLevelSettings);
-            // 
-            // debugToolStripMenuItem
-            // 
-            this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
-            this.debugToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
-            this.debugToolStripMenuItem.Text = "Debug";
-            this.debugToolStripMenuItem.Click += new System.EventHandler(this.debugToolStripMenuItem_Click);
-            // 
-            // levelMenu
-            // 
-            this.levelMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.levelEditTitle,
-            this.levelSettings});
-            this.toolStripGrouper.SetItemSet(this.levelMenu, Necrofy.ToolStripGrouper.ItemSet.LevelEditor);
-            this.levelMenu.Name = "levelMenu";
-            this.levelMenu.Size = new System.Drawing.Size(46, 20);
-            this.levelMenu.Text = "&Level";
-            // 
-            // levelEditTitle
-            // 
-            this.toolStripGrouper.SetItemType(this.levelEditTitle, Necrofy.ToolStripGrouper.ItemType.LevelEditTitle);
-            this.levelEditTitle.Name = "levelEditTitle";
-            this.levelEditTitle.Size = new System.Drawing.Size(128, 22);
-            this.levelEditTitle.Text = "Edit Title...";
-            // 
-            // levelSettings
-            // 
-            this.toolStripGrouper.SetItemType(this.levelSettings, Necrofy.ToolStripGrouper.ItemType.LevelSettings);
-            this.levelSettings.Name = "levelSettings";
-            this.levelSettings.Size = new System.Drawing.Size(128, 22);
-            this.levelSettings.Text = "&Settings...";
-            // 
-            // toolsMenu
-            // 
-            this.toolsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolsPaintbrush,
-            this.toolsTileSuggest,
-            this.toolsRectangleSelect,
-            this.toolsPencilSelect,
-            this.toolsTileSelect,
-            this.toolsResizeLevel,
-            this.toolsSprites});
-            this.toolStripGrouper.SetItemSet(this.toolsMenu, Necrofy.ToolStripGrouper.ItemSet.LevelEditor);
-            this.toolsMenu.Name = "toolsMenu";
-            this.toolsMenu.Size = new System.Drawing.Size(46, 20);
-            this.toolsMenu.Text = "&Tools";
-            // 
-            // toolsPaintbrush
-            // 
-            this.toolsPaintbrush.Checked = true;
-            this.toolsPaintbrush.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.toolsPaintbrush.Image = global::Necrofy.Properties.Resources.paint_brush;
-            this.toolStripGrouper.SetItemType(this.toolsPaintbrush, Necrofy.ToolStripGrouper.ItemType.PaintbrushTool);
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsPaintbrush, this.paintbrushButton);
-            this.toolsPaintbrush.Name = "toolsPaintbrush";
-            this.toolsPaintbrush.ShortcutKeyDisplayString = "P";
-            this.toolsPaintbrush.Size = new System.Drawing.Size(174, 22);
-            this.toolsPaintbrush.Text = "&Paintbrush";
-            // 
-            // toolsTileSuggest
-            // 
-            this.toolsTileSuggest.Image = global::Necrofy.Properties.Resources.light_bulb;
-            this.toolStripGrouper.SetItemType(this.toolsTileSuggest, Necrofy.ToolStripGrouper.ItemType.TileSuggestTool);
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsTileSuggest, this.tileSuggestButton);
-            this.toolsTileSuggest.Name = "toolsTileSuggest";
-            this.toolsTileSuggest.ShortcutKeyDisplayString = "S";
-            this.toolsTileSuggest.Size = new System.Drawing.Size(174, 22);
-            this.toolsTileSuggest.Text = "Tile &Suggest";
-            // 
-            // toolsRectangleSelect
-            // 
-            this.toolsRectangleSelect.Image = global::Necrofy.Properties.Resources.selection_select;
-            this.toolStripGrouper.SetItemType(this.toolsRectangleSelect, Necrofy.ToolStripGrouper.ItemType.RectangleSelectTool);
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsRectangleSelect, this.rectangleSelectButton);
-            this.toolsRectangleSelect.Name = "toolsRectangleSelect";
-            this.toolsRectangleSelect.ShortcutKeyDisplayString = "R";
-            this.toolsRectangleSelect.Size = new System.Drawing.Size(174, 22);
-            this.toolsRectangleSelect.Text = "&Rectangle Select";
-            // 
-            // toolsPencilSelect
-            // 
-            this.toolsPencilSelect.Image = global::Necrofy.Properties.Resources.pencil_select;
-            this.toolStripGrouper.SetItemType(this.toolsPencilSelect, Necrofy.ToolStripGrouper.ItemType.PencilSelectTool);
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsPencilSelect, this.pencilSelectButton);
-            this.toolsPencilSelect.Name = "toolsPencilSelect";
-            this.toolsPencilSelect.ShortcutKeyDisplayString = "C";
-            this.toolsPencilSelect.Size = new System.Drawing.Size(174, 22);
-            this.toolsPencilSelect.Text = "Pen&cil Select";
-            // 
-            // toolsTileSelect
-            // 
-            this.toolsTileSelect.Image = global::Necrofy.Properties.Resources.tile_select;
-            this.toolStripGrouper.SetItemType(this.toolsTileSelect, Necrofy.ToolStripGrouper.ItemType.TileSelectTool);
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsTileSelect, this.tileSelectButton);
-            this.toolsTileSelect.Name = "toolsTileSelect";
-            this.toolsTileSelect.ShortcutKeyDisplayString = "T";
-            this.toolsTileSelect.Size = new System.Drawing.Size(174, 22);
-            this.toolsTileSelect.Text = "&Tile Select";
-            // 
-            // toolsResizeLevel
-            // 
-            this.toolsResizeLevel.Image = global::Necrofy.Properties.Resources.map_resize;
-            this.toolStripGrouper.SetItemType(this.toolsResizeLevel, Necrofy.ToolStripGrouper.ItemType.ResizeLevelTool);
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsResizeLevel, this.resizeLevelButton);
-            this.toolsResizeLevel.Name = "toolsResizeLevel";
-            this.toolsResizeLevel.ShortcutKeyDisplayString = "L";
-            this.toolsResizeLevel.Size = new System.Drawing.Size(174, 22);
-            this.toolsResizeLevel.Text = "Resize &Level";
-            // 
             // toolsSprites
             // 
             this.toolsSprites.Image = global::Necrofy.Properties.Resources.leaf;
@@ -875,56 +1102,6 @@
             this.toolsSprites.ShortcutKeyDisplayString = "I";
             this.toolsSprites.Size = new System.Drawing.Size(174, 22);
             this.toolsSprites.Text = "Spr&ites";
-            // 
-            // windowMenu
-            // 
-            this.windowMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.windowProject,
-            this.windowObjects,
-            this.windowProperties,
-            this.windowSeparator1,
-            this.windowRestore});
-            this.windowMenu.Name = "windowMenu";
-            this.windowMenu.Size = new System.Drawing.Size(63, 20);
-            this.windowMenu.Text = "&Window";
-            // 
-            // windowProject
-            // 
-            this.windowProject.Name = "windowProject";
-            this.windowProject.Size = new System.Drawing.Size(193, 22);
-            this.windowProject.Text = "Pro&ject";
-            this.windowProject.Click += new System.EventHandler(this.windowProject_Click);
-            // 
-            // windowObjects
-            // 
-            this.windowObjects.Name = "windowObjects";
-            this.windowObjects.Size = new System.Drawing.Size(193, 22);
-            this.windowObjects.Text = "&Objects";
-            this.windowObjects.Click += new System.EventHandler(this.windowObjects_Click);
-            // 
-            // windowProperties
-            // 
-            this.windowProperties.Name = "windowProperties";
-            this.windowProperties.Size = new System.Drawing.Size(193, 22);
-            this.windowProperties.Text = "&Properties";
-            this.windowProperties.Click += new System.EventHandler(this.windowProperties_Click);
-            // 
-            // windowSeparator1
-            // 
-            this.windowSeparator1.Name = "windowSeparator1";
-            this.windowSeparator1.Size = new System.Drawing.Size(190, 6);
-            // 
-            // windowRestore
-            // 
-            this.windowRestore.Name = "windowRestore";
-            this.windowRestore.Size = new System.Drawing.Size(193, 22);
-            this.windowRestore.Text = "&Restore Default Layout";
-            this.windowRestore.Click += new System.EventHandler(this.windowRestore_Click);
-            // 
-            // openProjectDialog
-            // 
-            this.openProjectDialog.Filter = "Necrofy project files (*.nfyp)|*.nfyp|All Files (*.*)|*.*";
-            this.openProjectDialog.Title = "Open Project";
             // 
             // toolStripGrouper
             // 
@@ -1038,6 +1215,22 @@
         private System.Windows.Forms.ToolStripMenuItem levelMenu;
         private System.Windows.Forms.ToolStripMenuItem levelSettings;
         private System.Windows.Forms.ToolStripMenuItem levelEditTitle;
+        private System.Windows.Forms.ToolStripSeparator levelTitleToolStripSeparator;
+        private System.Windows.Forms.ToolStripButton centerHorizontallyButton;
+        private System.Windows.Forms.ToolStripButton centerVerticallyButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripButton moveUpButton;
+        private System.Windows.Forms.ToolStripButton moveDownButton;
+        private System.Windows.Forms.ToolStripButton moveToFrontButton;
+        private System.Windows.Forms.ToolStripButton moveToBackButton;
+        private System.Windows.Forms.ToolStripMenuItem titleMenu;
+        private System.Windows.Forms.ToolStripMenuItem titleCenterHorizontally;
+        private System.Windows.Forms.ToolStripMenuItem titleCenterVertically;
+        private System.Windows.Forms.ToolStripSeparator titleSeparator;
+        private System.Windows.Forms.ToolStripMenuItem titleMoveUp;
+        private System.Windows.Forms.ToolStripMenuItem titleMoveDown;
+        private System.Windows.Forms.ToolStripMenuItem titleMoveToFront;
+        private System.Windows.Forms.ToolStripMenuItem titleMoveToBack;
     }
 }
 

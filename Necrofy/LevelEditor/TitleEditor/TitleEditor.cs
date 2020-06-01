@@ -21,6 +21,13 @@ namespace Necrofy
         private LevelTitleObjectBrowserContents levelTitleContents;
         public UndoManager<TitleEditor> undoManager;
 
+        public override ToolStripGrouper.ItemSet ToolStripItemSet => ToolStripGrouper.ItemSet.LevelTitle;
+        private static readonly ToolStripGrouper.ItemType[] wordSelectedItems = new ToolStripGrouper.ItemType[] {
+            ToolStripGrouper.ItemType.CenterHorizontally, ToolStripGrouper.ItemType.CenterVertically,
+            ToolStripGrouper.ItemType.MoveUp, ToolStripGrouper.ItemType.MoveDown,
+            ToolStripGrouper.ItemType.MoveToFront, ToolStripGrouper.ItemType.MoveToBack
+        };
+
         private int updatingData = 0;
 
         public string DisplayName {
@@ -94,9 +101,21 @@ namespace Necrofy
 
         private void SelectedWordsChanged(object sender, EventArgs e) {
             if (sender == activeEditor) {
+                UpdateToolbar();
                 UpdateSelectedPalette();
                 PropertyBrowserObjects = activeEditor.SelectedWords.ToArray();
                 RaiseSelectionChanged();
+            }
+        }
+
+        public override void Displayed() {
+            base.Displayed();
+            UpdateToolbar();
+        }
+
+        private void UpdateToolbar() {
+            foreach (ToolStripGrouper.ItemType item in wordSelectedItems) {
+                mainWindow.GetToolStripItem(item).Enabled = activeEditor.SelectedWords.Count > 0;
             }
         }
 
@@ -258,6 +277,29 @@ namespace Necrofy
                 } else if (intValue >= byte.MinValue && intValue <= byte.MaxValue) {
                     undoManager.Do(absoluteMoveGetter((byte)intValue));
                 }
+            }
+        }
+
+        public override void ToolStripItemClicked(ToolStripGrouper.ItemType item) {
+            switch (item) {
+                case ToolStripGrouper.ItemType.CenterHorizontally:
+                    activeEditor.CenterHorizontally();
+                    break;
+                case ToolStripGrouper.ItemType.CenterVertically:
+                    activeEditor.CenterVertically();
+                    break;
+                case ToolStripGrouper.ItemType.MoveUp:
+                    activeEditor.MoveUp();
+                    break;
+                case ToolStripGrouper.ItemType.MoveDown:
+                    activeEditor.MoveDown();
+                    break;
+                case ToolStripGrouper.ItemType.MoveToFront:
+                    activeEditor.MoveToFront();
+                    break;
+                case ToolStripGrouper.ItemType.MoveToBack:
+                    activeEditor.MoveToBack();
+                    break;
             }
         }
 

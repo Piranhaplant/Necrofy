@@ -135,13 +135,18 @@ namespace Necrofy
         public abstract class ItemProxy
         {
             public abstract bool Checked { get; set; }
+            public abstract bool Enabled { get; set; }
         }
 
         private class BaseItemProxy : ItemProxy
         {
+            private readonly ToolStripItem item;
+
             public override bool Checked { get => false; set { } }
+            public override bool Enabled { get => item.Enabled; set => item.Enabled = value; }
 
             public BaseItemProxy(ToolStripItem item, EventHandler clickEventHandler) {
+                this.item = item;
                 item.Click += clickEventHandler;
             }
         }
@@ -151,6 +156,7 @@ namespace Necrofy
             private readonly ToolStripMenuItem item;
 
             public override bool Checked { get => item.Checked; set => item.Checked = value; }
+            public override bool Enabled { get => item.Enabled; set => item.Enabled = value; }
 
             public MenuItemProxy(ToolStripMenuItem item, EventHandler clickEventHandler, EventHandler checkedChangedEventHandler) {
                 this.item = item;
@@ -164,6 +170,7 @@ namespace Necrofy
             private readonly CheckableToolStripSplitButton item;
 
             public override bool Checked { get => item.Checked; set => item.Checked = value; }
+            public override bool Enabled { get => item.Enabled; set => item.Enabled = value; }
 
             public CheckableSplitButtonItemProxy(CheckableToolStripSplitButton item, EventHandler clickEventHandler, EventHandler checkedChangedEventHandler) {
                 this.item = item;
@@ -177,6 +184,7 @@ namespace Necrofy
             private readonly SeparateCheckToolStripMenuItem item;
 
             public override bool Checked { get => item.Checked; set => item.Checked = value; }
+            public override bool Enabled { get => item.Enabled; set => item.Enabled = value; }
 
             public SeparateCheckMenuItemProxy(SeparateCheckToolStripMenuItem item, EventHandler clickEventHandler, EventHandler checkedChangedEventHandler) {
                 this.item = item;
@@ -188,6 +196,7 @@ namespace Necrofy
         public enum ItemType
         {
             None,
+
             LevelEditTitle,
             LevelSettings,
             PaintbrushTool,
@@ -204,12 +213,20 @@ namespace Necrofy
             SpritesBossMonsters,
             SpritesPlayers,
             SpritesAll,
+
+            CenterHorizontally,
+            CenterVertically,
+            MoveUp,
+            MoveDown,
+            MoveToFront,
+            MoveToBack,
         }
 
         public enum ItemSet
         {
             None,
             LevelEditor,
+            LevelTitle,
         }
     }
 }

@@ -24,6 +24,10 @@ namespace Necrofy
         private readonly List<byte> newY = new List<byte>();
 
         public MoveWordAction(IEnumerable<WrappedTitleWord> words, int dx, int dy) {
+            if (dx == 0 && dy == 0) {
+                cancel = true;
+                return;
+            }
             this.words = new List<WrappedTitleWord>(words);
             foreach (WrappedTitleWord word in words) {
                 prevX.Add(word.X);
@@ -212,6 +216,48 @@ namespace Necrofy
 
         public override string ToString() {
             return "Change text";
+        }
+    }
+
+    class ChangeWordZIndexAction : LevelTitleAction
+    {
+        private readonly PageEditor pageEditor;
+        private readonly List<WrappedTitleWord> words;
+        private readonly List<int> oldZIndexes;
+        private List<int> newZIndexes;
+
+        public ChangeWordZIndexAction(PageEditor pageEditor, List<WrappedTitleWord> words, List<int> oldZIndexes, List<int> newZIndexes) {
+            this.pageEditor = pageEditor;
+            this.words = words;
+            this.oldZIndexes = oldZIndexes;
+            this.newZIndexes = newZIndexes;
+            if (newZIndexes.SequenceEqual(oldZIndexes)) {
+                cancel = true;
+            }
+        }
+
+        protected override void Undo() {
+            pageEditor.RemoveWords(words, updateSelection: false);
+            pageEditor.AddWords(words, oldZIndexes);
+        }
+
+        protected override void Redo() {
+            pageEditor.RemoveWords(words, updateSelection: false);
+            pageEditor.AddWords(words, newZIndexes);
+        }
+
+        public override bool Merge(UndoAction<TitleEditor> action) {
+            if (action is ChangeWordZIndexAction changeWordZIndexAction) {
+                if (changeWordZIndexAction.words.SequenceEqual(words)) {
+                    newZIndexes = changeWordZIndexAction.newZIndexes;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public override string ToString() {
+            return "Change text order";
         }
     }
 
