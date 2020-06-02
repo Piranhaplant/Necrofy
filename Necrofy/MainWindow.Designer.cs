@@ -116,6 +116,8 @@
             this.titleMoveDown = new System.Windows.Forms.ToolStripMenuItem();
             this.titleMoveToFront = new System.Windows.Forms.ToolStripMenuItem();
             this.titleMoveToBack = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.levelClear = new System.Windows.Forms.ToolStripMenuItem();
             this.spritesButton = new Necrofy.CheckableToolStripSplitButton();
             this.spritesItems = new Necrofy.SeparateCheckToolStripMenuItem();
             this.spritesVictims = new Necrofy.SeparateCheckToolStripMenuItem();
@@ -354,7 +356,9 @@
             // 
             this.levelMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.levelEditTitle,
-            this.levelSettings});
+            this.levelSettings,
+            this.toolStripSeparator5,
+            this.levelClear});
             this.toolStripGrouper.SetItemSet(this.levelMenu, Necrofy.ToolStripGrouper.ItemSet.LevelEditor);
             this.levelMenu.Name = "levelMenu";
             this.levelMenu.Size = new System.Drawing.Size(46, 20);
@@ -364,14 +368,14 @@
             // 
             this.toolStripGrouper.SetItemType(this.levelEditTitle, Necrofy.ToolStripGrouper.ItemType.LevelEditTitle);
             this.levelEditTitle.Name = "levelEditTitle";
-            this.levelEditTitle.Size = new System.Drawing.Size(128, 22);
+            this.levelEditTitle.Size = new System.Drawing.Size(180, 22);
             this.levelEditTitle.Text = "Edit Title...";
             // 
             // levelSettings
             // 
             this.toolStripGrouper.SetItemType(this.levelSettings, Necrofy.ToolStripGrouper.ItemType.LevelSettings);
             this.levelSettings.Name = "levelSettings";
-            this.levelSettings.Size = new System.Drawing.Size(128, 22);
+            this.levelSettings.Size = new System.Drawing.Size(180, 22);
             this.levelSettings.Text = "&Settings...";
             // 
             // toolsMenu
@@ -990,6 +994,18 @@
             this.titleMoveToBack.Size = new System.Drawing.Size(176, 22);
             this.titleMoveToBack.Text = "Move to &Back";
             // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(177, 6);
+            // 
+            // levelClear
+            // 
+            this.toolStripGrouper.SetItemType(this.levelClear, Necrofy.ToolStripGrouper.ItemType.LevelClear);
+            this.levelClear.Name = "levelClear";
+            this.levelClear.Size = new System.Drawing.Size(180, 22);
+            this.levelClear.Text = "Clear";
+            // 
             // spritesButton
             // 
             this.spritesButton.Checked = false;
@@ -1231,6 +1247,8 @@
         private System.Windows.Forms.ToolStripMenuItem titleMoveDown;
         private System.Windows.Forms.ToolStripMenuItem titleMoveToFront;
         private System.Windows.Forms.ToolStripMenuItem titleMoveToBack;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripMenuItem levelClear;
     }
 }
 

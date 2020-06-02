@@ -41,7 +41,7 @@
             this.propertyGrid.Name = "propertyGrid";
             this.propertyGrid.PropertySort = System.Windows.Forms.PropertySort.Categorized;
             this.propertyGrid.Size = new System.Drawing.Size(223, 503);
-            this.propertyGrid.TabIndex = 0;
+            this.propertyGrid.TabIndex = 1;
             this.propertyGrid.ToolbarVisible = false;
             this.propertyGrid.UseCompatibleTextRendering = true;
             // 
@@ -55,7 +55,7 @@
             this.presetTree.ShowPlusMinus = false;
             this.presetTree.ShowRootLines = false;
             this.presetTree.Size = new System.Drawing.Size(128, 274);
-            this.presetTree.TabIndex = 1;
+            this.presetTree.TabIndex = 0;
             this.presetTree.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.presetTree_AfterLabelEdit);
             this.presetTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.presetTree_AfterSelect);
             // 

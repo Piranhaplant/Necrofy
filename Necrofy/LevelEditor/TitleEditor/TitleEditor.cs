@@ -134,10 +134,6 @@ namespace Necrofy
             pageEditor2.Invalidate();
         }
 
-        public void RefreshPropertyBrowser() {
-            mainWindow.PropertyBrowser.RefreshProperties();
-        }
-
         public void UpdateSelectedPalette() {
             if (activeEditor.SelectedWords.Count > 0) {
                 byte firstPalette = activeEditor.SelectedWords.First().Palette;

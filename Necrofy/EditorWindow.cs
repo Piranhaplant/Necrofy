@@ -93,6 +93,14 @@ namespace Necrofy
             }
         }
 
+        public void ScrollObjectBrowserToSelection() {
+            mainWindow.ObjectBrowser.Browser.ScrollToSelection();
+        }
+
+        public void RefreshPropertyBrowser() {
+            mainWindow.PropertyBrowser.RefreshProperties();
+        }
+
         private void UpdateText() {
             Text = (Dirty ? "*" : "") + title;
         }

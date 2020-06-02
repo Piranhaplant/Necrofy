@@ -199,6 +199,7 @@ namespace Necrofy
 
             LevelEditTitle,
             LevelSettings,
+            LevelClear,
             PaintbrushTool,
             TileSuggestTool,
             RectangleSelectTool,

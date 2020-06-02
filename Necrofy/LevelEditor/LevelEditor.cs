@@ -119,10 +119,6 @@ namespace Necrofy
             Title = level.levelAsset.LevelNumber.ToString() + " " + level.Level.displayName;
         }
 
-        public void ScrollObjectBrowserToSelection() {
-            mainWindow.ObjectBrowser.Browser.ScrollToSelection();
-        }
-
         public void FillSelection() {
             if (tilesetObjectBrowserContents.SelectedIndex >= 0 && TileSelectionExists) {
                 undoManager.Do(new FillSelectionAction((ushort)tilesetObjectBrowserContents.SelectedIndex));
@@ -139,10 +135,6 @@ namespace Necrofy
 
         public void SetPropertyBrowserObjects(object[] objects) {
             PropertyBrowserObjects = objects;
-        }
-
-        public void RefreshPropertyBrowser() {
-            mainWindow.PropertyBrowser.RefreshProperties();
         }
 
         public void GenerateMouseMove() {
@@ -378,6 +370,8 @@ namespace Necrofy
                 }
             } else if (item == ToolStripGrouper.ItemType.LevelSettings) {
                 new LevelSettingsDialog(project, this).ShowDialog();
+            } else if (item == ToolStripGrouper.ItemType.LevelClear) {
+                undoManager.Do(new ClearLevelAction((ushort)Math.Max(tilesetObjectBrowserContents.SelectedTile, 0)));
             }
         }
 

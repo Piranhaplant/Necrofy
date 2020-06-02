@@ -141,19 +141,19 @@ namespace Necrofy
 
     class ChangeSpriteTypeAction : SpriteAction
     {
-        private readonly int newType;
+        private int newType;
         private readonly List<int> prevType = new List<int>();
 
         public ChangeSpriteTypeAction(IEnumerable<WrappedLevelObject> objs, SpriteDisplay.Category category, int newType) : base(objs.Where(o => o.Category == category)) {
             this.newType = newType;
-            foreach (WrappedLevelObject obj in objs) {
+            foreach (WrappedLevelObject obj in base.objs) {
                 prevType.Add(obj.Type);
             }
         }
 
         public ChangeSpriteTypeAction(IEnumerable<WrappedLevelObject> objs, int newType) : base(objs) {
             this.newType = newType;
-            foreach (WrappedLevelObject obj in objs) {
+            foreach (WrappedLevelObject obj in base.objs) {
                 prevType.Add(obj.Type);
             }
         }
@@ -169,8 +169,16 @@ namespace Necrofy
                 objs[i].Type = newType;
             }
         }
-        
-        // Not allowing merging because it gets complicated when there are multiple types of sprites selected at the same time
+
+        public override bool Merge(UndoAction<LevelEditor> action) {
+            if (action is ChangeSpriteTypeAction changeSpriteTypeAction) {
+                if (changeSpriteTypeAction.objs.SequenceEqual(objs)) {
+                    newType = changeSpriteTypeAction.newType;
+                    return true;
+                }
+            }
+            return false;
+        }
 
         public override string ToString() {
             if (objs.Count == 1) {
