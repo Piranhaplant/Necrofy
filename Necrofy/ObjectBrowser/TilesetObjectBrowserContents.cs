@@ -28,14 +28,14 @@ namespace Necrofy
                 for (ushort i = 0; i < level.tiles.Length; i++) {
                     visibleTiles.Add(i);
                 }
-                RaiseObjectsChangedEvent(scrollToTop: true);
+                RaiseObjectsChangedEvent();
                 SelectedIndex = selectedTile;
             }
         }
 
         public void ShowTiles(List<ushort> tiles) {
             visibleTiles = tiles;
-            RaiseObjectsChangedEvent(scrollToTop: true);
+            RaiseObjectsChangedEvent();
             SelectedIndex = -1;
         }
 

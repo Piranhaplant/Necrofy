@@ -33,7 +33,7 @@ namespace Necrofy
         public void SetHighlightedCategories(IEnumerable<SpriteDisplay.Category> categories) {
             if (!highlighedCategories.SetEquals(categories)) {
                 highlighedCategories = new HashSet<SpriteDisplay.Category>(categories);
-                RaiseObjectsChangedEvent(scrollToTop: false);
+                Repaint();
             }
         }
 
@@ -46,7 +46,7 @@ namespace Necrofy
                 sprites.AddRange(s);
                 categoryForSprites.AddRange(s.Select(o => category));
             }
-            RaiseObjectsChangedEvent(scrollToTop: true);
+            RaiseObjectsChangedEvent();
         }
 
         public SpriteDisplay.Key SelectedSprite => SelectedIndex < 0 ? null : sprites[SelectedIndex].Key;

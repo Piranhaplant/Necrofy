@@ -103,6 +103,8 @@ namespace Necrofy
             // Bonus pointer is optional
             if (s.PeekInt16() > 0) {
                 AddAllObjects(s, () => bonuses.Add(s.ReadInt16()));
+            } else {
+                s.ReadInt16();
             }
 
             while (s.PeekPointer() > -1) {
@@ -194,7 +196,11 @@ namespace Necrofy
             data.AddPointer(MovableData.PointerSize.TwoBytes, title1.Build(0));
             data.AddPointer(MovableData.PointerSize.TwoBytes, title2.Build(1));
 
-            BuildAll(bonuses, data, (o, d) => d.data.AddInt16(o));
+            if (bonuses.Count > 0) {
+                BuildAll(bonuses, data, (o, d) => d.data.AddInt16(o));
+            } else {
+                data.data.AddInt16(0);
+            }
 
             foreach (LevelMonster levelMonster in levelMonsters) {
                 levelMonster.Build(data, rom);

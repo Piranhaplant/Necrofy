@@ -155,6 +155,7 @@
     <Compile Include="LevelEditor\ResizeLevelTool.cs" />
     <Compile Include="LevelEditor\SpriteClipboardContents.cs" />
     <Compile Include="LevelEditor\SpriteTool.cs" />
+    <Compile Include="LevelEditor\TileAnimator.cs" />
     <Compile Include="LevelEditor\TileSelectTool.cs" />
     <Compile Include="LevelEditor\TileSuggestionTool.cs" />
     <Compile Include="LevelEditor\TileTool.cs" />

@@ -7,8 +7,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace Necrofy
 {
-    class EditorWindow : DockContent
-    {
+    class EditorWindow : DockContent {
         private ObjectBrowserContents browserContents = null;
         public ObjectBrowserContents BrowserContents {
             get {
@@ -43,6 +42,12 @@ namespace Necrofy
             set {
                 title = value;
                 UpdateText();
+            }
+        }
+
+        public bool DockVisible {
+            get {
+                return mainWindow.EditorVisible(this);
             }
         }
 

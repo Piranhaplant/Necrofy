@@ -178,6 +178,15 @@ namespace Necrofy
             editor.TextChanged += Editor_TextChanged;
         }
 
+        public bool EditorVisible(EditorWindow editor) {
+            foreach (DockPane pane in dockPanel.DockWindows[DockState.Document].VisibleNestedPanes) {
+                if (pane.ActiveContent == editor) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         private void Editor_DirtyChanged(object sender, EventArgs e) {
             EditorWindow editor = sender as EditorWindow;
             if (editor != null) {

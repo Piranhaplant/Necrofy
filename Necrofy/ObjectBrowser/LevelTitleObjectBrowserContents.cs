@@ -28,7 +28,7 @@ namespace Necrofy
 
         public void SetPalette(byte palette) {
             this.palette = palette;
-            RaiseObjectsChangedEvent(scrollToTop: false);
+            Repaint();
         }
 
         public byte SelectedChar => SelectedIndex > -1 ? characterNumbers[SelectedIndex] : (byte)0;

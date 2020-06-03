@@ -87,6 +87,9 @@ namespace Necrofy
             spriteTool = new SpriteTool(this);
             SetupTool(spriteTool, ToolStripGrouper.ItemType.SpriteTool, Keys.I);
 
+            level.tileAnimator.Animated += TileAnimator_Animated;
+            level.tileAnimator.Run();
+
             Repaint();
         }
 
@@ -248,12 +251,15 @@ namespace Necrofy
             Repaint();
         }
 
-        public void Repaint() {
-            canvas.Invalidate();
+        private void TileAnimator_Animated(object sender, EventArgs e) {
+            if (DockVisible) {
+                Repaint();
+                tilesetObjectBrowserContents.Repaint();
+            }
         }
 
-        public void RepaintObjectBrowser() {
-            mainWindow.ObjectBrowser.Invalidate(true);
+        public void Repaint() {
+            canvas.Invalidate();
         }
 
         private void canvas_Paint(object sender, PaintEventArgs e) {

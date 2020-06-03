@@ -46,9 +46,11 @@ namespace Necrofy
         }
         
         private void Contents_ObjectsChanged(object sender, ObjectsChangedEventArgs e) {
-            LayoutObjects();
-            if (e.ScrollToTop) {
+            if (e.LayoutChanged) {
+                LayoutObjects();
                 scrollWrapper.ScrollToPoint(0, 0);
+            } else {
+                canvas.Invalidate();
             }
         }
 

@@ -231,7 +231,7 @@ namespace Necrofy
 
             levelEditor.undoManager.ForceDirty();
             levelEditor.Repaint();
-            levelEditor.RepaintObjectBrowser();
+            levelEditor.BrowserContents.Repaint();
         }
     }
 }

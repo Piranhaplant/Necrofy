@@ -33,6 +33,13 @@ namespace Necrofy
                 xFlip = ((highByte >> 6) & 1) > 0;
                 yFlip = ((highByte >> 7) & 1) > 0;
             }
+
+            public Tile(Tile original, int tileNum) {
+                this.tileNum = tileNum;
+                palette = original.palette;
+                xFlip = original.xFlip;
+                yFlip = original.yFlip;
+            }
         }
     }
 }

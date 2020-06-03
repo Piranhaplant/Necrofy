@@ -10,12 +10,16 @@ namespace Necrofy
     class LoadedLevel : IDisposable
     {
         public readonly LevelAsset levelAsset;
+        public LoadedTilesetGraphics graphics;
+        public LoadedTilesetTilemap tilemap;
         public LoadedSpriteGraphics spriteGraphics;
         public TilesetSuggestionsAsset tilesetSuggestionsAsset;
 
         public Bitmap[] tiles;
         public Bitmap[] priorityTiles;
         public Bitmap[] solidOnlyTiles;
+
+        public TileAnimator tileAnimator;
 
         public LoadedLevel(Project project, int levelNum) {
             levelAsset = LevelAsset.FromProject(project, levelNum);
@@ -25,6 +29,7 @@ namespace Necrofy
         }
         
         public void Dispose() {
+            tileAnimator.Pause();
             foreach (Bitmap b in tiles.Union(priorityTiles).Union(solidOnlyTiles)) {
                 b.Dispose();
             }
@@ -41,14 +46,21 @@ namespace Necrofy
         }
 
         public void LoadTiles(Project project) {
-            LoadedTilesetTilemap tilemap = new LoadedTilesetTilemap(project, Level.tilesetTilemapName);
+            tilemap = new LoadedTilesetTilemap(project, Level.tilesetTilemapName);
             LoadedTilesetCollision collision = new LoadedTilesetCollision(project, Level.tilesetCollisionName);
-            LoadedTilesetGraphics graphics = new LoadedTilesetGraphics(project, Level.tilesetGraphicsName);
+            graphics = new LoadedTilesetGraphics(project, Level.tilesetGraphicsName);
             LoadedTilesetPalette palette = new LoadedTilesetPalette(project, Level.paletteName);
 
             tiles = new Bitmap[tilemap.tiles.Length];
             priorityTiles = new Bitmap[tilemap.tiles.Length];
             solidOnlyTiles = new Bitmap[tilemap.tiles.Length];
+
+            tileAnimator = new TileAnimator();
+            foreach (LevelMonster levelMonster in Level.levelMonsters) {
+                if (levelMonster is TileAnimLevelMonster tileAnimLevelMonster) {
+                    tileAnimator = new TileAnimator(this, tileAnimLevelMonster);
+                }
+            }
 
             for (int i = 0; i < tiles.Length; i++) {
                 BitmapData curTile = CreateTile(tiles, i, palette);
@@ -59,6 +71,7 @@ namespace Necrofy
                     for (int x = 0; x < 8; x++) {
                         int tileNum = tilemap.tiles[i][x, y].tileNum;
                         if (tileNum <= Level.visibleTilesEnd) {
+                            tileAnimator.ProcessTile(i, x, y, tileNum);
                             SNESGraphics.DrawTile(curTile, x * 8, y * 8, tilemap.tiles[i][x, y], graphics.linearGraphics);
                             if (tileNum < Level.priorityTileCount) {
                                 SNESGraphics.DrawTile(curPriorityTile, x * 8, y * 8, tilemap.tiles[i][x, y], graphics.linearGraphics);
