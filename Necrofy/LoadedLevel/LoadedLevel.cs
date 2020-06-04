@@ -19,7 +19,8 @@ namespace Necrofy
         public Bitmap[] priorityTiles;
         public Bitmap[] solidOnlyTiles;
 
-        public TileAnimator tileAnimator;
+        public TileAnimator tileAnimator = new TileAnimator();
+        public event EventHandler Animated;
 
         public LoadedLevel(Project project, int levelNum) {
             levelAsset = LevelAsset.FromProject(project, levelNum);
@@ -46,6 +47,9 @@ namespace Necrofy
         }
 
         public void LoadTiles(Project project) {
+            tileAnimator.Pause();
+            tileAnimator.Animated -= TileAnimator_Animated;
+
             tilemap = new LoadedTilesetTilemap(project, Level.tilesetTilemapName);
             LoadedTilesetCollision collision = new LoadedTilesetCollision(project, Level.tilesetCollisionName);
             graphics = new LoadedTilesetGraphics(project, Level.tilesetGraphicsName);
@@ -61,6 +65,7 @@ namespace Necrofy
                     tileAnimator = new TileAnimator(this, tileAnimLevelMonster);
                 }
             }
+            tileAnimator.Animated += TileAnimator_Animated;
 
             for (int i = 0; i < tiles.Length; i++) {
                 BitmapData curTile = CreateTile(tiles, i, palette);
@@ -87,6 +92,10 @@ namespace Necrofy
                 priorityTiles[i].UnlockBits(curPriorityTile);
                 solidOnlyTiles[i].UnlockBits(curSolidOnlyTile);
             }
+        }
+
+        private void TileAnimator_Animated(object sender, EventArgs e) {
+            Animated?.Invoke(sender, e);
         }
 
         private BitmapData CreateTile(Bitmap[] allTiles, int i, LoadedTilesetPalette palette, bool transparent = false) {

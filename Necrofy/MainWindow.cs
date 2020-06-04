@@ -59,19 +59,23 @@ namespace Necrofy
             }
 
             LoadRunSettings();
+            viewAnimate.Checked = Properties.Settings.Default.AnimateLevelEditor;
+            viewRespawnAreas.Checked = Properties.Settings.Default.ShowRespawnAreas;
 
             projectMenuItems = new List<ToolStripMenuItem>() { buildBuildProject, buildRunProject };
             HideAllEditorToolStripItems();
         }
         
         private void MainWindow_FormClosed(object sender, FormClosedEventArgs e) {
-            ObjectBrowser.Browser.Contents = null; // Fixes a bug where the object browser would try to paint disposed images
             using (MemoryStream s = new MemoryStream()) {
                 dockPanel.SaveAsXml(s, Encoding.UTF8);
                 string xml = Encoding.UTF8.GetString(s.ToArray());
                 Properties.Settings.Default.DockLayout = xml;
-                Properties.Settings.Default.Save();
             }
+            Properties.Settings.Default.AnimateLevelEditor = viewAnimate.Checked;
+            Properties.Settings.Default.ShowRespawnAreas = viewRespawnAreas.Checked;
+            Properties.Settings.Default.Save();
+
             CloseProject(closeEditors: false);
         }
 
@@ -471,13 +475,15 @@ namespace Necrofy
         private void windowRestore_Click(object sender, EventArgs e) {
             UseDefaultDockLayout();
         }
-
+        
         private void toolStripGrouper_ItemClick(object sender, ToolStripGrouper.ItemEventArgs e) {
             activeEditor?.ToolStripItemClicked(e.Type);
         }
 
         private void toolStripGrouper_ItemCheckedChanged(object sender, ToolStripGrouper.ItemEventArgs e) {
-            activeEditor?.ToolStripItemCheckedChanged(e.Type);
+            foreach (EditorWindow editor in openEditors) {
+                editor.ToolStripItemCheckedChanged(e.Type);
+            }
         }
 
         public ToolStripGrouper.ItemProxy GetToolStripItem(ToolStripGrouper.ItemType type) {

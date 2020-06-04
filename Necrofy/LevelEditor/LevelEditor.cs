@@ -51,7 +51,7 @@ namespace Necrofy
         
         public LevelEditor(LoadedLevel level) {
             InitializeComponent();
-            FormClosed += LevelEditor_FormClosed;
+            Disposed += LevelEditor_Disposed;
 
             this.level = level;
             UpdateTitle();
@@ -87,8 +87,7 @@ namespace Necrofy
             spriteTool = new SpriteTool(this);
             SetupTool(spriteTool, ToolStripGrouper.ItemType.SpriteTool, Keys.I);
 
-            level.tileAnimator.Animated += TileAnimator_Animated;
-            level.tileAnimator.Run();
+            level.Animated += TileAnimator_Animated;
 
             Repaint();
         }
@@ -102,7 +101,7 @@ namespace Necrofy
             }
         }
         
-        private void LevelEditor_FormClosed(object sender, FormClosedEventArgs e) {
+        private void LevelEditor_Disposed(object sender, EventArgs e) {
             level.Dispose();
             tileSelectionPath?.Dispose();
         }
@@ -157,6 +156,7 @@ namespace Necrofy
 
         public override void Displayed() {
             base.Displayed();
+            UpdateAnimationState();
             foreach (ToolStripGrouper.ItemType type in spriteCategoryForMenuItem.Keys) {
                 mainWindow.GetToolStripItem(type).Checked = spriteCategoryEnabled[spriteCategoryForMenuItem[type]];
             }
@@ -167,6 +167,14 @@ namespace Necrofy
                 }
             }
             ChangeTool(spriteTool);
+        }
+
+        private void UpdateAnimationState() {
+            if (mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewAnimate).Checked) {
+                level.tileAnimator.Run();
+            } else {
+                level.tileAnimator.Pause();
+            }
         }
 
         protected override void DoSave(Project project) {
@@ -366,6 +374,7 @@ namespace Necrofy
                 foreach (ToolStripGrouper.ItemType type in spriteCategoryForMenuItem.Keys) {
                     mainWindow.GetToolStripItem(type).Checked = true;
                 }
+                ChangeTool(spriteTool);
             } else if (item == ToolStripGrouper.ItemType.LevelEditTitle) {
                 if (titleEditor == null) {
                     titleEditor = new TitleEditor(this, project);
@@ -376,8 +385,13 @@ namespace Necrofy
                 }
             } else if (item == ToolStripGrouper.ItemType.LevelSettings) {
                 new LevelSettingsDialog(project, this).ShowDialog();
+                UpdateAnimationState();
             } else if (item == ToolStripGrouper.ItemType.LevelClear) {
                 undoManager.Do(new ClearLevelAction((ushort)Math.Max(tilesetObjectBrowserContents.SelectedTile, 0)));
+            } else if (item == ToolStripGrouper.ItemType.ViewNextFrame) {
+                level.tileAnimator.Advance();
+            } else if (item == ToolStripGrouper.ItemType.ViewRestartAnimation) {
+                level.tileAnimator.Restart();
             }
         }
 
@@ -406,8 +420,10 @@ namespace Necrofy
             };
 
         public override void ToolStripItemCheckedChanged(ToolStripGrouper.ItemType item) {
-            if (spriteCategoryForMenuItem.TryGetValue(item, out SpriteDisplay.Category category)) {
+            if (IsActivated && spriteCategoryForMenuItem.TryGetValue(item, out SpriteDisplay.Category category)) {
                 UpdateSpriteCategory(category, mainWindow.GetToolStripItem(item).Checked);
+            } else if (item == ToolStripGrouper.ItemType.ViewAnimate) {
+                UpdateAnimationState();
             }
         }
 

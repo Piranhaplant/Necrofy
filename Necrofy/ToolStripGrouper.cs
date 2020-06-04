@@ -197,6 +197,14 @@ namespace Necrofy
         {
             None,
 
+            ViewGrid,
+            ViewSolidTilesOnly,
+            ViewTilePriority,
+            ViewRespawnAreas,
+            ViewScreenSizeGuide,
+            ViewAnimate,
+            ViewNextFrame,
+            ViewRestartAnimation,
             LevelEditTitle,
             LevelSettings,
             LevelClear,

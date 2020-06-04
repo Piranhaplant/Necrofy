@@ -51,6 +51,21 @@ namespace Necrofy
             animationCancel = new CancellationTokenSource();
         }
 
+        public void Advance() {
+            if (entries.Values.All(e => e.Done)) {
+                return;
+            }
+            while (!RunFrame()) { }
+            Animated?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void Restart() {
+            foreach (Entry e in entries.Values) {
+                e.Restart();
+            }
+            Animated?.Invoke(this, EventArgs.Empty);
+        }
+
         private async void RunAsync(CancellationToken cancellationToken) {
             Stopwatch timer = new Stopwatch();
             timer.Start();
@@ -85,6 +100,8 @@ namespace Necrofy
             private int curIndex = 0;
             private int curFrame = 0;
 
+            public bool Done => curIndex < 0;
+
             public Entry(LoadedLevel level, TileAnimLevelMonster.Entry entry) {
                 this.level = level;
                 this.entry = entry;
@@ -95,21 +112,14 @@ namespace Necrofy
             }
 
             public bool RunFrame() {
-                if (curIndex < 0) {
+                if (Done) {
                     return false;
                 }
 
                 curFrame++;
                 if (curFrame == entry.tiles[curIndex + 1]) {
                     curIndex += 2;
-
-                    foreach (Location location in locations) {
-                        Bitmap image = level.tiles[location.bgTile];
-                        BitmapData data = image.LockBits(new Rectangle(location.x * 8, location.y * 8, 8, 8), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
-                        SNESGraphics.DrawTile(data, 0, 0, new LoadedTilemap.Tile(level.tilemap.tiles[location.bgTile][location.x, location.y], entry.tiles[curIndex]), level.graphics.linearGraphics);
-                        image.UnlockBits(data);
-                    }
-
+                    RenderFrame();
                     if (curIndex >= entry.tiles.Count - 2) {
                         curIndex = entry.loop ? 0 : -1;
                     }
@@ -117,6 +127,21 @@ namespace Necrofy
                     return true;
                 }
                 return false;
+            }
+
+            public void Restart() {
+                curIndex = 0;
+                curFrame = 0;
+                RenderFrame();
+            }
+
+            private void RenderFrame() {
+                foreach (Location location in locations) {
+                    Bitmap image = level.tiles[location.bgTile];
+                    BitmapData data = image.LockBits(new Rectangle(location.x * 8, location.y * 8, 8, 8), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
+                    SNESGraphics.DrawTile(data, 0, 0, new LoadedTilemap.Tile(level.tilemap.tiles[location.bgTile][location.x, location.y], entry.tiles[curIndex]), level.graphics.linearGraphics);
+                    image.UnlockBits(data);
+                }
             }
 
             private class Location

@@ -201,10 +201,6 @@ namespace Necrofy
             reloadTileset |= level.Level.visibleTilesEnd != visibleEndValue;
             level.Level.visibleTilesEnd = visibleEndValue;
 
-            if (reloadTileset) {
-                level.LoadTiles(project);
-            }
-
             string spritePaletteName = spritePaletteAuto.Checked ? PaletteAsset.SpritesName : (string)spritePaletteSelector.SelectedItem;
             if (level.Level.spritePaletteName != spritePaletteName) {
                 level.Level.spritePaletteName = spritePaletteName;
@@ -226,12 +222,38 @@ namespace Necrofy
                 }
             }
 
+            if (!TileAnimationsEqual(level.Level.levelMonsters, levelMonsters)) {
+                reloadTileset = true;
+            }
+
             level.Level.levelMonsters.Clear();
             level.Level.levelMonsters.AddRange(levelMonsters);
+
+            if (reloadTileset) {
+                level.LoadTiles(project);
+            }
 
             levelEditor.undoManager.ForceDirty();
             levelEditor.Repaint();
             levelEditor.BrowserContents.Repaint();
+        }
+
+        private static bool TileAnimationsEqual(List<LevelMonster> list1, List<LevelMonster> list2) {
+            List<List<TileAnimLevelMonster.Entry>> entries1 = GetEntries(list1);
+            List<List<TileAnimLevelMonster.Entry>> entries2 = GetEntries(list2);
+            if (entries1.Count == entries2.Count) {
+                for (int i = 0; i < entries1.Count; i++) {
+                    if (!entries1[i].SequenceEqual(entries2[i])) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+
+        private static List<List<TileAnimLevelMonster.Entry>> GetEntries(List<LevelMonster> list) {
+            return list.Select(m => m as TileAnimLevelMonster).Where(m => m != null).Select(m => m.entries).ToList();
         }
     }
 }

@@ -149,7 +149,6 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "TitleEditor";
             this.Text = "TitleEditor";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.TitleEditor_FormClosed);
             this.screenBounds.ResumeLayout(false);
             this.mainPanel.ResumeLayout(false);
             this.ResumeLayout(false);

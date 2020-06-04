@@ -45,6 +45,8 @@ namespace Necrofy
 
         public TitleEditor(LevelEditor levelEditor, Project project) {
             InitializeComponent();
+            Disposed += TitleEditor_Disposed;
+
             if (FormIcon == null) {
                 FormIcon = Icon.FromHandle(Resources.blue_document_rename.GetHicon());
             }
@@ -82,11 +84,10 @@ namespace Necrofy
             pageEditor2.SelectedWordsChanged += SelectedWordsChanged;
         }
 
-        private void TitleEditor_FormClosed(object sender, FormClosedEventArgs e) {
-            palette.Items.Clear(); // Fixes a bug where the items try to be painted after disposing
+        private void TitleEditor_Disposed(object sender, EventArgs e) {
             characters.Dispose();
         }
-
+        
         private void PageEditor1_Enter(object sender, EventArgs e) {
             activeEditor = pageEditor1;
             pageEditor2.SelectNone();

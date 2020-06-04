@@ -82,5 +82,29 @@ namespace Necrofy.Properties {
                 this["hexPointers"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AnimateLevelEditor {
+            get {
+                return ((bool)(this["AnimateLevelEditor"]));
+            }
+            set {
+                this["AnimateLevelEditor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ShowRespawnAreas {
+            get {
+                return ((bool)(this["ShowRespawnAreas"]));
+            }
+            set {
+                this["ShowRespawnAreas"] = value;
+            }
+        }
     }
 }
