@@ -152,18 +152,12 @@ namespace Necrofy
                 }
                 host.SelectionChanged();
             } else if (movingObjects) {
-                int minX = selectedObjects.Min(o => o.X);
-                int minY = selectedObjects.Min(o => o.Y);
-                int maxX = selectedObjects.Max(o => o.X);
-                int maxY = selectedObjects.Max(o => o.Y);
-
                 int newMoveX = x - dragStartX;
                 int newMoveY = y - dragStartY;
-                
-                int dx = Math.Min(width - maxX, Math.Max(-minX, newMoveX - totalMoveX));
-                int dy = Math.Min(height - maxY, Math.Max(-minY, newMoveY - totalMoveY));
-                dx = (dx / positionStep) * positionStep;
-                dy = (dy / positionStep) * positionStep;
+
+                int dx = newMoveX - totalMoveX;
+                int dy = newMoveY - totalMoveY;
+                ClampObjectMove(ref dx, ref dy);
 
                 if (dx != 0 || dy != 0) {
                     if (creating) {
@@ -191,7 +185,46 @@ namespace Necrofy
             baseSelectedObjects = null;
             host.SelectionChanged();
         }
-        
+
+        public void KeyDown(Keys keyData) {
+            int dx = 0;
+            int dy = 0;
+            switch (keyData) {
+                case Keys.Up:
+                    dy = -1;
+                    break;
+                case Keys.Down:
+                    dy = 1;
+                    break;
+                case Keys.Left:
+                    dx = -1;
+                    break;
+                case Keys.Right:
+                    dx = 1;
+                    break;
+            }
+            dx *= positionStep;
+            dy *= positionStep;
+            ClampObjectMove(ref dx, ref dy);
+
+            if (dx != 0 || dy != 0) {
+                // TODO add snap?
+                host.MoveSelectedObjects(dx, dy, 1);
+            }
+        }
+
+        private void ClampObjectMove(ref int dx, ref int dy) {
+            int minX = selectedObjects.Min(o => o.X);
+            int minY = selectedObjects.Min(o => o.Y);
+            int maxX = selectedObjects.Max(o => o.X);
+            int maxY = selectedObjects.Max(o => o.Y);
+
+            dx = Math.Min(width - maxX, Math.Max(-minX, dx));
+            dy = Math.Min(height - maxY, Math.Max(-minY, dy));
+            dx = (dx / positionStep) * positionStep;
+            dy = (dy / positionStep) * positionStep;
+        }
+
         public interface IHost
         {
             IEnumerable<T> GetObjects();

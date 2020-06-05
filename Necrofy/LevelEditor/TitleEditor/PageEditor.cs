@@ -256,6 +256,7 @@ namespace Necrofy
             mouseDown = true;
 
             if (mouseMode == MouseMode.Text) {
+                bool shiftSelect = textEditWord == hoveredWord && ModifierKeys.HasFlag(Keys.Shift);
                 textEditWord = hoveredWord;
                 keepTextEditWord = true;
                 objectSelector.SelectObjects(new[] { hoveredWord });
@@ -270,8 +271,10 @@ namespace Necrofy
                     TextSelectionEnd = wordSelectStartWordEnd;
                     doubleClickTimer.Stop();
                 } else {
-                    TextSelectionStart = GetCaretPosition(e.X);
-                    TextSelectionEnd = TextSelectionStart;
+                    TextSelectionEnd = GetCaretPosition(e.X);
+                    if (!shiftSelect) {
+                        TextSelectionStart = TextSelectionEnd;
+                    }
                     doubleClickTimer.Restart();
                 }
             } else {
@@ -341,7 +344,9 @@ namespace Necrofy
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
             Keys code = keyData & Keys.KeyCode;
             if (code == Keys.Left || code == Keys.Right) {
-                if (textEditWord != null) {
+                if (textEditWord == null) {
+                    objectSelector.KeyDown(keyData);
+                } else {
                     if (TextSelectionStart != TextSelectionEnd && !keyData.HasFlag(Keys.Shift)) {
                         if (code == Keys.Right) {
                             TextSelectionStart = Math.Max(TextSelectionStart, TextSelectionEnd);
@@ -363,6 +368,17 @@ namespace Necrofy
                 }
                 return true;
             } else if (code == Keys.Up || code == Keys.Down) {
+                if (textEditWord == null) {
+                    objectSelector.KeyDown(keyData);
+                }
+                return true;
+            } else if (code == Keys.Home || code == Keys.End) {
+                if (textEditWord != null) {
+                    TextSelectionEnd = code == Keys.Home ? 0 : textEditWord.CharXPositions.Count - 1;
+                    if (!keyData.HasFlag(Keys.Shift)) {
+                        TextSelectionStart = TextSelectionEnd;
+                    }
+                }
                 return true;
             } else if (code == Keys.Delete) {
                 bool processed = DoTextEdit(newChars => {

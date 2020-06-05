@@ -418,6 +418,12 @@ namespace Necrofy
             return false;
         }
 
+        private void canvas_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e) {
+            if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Left || e.KeyCode == Keys.Down || e.KeyCode == Keys.Right) {
+                e.IsInputKey = true;
+            }
+        }
+
         private void canvas_KeyDown(object sender, KeyEventArgs e) {
             if (toolShortcutKeys.TryGetValue(e.KeyData, out Tool t)) {
                 mouseDown = false;
@@ -430,7 +436,7 @@ namespace Necrofy
         private void canvas_KeyUp(object sender, KeyEventArgs e) {
             currentTool.KeyUp(e);
         }
-
+        
         public override void ToolStripItemClicked(ToolStripGrouper.ItemType item) {
             if (toolForItemType.TryGetValue(item, out Tool tool)) {
                 ChangeTool(tool);

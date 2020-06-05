@@ -100,6 +100,10 @@ namespace Necrofy
             editor.undoManager.ForceNoMerge();
         }
 
+        public override void KeyDown(KeyEventArgs e) {
+            objectSelector.KeyDown(e.KeyData);
+        }
+
         public override void SpriteChanged() {
             if (editor.spriteObjectBrowserContents.SelectedSprite != null) {
                 editor.undoManager.Do(new ChangeSpriteTypeAction(objectSelector.GetSelectedObjects(), (SpriteDisplay.Category)editor.spriteObjectBrowserContents.SelectedCategory, editor.spriteObjectBrowserContents.SelectedSprite.value));
