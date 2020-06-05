@@ -89,7 +89,7 @@ namespace Necrofy
 
         public PageEditor() {
             InitializeComponent();
-            objectSelector = new ObjectSelector<WrappedTitleWord>(this, positionStep: 8, width: Width - 8, height: Height - 8);
+            objectSelector = new ObjectSelector<WrappedTitleWord>(this, positionStep: 8, width: SNESGraphics.ScreenWidth - 8, height: SNESGraphics.ScreenHeight - 8);
         }
 
         public void LoadPage(TitleEditor titleEditor, TitlePage originalPage, LoadedLevelTitleCharacters loadedCharacters) {

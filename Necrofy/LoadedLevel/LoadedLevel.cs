@@ -30,14 +30,28 @@ namespace Necrofy
         }
         
         public void Dispose() {
+            DisposeTiles();
+            DisposeSprites();
+        }
+
+        private void DisposeTiles() {
             tileAnimator.Pause();
-            foreach (Bitmap b in tiles.Union(priorityTiles).Union(solidOnlyTiles)) {
-                b.Dispose();
+            tileAnimator.Animated -= TileAnimator_Animated;
+            if (tiles != null) {
+                foreach (Bitmap b in tiles.Union(priorityTiles).Union(solidOnlyTiles)) {
+                    b.Dispose();
+                }
             }
-            spriteGraphics.Dispose();
+        }
+
+        private void DisposeSprites() {
+            if (spriteGraphics != null) {
+                spriteGraphics.Dispose();
+            }
         }
 
         public void LoadSprites(Project project) {
+            DisposeSprites();
             spriteGraphics = new LoadedSpriteGraphics(project, Level.spritePaletteName);
         }
 
@@ -47,8 +61,7 @@ namespace Necrofy
         }
 
         public void LoadTiles(Project project) {
-            tileAnimator.Pause();
-            tileAnimator.Animated -= TileAnimator_Animated;
+            DisposeTiles();
 
             tilemap = new LoadedTilesetTilemap(project, Level.tilesetTilemapName);
             LoadedTilesetCollision collision = new LoadedTilesetCollision(project, Level.tilesetCollisionName);

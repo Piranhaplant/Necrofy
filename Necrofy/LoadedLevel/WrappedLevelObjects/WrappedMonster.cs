@@ -47,6 +47,15 @@ namespace Necrofy
             spriteGraphics.Render(SpriteDisplay.Key.Type.Pointer, wrappedObject.type, g, X, Y);
         }
 
+        public override void RenderExtras(Graphics g, bool showRespawnAreas) {
+            if (showRespawnAreas) {
+                Rectangle bounds = Bounds;
+                g.DrawRectangle(Pens.LightSteelBlue,
+                    bounds.X - wrappedObject.radius / 2, bounds.Y - wrappedObject.radius / 2,
+                    bounds.Width + wrappedObject.radius, bounds.Height + wrappedObject.radius);
+            }
+        }
+
         public override bool Removable => true;
 
         public override void Add(Level level) {

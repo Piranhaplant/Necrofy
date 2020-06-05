@@ -21,6 +21,19 @@ namespace Necrofy
             ShowAllTiles();
         }
 
+        private bool solidOnly;
+        public bool SolidOnly {
+            get {
+                return solidOnly;
+            }
+            set {
+                if (value != solidOnly) {
+                    solidOnly = value;
+                    Repaint();
+                }
+            }
+        }
+
         public void ShowAllTiles() {
             if (visibleTiles.Count != level.tiles.Length) {
                 int selectedTile = SelectedTile;
@@ -52,7 +65,11 @@ namespace Necrofy
 
         public override void PaintObject(int i, Graphics g, int x, int y) {
             ushort tile = visibleTiles[i];
-            g.DrawImage(level.tiles[tile], x, y);
+            if (solidOnly) {
+                g.DrawImage(level.solidOnlyTiles[tile], x, y);
+            } else {
+                g.DrawImage(level.tiles[tile], x, y);
+            }
             g.DrawString((tile / 0x10).ToString("X"), font, Brushes.Black, x + level.tiles[tile].Width + fontPadding, y);
             g.DrawString((tile % 0x10).ToString("X"), font, Brushes.Black, x + level.tiles[tile].Width + fontPadding, y + fontSize.Height);
         }

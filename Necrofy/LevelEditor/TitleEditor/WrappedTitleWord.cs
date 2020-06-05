@@ -14,7 +14,6 @@ namespace Necrofy
         public const string YProperty = "Y";
         public const string PaletteProperty = "Palette";
 
-        private const int ScreenWidth = 0x100;
         private const int MaxX = 0x80;
         private const int MoveAreaOutsideSize = 12;
         private const int MoveAreaInsideSize = 4;
@@ -113,8 +112,8 @@ namespace Necrofy
 
         public void Render(Graphics g) {
             void DrawImage(int i, Bitmap image, bool wrapped, int xOffset = 0, int yOffset = 0) {
-                int x = CharXPositions[i] % ScreenWidth + xOffset;
-                int y = (word.y + CharXPositions[i] / ScreenWidth) * 8 + yOffset;
+                int x = CharXPositions[i] % SNESGraphics.ScreenWidth + xOffset;
+                int y = (word.y + CharXPositions[i] / SNESGraphics.ScreenWidth) * 8 + yOffset;
                 loadedCharacters.DrawChar(g, x, y, word.chars[i], word.palette);
                 if (wrapped) {
                     g.FillRectangle(WrapAroundBrush, x, y, image.Width, image.Height);
@@ -124,9 +123,9 @@ namespace Necrofy
             for (int i = 0; i < word.chars.Count; i++) {
                 Bitmap image = loadedCharacters.GetImageForChar(word.chars[i]);
                 if (image != null) {
-                    DrawImage(i, image, wrapped: X >= MaxX || CharXPositions[i] >= ScreenWidth);
-                    if (CharXPositions[i] / ScreenWidth != CharXPositions[i + 1] / ScreenWidth) {
-                        DrawImage(i, image, wrapped: true, xOffset: -ScreenWidth, yOffset: 8);
+                    DrawImage(i, image, wrapped: X >= MaxX || CharXPositions[i] >= SNESGraphics.ScreenWidth);
+                    if (CharXPositions[i] / SNESGraphics.ScreenWidth != CharXPositions[i + 1] / SNESGraphics.ScreenWidth) {
+                        DrawImage(i, image, wrapped: true, xOffset: -SNESGraphics.ScreenWidth, yOffset: 8);
                     }
                 }
             }

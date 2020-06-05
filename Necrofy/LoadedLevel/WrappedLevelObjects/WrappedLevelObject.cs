@@ -60,6 +60,7 @@ namespace Necrofy
         public abstract bool Removable { get; }
 
         public abstract void Render(Graphics g);
+        public virtual void RenderExtras(Graphics g, bool showRespawnAreas) { }
         public abstract void Add(Level level);
         public abstract void Remove(Level level);
         public abstract void AddToClipboard(SpriteClipboardContents clipboard);

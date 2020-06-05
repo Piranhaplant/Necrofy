@@ -141,8 +141,7 @@ namespace Necrofy
 
         public void GenerateMouseMove() {
             if (currentTool != null) {
-                Point mousePosition = PointToClient(MousePosition);
-                DoMouseMove(new MouseEventArgs(MouseButtons, 0, mousePosition.X, mousePosition.Y, 0));
+                DoMouseMove(new MouseEventArgs(MouseButtons, 0, prevMousePosition.X, prevMousePosition.Y, 0));
             }
         }
 
@@ -157,6 +156,7 @@ namespace Necrofy
         public override void Displayed() {
             base.Displayed();
             UpdateAnimationState();
+            UpdateViewOptions();
             foreach (ToolStripGrouper.ItemType type in spriteCategoryForMenuItem.Keys) {
                 mainWindow.GetToolStripItem(type).Checked = spriteCategoryEnabled[spriteCategoryForMenuItem[type]];
             }
@@ -253,14 +253,12 @@ namespace Necrofy
         }
 
         void scrollWrapper_Scrolled(object sender, EventArgs e) {
-            if (MouseButtons == MouseButtons.Left) {
-                GenerateMouseMove();
-            }
+            GenerateMouseMove();
             Repaint();
         }
 
         private void TileAnimator_Animated(object sender, EventArgs e) {
-            if (DockVisible) {
+            if (DockVisible && !solidTilesOnly) {
                 Repaint();
                 tilesetObjectBrowserContents.Repaint();
             }
@@ -270,27 +268,53 @@ namespace Necrofy
             canvas.Invalidate();
         }
 
+        private bool showGrid;
+        private bool solidTilesOnly;
+        private bool showTilePriority;
+        private bool showRespawnAreas;
+        private bool showScreenSizeGuide;
+
+        private void UpdateViewOptions() {
+            showGrid = mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewGrid).Checked;
+            solidTilesOnly = mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewSolidTilesOnly).Checked;
+            showTilePriority = mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewTilePriority).Checked;
+            showRespawnAreas = mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewRespawnAreas).Checked;
+            showScreenSizeGuide = mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewScreenSizeGuide).Checked;
+        }
+
         private void canvas_Paint(object sender, PaintEventArgs e) {
             if (level == null) {
                 return;
             }
             e.Graphics.TranslateTransform(scrollWrapper.LeftPosition + LevelPadding, scrollWrapper.TopPosition + LevelPadding);
 
-            for (int y = 0; y < level.Level.height; y++) {
-                for (int x = 0; x < level.Level.width; x++) {
-                    e.Graphics.DrawImage(level.tiles[level.Level.background[x, y]], x * 64, y * 64);
-                }
+            if (solidTilesOnly) {
+                RenderBackground(e.Graphics, level.solidOnlyTiles);
+            } else {
+                RenderBackground(e.Graphics, level.tiles);
             }
 
-            foreach (WrappedLevelObject obj in level.GetAllObjects()) {
+            List<WrappedLevelObject> objects = level.GetAllObjects().ToList();
+            foreach (WrappedLevelObject obj in objects) {
                 obj.Render(e.Graphics);
             }
 
-            //for (int y = 0; y < level.Level.height; y++) {
-            //    for (int x = 0; x < level.Level.width; x++) {
-            //        e.Graphics.DrawImage(level.priorityTiles[level.Level.background[x, y]], x * 64, y * 64);
-            //    }
-            //}
+            if (showTilePriority && !solidTilesOnly) {
+                RenderBackground(e.Graphics, level.priorityTiles);
+            }
+
+            foreach (WrappedLevelObject obj in objects) {
+                obj.RenderExtras(e.Graphics, showRespawnAreas);
+            }
+
+            if (showGrid) {
+                for (int x = 1; x < level.Level.width; x++) {
+                    e.Graphics.DrawLine(Pens.White, x * 64, 0, x * 64, level.Level.height * 64);
+                }
+                for (int y = 1; y < level.Level.height; y++) {
+                    e.Graphics.DrawLine(Pens.White, 0, y * 64, level.Level.width * 64, y * 64);
+                }
+            }
 
             if (TileSelectionExists) {
                 e.Graphics.FillPath(selectionFillBrush, tileSelectionPath);
@@ -304,12 +328,50 @@ namespace Necrofy
             }
 
             currentTool.Paint(e.Graphics);
+
+            if (showScreenSizeGuide && screenSizeGuidePosition != Point.Empty) {
+                int left = screenSizeGuidePosition.X - SNESGraphics.ScreenWidth / 2;
+                int top = screenSizeGuidePosition.Y - SNESGraphics.ScreenHeight / 2;
+                e.Graphics.DrawRectangle(Pens.Snow, left, top, SNESGraphics.ScreenWidth, SNESGraphics.ScreenHeight);
+                e.Graphics.DrawLine(Pens.Snow, left, screenSizeGuidePosition.Y, left + SNESGraphics.ScreenWidth, screenSizeGuidePosition.Y);
+                e.Graphics.DrawLine(Pens.Snow, screenSizeGuidePosition.X, top, screenSizeGuidePosition.X, top + SNESGraphics.ScreenHeight);
+            }
+        }
+
+        private void RenderBackground(Graphics g, Bitmap[] tiles) {
+            for (int y = 0; y < level.Level.height; y++) {
+                for (int x = 0; x < level.Level.width; x++) {
+                    g.DrawImage(tiles[level.Level.background[x, y]], x * 64, y * 64);
+                }
+            }
         }
 
         // Double clicking on the title bar to maximize the window causes mouse up events to be sent without a mouse down. This is used to ignore those.
         private bool mouseDown = false;
         // Used to ignore mouse move events that are generated by setting the property grid objects
         private Point prevMousePosition = new Point(int.MinValue, int.MinValue);
+        private Point screenSizeGuidePosition = Point.Empty;
+
+        private void UpdateScreenSizeGuide(int mouseX, int mouseY) {
+            int screenSizeGuideX = mouseX - scrollWrapper.LeftPosition - LevelPadding;
+            int screenSizeGuideY = mouseY - scrollWrapper.TopPosition - LevelPadding;
+            int maxX = level.Level.width * 64;
+            int maxY = level.Level.height * 64;
+
+            if (screenSizeGuideX < 0 || screenSizeGuideY < 0 || screenSizeGuideX >= maxX || screenSizeGuideY >= maxY) {
+                screenSizeGuideX = 0;
+                screenSizeGuideY = 0;
+            } else {
+                screenSizeGuideX = Math.Max(SNESGraphics.ScreenWidth / 2, Math.Min(maxX - SNESGraphics.ScreenWidth / 2, screenSizeGuideX));
+                screenSizeGuideY = Math.Max(SNESGraphics.ScreenHeight / 2, Math.Min(maxY - SNESGraphics.ScreenHeight / 2, screenSizeGuideY));
+            }
+            if (screenSizeGuideX != screenSizeGuidePosition.X || screenSizeGuideY != screenSizeGuidePosition.Y) {
+                screenSizeGuidePosition = new Point(screenSizeGuideX, screenSizeGuideY);
+                if (showScreenSizeGuide) {
+                    Repaint();
+                }
+            }
+        }
 
         private void canvas_MouseDown(object sender, MouseEventArgs e) {
             mouseDown = true;
@@ -334,6 +396,7 @@ namespace Necrofy
         }
 
         private void DoMouseMove(MouseEventArgs e) {
+            UpdateScreenSizeGuide(e.X, e.Y);
             if (TransformMouseArgs(e, out LevelMouseEventArgs args)) {
                 currentTool.MouseMove(args);
             }
@@ -341,6 +404,7 @@ namespace Necrofy
 
         private void canvas_MouseLeave(object sender, EventArgs e) {
             prevMousePosition = new Point(int.MinValue, int.MinValue);
+            UpdateScreenSizeGuide(int.MaxValue / 2, int.MaxValue / 2);
         }
 
         private bool TransformMouseArgs(MouseEventArgs e, out LevelMouseEventArgs ret, bool mouseDownOnly = false) {
@@ -406,7 +470,7 @@ namespace Necrofy
                 { ToolStripGrouper.ItemType.SpritesOneShotMonsters, SpriteDisplay.Category.OneShotMonster },
                 { ToolStripGrouper.ItemType.SpritesMonsters, SpriteDisplay.Category.Monster },
                 { ToolStripGrouper.ItemType.SpritesBossMonsters, SpriteDisplay.Category.LevelMonster },
-                { ToolStripGrouper.ItemType.SpritesPlayers, SpriteDisplay.Category.Player }
+                { ToolStripGrouper.ItemType.SpritesPlayers, SpriteDisplay.Category.Player },
             };
 
         private readonly Dictionary<SpriteDisplay.Category, bool> spriteCategoryEnabled =
@@ -416,14 +480,26 @@ namespace Necrofy
                 { SpriteDisplay.Category.OneShotMonster, true },
                 { SpriteDisplay.Category.Monster, true },
                 { SpriteDisplay.Category.LevelMonster, true },
-                { SpriteDisplay.Category.Player, true }
+                { SpriteDisplay.Category.Player, true },
             };
+
+        private static HashSet<ToolStripGrouper.ItemType> viewOptionsItems = new HashSet<ToolStripGrouper.ItemType>() {
+            ToolStripGrouper.ItemType.ViewGrid, ToolStripGrouper.ItemType.ViewSolidTilesOnly,
+            ToolStripGrouper.ItemType.ViewTilePriority, ToolStripGrouper.ItemType.ViewRespawnAreas,
+            ToolStripGrouper.ItemType.ViewScreenSizeGuide,
+        };
 
         public override void ToolStripItemCheckedChanged(ToolStripGrouper.ItemType item) {
             if (IsActivated && spriteCategoryForMenuItem.TryGetValue(item, out SpriteDisplay.Category category)) {
                 UpdateSpriteCategory(category, mainWindow.GetToolStripItem(item).Checked);
             } else if (item == ToolStripGrouper.ItemType.ViewAnimate) {
                 UpdateAnimationState();
+            } else if (viewOptionsItems.Contains(item)) {
+                UpdateViewOptions();
+                tilesetObjectBrowserContents.SolidOnly = solidTilesOnly;
+                if (DockVisible) {
+                    Repaint();
+                }
             }
         }
 

@@ -64,6 +64,9 @@ namespace Necrofy
             } else {
                 spriteGraphics.Render(SpriteDisplay.Key.Type.Pointer, wrappedObject.type, g, X, Y);
             }
+        }
+
+        public override void RenderExtras(Graphics g, bool showRespawnAreas) {
             if (wrappedObject.victimNumber > 0) {
                 Rectangle bounds = Bounds;
                 int x = bounds.X + bounds.Width / 2;

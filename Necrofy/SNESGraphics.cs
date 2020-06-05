@@ -12,6 +12,8 @@ namespace Necrofy
 {
     class SNESGraphics
     {
+        public const int ScreenWidth = 256;
+        public const int ScreenHeight = 224;
 
         public static byte RGBToSNESLo(Color color) {
             return (byte)((color.B / 8 * 0x400 + color.G / 8 * 0x20 + color.R / 8) % 0x100);

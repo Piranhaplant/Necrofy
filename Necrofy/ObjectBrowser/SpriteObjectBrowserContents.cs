@@ -33,7 +33,7 @@ namespace Necrofy
         public void SetHighlightedCategories(IEnumerable<SpriteDisplay.Category> categories) {
             if (!highlighedCategories.SetEquals(categories)) {
                 highlighedCategories = new HashSet<SpriteDisplay.Category>(categories);
-                Repaint();
+                RaiseObjectsChangedEvent();
             }
         }
 
