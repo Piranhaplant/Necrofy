@@ -28,6 +28,7 @@
             this.canvas = new Necrofy.Canvas();
             this.hscroll = new System.Windows.Forms.HScrollBar();
             this.vscroll = new System.Windows.Forms.VScrollBar();
+            this.saveAsImageDialog = new System.Windows.Forms.SaveFileDialog();
             this.SuspendLayout();
             // 
             // canvas
@@ -71,6 +72,11 @@
             this.vscroll.SmallChange = 16;
             this.vscroll.TabIndex = 2;
             // 
+            // saveAsImageDialog
+            // 
+            this.saveAsImageDialog.Filter = "PNG Images (*.png)|*.png|All Files (*.*)|*.*";
+            this.saveAsImageDialog.Title = "Save level as image";
+            // 
             // LevelEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -91,5 +97,6 @@
         private Canvas canvas;
         private System.Windows.Forms.HScrollBar hscroll;
         private System.Windows.Forms.VScrollBar vscroll;
+        private System.Windows.Forms.SaveFileDialog saveAsImageDialog;
     }
 }

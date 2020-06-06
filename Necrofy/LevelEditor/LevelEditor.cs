@@ -282,51 +282,20 @@ namespace Necrofy
             showScreenSizeGuide = mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewScreenSizeGuide).Checked;
         }
 
+        private void SaveAsImage(string filename) {
+            using (Bitmap image = new Bitmap(level.Level.width * 64, level.Level.height * 64))
+            using (Graphics g = Graphics.FromImage(image)) {
+                RenderLevel(g);
+                image.Save(filename);
+            }
+        }
+
         private void canvas_Paint(object sender, PaintEventArgs e) {
             if (level == null) {
                 return;
             }
             e.Graphics.TranslateTransform(scrollWrapper.LeftPosition + LevelPadding, scrollWrapper.TopPosition + LevelPadding);
-
-            if (solidTilesOnly) {
-                RenderBackground(e.Graphics, level.solidOnlyTiles);
-            } else {
-                RenderBackground(e.Graphics, level.tiles);
-            }
-
-            List<WrappedLevelObject> objects = level.GetAllObjects().ToList();
-            foreach (WrappedLevelObject obj in objects) {
-                obj.Render(e.Graphics);
-            }
-
-            if (showTilePriority && !solidTilesOnly) {
-                RenderBackground(e.Graphics, level.priorityTiles);
-            }
-
-            foreach (WrappedLevelObject obj in objects) {
-                obj.RenderExtras(e.Graphics, showRespawnAreas);
-            }
-
-            if (showGrid) {
-                for (int x = 1; x < level.Level.width; x++) {
-                    e.Graphics.DrawLine(Pens.White, x * 64, 0, x * 64, level.Level.height * 64);
-                }
-                for (int y = 1; y < level.Level.height; y++) {
-                    e.Graphics.DrawLine(Pens.White, 0, y * 64, level.Level.width * 64, y * 64);
-                }
-            }
-
-            if (TileSelectionExists) {
-                e.Graphics.FillPath(selectionFillBrush, tileSelectionPath);
-                e.Graphics.DrawPath(Pens.White, tileSelectionPath);
-                e.Graphics.DrawPath(selectionBorderDashPen, tileSelectionPath);
-            }
-            if (tileSelectionEraserRect != Rectangle.Empty) {
-                e.Graphics.FillRectangle(eraserFillBrush, tileSelectionEraserRect);
-                e.Graphics.DrawRectangle(Pens.White, tileSelectionEraserRect);
-                e.Graphics.DrawRectangle(selectionBorderDashPen, tileSelectionEraserRect);
-            }
-
+            RenderLevel(e.Graphics);
             currentTool.Paint(e.Graphics);
 
             if (showScreenSizeGuide && screenSizeGuidePosition != Point.Empty) {
@@ -335,6 +304,47 @@ namespace Necrofy
                 e.Graphics.DrawRectangle(Pens.Snow, left, top, SNESGraphics.ScreenWidth, SNESGraphics.ScreenHeight);
                 e.Graphics.DrawLine(Pens.Snow, left, screenSizeGuidePosition.Y, left + SNESGraphics.ScreenWidth, screenSizeGuidePosition.Y);
                 e.Graphics.DrawLine(Pens.Snow, screenSizeGuidePosition.X, top, screenSizeGuidePosition.X, top + SNESGraphics.ScreenHeight);
+            }
+        }
+
+        private void RenderLevel(Graphics g) {
+            if (solidTilesOnly) {
+                RenderBackground(g, level.solidOnlyTiles);
+            } else {
+                RenderBackground(g, level.tiles);
+            }
+
+            List<WrappedLevelObject> objects = level.GetAllObjects().ToList();
+            foreach (WrappedLevelObject obj in objects) {
+                obj.Render(g);
+            }
+
+            if (showTilePriority && !solidTilesOnly) {
+                RenderBackground(g, level.priorityTiles);
+            }
+
+            foreach (WrappedLevelObject obj in objects) {
+                obj.RenderExtras(g, showRespawnAreas);
+            }
+
+            if (showGrid) {
+                for (int x = 1; x < level.Level.width; x++) {
+                    g.DrawLine(Pens.White, x * 64, 0, x * 64, level.Level.height * 64);
+                }
+                for (int y = 1; y < level.Level.height; y++) {
+                    g.DrawLine(Pens.White, 0, y * 64, level.Level.width * 64, y * 64);
+                }
+            }
+
+            if (TileSelectionExists) {
+                g.FillPath(selectionFillBrush, tileSelectionPath);
+                g.DrawPath(Pens.White, tileSelectionPath);
+                g.DrawPath(selectionBorderDashPen, tileSelectionPath);
+            }
+            if (tileSelectionEraserRect != Rectangle.Empty) {
+                g.FillRectangle(eraserFillBrush, tileSelectionEraserRect);
+                g.DrawRectangle(Pens.White, tileSelectionEraserRect);
+                g.DrawRectangle(selectionBorderDashPen, tileSelectionEraserRect);
             }
         }
 
@@ -458,6 +468,10 @@ namespace Necrofy
                 UpdateAnimationState();
             } else if (item == ToolStripGrouper.ItemType.LevelClear) {
                 undoManager.Do(new ClearLevelAction((ushort)Math.Max(tilesetObjectBrowserContents.SelectedTile, 0)));
+            } else if (item == ToolStripGrouper.ItemType.LevelSaveAsImage) {
+                if (saveAsImageDialog.ShowDialog() == DialogResult.OK) {
+                    SaveAsImage(saveAsImageDialog.FileName);
+                }
             } else if (item == ToolStripGrouper.ItemType.ViewNextFrame) {
                 level.tileAnimator.Advance();
             } else if (item == ToolStripGrouper.ItemType.ViewRestartAnimation) {
