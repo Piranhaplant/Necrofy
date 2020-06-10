@@ -11,11 +11,8 @@ namespace Necrofy
     {
         public readonly Color[] colors;
 
-        public LoadedPalette(Project project, string paletteName, bool transparent = false)
-            : this(PaletteAsset.FromProject(project, paletteName).data, transparent) { }
-
-        protected LoadedPalette(byte[] data, bool transparent) {
-            colors = SNESGraphics.SNESToRGB(data, transparent);
+        public LoadedPalette(Project project, string paletteName, bool transparent = false) {
+            colors = SNESGraphics.SNESToRGB(PaletteAsset.FromProject(project, paletteName).data, transparent);
         }
     }
 }

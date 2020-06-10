@@ -62,35 +62,32 @@ namespace Necrofy
                 };
             }
 
-            public override Asset FromRom(NameInfo nameInfo, NStream romStream, int? size) {
+            public override Asset FromRom(NameInfo nameInfo, NStream romStream, int? size, out bool trackFreespace) {
+                trackFreespace = false;
                 List<Sprite> sprites = new List<Sprite>();
                 Sprite.AddFromROM(sprites, romStream, ROMPointers.SpriteData1);
                 Sprite.AddFromROM(sprites, romStream, ROMPointers.SpriteData2);
                 return new SpritesAsset((SpritesNameInfo)nameInfo, sprites.ToArray());
             }
-
-            public override bool AutoTrackFreespace => false;
         }
 
         class SpritesNameInfo : NameInfo
         {
-            private const string Folder = "Tilemaps";
+            private const string Folder = SpritesFolder;
             private const string FileName = "Sprites";
-            private const string Extension = "json";
+            private const string Extension = "spr";
 
-            public SpritesNameInfo() { }
+            public SpritesNameInfo() : base(FileName) { }
 
-            public override string Name => FileName;
             public override string DisplayName => FileName;
             public override AssetCategory Category => AssetCat;
 
             protected override PathParts GetPathParts() {
-                return new PathParts(Folder, null, FileName, Extension, null, false);
+                return new PathParts(Folder, FileName, Extension, null, false);
             }
 
             public static SpritesNameInfo FromPath(PathParts parts) {
-                if (parts.topFolder != Folder) return null;
-                if (parts.subFolder != null) return null;
+                if (parts.folder != Folder) return null;
                 if (parts.name != FileName) return null;
                 if (parts.fileExtension != Extension) return null;
                 if (parts.pointer != null) return null;

@@ -8,14 +8,19 @@ namespace Necrofy
 {
     class SpriteObjectBrowserContents : ObjectBrowserContents
     {
-        private readonly LoadedSpriteGraphics spriteGrahpics;
+        private readonly LoadedLevel level;
         private readonly HashSet<SpriteDisplay.Category> categories = new HashSet<SpriteDisplay.Category>();
         private readonly List<LoadedSpriteGraphics.LoadedSprite> sprites = new List<LoadedSpriteGraphics.LoadedSprite>();
         private readonly List<SpriteDisplay.Category> categoryForSprites = new List<SpriteDisplay.Category>();
         private HashSet<SpriteDisplay.Category> highlighedCategories = new HashSet<SpriteDisplay.Category>();
         
-        public SpriteObjectBrowserContents(LoadedSpriteGraphics spriteGrahpics) {
-            this.spriteGrahpics = spriteGrahpics;
+        public SpriteObjectBrowserContents(LoadedLevel level) {
+            this.level = level;
+            level.SpritesChanged += Level_SpritesChanged;
+        }
+
+        private void Level_SpritesChanged(object sender, EventArgs e) {
+            UpdateSpriteList();
         }
 
         public void AddCategory(SpriteDisplay.Category category) {
@@ -42,7 +47,7 @@ namespace Necrofy
             sprites.Clear();
             categoryForSprites.Clear();
             foreach (SpriteDisplay.Category category in categories.OrderBy(c => c)) {
-                List<LoadedSpriteGraphics.LoadedSprite> s = spriteGrahpics.spritesByCategory[category];
+                List<LoadedSpriteGraphics.LoadedSprite> s = level.spriteGraphics.spritesByCategory[category];
                 sprites.AddRange(s);
                 categoryForSprites.AddRange(s.Select(o => category));
             }

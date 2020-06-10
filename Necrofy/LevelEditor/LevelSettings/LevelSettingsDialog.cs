@@ -30,23 +30,24 @@ namespace Necrofy
             // TODO Error handling
             presets = EditorAsset<LevelSettingsPresets>.FromProject(project, "LevelSettingsPresets").data;
 
-            tilesSelector.Items.AddRange(project.GetAssetsInCategory(AssetCategory.TilesetTilemap).Select(a => a.Name).ToArray());
-            tilesSelector.SelectedItem = level.Level.tilesetTilemapName;
+            tilesSelector.Add(project.GetAssetsInCategory(AssetCategory.Tilemap).Where(a => a.ParsedName.Tileset != null), TilemapAsset.DefaultName);
+            tilesSelector.SelectedName = level.Level.tilesetTilemapName;
 
-            PopulatePalettes(tilesetPaletteSelector, selectedItem: level.Level.paletteName);
+            PopulatePalettes(tilesetPaletteSelector);
+            tilesetPaletteSelector.SelectedName = level.Level.paletteName;
 
             if (presets.paletteAnimations != null) {
                 paletteAnimationSelector.Items.AddRange(presets.paletteAnimations.ToArray());
                 paletteAnimationSelector.SelectedItem = presets.paletteAnimations.Where(p => p.value == level.Level.paletteAnimationPtr).FirstOrDefault();
             }
 
-            graphicsSelector.Items.AddRange(project.GetAssetsInCategory(AssetCategory.TilesetGraphics).Select(a => a.Name).ToArray());
-            graphicsSelector.SelectedItem = level.Level.tilesetGraphicsName;
-            SetupAutoCheckBox(graphicsAuto, graphicsSelector, level.Level.tilesetGraphicsName == level.Level.tilesetTilemapName);
+            graphicsSelector.Add(project.GetAssetsInCategory(AssetCategory.Graphics).Where(a => a.ParsedName.Tileset != null), GraphicsAsset.DefaultName);
+            graphicsSelector.SelectedName = level.Level.tilesetGraphicsName;
+            SetupAutoCheckBox(graphicsAuto, graphicsSelector, level.Level.tilesetGraphicsName == GetDefaultName(level.Level.tilesetTilemapName, GraphicsAsset.DefaultName));
 
-            collisionSelector.Items.AddRange(project.GetAssetsInCategory(AssetCategory.Collision).Select(a => a.Name).ToArray());
-            collisionSelector.SelectedItem = level.Level.tilesetCollisionName;
-            SetupAutoCheckBox(collisionAuto, collisionSelector, level.Level.tilesetCollisionName == level.Level.tilesetTilemapName);
+            collisionSelector.Add(project.GetAssetsInCategory(AssetCategory.Collision).Where(a => a.ParsedName.Tileset != null), CollisionAsset.DefaultName);
+            collisionSelector.SelectedName = level.Level.tilesetCollisionName;
+            SetupAutoCheckBox(collisionAuto, collisionSelector, level.Level.tilesetCollisionName == GetDefaultName(level.Level.tilesetTilemapName, CollisionAsset.DefaultName));
 
             prioritySelector.Value = level.Level.priorityTileCount;
             SetupAutoCheckBox(priorityAuto, prioritySelector, level.Level.priorityTileCount == level.TilesetSuggestions.PriorityTileCount);
@@ -54,9 +55,8 @@ namespace Necrofy
             visibleEndSelector.Value = level.Level.visibleTilesEnd;
             SetupAutoCheckBox(visibleEndAuto, visibleEndSelector, level.Level.visibleTilesEnd == DefaultVisibleTilesEnd);
 
-            spritePaletteSelector.Items.AddRange(project.GetAssetsInCategory(AssetCategory.Palette).Select(a => a.Name).ToArray());
-            spritePaletteSelector.SelectedItem = level.Level.spritePaletteName;
-            SetupAutoCheckBox(spritePaletteAuto, spritePaletteSelector, level.Level.spritePaletteName == PaletteAsset.SpritesName);
+            PopulateSpritePalettes(spritePaletteSelector);
+            spritePaletteSelector.SelectedName = level.Level.spritePaletteName;
 
             if (presets.music != null) {
                 musicSelector.Items.AddRange(presets.music.ToArray());
@@ -74,7 +74,7 @@ namespace Necrofy
                 if (index > -1) {
                     bonusList.SetItemChecked(index, true);
                 } else {
-                    bonusList.Items.Add(new LevelSettingsPresets.Preset<ushort>($"Custom ({bonus})", bonus));
+                    bonusList.Items.Add(new LevelSettingsPresets.Preset<ushort>($"Custom (0x{bonus:X})", bonus));
                     bonusList.SetItemChecked(bonusList.Items.Count - 1, true);
                 }
             }
@@ -93,7 +93,7 @@ namespace Necrofy
                 }
             }
         }
-
+        
         private void SetupAutoCheckBox(CheckBox autoCheckBox, Control manualControl, bool enabled) {
             autoCheckBox.CheckedChanged += (sender, e) => {
                 manualControl.Visible = !autoCheckBox.Checked;
@@ -110,29 +110,29 @@ namespace Necrofy
                 TilesetPalettesChanged?.Invoke(this, EventArgs.Empty);
             }
         }
+        
+        private string GetDefaultName(string tilemapName, string defaultName) {
+            return new Asset.ParsedName(tilemapName).Folder + Asset.FolderSeparator + defaultName;
+        }
 
-        public void PopulatePalettes(ComboBox comboBox, string selectedItem = null) {
-            string palleteNamePrefix = tilesSelector.SelectedItem + TilesetAsset.NameSeparator;
-            comboBox.Items.Clear();
-            comboBox.Items.AddRange(
-                project.GetAssetsInCategory(AssetCategory.TilesetPalette)
-                .Where(a => a.Name.StartsWith(palleteNamePrefix))
-                .Select(a => a.Name.Substring(palleteNamePrefix.Length)).ToArray());
-            if (selectedItem != null && selectedItem.StartsWith(palleteNamePrefix)) {
-                comboBox.SelectedItem = selectedItem.Substring(palleteNamePrefix.Length);
+        public void PopulatePalettes(AssetComboBox comboBox) {
+            comboBox.Clear();
+            if (tilesSelector.SelectedItem != null) {
+                string folder = tilesSelector.SelectedItem.ParsedName.Folder;
+                comboBox.Add(project.GetAssetsInCategory(AssetCategory.Palette).Where(a => a.ParsedName.Folder == folder), PaletteAsset.DefaultName, showTilesetName: false);
             }
         }
 
-        public string GetFullPaletteName(string tilesetPalette) {
-            return (string)tilesSelector.SelectedItem + TilesetAsset.NameSeparator + tilesetPalette;
+        public void PopulateSpritePalettes(AssetComboBox comboBox) {
+            comboBox.Add(project.GetAssetsInCategory(AssetCategory.Palette).Where(a => a.ParsedName.Folder == Asset.SpritesFolder), PaletteAsset.DefaultName);
         }
-
+        
         private void addLevelEffect_Click(object sender, EventArgs e) {
             addLevelEffectMenu.Show(addLevelEffect, 0, addLevelEffect.Height);
         }
 
         private void addPaletteFade_Click(object sender, EventArgs e) {
-            PaletteFadeLevelMonster paletteFade = new PaletteFadeLevelMonster(GetFullPaletteName((string)tilesetPaletteSelector.Items[0]), PaletteAsset.SpritesName);
+            PaletteFadeLevelMonster paletteFade = new PaletteFadeLevelMonster(tilesetPaletteSelector.GetAnyName(), spritePaletteSelector.GetAnyName());
             levelMonsters.Add(paletteFade);
             levelMonsterList.AddRow(new PaletteFadeRow(paletteFade, this));
             levelMonsterList.ScrollToBottom();
@@ -169,29 +169,38 @@ namespace Necrofy
             LoadedLevel level = levelEditor.level;
             bool reloadTileset = false;
 
-            if (!level.Level.tilesetTilemapName.Equals(tilesSelector.SelectedItem)) {
-                level.Level.tilesetTilemapName = (string)tilesSelector.SelectedItem;
+            if (tilesSelector.SelectedIndex > -1 && level.Level.tilesetTilemapName != tilesSelector.SelectedName) {
+                level.Level.tilesetTilemapName = tilesSelector.SelectedName;
                 level.LoadTilesetSuggestions(project);
                 reloadTileset = true;
             }
 
-            if (tilesetPaletteSelector.SelectedIndex > -1) {
-                string newPaletteName = GetFullPaletteName((string)tilesetPaletteSelector.SelectedItem);
-                reloadTileset |= !level.Level.paletteName.Equals(newPaletteName);
-                level.Level.paletteName = newPaletteName;
+            if (tilesetPaletteSelector.SelectedIndex > -1 && level.Level.paletteName != tilesetPaletteSelector.SelectedName) {
+                reloadTileset = true;
+                level.Level.paletteName = tilesetPaletteSelector.SelectedName;
             }
 
             if (paletteAnimationSelector.SelectedIndex > -1) {
                 level.Level.paletteAnimationPtr = ((LevelSettingsPresets.Preset<int>)paletteAnimationSelector.SelectedItem).value;
             }
 
-            string graphicsName = graphicsAuto.Checked ? level.Level.tilesetTilemapName : (string)graphicsSelector.SelectedItem;
-            reloadTileset |= level.Level.tilesetGraphicsName != graphicsName;
-            level.Level.tilesetGraphicsName = graphicsName;
+            if (graphicsAuto.Checked) {
+                string graphicsName = GetDefaultName(level.Level.tilesetTilemapName, GraphicsAsset.DefaultName);
+                reloadTileset |= level.Level.tilesetGraphicsName != graphicsName;
+                level.Level.tilesetGraphicsName = graphicsName;
+            } else if (graphicsSelector.SelectedIndex > -1 && level.Level.tilesetGraphicsName != graphicsSelector.SelectedName) {
+                level.Level.tilesetGraphicsName = graphicsSelector.SelectedName;
+                reloadTileset = true;
+            }
 
-            string collisionName = collisionAuto.Checked ? level.Level.tilesetTilemapName : (string)collisionSelector.SelectedItem;
-            reloadTileset |= level.Level.tilesetCollisionName != collisionName;
-            level.Level.tilesetCollisionName = collisionName;
+            if (collisionAuto.Checked) {
+                string collisionName = GetDefaultName(level.Level.tilesetTilemapName, CollisionAsset.DefaultName);
+                reloadTileset |= level.Level.tilesetCollisionName != collisionName;
+                level.Level.tilesetCollisionName = collisionName;
+            } else if (collisionSelector.SelectedIndex > -1 && level.Level.tilesetCollisionName != collisionSelector.SelectedName) {
+                level.Level.tilesetCollisionName = collisionSelector.SelectedName;
+                reloadTileset = true;
+            }
 
             ushort priorityValue = priorityAuto.Checked ? level.TilesetSuggestions.PriorityTileCount : (ushort)prioritySelector.Value;
             reloadTileset |= level.Level.priorityTileCount != priorityValue;
@@ -201,9 +210,8 @@ namespace Necrofy
             reloadTileset |= level.Level.visibleTilesEnd != visibleEndValue;
             level.Level.visibleTilesEnd = visibleEndValue;
 
-            string spritePaletteName = spritePaletteAuto.Checked ? PaletteAsset.SpritesName : (string)spritePaletteSelector.SelectedItem;
-            if (level.Level.spritePaletteName != spritePaletteName) {
-                level.Level.spritePaletteName = spritePaletteName;
+            if (level.Level.spritePaletteName != spritePaletteSelector.SelectedName) {
+                level.Level.spritePaletteName = spritePaletteSelector.SelectedName;
                 level.LoadSprites(project);
             }
 
@@ -234,8 +242,6 @@ namespace Necrofy
             }
 
             levelEditor.undoManager.ForceDirty();
-            levelEditor.Repaint();
-            levelEditor.BrowserContents.Repaint();
         }
 
         private static bool TileAnimationsEqual(List<LevelMonster> list1, List<LevelMonster> list2) {

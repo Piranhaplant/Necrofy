@@ -44,7 +44,7 @@ namespace Necrofy
             }
 
             public override NameInfo GetNameInfo(NameInfo.PathParts pathParts, Project project) {
-                return EditorNameInfo.FromPath(pathParts);
+                throw new NotImplementedException();
             }
 
             public override Asset FromFile(NameInfo nameInfo, string filename) {
@@ -59,24 +59,15 @@ namespace Necrofy
 
             public readonly string name;
 
-            public EditorNameInfo(string name) {
+            public EditorNameInfo(string name) : base(name) {
                 this.name = name;
             }
 
-            public override string Name => name;
             public override string DisplayName => name;
             public override AssetCategory Category => AssetCat;
 
             protected override PathParts GetPathParts() {
-                return new PathParts(Folder, null, name, Extension, null, false);
-            }
-
-            public static EditorNameInfo FromPath(PathParts parts) {
-                if (parts.topFolder != Folder) return null;
-                if (parts.subFolder != null) return null;
-                if (parts.fileExtension != Extension) return null;
-                if (parts.pointer != null) return null;
-                return new EditorNameInfo(parts.name);
+                return new PathParts(Folder, name, Extension, null, false);
             }
         }
     }

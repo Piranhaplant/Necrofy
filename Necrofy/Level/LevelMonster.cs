@@ -15,7 +15,7 @@ namespace Necrofy
         public int type { get; set; }
 
         /// <summary>Delegate for loading a LevelMonster from a ROM file</summary>
-        protected delegate LevelMonster ROMDelegate(ROMInfo r, NStream s);
+        protected delegate LevelMonster ROMDelegate(ROMInfo r, NStream s, string tileset);
         /// <summary>Delegate for creating a blank LevelMonster (for loading from JSON)</summary>
         protected delegate LevelMonster BlankDelegate();
         private static Dictionary<int, ROMDelegate> romLoaders = new Dictionary<int, ROMDelegate>();
@@ -33,11 +33,12 @@ namespace Necrofy
         /// <summary>Creates a level monster of the correct type from the given ROM stream</summary>
         /// <param name="r">ROMInfo needed to get palette names for the <see cref="PaletteFadeLevelMonster"/></param>
         /// <param name="s">The stream to create the level monster from</param>
+        /// <param name="tileset">The tileset name, used for extracting palettes</param>
         /// <returns>The level monster</returns>
-        public static LevelMonster FromROM(ROMInfo r, NStream s) {
+        public static LevelMonster FromROM(ROMInfo r, NStream s, string tileset) {
             int type = s.ReadPointer();
             if (romLoaders.ContainsKey(type)) {
-                return romLoaders[type](r, s);
+                return romLoaders[type](r, s, tileset);
             }
             return new PositionLevelMonster(type, s);
         }

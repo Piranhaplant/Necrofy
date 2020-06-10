@@ -33,7 +33,7 @@ namespace Necrofy
             }
         }
 
-        private void manualButton_Click(object sender, EventArgs e) {
+        private void customizeButton_Click(object sender, EventArgs e) {
             // TODO
         }
     }

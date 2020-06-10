@@ -8,24 +8,24 @@ namespace Necrofy
 {
     class GraphicsAsset : Asset
     {
-        private const AssetCategory AssetCat = AssetCategory.Graphics;
+        public const string DefaultName = "Graphics";
 
-        public const string SpritesName = "Sprites";
-        public const string LevelTitleName = "Level Title";
+        private const AssetCategory AssetCat = AssetCategory.Graphics;
 
         public static void RegisterLoader() {
             AddCreator(new GraphicsCreator());
         }
         
-        public static string GetAssetName(NStream romStream, ROMInfo romInfo, int pointer) {
-            return GetAssetName(romStream, romInfo, pointer, new GraphicsCreator(), AssetCat);
+        public static string GetAssetName(NStream romStream, ROMInfo romInfo, int pointer, string tileset) {
+            return GetAssetName(romStream, romInfo, new GraphicsCreator(), AssetCat, pointer, tileset);
         }
 
         private readonly GraphicsNameInfo nameInfo;
         public readonly byte[] data;
 
-        public static GraphicsAsset FromProject(Project project, string graphicsName) {
-            return new GraphicsCreator().FromProject(project, graphicsName);
+        public static GraphicsAsset FromProject(Project project, string fullName) {
+            ParsedName parsedName = new ParsedName(fullName);
+            return new GraphicsCreator().FromProject(project, parsedName.Folder, parsedName.FinalName);
         }
 
         private GraphicsAsset(GraphicsNameInfo nameInfo, byte[] data) {
@@ -36,7 +36,7 @@ namespace Necrofy
         public override void WriteFile(Project project) {
             File.WriteAllBytes(nameInfo.GetFilename(project.path, createDirectories: true), data);
         }
-
+        
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
             if (nameInfo.compressed) {
                 InsertCompressedByteArray(rom, romInfo, data, nameInfo.GetFilename(project.path), nameInfo.pointer);
@@ -50,8 +50,8 @@ namespace Necrofy
 
         class GraphicsCreator : Creator
         {
-            public GraphicsAsset FromProject(Project project, string graphicsName) {
-                NameInfo nameInfo = new GraphicsNameInfo(graphicsName, null);
+            public GraphicsAsset FromProject(Project project, string folder, string graphicsName) {
+                NameInfo nameInfo = new GraphicsNameInfo(folder, graphicsName, null);
                 string filename = nameInfo.FindFilename(project.path);
                 return (GraphicsAsset)FromFile(nameInfo, filename);
             }
@@ -66,13 +66,20 @@ namespace Necrofy
 
             public override List<DefaultParams> GetDefaults() {
                 return new List<DefaultParams>() {
-                    new DefaultParams(0x20000, new GraphicsNameInfo(SpritesName, 0x20000), 0x5d300),
-                    new DefaultParams(0x94f80, new GraphicsNameInfo(LevelTitleName, 0x94f80, compressed: true))
+                    new DefaultParams(0x20000, new GraphicsNameInfo(SpritesFolder, DefaultName, 0x20000), 0x5d300),
+                    new DefaultParams(0x94f80, new GraphicsNameInfo(LevelTitleFolder, DefaultName, 0x94f80, compressed: true)),
+
+                    new DefaultParams(0xc8000, new GraphicsNameInfo(GetTilesetFolder(Castle), DefaultName), 0x4000),
+                    new DefaultParams(0xc0000, new GraphicsNameInfo(GetTilesetFolder(Grass), DefaultName), 0x4000),
+                    new DefaultParams(0xc4000, new GraphicsNameInfo(GetTilesetFolder(Sand), DefaultName), 0x4000),
+                    new DefaultParams(0xd0000, new GraphicsNameInfo(GetTilesetFolder(Office), DefaultName), 0x4000),
+                    new DefaultParams(0xcc000, new GraphicsNameInfo(GetTilesetFolder(Mall), DefaultName), 0x4000),
                 };
             }
 
-            public override Asset FromRom(NameInfo nameInfo, NStream romStream, int? size) {
+            public override Asset FromRom(NameInfo nameInfo, NStream romStream, int? size, out bool trackFreespace) {
                 GraphicsNameInfo graphicsNameInfo = (GraphicsNameInfo)nameInfo;
+                trackFreespace = graphicsNameInfo.pointer == null;
                 if (graphicsNameInfo.compressed) {
                     return new GraphicsAsset(graphicsNameInfo, ZAMNCompress.Decompress(romStream));
                 } else {
@@ -80,41 +87,37 @@ namespace Necrofy
                 }
             }
 
-            public override NameInfo GetNameInfoForName(string name) {
-                return new GraphicsNameInfo(name, null);
+            public override NameInfo GetNameInfoForName(string name, string group) {
+                return new GraphicsNameInfo(GetTilesetFolder(group), name, null);
             }
-
-            public override bool AutoTrackFreespace => false;
         }
 
         class GraphicsNameInfo : NameInfo
         {
-            private const string Folder = "Graphics";
-            private const string Extension = "bin";
+            private const string Extension = "gfx";
 
+            public readonly string folder;
             public readonly string name;
             public readonly int? pointer;
             public readonly bool compressed;
 
-            public GraphicsNameInfo(string name, int? pointer, bool compressed = false) {
+            public GraphicsNameInfo(string folder, string name, int? pointer = null, bool compressed = false) : base(folder, name) {
+                this.folder = folder;
                 this.name = name;
                 this.pointer = pointer;
                 this.compressed = compressed;
             }
-
-            public override string Name => name;
+            
             public override string DisplayName => name;
             public override AssetCategory Category => AssetCat;
 
             protected override PathParts GetPathParts() {
-                return new PathParts(Folder, null, name, Extension, pointer, compressed);
+                return new PathParts(folder, name, Extension, pointer, compressed);
             }
 
             public static GraphicsNameInfo FromPath(PathParts parts) {
-                if (parts.topFolder != Folder) return null;
-                if (parts.subFolder != null) return null;
                 if (parts.fileExtension != Extension) return null;
-                return new GraphicsNameInfo(parts.name, parts.pointer, parts.compressed);
+                return new GraphicsNameInfo(parts.folder, parts.name, parts.pointer, parts.compressed);
             }
         }
     }

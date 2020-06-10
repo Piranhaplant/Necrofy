@@ -9,7 +9,7 @@ namespace Necrofy
 {
     class DataAsset : Asset
     {
-        public const string LevelTitleCharsName = "Level Title Chars";
+        public const string LevelTitleCharacterMapName = "Character Map";
 
         private const AssetCategory AssetCat = AssetCategory.Data;
 
@@ -17,15 +17,11 @@ namespace Necrofy
             AddCreator(new DataCreator());
         }
 
-        public static string GetAssetName(NStream romStream, ROMInfo romInfo, int pointer) {
-            return GetAssetName(romStream, romInfo, pointer, new DataCreator(), AssetCat);
-        }
-
         private readonly DataNameInfo nameInfo;
         public readonly byte[] data;
 
-        public static DataAsset FromProject(Project project, string dataName) {
-            return new DataCreator().FromProject(project, dataName);
+        public static DataAsset FromProject(Project project, string folder, string dataName) {
+            return new DataCreator().FromProject(project, folder, dataName);
         }
 
         private DataAsset(DataNameInfo nameInfo, byte[] data) {
@@ -46,8 +42,8 @@ namespace Necrofy
 
         class DataCreator : Creator
         {
-            public DataAsset FromProject(Project project, string dataName) {
-                NameInfo nameInfo = new DataNameInfo(dataName, null);
+            public DataAsset FromProject(Project project, string folder, string name) {
+                NameInfo nameInfo = new DataNameInfo(folder, name, null);
                 string filename = nameInfo.FindFilename(project.path);
                 return (DataAsset)FromFile(nameInfo, filename);
             }
@@ -62,47 +58,41 @@ namespace Necrofy
 
             public override List<DefaultParams> GetDefaults() {
                 return new List<DefaultParams>() {
-                    new DefaultParams(0x12f37, new DataNameInfo(LevelTitleCharsName, 0x12f37), 0xbc),
+                    new DefaultParams(0x12f37, new DataNameInfo(LevelTitleFolder, LevelTitleCharacterMapName, 0x12f37), 0xbc),
                 };
             }
 
-            public override Asset FromRom(NameInfo nameInfo, NStream romStream, int? size) {
-                return new DataAsset((DataNameInfo)nameInfo, romStream.ReadBytes((int)size));
+            public override Asset FromRom(NameInfo nameInfo, NStream romStream, int? size, out bool trackFreespace) {
+                DataNameInfo dataNameInfo = (DataNameInfo)nameInfo;
+                trackFreespace = dataNameInfo.pointer == null;
+                return new DataAsset(dataNameInfo, romStream.ReadBytes((int)size));
             }
-
-            public override NameInfo GetNameInfoForName(string name) {
-                return new DataNameInfo(name, null);
-            }
-
-            public override bool AutoTrackFreespace => false;
         }
 
         class DataNameInfo : NameInfo
         {
-            private const string Folder = "Data";
             private const string Extension = "bin";
 
+            public readonly string folder;
             public readonly string name;
             public readonly int? pointer;
-
-            public DataNameInfo(string name, int? pointer) {
+            
+            public DataNameInfo(string folder, string name, int? pointer) : base(folder, name) {
+                this.folder = folder;
                 this.name = name;
                 this.pointer = pointer;
             }
 
-            public override string Name => name;
             public override string DisplayName => name;
             public override AssetCategory Category => AssetCat;
 
             protected override PathParts GetPathParts() {
-                return new PathParts(Folder, null, name, Extension, pointer, false);
+                return new PathParts(folder, name, Extension, pointer, false);
             }
 
             public static DataNameInfo FromPath(PathParts parts) {
-                if (parts.topFolder != Folder) return null;
-                if (parts.subFolder != null) return null;
                 if (parts.fileExtension != Extension) return null;
-                return new DataNameInfo(parts.name, parts.pointer);
+                return new DataNameInfo(parts.folder, parts.name, parts.pointer);
             }
         }
     }

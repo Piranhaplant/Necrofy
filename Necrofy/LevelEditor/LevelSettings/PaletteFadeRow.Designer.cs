@@ -26,10 +26,10 @@
         /// </summary>
         private void InitializeComponent() {
             this.tilesetPaletteLbl = new System.Windows.Forms.Label();
-            this.tilesetPaletteSelector = new System.Windows.Forms.ComboBox();
+            this.tilesetPaletteSelector = new AssetComboBox();
             this.titleLabel = new System.Windows.Forms.Label();
             this.spritePaletteLbl = new System.Windows.Forms.Label();
-            this.spritePaletteSelector = new System.Windows.Forms.ComboBox();
+            this.spritePaletteSelector = new AssetComboBox();
             this.SuspendLayout();
             // 
             // tilesetPaletteLbl
@@ -73,8 +73,6 @@
             // 
             this.spritePaletteSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.spritePaletteSelector.FormattingEnabled = true;
-            this.spritePaletteSelector.Items.AddRange(new object[] {
-            "Auto"});
             this.spritePaletteSelector.Location = new System.Drawing.Point(336, -1);
             this.spritePaletteSelector.Name = "spritePaletteSelector";
             this.spritePaletteSelector.Size = new System.Drawing.Size(84, 21);
@@ -103,9 +101,9 @@
         #endregion
 
         private System.Windows.Forms.Label tilesetPaletteLbl;
-        private System.Windows.Forms.ComboBox tilesetPaletteSelector;
+        private AssetComboBox tilesetPaletteSelector;
         private System.Windows.Forms.Label titleLabel;
         private System.Windows.Forms.Label spritePaletteLbl;
-        private System.Windows.Forms.ComboBox spritePaletteSelector;
+        private AssetComboBox spritePaletteSelector;
     }
 }

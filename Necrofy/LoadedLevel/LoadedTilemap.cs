@@ -10,16 +10,14 @@ namespace Necrofy
     {
         public Tile[] tiles;
 
-        public LoadedTilemap(Project project, string tilemapName)
-            : this(TilemapAsset.FromProject(project, tilemapName).data) { }
-
-        protected LoadedTilemap(byte[] data) {
+        public LoadedTilemap(Project project, string tilemapName) {
+            byte[] data = TilemapAsset.FromProject(project, tilemapName).data;
             tiles = new Tile[data.Length / 2];
             for (int i = 0; i < tiles.Length; i++) {
                 tiles[i] = new Tile(data[i * 2], data[i * 2 + 1]);
             }
         }
-
+        
         public struct Tile
         {
             public int tileNum;

@@ -28,8 +28,8 @@
             this.presetSelector = new System.Windows.Forms.ComboBox();
             this.titleLabel = new System.Windows.Forms.Label();
             this.presetLbl = new System.Windows.Forms.Label();
-            this.manualButton = new System.Windows.Forms.Button();
-            this.manualLbl = new System.Windows.Forms.Label();
+            this.customizeButton = new System.Windows.Forms.Button();
+            this.customizeLbl = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // presetSelector
@@ -60,31 +60,31 @@
             this.presetLbl.TabIndex = 6;
             this.presetLbl.Text = "Preset:";
             // 
-            // manualButton
+            // customizeButton
             // 
-            this.manualButton.Location = new System.Drawing.Point(335, -2);
-            this.manualButton.Name = "manualButton";
-            this.manualButton.Size = new System.Drawing.Size(86, 23);
-            this.manualButton.TabIndex = 7;
-            this.manualButton.Text = "Edit...";
-            this.manualButton.UseVisualStyleBackColor = true;
-            this.manualButton.Click += new System.EventHandler(this.manualButton_Click);
+            this.customizeButton.Location = new System.Drawing.Point(335, -2);
+            this.customizeButton.Name = "customizeButton";
+            this.customizeButton.Size = new System.Drawing.Size(86, 23);
+            this.customizeButton.TabIndex = 7;
+            this.customizeButton.Text = "Edit...";
+            this.customizeButton.UseVisualStyleBackColor = true;
+            this.customizeButton.Click += new System.EventHandler(this.customizeButton_Click);
             // 
-            // manualLbl
+            // customizeLbl
             // 
-            this.manualLbl.AutoSize = true;
-            this.manualLbl.Location = new System.Drawing.Point(259, 2);
-            this.manualLbl.Name = "manualLbl";
-            this.manualLbl.Size = new System.Drawing.Size(45, 13);
-            this.manualLbl.TabIndex = 8;
-            this.manualLbl.Text = "Manual:";
+            this.customizeLbl.AutoSize = true;
+            this.customizeLbl.Location = new System.Drawing.Point(259, 2);
+            this.customizeLbl.Name = "customizeLbl";
+            this.customizeLbl.Size = new System.Drawing.Size(58, 13);
+            this.customizeLbl.TabIndex = 8;
+            this.customizeLbl.Text = "Customize:";
             // 
             // TileAnimationRow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.manualLbl);
-            this.Controls.Add(this.manualButton);
+            this.Controls.Add(this.customizeLbl);
+            this.Controls.Add(this.customizeButton);
             this.Controls.Add(this.presetLbl);
             this.Controls.Add(this.titleLabel);
             this.Controls.Add(this.presetSelector);
@@ -92,8 +92,8 @@
             this.Controls.SetChildIndex(this.presetSelector, 0);
             this.Controls.SetChildIndex(this.titleLabel, 0);
             this.Controls.SetChildIndex(this.presetLbl, 0);
-            this.Controls.SetChildIndex(this.manualButton, 0);
-            this.Controls.SetChildIndex(this.manualLbl, 0);
+            this.Controls.SetChildIndex(this.customizeButton, 0);
+            this.Controls.SetChildIndex(this.customizeLbl, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -104,7 +104,7 @@
         private System.Windows.Forms.ComboBox presetSelector;
         private System.Windows.Forms.Label titleLabel;
         private System.Windows.Forms.Label presetLbl;
-        private System.Windows.Forms.Button manualButton;
-        private System.Windows.Forms.Label manualLbl;
+        private System.Windows.Forms.Button customizeButton;
+        private System.Windows.Forms.Label customizeLbl;
     }
 }

@@ -27,11 +27,11 @@
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             this.tilesLabel = new System.Windows.Forms.Label();
-            this.tilesSelector = new System.Windows.Forms.ComboBox();
+            this.tilesSelector = new Necrofy.AssetComboBox();
             this.okButton = new System.Windows.Forms.Button();
             this.applyButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.tilesetPaletteSelector = new System.Windows.Forms.ComboBox();
+            this.tilesetPaletteSelector = new Necrofy.AssetComboBox();
             this.tilesetPaletteLabel = new System.Windows.Forms.Label();
             this.graphicsAuto = new System.Windows.Forms.CheckBox();
             this.tilesetGroup = new System.Windows.Forms.GroupBox();
@@ -43,10 +43,10 @@
             this.paletteAnimationLabel = new System.Windows.Forms.Label();
             this.visibleEndLabel = new System.Windows.Forms.Label();
             this.collisionAuto = new System.Windows.Forms.CheckBox();
-            this.collisionSelector = new System.Windows.Forms.ComboBox();
+            this.collisionSelector = new Necrofy.AssetComboBox();
             this.priorityLabel = new System.Windows.Forms.Label();
             this.collisionLabel = new System.Windows.Forms.Label();
-            this.graphicsSelector = new System.Windows.Forms.ComboBox();
+            this.graphicsSelector = new Necrofy.AssetComboBox();
             this.graphicsLabel = new System.Windows.Forms.Label();
             this.audioGroup = new System.Windows.Forms.GroupBox();
             this.soundsSelector = new System.Windows.Forms.ComboBox();
@@ -55,8 +55,7 @@
             this.musicLabel = new System.Windows.Forms.Label();
             this.spritePaletteLabel = new System.Windows.Forms.Label();
             this.spritesGroup = new System.Windows.Forms.GroupBox();
-            this.spritePaletteSelector = new System.Windows.Forms.ComboBox();
-            this.spritePaletteAuto = new System.Windows.Forms.CheckBox();
+            this.spritePaletteSelector = new Necrofy.AssetComboBox();
             this.bonusesGroup = new System.Windows.Forms.GroupBox();
             this.bonusList = new System.Windows.Forms.CheckedListBox();
             this.levelEffectsGroup = new System.Windows.Forms.GroupBox();
@@ -91,6 +90,8 @@
             this.tilesSelector.FormattingEnabled = true;
             this.tilesSelector.Location = new System.Drawing.Point(116, 21);
             this.tilesSelector.Name = "tilesSelector";
+            this.tilesSelector.SelectedItem = null;
+            this.tilesSelector.SelectedName = null;
             this.tilesSelector.Size = new System.Drawing.Size(165, 21);
             this.tilesSelector.TabIndex = 1;
             this.tilesSelector.SelectedIndexChanged += new System.EventHandler(this.tilesSelector_SelectedIndexChanged);
@@ -134,6 +135,8 @@
             this.tilesetPaletteSelector.FormattingEnabled = true;
             this.tilesetPaletteSelector.Location = new System.Drawing.Point(116, 48);
             this.tilesetPaletteSelector.Name = "tilesetPaletteSelector";
+            this.tilesetPaletteSelector.SelectedItem = null;
+            this.tilesetPaletteSelector.SelectedName = null;
             this.tilesetPaletteSelector.Size = new System.Drawing.Size(165, 21);
             this.tilesetPaletteSelector.TabIndex = 6;
             // 
@@ -273,6 +276,8 @@
             this.collisionSelector.FormattingEnabled = true;
             this.collisionSelector.Location = new System.Drawing.Point(170, 129);
             this.collisionSelector.Name = "collisionSelector";
+            this.collisionSelector.SelectedItem = null;
+            this.collisionSelector.SelectedName = null;
             this.collisionSelector.Size = new System.Drawing.Size(111, 21);
             this.collisionSelector.TabIndex = 12;
             // 
@@ -300,6 +305,8 @@
             this.graphicsSelector.FormattingEnabled = true;
             this.graphicsSelector.Location = new System.Drawing.Point(170, 102);
             this.graphicsSelector.Name = "graphicsSelector";
+            this.graphicsSelector.SelectedItem = null;
+            this.graphicsSelector.SelectedName = null;
             this.graphicsSelector.Size = new System.Drawing.Size(111, 21);
             this.graphicsSelector.TabIndex = 9;
             // 
@@ -373,7 +380,6 @@
             // spritesGroup
             // 
             this.spritesGroup.Controls.Add(this.spritePaletteSelector);
-            this.spritesGroup.Controls.Add(this.spritePaletteAuto);
             this.spritesGroup.Controls.Add(this.spritePaletteLabel);
             this.spritesGroup.Location = new System.Drawing.Point(12, 238);
             this.spritesGroup.Name = "spritesGroup";
@@ -386,20 +392,12 @@
             // 
             this.spritePaletteSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.spritePaletteSelector.FormattingEnabled = true;
-            this.spritePaletteSelector.Location = new System.Drawing.Point(170, 21);
+            this.spritePaletteSelector.Location = new System.Drawing.Point(116, 21);
             this.spritePaletteSelector.Name = "spritePaletteSelector";
-            this.spritePaletteSelector.Size = new System.Drawing.Size(111, 21);
+            this.spritePaletteSelector.SelectedItem = null;
+            this.spritePaletteSelector.SelectedName = null;
+            this.spritePaletteSelector.Size = new System.Drawing.Size(165, 21);
             this.spritePaletteSelector.TabIndex = 27;
-            // 
-            // spritePaletteAuto
-            // 
-            this.spritePaletteAuto.AutoSize = true;
-            this.spritePaletteAuto.Location = new System.Drawing.Point(116, 23);
-            this.spritePaletteAuto.Name = "spritePaletteAuto";
-            this.spritePaletteAuto.Size = new System.Drawing.Size(48, 17);
-            this.spritePaletteAuto.TabIndex = 26;
-            this.spritePaletteAuto.Text = "Auto";
-            this.spritePaletteAuto.UseVisualStyleBackColor = true;
             // 
             // bonusesGroup
             // 
@@ -530,20 +528,20 @@
         #endregion
 
         private System.Windows.Forms.Label tilesLabel;
-        private System.Windows.Forms.ComboBox tilesSelector;
+        private AssetComboBox tilesSelector;
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.Button applyButton;
         private System.Windows.Forms.Button cancelButton;
-        private System.Windows.Forms.ComboBox tilesetPaletteSelector;
+        private AssetComboBox tilesetPaletteSelector;
         private System.Windows.Forms.Label tilesetPaletteLabel;
         private System.Windows.Forms.CheckBox graphicsAuto;
         private System.Windows.Forms.GroupBox tilesetGroup;
         private System.Windows.Forms.Label graphicsLabel;
         private System.Windows.Forms.CheckBox collisionAuto;
-        private System.Windows.Forms.ComboBox collisionSelector;
+        private AssetComboBox collisionSelector;
         private System.Windows.Forms.Label priorityLabel;
         private System.Windows.Forms.Label collisionLabel;
-        private System.Windows.Forms.ComboBox graphicsSelector;
+        private AssetComboBox graphicsSelector;
         private System.Windows.Forms.NumericUpDown prioritySelector;
         private System.Windows.Forms.CheckBox priorityAuto;
         private System.Windows.Forms.NumericUpDown visibleEndSelector;
@@ -558,8 +556,7 @@
         private System.Windows.Forms.Label musicLabel;
         private System.Windows.Forms.Label spritePaletteLabel;
         private System.Windows.Forms.GroupBox spritesGroup;
-        private System.Windows.Forms.ComboBox spritePaletteSelector;
-        private System.Windows.Forms.CheckBox spritePaletteAuto;
+        private AssetComboBox spritePaletteSelector;
         private System.Windows.Forms.GroupBox bonusesGroup;
         private System.Windows.Forms.CheckedListBox bonusList;
         private System.Windows.Forms.GroupBox levelEffectsGroup;

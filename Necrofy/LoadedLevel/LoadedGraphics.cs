@@ -10,13 +10,10 @@ namespace Necrofy
     {
         public readonly LinearGraphics linearGraphics;
 
-        public LoadedGraphics(Project project, string graphicsName)
-            : this(GraphicsAsset.FromProject(project, graphicsName).data) { }
-
-        protected LoadedGraphics(byte[] data) {
-            linearGraphics = new LinearGraphics(data);
+        public LoadedGraphics(Project project, string graphicsName) {
+            linearGraphics = new LinearGraphics(GraphicsAsset.FromProject(project, graphicsName).data);
         }
-
+        
         public class LinearGraphics
         {
             private readonly byte[] data;

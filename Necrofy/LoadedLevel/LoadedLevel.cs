@@ -10,17 +10,21 @@ namespace Necrofy
     class LoadedLevel : IDisposable
     {
         public readonly LevelAsset levelAsset;
-        public LoadedTilesetGraphics graphics;
+        public LoadedGraphics graphics;
         public LoadedTilesetTilemap tilemap;
         public LoadedSpriteGraphics spriteGraphics;
-        public TilesetSuggestionsAsset tilesetSuggestionsAsset;
 
         public Bitmap[] tiles;
         public Bitmap[] priorityTiles;
         public Bitmap[] solidOnlyTiles;
 
         public TileAnimator tileAnimator = new TileAnimator();
-        public event EventHandler Animated;
+
+        public event EventHandler SpritesChanged;
+        public event EventHandler TilesChanged;
+
+        public Level Level => levelAsset.level;
+        public TilesetSuggestions TilesetSuggestions { get; private set; }
 
         public LoadedLevel(Project project, int levelNum) {
             levelAsset = LevelAsset.FromProject(project, levelNum);
@@ -53,20 +57,25 @@ namespace Necrofy
         public void LoadSprites(Project project) {
             DisposeSprites();
             spriteGraphics = new LoadedSpriteGraphics(project, Level.spritePaletteName);
+            SpritesChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void LoadTilesetSuggestions(Project project) {
-            // TODO Error handling on tileset suggestings not being found
-            tilesetSuggestionsAsset = TilesetSuggestionsAsset.FromProject(project, Level.tilesetTilemapName);
+            try {
+                TilesetSuggestions = TilesetSuggestionsAsset.FromProject(project, Level.tilesetTilemapName).data;
+            } catch (Exception e) {
+                Console.WriteLine(e);
+                TilesetSuggestions = new TilesetSuggestions();
+            }
         }
 
         public void LoadTiles(Project project) {
             DisposeTiles();
 
             tilemap = new LoadedTilesetTilemap(project, Level.tilesetTilemapName);
-            LoadedTilesetCollision collision = new LoadedTilesetCollision(project, Level.tilesetCollisionName);
-            graphics = new LoadedTilesetGraphics(project, Level.tilesetGraphicsName);
-            LoadedTilesetPalette palette = new LoadedTilesetPalette(project, Level.paletteName);
+            LoadedCollision collision = new LoadedCollision(project, Level.tilesetCollisionName);
+            graphics = new LoadedGraphics(project, Level.tilesetGraphicsName);
+            LoadedPalette palette = new LoadedPalette(project, Level.paletteName);
 
             tiles = new Bitmap[tilemap.tiles.Length];
             priorityTiles = new Bitmap[tilemap.tiles.Length];
@@ -105,13 +114,15 @@ namespace Necrofy
                 priorityTiles[i].UnlockBits(curPriorityTile);
                 solidOnlyTiles[i].UnlockBits(curSolidOnlyTile);
             }
+
+            TilesChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void TileAnimator_Animated(object sender, EventArgs e) {
-            Animated?.Invoke(sender, e);
+            TilesChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        private BitmapData CreateTile(Bitmap[] allTiles, int i, LoadedTilesetPalette palette, bool transparent = false) {
+        private BitmapData CreateTile(Bitmap[] allTiles, int i, LoadedPalette palette, bool transparent = false) {
             Bitmap tile = new Bitmap(64, 64, PixelFormat.Format8bppIndexed);
             allTiles[i] = tile;
             SNESGraphics.FillPalette(tile, palette.colors);
@@ -149,8 +160,5 @@ namespace Necrofy
                 }
             }
         }
-
-        public Level Level => levelAsset.level;
-        public TilesetSuggestions TilesetSuggestions => tilesetSuggestionsAsset.data;
     }
 }

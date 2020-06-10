@@ -19,16 +19,13 @@ namespace Necrofy
             this.paletteFade = paletteFade;
             this.levelSettings = levelSettings;
 
-            levelSettings.PopulatePalettes(tilesetPaletteSelector, paletteFade.bgPal);
+            levelSettings.PopulatePalettes(tilesetPaletteSelector);
+            tilesetPaletteSelector.SelectedName = paletteFade.bgPal;
             levelSettings.TilesetPalettesChanged += LevelSettings_TilesetPalettesChanged;
             tilesetPaletteSelector.SelectedIndexChanged += TilesetPaletteSelector_SelectedIndexChanged;
 
-            spritePaletteSelector.Items.AddRange(levelSettings.project.GetAssetsInCategory(AssetCategory.Palette).Select(a => a.Name).ToArray());
-            if (paletteFade.spritePal == PaletteAsset.SpritesName) {
-                spritePaletteSelector.SelectedIndex = 0;
-            } else {
-                spritePaletteSelector.SelectedItem = paletteFade.spritePal;
-            }
+            levelSettings.PopulateSpritePalettes(spritePaletteSelector);
+            spritePaletteSelector.SelectedName = paletteFade.spritePal;
             spritePaletteSelector.SelectedIndexChanged += SpritePaletteSelector_SelectedIndexChanged;
         }
 
@@ -43,17 +40,13 @@ namespace Necrofy
 
         private void TilesetPaletteSelector_SelectedIndexChanged(object sender, EventArgs e) {
             if (tilesetPaletteSelector.SelectedIndex > -1) {
-                paletteFade.bgPal = levelSettings.GetFullPaletteName((string)tilesetPaletteSelector.SelectedItem);
+                paletteFade.bgPal = tilesetPaletteSelector.SelectedName;
             }
         }
 
         private void SpritePaletteSelector_SelectedIndexChanged(object sender, EventArgs e) {
             if (spritePaletteSelector.SelectedIndex > -1) {
-                if (spritePaletteSelector.SelectedIndex == 0) {
-                    paletteFade.spritePal = PaletteAsset.SpritesName;
-                } else {
-                    paletteFade.spritePal = (string)spritePaletteSelector.SelectedItem;
-                }
+                paletteFade.spritePal = spritePaletteSelector.SelectedName;
             }
         }
     }

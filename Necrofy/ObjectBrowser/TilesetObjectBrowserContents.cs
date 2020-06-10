@@ -18,7 +18,12 @@ namespace Necrofy
 
         public TilesetObjectBrowserContents(LoadedLevel level) {
             this.level = level;
+            level.TilesChanged += Level_TilesChanged;
             ShowAllTiles();
+        }
+
+        private void Level_TilesChanged(object sender, EventArgs e) {
+            Repaint();
         }
 
         private bool solidOnly;

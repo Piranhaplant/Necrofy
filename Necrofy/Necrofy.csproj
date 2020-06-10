@@ -99,6 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Asset.cs" />
+    <Compile Include="Assets\CollisionAsset.cs" />
     <Compile Include="Assets\DataAsset.cs" />
     <Compile Include="Assets\EditorAsset.cs" />
     <Compile Include="Assets\GraphicsAsset.cs" />
@@ -106,12 +107,7 @@
     <Compile Include="Assets\PaletteAsset.cs" />
     <Compile Include="Assets\SpritesAsset.cs" />
     <Compile Include="Assets\TilemapAsset.cs" />
-    <Compile Include="Assets\TilesetAsset.cs" />
-    <Compile Include="Assets\TilesetCollisionAsset.cs" />
-    <Compile Include="Assets\TilesetGraphicsAsset.cs" />
-    <Compile Include="Assets\TilesetPaletteAsset.cs" />
     <Compile Include="Assets\TilesetSuggestionsAsset.cs" />
-    <Compile Include="Assets\TilesetTilemapAsset.cs" />
     <Compile Include="AssetTree.cs" />
     <Compile Include="Canvas.cs">
       <SubType>UserControl</SubType>
@@ -127,6 +123,9 @@
     </Compile>
     <Compile Include="Extensions.cs" />
     <Compile Include="LevelEditor\LevelMouseEventArgs.cs" />
+    <Compile Include="LevelEditor\LevelSettings\AssetComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="LevelEditor\LevelSettings\LevelMonsterList.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -255,10 +254,8 @@
       <DependentUpon>LevelEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="LoadedLevel\LoadedSpriteGraphics.cs" />
-    <Compile Include="LoadedLevel\LoadedTilesetCollision.cs" />
+    <Compile Include="LoadedLevel\LoadedCollision.cs" />
     <Compile Include="LoadedLevel\LoadedLevel.cs" />
-    <Compile Include="LoadedLevel\LoadedTilesetGraphics.cs" />
-    <Compile Include="LoadedLevel\LoadedTilesetPalette.cs" />
     <Compile Include="LoadedLevel\LoadedTilesetTilemap.cs" />
     <Compile Include="Level\Item.cs" />
     <Compile Include="LevelJsonConverter.cs" />
@@ -377,19 +374,19 @@
     <None Include="ProjectFiles\Editor\SpriteDisplay.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="ProjectFiles\Tilesets\Castle\suggestions.json">
+    <None Include="ProjectFiles\Tilesets\Castle\Suggestions.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="ProjectFiles\Tilesets\Sand\suggestions.json">
+    <None Include="ProjectFiles\Tilesets\Grass\Suggestions.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="ProjectFiles\Tilesets\Grass\suggestions.json">
+    <None Include="ProjectFiles\Tilesets\Mall+Factory\Suggestions.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="ProjectFiles\Tilesets\Mall+Factory\suggestions.json">
+    <None Include="ProjectFiles\Tilesets\Office+Cave\Suggestions.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="ProjectFiles\Tilesets\Office+Cave\suggestions.json">
+    <None Include="ProjectFiles\Tilesets\Sand\Suggestions.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Properties\Settings.settings">

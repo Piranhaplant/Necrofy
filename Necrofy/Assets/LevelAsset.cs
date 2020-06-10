@@ -100,13 +100,11 @@ namespace Necrofy
             private readonly Func<LevelNameInfo, string> displayNameGetter;
             private string displayName = null;
 
-            public LevelNameInfo(int levelNum, Func<LevelNameInfo, string> displayNameGetter) {
+            public LevelNameInfo(int levelNum, Func<LevelNameInfo, string> displayNameGetter) : base(levelNum.ToString()) {
                 this.levelNum = levelNum;
                 this.displayNameGetter = displayNameGetter;
             }
-
-            public override string Name => levelNum.ToString();
-
+            
             public override string DisplayName {
                 get {
                     if (displayName == null) {
@@ -119,7 +117,7 @@ namespace Necrofy
             public override AssetCategory Category => AssetCat;
 
             protected override PathParts GetPathParts() {
-                return new PathParts(Folder, null, levelNum.ToString(), Extension, null, false);
+                return new PathParts(Folder, levelNum.ToString(), Extension, null, false);
             }
 
             public override EditorWindow GetEditor(Project project) {
@@ -131,8 +129,7 @@ namespace Necrofy
             }
 
             public static LevelNameInfo FromPath(PathParts parts, Func<LevelNameInfo, string> displayNameGetter) {
-                if (parts.topFolder != Folder) return null;
-                if (parts.subFolder != null) return null;
+                if (parts.folder != Folder) return null;
                 if (parts.fileExtension != Extension) return null;
                 if (parts.pointer != null) return null;
                 if (!int.TryParse(parts.name, out int levelNum)) return null;

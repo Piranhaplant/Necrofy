@@ -63,11 +63,12 @@ namespace Necrofy
             levelMonsters = new List<LevelMonster>();
 
             s.StartBlock(); // Track the freespace used by the level
-            tilesetTilemapName = TilesetTilemapAsset.GetAssetName(s, r, s.ReadPointer());
+            tilesetTilemapName = TilemapAsset.GetAssetName(s, r, s.ReadPointer());
+            string tileset = new Asset.ParsedName(tilesetTilemapName).Tileset;
             int backgroundPtr = s.ReadPointer();
-            tilesetCollisionName = TilesetCollisionAsset.GetAssetName(s, r, s.ReadPointer());
-            tilesetGraphicsName = TilesetGraphicsAsset.GetAssetName(s, r, s.ReadPointer());
-            paletteName = TilesetPaletteAsset.GetAssetName(s, r, s.ReadPointer());
+            tilesetCollisionName = CollisionAsset.GetAssetName(s, r, s.ReadPointer(), tileset);
+            tilesetGraphicsName = GraphicsAsset.GetAssetName(s, r, s.ReadPointer(), tileset);
+            paletteName = PaletteAsset.GetAssetName(s, r, s.ReadPointer(), tileset);
             spritePaletteName = PaletteAsset.GetAssetName(s, r, s.ReadPointer());
             paletteAnimationPtr = s.ReadPointer();
 
@@ -108,7 +109,7 @@ namespace Necrofy
             }
 
             while (s.PeekPointer() > -1) {
-                levelMonsters.Add(LevelMonster.FromROM(r, s));
+                levelMonsters.Add(LevelMonster.FromROM(r, s, tileset));
             }
             // Stop tracking the freespace since the background data is separate from the rest
             s.EndBlock(r.Freespace);
@@ -155,7 +156,7 @@ namespace Necrofy
         public MovableData Build(ROMInfo rom) {
             MovableData data = new MovableData();
 
-            data.data.AddPointer(rom.GetAssetPointer(AssetCategory.TilesetTilemap, tilesetTilemapName));
+            data.data.AddPointer(rom.GetAssetPointer(AssetCategory.Tilemap, tilesetTilemapName));
 
             MovableData backgroundData = new MovableData();
             int width = this.width;
@@ -168,8 +169,8 @@ namespace Necrofy
             data.AddPointer(MovableData.PointerSize.FourBytes, backgroundData);
 
             data.data.AddPointer(rom.GetAssetPointer(AssetCategory.Collision, tilesetCollisionName));
-            data.data.AddPointer(rom.GetAssetPointer(AssetCategory.TilesetGraphics, tilesetGraphicsName));
-            data.data.AddPointer(rom.GetAssetPointer(AssetCategory.TilesetPalette, paletteName));
+            data.data.AddPointer(rom.GetAssetPointer(AssetCategory.Graphics, tilesetGraphicsName));
+            data.data.AddPointer(rom.GetAssetPointer(AssetCategory.Palette, paletteName));
             data.data.AddPointer(rom.GetAssetPointer(AssetCategory.Palette, spritePaletteName));
             if (paletteAnimationPtr > 0) {
                 data.data.AddPointer(paletteAnimationPtr);

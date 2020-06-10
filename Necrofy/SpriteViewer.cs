@@ -25,7 +25,7 @@ namespace Necrofy
 
         public void Show(Project project) {
             loadedPalette = new LoadedPalette(project, "Sprites");
-            loadedGraphics = new LoadedGraphics(project, GraphicsAsset.SpritesName);
+            loadedGraphics = new LoadedGraphics(project, GraphicsAsset.DefaultName);
             spritesAsset = SpritesAsset.FromProject(project);
 
             numericUpDown1.Maximum = spritesAsset.sprites.Length - 1;

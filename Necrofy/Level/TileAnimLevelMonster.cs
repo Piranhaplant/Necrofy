@@ -16,8 +16,8 @@ namespace Necrofy
         public List<Entry> entries { get; set; }
 
         public static void RegisterLoader() {
-            LevelMonster.AddLoader(Type,
-                (r, s) => {
+            AddLoader(Type,
+                (r, s, tileset) => {
                     s.GoToPointerPush();
                     LevelMonster m = new TileAnimLevelMonster(s);
                     s.PopPosition();

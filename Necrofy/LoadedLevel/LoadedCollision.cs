@@ -5,12 +5,12 @@ using System.Text;
 
 namespace Necrofy
 {
-    class LoadedTilesetCollision
+    class LoadedCollision
     {
         public readonly ushort[] tiles;
 
-        public LoadedTilesetCollision(Project project, string tilesetCollisionName) {
-            TilesetCollisionAsset collisionAsset = TilesetCollisionAsset.FromProject(project, tilesetCollisionName);
+        public LoadedCollision(Project project, string collisionName) {
+            CollisionAsset collisionAsset = CollisionAsset.FromProject(project, collisionName);
 
             tiles = new ushort[collisionAsset.data.Length / 2];
             for (int i = 0; i < tiles.Length; i++) {

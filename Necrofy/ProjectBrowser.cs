@@ -23,13 +23,10 @@ namespace Necrofy
             { AssetCategory.Data, Resources.document_binary },
             { AssetCategory.Editor, Resources.gear },
             { AssetCategory.Graphics, Resources.image },
-            { AssetCategory.TilesetGraphics, Resources.image },
             { AssetCategory.Level, Resources.map },
             { AssetCategory.Palette, Resources.color },
-            { AssetCategory.TilesetPalette, Resources.color },
-            { AssetCategory.Sprites, Resources.layout_4 },
+            { AssetCategory.Sprites, Resources.leaf },
             { AssetCategory.Tilemap, Resources.layout_4 },
-            { AssetCategory.TilesetTilemap, Resources.layout_4 },
         };
         private readonly Dictionary<AssetCategory, int> displayImageIndexes = new Dictionary<AssetCategory, int>();
         private readonly Dictionary<AssetCategory, Icon> displayIcons = new Dictionary<AssetCategory, Icon>();

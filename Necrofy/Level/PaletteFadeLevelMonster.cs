@@ -18,10 +18,10 @@ namespace Necrofy
         public string spritePal { get; set; }
 
         public static void RegisterLoader() {
-            LevelMonster.AddLoader(Type,
-                (r, s) => {
+            AddLoader(Type,
+                (r, s, tileset) => {
                     s.GoToPointerPush();
-                    LevelMonster m = new PaletteFadeLevelMonster(r, s);
+                    LevelMonster m = new PaletteFadeLevelMonster(r, s, tileset);
                     s.PopPosition();
                     return m;
                 },
@@ -34,15 +34,15 @@ namespace Necrofy
             this.spritePal = spritePal;
         }
 
-        public PaletteFadeLevelMonster(ROMInfo r, NStream s) : base(Type) {
-            bgPal = TilesetPaletteAsset.GetAssetName(s, r, s.ReadPointer());
+        public PaletteFadeLevelMonster(ROMInfo r, NStream s, string tileset) : base(Type) {
+            bgPal = PaletteAsset.GetAssetName(s, r, s.ReadPointer(), tileset);
             spritePal = PaletteAsset.GetAssetName(s, r, s.ReadPointer());
         }
 
         public override void Build(MovableData data, ROMInfo rom) {
             data.data.AddPointer(type);
             MovableData paletteData = new MovableData();
-            paletteData.data.AddPointer(rom.GetAssetPointer(AssetCategory.TilesetPalette, bgPal));
+            paletteData.data.AddPointer(rom.GetAssetPointer(AssetCategory.Palette, bgPal));
             paletteData.data.AddPointer(rom.GetAssetPointer(AssetCategory.Palette, spritePal));
             data.AddPointer(MovableData.PointerSize.FourBytes, paletteData);
         }

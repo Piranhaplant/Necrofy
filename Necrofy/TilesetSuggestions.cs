@@ -11,6 +11,14 @@ namespace Necrofy
         public ushort PriorityTileCount { get; private set; }
         private readonly Dictionary<Direction, List<Category>> directions = new Dictionary<Direction, List<Category>>();
 
+        public TilesetSuggestions() {
+            PriorityTileCount = 0;
+            directions.Add(Direction.Left, new List<Category>());
+            directions.Add(Direction.Top, new List<Category>());
+            directions.Add(Direction.Right, new List<Category>());
+            directions.Add(Direction.Bottom, new List<Category>());
+        }
+
         public TilesetSuggestions(string json) {
             JsonData data = JsonConvert.DeserializeObject<JsonData>(json);
             PriorityTileCount = data.priorityTileCount;

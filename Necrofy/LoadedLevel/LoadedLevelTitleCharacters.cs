@@ -18,10 +18,10 @@ namespace Necrofy
         public readonly Bitmap[] images;
 
         public LoadedLevelTitleCharacters(Project project) {
-            LoadedGraphics loadedGraphics = new LoadedGraphics(project, GraphicsAsset.LevelTitleName);
-            loadedPalette = new LoadedPalette(project, PaletteAsset.LevelTitleName);
-            LoadedTilemap loadedTilemap = new LoadedTilemap(project, TilemapAsset.LevelTitleName);
-            DataAsset charData = DataAsset.FromProject(project, DataAsset.LevelTitleCharsName);
+            LoadedGraphics loadedGraphics = new LoadedGraphics(project, Asset.LevelTitleFolder + Asset.FolderSeparator + GraphicsAsset.DefaultName);
+            loadedPalette = new LoadedPalette(project, Asset.LevelTitleFolder + Asset.FolderSeparator + PaletteAsset.DefaultName);
+            LoadedTilemap loadedTilemap = new LoadedTilemap(project, Asset.LevelTitleFolder + Asset.FolderSeparator + TilemapAsset.DefaultName);
+            DataAsset charData = DataAsset.FromProject(project, Asset.LevelTitleFolder, DataAsset.LevelTitleCharacterMapName);
 
             images = new Bitmap[charData.data.Length / 2];
             for (int i = 0; i < images.Length; i++) {

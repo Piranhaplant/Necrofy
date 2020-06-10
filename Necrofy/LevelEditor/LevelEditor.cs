@@ -65,7 +65,7 @@ namespace Necrofy
 
             tilesetObjectBrowserContents = new TilesetObjectBrowserContents(level);
             tilesetObjectBrowserContents.SelectedIndexChanged += TilesetObjectBrowserContents_SelectedIndexChanged;
-            spriteObjectBrowserContents = new SpriteObjectBrowserContents(level.spriteGraphics);
+            spriteObjectBrowserContents = new SpriteObjectBrowserContents(level);
             spriteObjectBrowserContents.SelectedIndexChanged += SpriteObjectBrowserContents_SelectedIndexChanged;
             spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.Item);
             spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.LevelMonster);
@@ -87,11 +87,12 @@ namespace Necrofy
             spriteTool = new SpriteTool(this);
             SetupTool(spriteTool, ToolStripGrouper.ItemType.SpriteTool, Keys.I);
 
-            level.Animated += TileAnimator_Animated;
+            level.TilesChanged += Level_GraphicsChanged;
+            level.SpritesChanged += Level_GraphicsChanged;
 
             Repaint();
         }
-
+        
         protected override void CloseChildren(FormClosingEventArgs e) {
             if (titleEditor != null) {
                 titleEditor.Close();
@@ -257,10 +258,9 @@ namespace Necrofy
             Repaint();
         }
 
-        private void TileAnimator_Animated(object sender, EventArgs e) {
-            if (DockVisible && !solidTilesOnly) {
+        private void Level_GraphicsChanged(object sender, EventArgs e) {
+            if (DockVisible) {
                 Repaint();
-                tilesetObjectBrowserContents.Repaint();
             }
         }
 

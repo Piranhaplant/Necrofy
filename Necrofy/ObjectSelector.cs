@@ -187,6 +187,10 @@ namespace Necrofy
         }
 
         public void KeyDown(Keys keyData) {
+            if (selectedObjects.Count == 0) {
+                return;
+            }
+
             int dx = 0;
             int dy = 0;
             switch (keyData) {
