@@ -48,9 +48,11 @@ namespace Necrofy
         private void Contents_ObjectsChanged(object sender, ObjectsChangedEventArgs e) {
             if (e.LayoutChanged) {
                 LayoutObjects();
-                scrollWrapper.ScrollToPoint(0, 0);
             } else {
                 canvas.Invalidate();
+            }
+            if (e.ScrollToTop) {
+                scrollWrapper.ScrollToPoint(0, 0);
             }
         }
 
@@ -131,12 +133,21 @@ namespace Necrofy
             for (int i = 0; i < objects.Count; i++) {
                 if (objects[i].DisplayBounds.Contains(x, y)) {
                     contents.SelectedIndex = i;
-                    canvas.Invalidate();
                     return;
                 }
             }
+            contents.SelectedIndex = -1;
         }
-        
+
+        private void canvas_MouseDoubleClick(object sender, MouseEventArgs e) {
+            if (contents == null || e.Button != MouseButtons.Left) {
+                return;
+            }
+            if (contents.SelectedIndex >= 0) {
+                contents.HandleDoubleClick();
+            }
+        }
+
         void scrollWrapper_Scrolled(object sender, EventArgs e) {
             canvas.Invalidate();
         }

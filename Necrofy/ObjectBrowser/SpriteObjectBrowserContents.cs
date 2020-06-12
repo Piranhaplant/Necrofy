@@ -13,14 +13,14 @@ namespace Necrofy
         private readonly List<LoadedSpriteGraphics.LoadedSprite> sprites = new List<LoadedSpriteGraphics.LoadedSprite>();
         private readonly List<SpriteDisplay.Category> categoryForSprites = new List<SpriteDisplay.Category>();
         private HashSet<SpriteDisplay.Category> highlighedCategories = new HashSet<SpriteDisplay.Category>();
-        
+
         public SpriteObjectBrowserContents(LoadedLevel level) {
             this.level = level;
             level.SpritesChanged += Level_SpritesChanged;
         }
 
         private void Level_SpritesChanged(object sender, EventArgs e) {
-            UpdateSpriteList();
+            UpdateSpriteList(scrollToTop: false);
         }
 
         public void AddCategory(SpriteDisplay.Category category) {
@@ -38,11 +38,11 @@ namespace Necrofy
         public void SetHighlightedCategories(IEnumerable<SpriteDisplay.Category> categories) {
             if (!highlighedCategories.SetEquals(categories)) {
                 highlighedCategories = new HashSet<SpriteDisplay.Category>(categories);
-                RaiseObjectsChangedEvent();
+                RaiseObjectsChangedEvent(scrollToTop: false);
             }
         }
 
-        private void UpdateSpriteList() {
+        private void UpdateSpriteList(bool scrollToTop = true) {
             // TODO: update selected index
             sprites.Clear();
             categoryForSprites.Clear();
@@ -51,7 +51,7 @@ namespace Necrofy
                 sprites.AddRange(s);
                 categoryForSprites.AddRange(s.Select(o => category));
             }
-            RaiseObjectsChangedEvent();
+            RaiseObjectsChangedEvent(scrollToTop);
         }
 
         public SpriteDisplay.Key SelectedSprite => SelectedIndex < 0 ? null : sprites[SelectedIndex].Key;

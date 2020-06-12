@@ -38,6 +38,16 @@ namespace Necrofy
             merge = true;
             InvokeDirtyChanged();
         }
+
+        public void Revert(UndoAction<T> action) {
+            if (undoActions.Count > 0) {
+                if (undoActions.Peek() == action) {
+                    undoActions.Pop();
+                } else if (undoActions.Peek().Unmerge(action)) {
+                    action.DoUndo();
+                }
+            }
+        }
         
         public override bool Dirty {
             get {
@@ -209,6 +219,7 @@ namespace Necrofy
         protected abstract void Redo();
         protected virtual void AfterAction() { }
         public virtual bool Merge(UndoAction<T> action) { return false; }
+        public virtual bool Unmerge(UndoAction<T> action) { return false; }
         public virtual void SetEditor(T editor) {
             this.editor = editor;
         }

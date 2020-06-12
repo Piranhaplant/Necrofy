@@ -180,6 +180,16 @@ namespace Necrofy
             return false;
         }
 
+        public override bool Unmerge(UndoAction<LevelEditor> action) {
+            if (action is ChangeSpriteTypeAction changeSpriteTypeAction) {
+                if (changeSpriteTypeAction.objs.SequenceEqual(objs)) {
+                    newType = changeSpriteTypeAction.prevType[0];
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public override string ToString() {
             if (objs.Count == 1) {
                 return "Change sprite";

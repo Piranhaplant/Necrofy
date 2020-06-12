@@ -5,16 +5,14 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Necrofy
 {
     class SpriteTool : Tool, ObjectSelector<WrappedLevelObject>.IHost
     {
-        private static readonly Pen selectionBorderDashPen = new Pen(Color.Black) {
-            DashOffset = 0,
-            DashPattern = new float[] { 4f, 4f },
-        };
         private static readonly SolidBrush selectionFillBrush = new SolidBrush(Color.FromArgb(96, 255, 255, 255));
 
         private readonly ObjectSelector<WrappedLevelObject> objectSelector;
@@ -50,8 +48,8 @@ namespace Necrofy
         public void MoveSelectedObjects(int dx, int dy, int snap) {
             editor.undoManager.Do(new MoveSpriteAction(objectSelector.GetSelectedObjects(), dx, dy, snap));
         }
-        
-        public WrappedLevelObject CreateObject(int x, int y) {
+
+        private WrappedLevelObject GetCreationObject(int x, int y) {
             SpriteDisplay.Key selectedSprite = editor.spriteObjectBrowserContents.SelectedSprite;
 
             WrappedLevelObject newObject = null;
@@ -71,6 +69,11 @@ namespace Necrofy
                         break;
                 }
             }
+            return newObject;
+        }
+        
+        public WrappedLevelObject CreateObject(int x, int y) {
+            WrappedLevelObject newObject = GetCreationObject(x, y);
             if (newObject != null) {
                 editor.undoManager.Do(new AddSpriteAction(new[] { newObject }));
             }
@@ -104,9 +107,35 @@ namespace Necrofy
             objectSelector.KeyDown(e.KeyData);
         }
 
+        ChangeSpriteTypeAction prevChangeSpriteAction1 = null;
+        ChangeSpriteTypeAction prevChangeSpriteAction2 = null;
+
         public override void SpriteChanged() {
+            prevChangeSpriteAction2 = prevChangeSpriteAction1;
             if (editor.spriteObjectBrowserContents.SelectedSprite != null) {
-                editor.undoManager.Do(new ChangeSpriteTypeAction(objectSelector.GetSelectedObjects(), (SpriteDisplay.Category)editor.spriteObjectBrowserContents.SelectedCategory, editor.spriteObjectBrowserContents.SelectedSprite.value));
+                prevChangeSpriteAction1 = new ChangeSpriteTypeAction(objectSelector.GetSelectedObjects(), (SpriteDisplay.Category)editor.spriteObjectBrowserContents.SelectedCategory, editor.spriteObjectBrowserContents.SelectedSprite.value);
+                editor.undoManager.Do(prevChangeSpriteAction1);
+            } else {
+                prevChangeSpriteAction1 = null;
+            }
+        }
+        
+        public override void SpriteDoubleClicked() {
+            Point center = editor.GetViewCenter();
+            WrappedLevelObject newObject = GetCreationObject(Math.Max(0, center.X), Math.Max(0, center.Y));
+            if (newObject != null) {
+                Cancel(prevChangeSpriteAction1);
+                Cancel(prevChangeSpriteAction2);
+                editor.undoManager.Do(new AddSpriteAction(new[] { newObject }));
+
+                objectSelector.SelectObjects(new[] { newObject });
+                editor.Activate();
+            }
+        }
+
+        private void Cancel(ChangeSpriteTypeAction action) {
+            if (action != null) {
+                editor.undoManager.Revert(action);
             }
         }
 

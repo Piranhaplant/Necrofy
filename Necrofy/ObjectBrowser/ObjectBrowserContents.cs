@@ -20,12 +20,17 @@ namespace Necrofy
         public abstract void PaintObject(int i, Graphics g, int x, int y);
         /// <summary>Invoked when there is a change to the list of objects</summary>
         public event EventHandler<ObjectsChangedEventArgs> ObjectsChanged;
-        protected void RaiseObjectsChangedEvent() {
-            ObjectsChanged?.Invoke(this, new ObjectsChangedEventArgs(layoutChanged: true));
+        protected void RaiseObjectsChangedEvent(bool scrollToTop = true) {
+            ObjectsChanged?.Invoke(this, new ObjectsChangedEventArgs(layoutChanged: true, scrollToTop: scrollToTop));
         }
 
         public void Repaint() {
-            ObjectsChanged?.Invoke(this, new ObjectsChangedEventArgs(layoutChanged: false));
+            ObjectsChanged?.Invoke(this, new ObjectsChangedEventArgs(layoutChanged: false, scrollToTop: false));
+        }
+
+        public event EventHandler DoubleClicked;
+        public virtual void HandleDoubleClick() {
+            DoubleClicked?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>Invoked when there is a change to the selected object</summary>
@@ -48,9 +53,11 @@ namespace Necrofy
     public class ObjectsChangedEventArgs : EventArgs
     {
         public bool LayoutChanged { get; private set; }
+        public bool ScrollToTop { get; private set; }
 
-        public ObjectsChangedEventArgs(bool layoutChanged) {
+        public ObjectsChangedEventArgs(bool layoutChanged, bool scrollToTop) {
             LayoutChanged = layoutChanged;
+            ScrollToTop = scrollToTop;
         }
     }
 }

@@ -67,6 +67,7 @@ namespace Necrofy
             tilesetObjectBrowserContents.SelectedIndexChanged += TilesetObjectBrowserContents_SelectedIndexChanged;
             spriteObjectBrowserContents = new SpriteObjectBrowserContents(level);
             spriteObjectBrowserContents.SelectedIndexChanged += SpriteObjectBrowserContents_SelectedIndexChanged;
+            spriteObjectBrowserContents.DoubleClicked += SpriteObjectBrowserContents_DoubleClicked;
             spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.Item);
             spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.LevelMonster);
             spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.Monster);
@@ -92,7 +93,7 @@ namespace Necrofy
 
             Repaint();
         }
-        
+
         protected override void CloseChildren(FormClosingEventArgs e) {
             if (titleEditor != null) {
                 titleEditor.Close();
@@ -247,6 +248,10 @@ namespace Necrofy
 
         private void SpriteObjectBrowserContents_SelectedIndexChanged(object sender, EventArgs e) {
             currentTool.SpriteChanged();
+        }
+
+        private void SpriteObjectBrowserContents_DoubleClicked(object sender, EventArgs e) {
+            currentTool.SpriteDoubleClicked();
         }
 
         public override void PropertyBrowserPropertyChanged(PropertyValueChangedEventArgs e) {

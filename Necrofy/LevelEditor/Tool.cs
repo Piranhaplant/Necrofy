@@ -26,6 +26,7 @@ namespace Necrofy
 
         public virtual void TileChanged() { }
         public virtual void SpriteChanged() { }
+        public virtual void SpriteDoubleClicked() { }
         public virtual void PropertyBrowserPropertyChanged(PropertyValueChangedEventArgs e) { }
 
         public virtual bool CanCopy => false;
