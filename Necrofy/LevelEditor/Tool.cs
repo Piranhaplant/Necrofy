@@ -52,6 +52,17 @@ namespace Necrofy
                 editor.SetPropertyBrowserObjects(propertyBrowserObjects);
             }
         }
+
+        private string status = "";
+        public string Status {
+            get {
+                return status;
+            }
+            protected set {
+                status = value;
+                editor.SetStatus(status);
+            }
+        }
         
         public enum ObjectType
         {

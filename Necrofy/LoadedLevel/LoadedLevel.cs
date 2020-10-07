@@ -70,6 +70,7 @@ namespace Necrofy
         }
 
         public void LoadTiles(Project project) {
+            bool animationRunning = tileAnimator.Running;
             DisposeTiles();
 
             tilemap = new LoadedTilesetTilemap(project, Level.tilesetTilemapName);
@@ -88,6 +89,9 @@ namespace Necrofy
                 }
             }
             tileAnimator.Animated += TileAnimator_Animated;
+            if (animationRunning) {
+                tileAnimator.Run();
+            }
 
             for (int i = 0; i < tiles.Length; i++) {
                 BitmapData curTile = CreateTile(tiles, i, palette);

@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace Necrofy
 {
-    class TileAnimator
-    {
+    class TileAnimator {
         private const double MillisecondsPerFrame = 1000.0 / 60.0;
 
         public event EventHandler Animated;
 
         private readonly Dictionary<int, Entry> entries;
         private CancellationTokenSource animationCancel = new CancellationTokenSource();
+        public bool Running { get; private set; }
 
         public TileAnimator() {
             entries = new Dictionary<int, Entry>();
@@ -44,11 +44,13 @@ namespace Necrofy
             animationCancel.Cancel();
             animationCancel = new CancellationTokenSource();
             RunAsync(animationCancel.Token);
+            Running = true;
         }
 
         public void Pause() {
             animationCancel.Cancel();
             animationCancel = new CancellationTokenSource();
+            Running = false;
         }
 
         public void Advance() {

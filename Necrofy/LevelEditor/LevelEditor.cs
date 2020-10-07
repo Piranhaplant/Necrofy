@@ -141,6 +141,10 @@ namespace Necrofy
             PropertyBrowserObjects = objects;
         }
 
+        public void SetStatus(string status) {
+            Status = status;
+        }
+
         public void GenerateMouseMove() {
             if (currentTool != null) {
                 DoMouseMove(new MouseEventArgs(MouseButtons, 0, prevMousePosition.X, prevMousePosition.Y, 0));
@@ -170,7 +174,7 @@ namespace Necrofy
             }
             ChangeTool(spriteTool);
         }
-
+        
         private void UpdateAnimationState() {
             if (mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewAnimate).Checked) {
                 level.tileAnimator.Run();
@@ -378,7 +382,7 @@ namespace Necrofy
                 screenSizeGuideY = 0;
             } else {
                 screenSizeGuideX = Math.Max(SNESGraphics.ScreenWidth / 2, Math.Min(maxX - SNESGraphics.ScreenWidth / 2, screenSizeGuideX));
-                screenSizeGuideY = Math.Max(SNESGraphics.ScreenHeight / 2, Math.Min(maxY - SNESGraphics.ScreenHeight / 2, screenSizeGuideY));
+                screenSizeGuideY = Math.Max(SNESGraphics.ScreenHeight / 2, Math.Min(maxY - SNESGraphics.ScreenHeight / 2 - 15, screenSizeGuideY));
             }
             if (screenSizeGuideX != screenSizeGuidePosition.X || screenSizeGuideY != screenSizeGuidePosition.Y) {
                 screenSizeGuidePosition = new Point(screenSizeGuideX, screenSizeGuideY);
@@ -470,7 +474,6 @@ namespace Necrofy
                 }
             } else if (item == ToolStripGrouper.ItemType.LevelSettings) {
                 new LevelSettingsDialog(project, this).ShowDialog();
-                UpdateAnimationState();
             } else if (item == ToolStripGrouper.ItemType.LevelClear) {
                 undoManager.Do(new ClearLevelAction((ushort)Math.Max(tilesetObjectBrowserContents.SelectedTile, 0)));
             } else if (item == ToolStripGrouper.ItemType.LevelSaveAsImage) {

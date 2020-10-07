@@ -39,9 +39,22 @@ namespace Necrofy
             get {
                 return title;
             }
-            set {
+            protected set {
                 title = value;
                 UpdateText();
+            }
+        }
+
+        private string status = "";
+        public string Status {
+            get {
+                return status;
+            }
+            protected set {
+                if (value != status) {
+                    status = value;
+                    StatusChanged?.Invoke(this, EventArgs.Empty);
+                }
             }
         }
 
@@ -55,6 +68,7 @@ namespace Necrofy
 
         public event EventHandler DirtyChanged;
         public event EventHandler SelectionChanged;
+        public event EventHandler StatusChanged;
         
         protected MainWindow mainWindow { get; private set; }
         protected Project project { get; private set; }

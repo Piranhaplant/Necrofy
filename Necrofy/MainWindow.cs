@@ -14,6 +14,8 @@ namespace Necrofy
 {
     partial class MainWindow : Form
     {
+        private static readonly string DefaultStatusText = Application.ProductName + " " + Application.ProductVersion;
+
         private Project project;
 
         private Dictionary<string, RunSettings> savedRunSettings;
@@ -64,6 +66,7 @@ namespace Necrofy
 
             projectMenuItems = new List<ToolStripMenuItem>() { buildBuildProject, buildRunProject };
             HideAllEditorToolStripItems();
+            UpdateStatusText();
         }
         
         private void MainWindow_FormClosed(object sender, FormClosedEventArgs e) {
@@ -180,6 +183,7 @@ namespace Necrofy
             editor.DirtyChanged += Editor_DirtyChanged;
             editor.SelectionChanged += Editor_SelectionChanged;
             editor.TextChanged += Editor_TextChanged;
+            editor.StatusChanged += Editor_StatusChanged;
         }
 
         public bool EditorVisible(EditorWindow editor) {
@@ -224,6 +228,12 @@ namespace Necrofy
             }
         }
 
+        private void Editor_StatusChanged(object sender, EventArgs e) {
+            if (sender == activeEditor) {
+                UpdateStatusText();
+            }
+        }
+
         private void dockPanel_ContentRemoved(object sender, DockContentEventArgs e) {
             if (e.Content is EditorWindow editor) {
                 openEditors.Remove(editor);
@@ -257,6 +267,7 @@ namespace Necrofy
             PropertyBrowser.SetObjects(activeEditor?.PropertyBrowserObjects);
             buildRunFromLevel.Enabled = activeEditor?.LevelNumber != null;
             fileClose.Enabled = activeEditor != null;
+            UpdateStatusText();
         }
 
         private void UpdateWindowText() {
@@ -264,6 +275,10 @@ namespace Necrofy
             if (activeEditor != null) {
                 Text += " - " + activeEditor.Title;
             }
+        }
+
+        private void UpdateStatusText() {
+            statusLabel.Text = activeEditor?.Status ?? DefaultStatusText;
         }
 
         private void PropertyBrowser_PropertyChanged(object sender, PropertyValueChangedEventArgs e) {
