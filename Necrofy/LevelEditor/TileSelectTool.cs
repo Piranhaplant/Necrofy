@@ -11,7 +11,9 @@ namespace Necrofy
         private int prevY;
         private bool ignoreTileChange = false;
 
-        public TileSelectTool(LevelEditor editor) : base(editor) { }
+        public TileSelectTool(LevelEditor editor) : base(editor) {
+            Status = "Click to select all tiles of the same type.";
+        }
         
         protected override void MouseDown2(LevelMouseEventArgs e) {
             prevX = -1;

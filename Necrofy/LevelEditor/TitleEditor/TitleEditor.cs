@@ -82,6 +82,8 @@ namespace Necrofy
             pageEditor2.Enter += PageEditor2_Enter;
             pageEditor1.SelectedWordsChanged += SelectedWordsChanged;
             pageEditor2.SelectedWordsChanged += SelectedWordsChanged;
+
+            Status = "Click to edit or move text. Hold ctrl and click to create new text.";
         }
 
         private void TitleEditor_Disposed(object sender, EventArgs e) {

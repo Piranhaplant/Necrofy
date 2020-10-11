@@ -12,7 +12,9 @@ namespace Necrofy
         private int prevY = -1;
         private bool selecting = false;
 
-        public PaintbrushTool(LevelEditor editor) : base(editor) { }
+        public PaintbrushTool(LevelEditor editor) : base(editor) {
+            Status = "Click to paint tiles. Hold Ctrl to select a tile type.";
+        }
 
         protected override void MouseDown2(LevelMouseEventArgs e) {
             prevX = -1;

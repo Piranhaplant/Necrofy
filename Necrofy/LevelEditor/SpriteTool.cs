@@ -13,12 +13,16 @@ namespace Necrofy
 {
     class SpriteTool : Tool, ObjectSelector<WrappedLevelObject>.IHost
     {
+        private const string DefaultStatus = "Click to select or move. Hold shift to add to the selection. Hold alt to remove from the selection. Double click in the objects panel or hold ctrl and click on the level to create a new sprite.";
+        private const string DragStatus = "Move: {0}, {1}. Hold shift to snap to 8x8 grid.";
+
         private static readonly SolidBrush selectionFillBrush = new SolidBrush(Color.FromArgb(96, 255, 255, 255));
 
         private readonly ObjectSelector<WrappedLevelObject> objectSelector;
 
         public SpriteTool(LevelEditor editor) : base(editor) {
             objectSelector = new ObjectSelector<WrappedLevelObject>(this);
+            UpdateStatus();
         }
 
         public override ObjectType objectType => ObjectType.Sprites;
@@ -47,6 +51,7 @@ namespace Necrofy
 
         public void MoveSelectedObjects(int dx, int dy, int snap) {
             editor.undoManager.Do(new MoveSpriteAction(objectSelector.GetSelectedObjects(), dx, dy, snap));
+            UpdateStatus();
         }
 
         private WrappedLevelObject GetCreationObject(int x, int y) {
@@ -92,6 +97,7 @@ namespace Necrofy
 
         public override void MouseDown(LevelMouseEventArgs e) {
             objectSelector.MouseDown(e.X, e.Y);
+            UpdateStatus();
         }
 
         public override void MouseMove(LevelMouseEventArgs e) {
@@ -101,6 +107,7 @@ namespace Necrofy
         public override void MouseUp(LevelMouseEventArgs e) {
             objectSelector.MouseUp();
             editor.undoManager.ForceNoMerge();
+            UpdateStatus();
         }
 
         public override void KeyDown(KeyEventArgs e) {
@@ -276,6 +283,14 @@ namespace Necrofy
 
         public override void Delete() {
             editor.undoManager.Do(new DeleteSpriteAction(objectSelector.GetSelectedObjects()));
+        }
+
+        private void UpdateStatus() {
+            if (objectSelector.MovingObjects) {
+                Status = string.Format(DragStatus, objectSelector.TotalMoveX, objectSelector.TotalMoveY);
+            } else {
+                Status = DefaultStatus;
+            }
         }
     }
 }

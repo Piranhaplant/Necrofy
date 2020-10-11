@@ -12,7 +12,9 @@ namespace Necrofy
         private int prevY;
         private bool addingToSelection;
 
-        public PencilSelectTool(LevelEditor editor) : base(editor) { }
+        public PencilSelectTool(LevelEditor editor) : base(editor) {
+            Status = "Click to select tiles. Hold alt to unselect tiles.";
+        }
 
         protected override void MouseDown2(LevelMouseEventArgs e) {
             prevX = -1;

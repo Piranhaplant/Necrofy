@@ -9,7 +9,12 @@ namespace Necrofy
 {
     class ResizeLevelTool : TileTool
     {
-        public ResizeLevelTool(LevelEditor editor) : base(editor) { }
+        private const string DefaultStatus = "Drag the level border to resize.";
+        private const string DragStatus = "Level: {0}x{1}";
+
+        public ResizeLevelTool(LevelEditor editor) : base(editor) {
+            UpdateStatus();
+        }
 
         private enum ResizeMode
         {
@@ -73,6 +78,7 @@ namespace Necrofy
                 curEndX = Width;
                 curEndY = Height;
                 editor.scrollWrapper.ExpandingDrag = true;
+                UpdateStatus();
             }
         }
 
@@ -101,6 +107,7 @@ namespace Necrofy
                     curEndX = newEndX;
                     curEndY = newEndY;
                     editor.Repaint();
+                    UpdateStatus();
                 }
             } else {
                 int width = Width * 64;
@@ -142,15 +149,26 @@ namespace Necrofy
                 int tile = Math.Max(editor.tilesetObjectBrowserContents.SelectedTile, 0);
                 editor.undoManager.Do(new ResizeLevelAction(curStartX, curStartY, curEndX, curEndY, (ushort)tile));
             }
-            resizing = false;
-            editor.scrollWrapper.ExpandingDrag = false;
-            editor.UpdateLevelSize();
+            EndResize();
         }
 
         protected override void DoneBeingUsed2() {
+            EndResize();
+        }
+
+        private void EndResize() {
             resizing = false;
             editor.scrollWrapper.ExpandingDrag = false;
             editor.UpdateLevelSize();
+            UpdateStatus();
+        }
+
+        private void UpdateStatus() {
+            if (resizing) {
+                Status = string.Format(DragStatus, curEndX - curStartX, curEndY - curStartY);
+            } else {
+                Status = DefaultStatus;
+            }
         }
     }
 }

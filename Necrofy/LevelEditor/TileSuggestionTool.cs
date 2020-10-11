@@ -21,7 +21,9 @@ namespace Necrofy
         private TilesetSuggestions.Direction? direction = null;
         private bool filtered = false;
 
-        public TileSuggestionTool(LevelEditor editor) : base(editor) { }
+        public TileSuggestionTool(LevelEditor editor) : base(editor) {
+            Status = "Click a tile and drag to an adjacent tile to show all connecting tiles.";
+        }
 
         protected override void Paint2(Graphics g) {
             if (startIsInBounds) {

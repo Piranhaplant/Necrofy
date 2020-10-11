@@ -30,9 +30,9 @@ namespace Necrofy
         private HashSet<T> baseSelectedObjects;
         private Rectangle selectionRectangle;
 
-        private bool movingObjects = false;
-        private int totalMoveX;
-        private int totalMoveY;
+        public bool MovingObjects { get; private set; } = false;
+        public int TotalMoveX { get; private set; }
+        public int TotalMoveY { get; private set; }
 
         private int dragStartX;
         private int dragStartY;
@@ -96,11 +96,11 @@ namespace Necrofy
             }
 
             makingSelectionRectangle = false;
-            movingObjects = false;
+            MovingObjects = false;
             dragStartX = x;
             dragStartY = y;
-            totalMoveX = 0;
-            totalMoveY = 0;
+            TotalMoveX = 0;
+            TotalMoveY = 0;
 
             if (!hitObjectFound) {
                 if (!addToSelection && !removeFromSelection || creating) {
@@ -110,7 +110,7 @@ namespace Necrofy
                     creating = false;
                     T newObject = host.CreateObject(x, y);
                     if (newObject != null) {
-                        movingObjects = true;
+                        MovingObjects = true;
                         selectedObjects.Add(newObject);
                     }
                 } else {
@@ -122,7 +122,7 @@ namespace Necrofy
                 if (removeFromSelection) {
                     selectedObjects.Remove(hitObject);
                 } else {
-                    movingObjects = true;
+                    MovingObjects = true;
                 }
             } else {
                 if (!addToSelection && !removeFromSelection) {
@@ -130,7 +130,7 @@ namespace Necrofy
                 }
                 if (!removeFromSelection) {
                     selectedObjects.Add(hitObject);
-                    movingObjects = true;
+                    MovingObjects = true;
                 }
             }
             host.SelectionChanged();
@@ -151,12 +151,12 @@ namespace Necrofy
                     }
                 }
                 host.SelectionChanged();
-            } else if (movingObjects) {
+            } else if (MovingObjects) {
                 int newMoveX = x - dragStartX;
                 int newMoveY = y - dragStartY;
 
-                int dx = newMoveX - totalMoveX;
-                int dy = newMoveY - totalMoveY;
+                int dx = newMoveX - TotalMoveX;
+                int dy = newMoveY - TotalMoveY;
                 ClampObjectMove(ref dx, ref dy);
 
                 if (dx != 0 || dy != 0) {
@@ -165,13 +165,13 @@ namespace Necrofy
                         selectedObjects = new HashSet<T>(host.CloneSelection());
                         host.SelectionChanged();
                         if (selectedObjects.Count == 0) {
-                            movingObjects = false;
+                            MovingObjects = false;
                             return;
                         }
                     }
 
-                    totalMoveX += dx;
-                    totalMoveY += dy;
+                    TotalMoveX += dx;
+                    TotalMoveY += dy;
 
                     // TODO add snap
                     host.MoveSelectedObjects(dx, dy, 1);
@@ -181,7 +181,7 @@ namespace Necrofy
 
         public void MouseUp() {
             makingSelectionRectangle = false;
-            movingObjects = false;
+            MovingObjects = false;
             baseSelectedObjects = null;
             host.SelectionChanged();
         }

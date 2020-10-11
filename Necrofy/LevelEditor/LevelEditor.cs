@@ -234,6 +234,7 @@ namespace Necrofy
                 currentTool = tool;
                 BrowserContents = toolTypeToObjectContents[tool.objectType];
                 PropertyBrowserObjects = tool.PropertyBrowserObjects;
+                Status = tool.Status;
                 
                 foreach (ToolStripGrouper.ItemType type in toolForItemType.Keys) {
                     mainWindow.GetToolStripItem(type).Checked = false;

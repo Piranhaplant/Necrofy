@@ -21,6 +21,22 @@ namespace Necrofy
         private int curX;
         private int curY;
         private bool adding;
+        
+        public Rectangle CurrentRectangle {
+            get {
+                if (useCurPoints) {
+                    int left = Math.Min(curX, startX);
+                    int right = Math.Max(curX, startX) + 1;
+                    int top = Math.Min(curY, startY);
+                    int bottom = Math.Max(curY, startY) + 1;
+                    Rectangle r = new Rectangle(left, top, right - left, bottom - top);
+                    r.Intersect(new Rectangle(0, 0, width, height));
+                    return r;
+                } else {
+                    return Rectangle.Empty;
+                }
+            }
+        }
 
         public event EventHandler Changed;
 
