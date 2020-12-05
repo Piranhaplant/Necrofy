@@ -13,11 +13,14 @@ namespace Necrofy
 {
     public partial class BuildResultsWindow : DockContent
     {
+        private BuildResults results;
+
         public BuildResultsWindow() {
             InitializeComponent();
         }
 
         public void ShowResults(BuildResults results) {
+            this.results = results;
             dataGrid.Rows.Clear();
 
             foreach (BuildResults.Entry entry in results.Entries) {
@@ -34,6 +37,21 @@ namespace Necrofy
                 case BuildResults.Entry.Level.INFO:
                 default:
                     return Properties.Resources.information;
+            }
+        }
+
+        private void resultsShowDetails_Click(object sender, EventArgs e) {
+            if (dataGrid.SelectedCells.Count > 0) {
+                BuildResults.Entry entry = results.Entries[dataGrid.SelectedCells[0].RowIndex];
+                new TextDisplayForm("Error Details", entry.description + Environment.NewLine + entry.stackTrace).ShowDialog();
+            }
+        }
+
+        private void dataGrid_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e) {
+            if (e.ColumnIndex > -1 && e.RowIndex > -1) {
+                DataGridViewCell cell = dataGrid[e.ColumnIndex, e.RowIndex];
+                dataGrid.CurrentCell = cell;
+                cell.Selected = true;
             }
         }
     }

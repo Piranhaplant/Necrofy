@@ -27,11 +27,14 @@
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             this.dataGrid = new System.Windows.Forms.DataGridView();
+            this.resultsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.resultsShowDetails = new System.Windows.Forms.ToolStripMenuItem();
             this.Level = new System.Windows.Forms.DataGridViewImageColumn();
             this.File = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Description = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.entryBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGrid)).BeginInit();
+            this.resultsContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.entryBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
@@ -47,11 +50,28 @@
             this.Description});
             this.dataGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGrid.Location = new System.Drawing.Point(0, 0);
+            this.dataGrid.MultiSelect = false;
             this.dataGrid.Name = "dataGrid";
             this.dataGrid.ReadOnly = true;
             this.dataGrid.RowHeadersVisible = false;
+            this.dataGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.dataGrid.Size = new System.Drawing.Size(856, 526);
             this.dataGrid.TabIndex = 0;
+            this.dataGrid.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGrid_CellMouseDown);
+            // 
+            // resultsContextMenu
+            // 
+            this.resultsContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.resultsShowDetails});
+            this.resultsContextMenu.Name = "resultsContextMenu";
+            this.resultsContextMenu.Size = new System.Drawing.Size(151, 26);
+            // 
+            // resultsShowDetails
+            // 
+            this.resultsShowDetails.Name = "resultsShowDetails";
+            this.resultsShowDetails.Size = new System.Drawing.Size(150, 22);
+            this.resultsShowDetails.Text = "Show Details...";
+            this.resultsShowDetails.Click += new System.EventHandler(this.resultsShowDetails_Click);
             // 
             // Level
             // 
@@ -74,6 +94,7 @@
             // Description
             // 
             this.Description.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Description.ContextMenuStrip = this.resultsContextMenu;
             this.Description.FillWeight = 90F;
             this.Description.HeaderText = "Description";
             this.Description.Name = "Description";
@@ -97,6 +118,7 @@
             this.Name = "BuildResultsWindow";
             this.Text = "Build Results";
             ((System.ComponentModel.ISupportInitialize)(this.dataGrid)).EndInit();
+            this.resultsContextMenu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.entryBindingSource)).EndInit();
             this.ResumeLayout(false);
 
@@ -109,5 +131,7 @@
         private System.Windows.Forms.DataGridViewImageColumn Level;
         private System.Windows.Forms.DataGridViewTextBoxColumn File;
         private System.Windows.Forms.DataGridViewTextBoxColumn Description;
+        private System.Windows.Forms.ContextMenuStrip resultsContextMenu;
+        private System.Windows.Forms.ToolStripMenuItem resultsShowDetails;
     }
 }

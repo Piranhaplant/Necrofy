@@ -10,7 +10,7 @@ namespace Necrofy
     {
         private List<Entry> entries = new List<Entry>();
 
-        public IEnumerable<Entry> Entries => entries;
+        public IReadOnlyList<Entry> Entries => entries;
         public bool Success => !entries.Any(e => e.level == Entry.Level.ERROR);
 
         public void AddEntry(Entry entry) {
@@ -22,11 +22,13 @@ namespace Necrofy
             public readonly Level level;
             public readonly string file;
             public readonly string description;
+            public readonly string stackTrace;
 
-            public Entry(Level level, string file, string description) {
+            public Entry(Level level, string file, string description, string stackTrace = "") {
                 this.level = level;
                 this.file = file;
                 this.description = description;
+                this.stackTrace = stackTrace;
             }
 
             public enum Level
