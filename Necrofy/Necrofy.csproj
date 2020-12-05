@@ -109,6 +109,13 @@
     <Compile Include="Assets\TilemapAsset.cs" />
     <Compile Include="Assets\TilesetSuggestionsAsset.cs" />
     <Compile Include="AssetTree.cs" />
+    <Compile Include="BuildResults.cs" />
+    <Compile Include="BuildResultsWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BuildResultsWindow.Designer.cs">
+      <DependentUpon>BuildResultsWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Canvas.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -314,6 +321,9 @@
     <Compile Include="Undo\TileAction.cs" />
     <Compile Include="Undo\UndoManager.cs" />
     <Compile Include="ZAMNCompress.cs" />
+    <EmbeddedResource Include="BuildResultsWindow.resx">
+      <DependentUpon>BuildResultsWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Canvas.resx">
       <DependentUpon>Canvas.cs</DependentUpon>
     </EmbeddedResource>
@@ -530,9 +540,12 @@
     <None Include="Icons\arrow-270.png" />
     <None Include="Icons\arrow-stop-090.png" />
     <None Include="Icons\arrow-stop-270.png" />
+    <None Include="Icons\cross-circle.png" />
+    <None Include="Icons\exclamation.png" />
     <Content Include="Icons\information-small.png" />
     <None Include="Icons\layers-alignment-center.png" />
     <None Include="Icons\layers-alignment-middle.png" />
+    <None Include="Icons\information.png" />
     <Content Include="ProjectFiles\Patches\OtherExpand.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

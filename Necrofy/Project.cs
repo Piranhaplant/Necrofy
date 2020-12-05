@@ -86,7 +86,8 @@ namespace Necrofy
         }
 
         /// <summary>Builds the project</summary>
-        public void Build() {
+        public BuildResults Build() {
+            BuildResults results = new BuildResults();
             string outputROM = Path.Combine(path, buildFilename);
             File.Copy(Path.Combine(path, baseROMFilename), outputROM, true);
 
@@ -97,13 +98,16 @@ namespace Necrofy
 
             foreach (string filename in Directory.GetFiles(path, "*", SearchOption.AllDirectories)) {
                 string relativeFilename = GetRelativePath(filename);
-                Asset asset = Asset.FromFile(this, relativeFilename);
-                if (asset == null) {
-                    // TODO: some sort of error
-                    Debug.WriteLine("No asset handled for filename " + relativeFilename);
-                    continue;
+                try {
+                    Asset asset = Asset.FromFile(this, relativeFilename);
+                    if (asset == null) {
+                        results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.WARNING, relativeFilename, "Unknown asset"));
+                        continue;
+                    }
+                    info.assets.Add(asset);
+                } catch (Exception ex) {
+                    results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, relativeFilename, ex.Message));
                 }
-                info.assets.Add(asset);
             }
 
             info.assets.Sort();
@@ -126,35 +130,42 @@ namespace Necrofy
             
             Patch(outputROM, "ROMExpand.asm");
             Patch(outputROM, "OtherExpand.asm");
+            return results;
         }
 
-        public void Run() {
+        public BuildResults Run() {
             // TODO: Don't build if not necessary
-            Build();
-            Process.Start(Path.Combine(path, buildFilename));
+            BuildResults results = Build();
+            if (results.Success) {
+                Process.Start(Path.Combine(path, buildFilename));
+            }
+            return results;
         }
 
-        public void RunFromLevel(int level, RunSettings settings) {
+        public BuildResults RunFromLevel(int level, RunSettings settings) {
             // TODO: Don't build if not necessary
-            Build();
-            string runROM = Path.Combine(path, runFromLevelFilename);
-            File.Copy(Path.Combine(path, buildFilename), runROM, true);
+            BuildResults results = Build();
+            if (results.Success) {
+                string runROM = Path.Combine(path, runFromLevelFilename);
+                File.Copy(Path.Combine(path, buildFilename), runROM, true);
 
-            Dictionary<string, string> defines = new Dictionary<string, string> {
-                ["LEVEL"] = level.ToString(),
-                ["VICTIMS"] = "$" + settings.victimCount.ToString(),
-                ["WEAPON_COUNT"] = settings.weaponAmounts.Length.ToString(),
-                ["SPECIAL_COUNT"] = settings.specialAmounts.Length.ToString(),
-            };
-            for (int i = 0; i < settings.weaponAmounts.Length; i++) {
-                defines["WEAPON" + i.ToString()] = "$" + settings.weaponAmounts[i].ToString();
-            }
-            for (int i = 0; i < settings.specialAmounts.Length; i++) {
-                defines["SPECIAL" + i.ToString()] = "$" + settings.specialAmounts[i].ToString();
-            }
+                Dictionary<string, string> defines = new Dictionary<string, string> {
+                    ["LEVEL"] = level.ToString(),
+                    ["VICTIMS"] = "$" + settings.victimCount.ToString(),
+                    ["WEAPON_COUNT"] = settings.weaponAmounts.Length.ToString(),
+                    ["SPECIAL_COUNT"] = settings.specialAmounts.Length.ToString(),
+                };
+                for (int i = 0; i < settings.weaponAmounts.Length; i++) {
+                    defines["WEAPON" + i.ToString()] = "$" + settings.weaponAmounts[i].ToString();
+                }
+                for (int i = 0; i < settings.specialAmounts.Length; i++) {
+                    defines["SPECIAL" + i.ToString()] = "$" + settings.specialAmounts[i].ToString();
+                }
 
-            Patch(runROM, "RunFromLevel.asm", defines);
-            Process.Start(runROM);
+                Patch(runROM, "RunFromLevel.asm", defines);
+                Process.Start(runROM);
+            }
+            return results;
         }
 
         private static void AddEndOfBankFreespace(Stream s, Freespace freespace) {

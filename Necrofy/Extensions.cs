@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace Necrofy
 {
@@ -43,6 +44,23 @@ namespace Necrofy
 
         public static void DrawRectangleProper(this Graphics g, Pen pen, Rectangle rect) {
             g.DrawRectangle(pen, rect.X, rect.Y, rect.Width - 1, rect.Height - 1);
+        }
+
+        public static void UnAutoHide(this DockContent dockContent) {
+            switch (dockContent.DockState) {
+                case DockState.DockBottomAutoHide:
+                    dockContent.DockState = DockState.DockBottom;
+                    break;
+                case DockState.DockLeftAutoHide:
+                    dockContent.DockState = DockState.DockLeft;
+                    break;
+                case DockState.DockRightAutoHide:
+                    dockContent.DockState = DockState.DockRight;
+                    break;
+                case DockState.DockTopAutoHide:
+                    dockContent.DockState = DockState.DockTop;
+                    break;
+            }
         }
     }
 }

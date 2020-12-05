@@ -24,6 +24,7 @@ namespace Necrofy
         public ObjectBrowserForm ObjectBrowser { get; private set; }
         public ProjectBrowser ProjectBrowser { get; private set; }
         public PropertyBrowser PropertyBrowser { get; private set; }
+        public BuildResultsWindow BuildResultsWindow { get; private set; }
 
         private readonly List<ToolStripMenuItem> projectMenuItems;
 
@@ -38,10 +39,11 @@ namespace Necrofy
             ProjectBrowser = new ProjectBrowser(this);
             PropertyBrowser = new PropertyBrowser();
             PropertyBrowser.PropertyChanged += PropertyBrowser_PropertyChanged;
+            BuildResultsWindow = new BuildResultsWindow();
 
             string dockLayout = Properties.Settings.Default.DockLayout;
             if (!string.IsNullOrEmpty(dockLayout)) {
-                Dictionary<string, DockContent> allPanels = new DockContent[] { ObjectBrowser, ProjectBrowser, PropertyBrowser }.ToDictionary(o => o.GetType().FullName);
+                Dictionary<string, DockContent> allPanels = new DockContent[] { ObjectBrowser, ProjectBrowser, PropertyBrowser, BuildResultsWindow }.ToDictionary(o => o.GetType().FullName);
                 using (MemoryStream s = new MemoryStream(Encoding.UTF8.GetBytes(dockLayout))) {
                     dockPanel.LoadFromXml(s, persistString => {
                         if (allPanels.TryGetValue(persistString, out DockContent panel)) {
@@ -83,6 +85,8 @@ namespace Necrofy
         }
 
         private void UseDefaultDockLayout() {
+            BuildResultsWindow.Show(dockPanel, DockState.DockBottomAutoHide);
+            BuildResultsWindow.Hide();
             ObjectBrowser.Show(dockPanel, DockState.DockLeft);
             ProjectBrowser.Show(dockPanel, DockState.DockRight);
             PropertyBrowser.Show(ProjectBrowser.Pane, DockAlignment.Bottom, 0.2);
@@ -406,20 +410,31 @@ namespace Necrofy
 
         private void BuildProject(object sender, EventArgs e) {
             // TODO prompt for saving
-            project?.Build();
+            ShowBuildResults(project?.Build());
             // TODO tell the user that it finished
         }
 
         private void RunProject(object sender, EventArgs e) {
             // TODO prompt for saving
-            project?.Run();
+            ShowBuildResults(project?.Run());
         }
 
         private void RunFromLevel(object sender, EventArgs e) {
             if (activeEditor?.LevelNumber != null) {
                 // TODO prompt for saving
-                project?.RunFromLevel((int)activeEditor?.LevelNumber, savedRunSettings[currentRunSettings]);
+                ShowBuildResults(project?.RunFromLevel((int)activeEditor?.LevelNumber, savedRunSettings[currentRunSettings]));
             }
+        }
+
+        private void ShowBuildResults(BuildResults results) {
+            if (results == null) {
+                return;
+            }
+            if (!results.Success) {
+                ShowDockContent(BuildResultsWindow);
+                BuildResultsWindow.UnAutoHide();
+            }
+            BuildResultsWindow.ShowResults(results);
         }
 
         private void RunFromLevelSettings(object sender, EventArgs e) {
