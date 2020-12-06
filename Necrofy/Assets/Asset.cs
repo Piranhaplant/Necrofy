@@ -94,7 +94,6 @@ namespace Necrofy
                     return creator.FromFile(nameInfo, Path.Combine(project.path, filename));
                 }
             }
-            // TODO: record error or something when this happens
             return null;
         }
         public static NameInfo GetInfo(Project project, string filename) {
@@ -105,7 +104,6 @@ namespace Necrofy
                     return nameInfo;
                 }
             }
-            // TODO: record error or something when this happens
             return null;
         }
         /// <summary>Adds the default assets for all asset types to romInfo</summary>

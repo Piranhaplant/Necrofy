@@ -27,7 +27,6 @@ namespace Necrofy
             this.levelEditor = levelEditor;
             LoadedLevel level = levelEditor.level;
 
-            // TODO Error handling
             presets = EditorAsset<LevelSettingsPresets>.FromProject(project, "LevelSettingsPresets").data;
 
             tilesSelector.Add(project.GetAssetsInCategory(AssetCategory.Tilemap).Where(a => a.ParsedName.Tileset != null), TilemapAsset.DefaultName);

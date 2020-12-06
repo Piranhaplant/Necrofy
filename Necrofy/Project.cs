@@ -31,9 +31,6 @@ namespace Necrofy
         public Project(string baseROM, string path) {
             this.path = FixPath(path);
 
-            if (Directory.Exists(path)) {
-                Directory.Delete(path, true); // TODO: Warn about this
-            }
             Directory.CreateDirectory(path);
             string newBaseROM = Path.Combine(path, baseROMFilename);
             File.Copy(baseROM, newBaseROM);
@@ -123,7 +120,6 @@ namespace Necrofy
                 }
 
                 // Round size up to the nearest bank
-                // TODO: Check if everything still works if more than one bank of extra stuff has been added
                 s.SetLength((long)Math.Ceiling(s.Length / (double)Freespace.BankSize) * Freespace.BankSize);
                 byte sizeValue = (byte)(Math.Ceiling(Math.Log(s.Length, 2)) - 10);
                 s.Seek(ROMPointers.ROMSize, SeekOrigin.Begin);

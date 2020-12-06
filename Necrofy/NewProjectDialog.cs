@@ -36,7 +36,6 @@ namespace Necrofy
         }
 
         private void btnCreate_Click(object sender, EventArgs e) {
-            // TODO: Check if file/folder exists
             BaseROM = txtBaseROM.Text;
             ProjectLocation = txtLocation.Text;
             this.DialogResult = System.Windows.Forms.DialogResult.OK;

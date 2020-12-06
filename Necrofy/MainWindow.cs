@@ -299,9 +299,11 @@ namespace Necrofy
                         }
                     }
                 }
-                ProjectBrowser.SaveFolderStates();
-                project.settings.OpenFiles = openEditors.Select(e => e.AssetInfo?.GetFilename("")).Where(e => e != null).ToList();
-                project.WriteSettings();
+                try {
+                    ProjectBrowser.SaveFolderStates();
+                    project.settings.OpenFiles = openEditors.Select(e => e.AssetInfo?.GetFilename("")).Where(e => e != null).ToList();
+                    project.WriteSettings();
+                } catch (Exception) { }
             }
             return false;
         }
@@ -312,30 +314,52 @@ namespace Necrofy
                 if (CloseProject(closeEditors: true)) {
                     return;
                 }
-                project = new Project(newProjectDialog.BaseROM, newProjectDialog.ProjectLocation);
+                try {
+                    if (Directory.Exists(newProjectDialog.ProjectLocation)) {
+                        if (MessageBox.Show($"The folder {newProjectDialog.ProjectLocation} already exists and will be deleted. Is this okay?", "Project location already exists", MessageBoxButtons.OKCancel) == DialogResult.Cancel) {
+                            return;
+                        }
+                        Directory.Delete(newProjectDialog.ProjectLocation, true);
+                    }
+                    project = new Project(newProjectDialog.BaseROM, newProjectDialog.ProjectLocation);
+                } catch (Exception ex) {
+                    MessageBox.Show($"Error creating project: {Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
                 ProjectReady();
             }
         }
 
         private void OpenProject(object sender, EventArgs e) {
             if (openProjectDialog.ShowDialog() == DialogResult.OK) {
-                if (CloseProject(closeEditors: true)) {
-                    return;
-                }
-                project = new Project(openProjectDialog.FileName);
-                ProjectReady();
+                OpenProject(openProjectDialog.FileName);
             }
         }
 
         private void recentProjects_FileClicked(string file) {
+            OpenProject(file);
+        }
+
+        private void OpenProject(string settingsFilename) {
             if (CloseProject(closeEditors: true)) {
                 return;
             }
-            project = new Project(file);
+            try {
+                project = new Project(settingsFilename);
+            } catch (Exception ex) {
+                MessageBox.Show($"Error opening project: {Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             ProjectReady();
         }
 
         private void ProjectReady() {
+            if (project.settings.MajorVersion > ProjectSettings.CurMajorVersion) {
+                MessageBox.Show($"Project was created with a newer version of {Application.ProductName} and cannot be opened.", "Error");
+                project = null;
+                return;
+            }
+
             recentProjects.Add(project.SettingsPath);
             Properties.Settings.Default.RecentProjects = string.Join(Path.PathSeparator.ToString(), recentProjects.Files);
             Properties.Settings.Default.Save();
@@ -346,7 +370,9 @@ namespace Necrofy
                 foreach (string filename in project.settings.OpenFiles) {
                     Asset.NameInfo info = Asset.GetInfo(project, filename);
                     if (info != null) {
-                        OpenAsset(info);
+                        try {
+                            OpenAsset(info);
+                        } catch (Exception) { }
                     }
                 }
             }

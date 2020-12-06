@@ -474,7 +474,11 @@ namespace Necrofy
                     titleEditor.Activate();
                 }
             } else if (item == ToolStripGrouper.ItemType.LevelSettings) {
-                new LevelSettingsDialog(project, this).ShowDialog();
+                try {
+                    new LevelSettingsDialog(project, this).ShowDialog();
+                } catch (Exception ex) {
+                    MessageBox.Show($"Error opening level settings: {Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             } else if (item == ToolStripGrouper.ItemType.LevelClear) {
                 undoManager.Do(new ClearLevelAction((ushort)Math.Max(tilesetObjectBrowserContents.SelectedTile, 0)));
             } else if (item == ToolStripGrouper.ItemType.LevelSaveAsImage) {

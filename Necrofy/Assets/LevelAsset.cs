@@ -39,7 +39,7 @@ namespace Necrofy
         }
 
         public override void WriteFile(Project project) {
-            File.WriteAllText(nameInfo.GetFilename(project.path, createDirectories: true), JsonConvert.SerializeObject(level));
+            File.WriteAllText(nameInfo.GetFilename(project.path, createDirectories: true), JsonConvert.SerializeObject(level, Formatting.Indented));
         }
 
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) {

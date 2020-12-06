@@ -279,7 +279,6 @@
     <Compile Include="Level\PositionLevelMonster.cs" />
     <Compile Include="Level\TileAnimLevelMonster.cs" />
     <Compile Include="Level\TitlePage.cs" />
-    <Compile Include="Log.cs" />
     <Compile Include="Level\Monster.cs" />
     <Compile Include="NStream.cs" />
     <Compile Include="Level\OneShotMonster.cs" />

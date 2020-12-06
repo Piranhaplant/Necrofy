@@ -137,7 +137,11 @@ namespace Necrofy
                 return;
             }
             if (e.Node.Tag is Asset.NameInfo info) {
-                mainWindow.OpenAsset(info);
+                try {
+                    mainWindow.OpenAsset(info);
+                } catch (Exception ex) {
+                    MessageBox.Show($"Could not open file {info.GetFilename("")}:{Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
