@@ -315,12 +315,6 @@ namespace Necrofy
                     return;
                 }
                 try {
-                    if (Directory.Exists(newProjectDialog.ProjectLocation)) {
-                        if (MessageBox.Show($"The folder {newProjectDialog.ProjectLocation} already exists and will be deleted. Is this okay?", "Project location already exists", MessageBoxButtons.OKCancel) == DialogResult.Cancel) {
-                            return;
-                        }
-                        Directory.Delete(newProjectDialog.ProjectLocation, true);
-                    }
                     project = new Project(newProjectDialog.BaseROM, newProjectDialog.ProjectLocation);
                 } catch (Exception ex) {
                     MessageBox.Show($"Error creating project: {Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -421,9 +415,11 @@ namespace Necrofy
         private void Paste(object sender, EventArgs e) {
             activeEditor?.Paste();
         }
-
+        
         private void Delete(object sender, EventArgs e) {
-            activeEditor?.Delete();
+            if (dockPanel.ActiveContent == activeEditor) {
+                activeEditor?.Delete();
+            }
         }
 
         private void SelectAll(object sender, EventArgs e) {

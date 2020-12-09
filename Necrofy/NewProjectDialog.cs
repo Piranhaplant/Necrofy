@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -19,27 +20,33 @@ namespace Necrofy
         }
 
         private void btnBaseROM_Click(object sender, EventArgs e) {
-            if (ofdBaseROM.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+            if (ofdBaseROM.ShowDialog() == DialogResult.OK) {
                 txtBaseROM.Text = ofdBaseROM.FileName;
             }
         }
 
         private void btnLocation_Click(object sender, EventArgs e) {
-            if (sfdLocation.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+            if (sfdLocation.ShowDialog() == DialogResult.OK) {
                 txtLocation.Text = sfdLocation.FileName;
             }
         }
 
         private void btnCancel_Click(object sender, EventArgs e) {
-            this.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
         private void btnCreate_Click(object sender, EventArgs e) {
+            if (Directory.Exists(txtLocation.Text)) {
+                if (MessageBox.Show($"The folder {txtLocation.Text} already exists and will be deleted. Is this okay?", "Project location already exists", MessageBoxButtons.OKCancel) == DialogResult.Cancel) {
+                    return;
+                }
+                Directory.Delete(txtLocation.Text, true);
+            }
             BaseROM = txtBaseROM.Text;
             ProjectLocation = txtLocation.Text;
-            this.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.Close();
+            DialogResult = DialogResult.OK;
+            Close();
         }
     }
 }

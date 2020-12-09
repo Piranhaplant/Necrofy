@@ -33,10 +33,15 @@ namespace Necrofy
 
             Directory.CreateDirectory(path);
             string newBaseROM = Path.Combine(path, baseROMFilename);
-            File.Copy(baseROM, newBaseROM);
-            // TODO: Remove header if it exists
 
-            NStream s = new NStream(new FileStream(newBaseROM, FileMode.Open, FileAccess.Read, FileShare.Read));
+            byte[] romData = File.ReadAllBytes(baseROM);
+            int extraBytes = romData.Length % Freespace.BankSize;
+            if (extraBytes != 0x200 && extraBytes != 0) {
+                throw new Exception($"ROM has unrecognized size (0x{romData.Length:X})");
+            }
+            NStream s = new NStream(new FileStream(newBaseROM, FileMode.Create, FileAccess.ReadWrite, FileShare.Read));
+            s.Write(romData, extraBytes, romData.Length - extraBytes);
+
             ROMInfo info = new ROMInfo(s);
 
             foreach (Asset asset in info.assets) {

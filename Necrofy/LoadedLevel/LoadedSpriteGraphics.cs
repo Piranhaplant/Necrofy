@@ -10,6 +10,12 @@ namespace Necrofy
 {
     class LoadedSpriteGraphics : IDisposable
     {
+        private static readonly Font unknownSpriteFont = new Font(FontFamily.GenericMonospace, 8);
+        private static readonly StringFormat unknownSpriteStringFormat = new StringFormat() {
+            Alignment = StringAlignment.Center,
+            LineAlignment = StringAlignment.Center
+        };
+
         public readonly Dictionary<SpriteDisplay.Key.Type, Dictionary<int, LoadedSprite>> sprites;
         public readonly Dictionary<SpriteDisplay.Category, List<LoadedSprite>> spritesByCategory;
 
@@ -52,16 +58,37 @@ namespace Necrofy
         public void Render(SpriteDisplay.Key.Type type, int value, Graphics g, int x, int y) {
             if (sprites[type].TryGetValue(value, out LoadedSprite s)) {
                 s.Render(g, x, y);
+            } else {
+                Rectangle r;
+                int length;
+                if (type == SpriteDisplay.Key.Type.Item) {
+                    r = new Rectangle(x - 8, y - 8, 17, 17);
+                    length = 2;
+                } else if (type == SpriteDisplay.Key.Type.CreditHead) {
+                    r = new Rectangle(x - 10, y - 28, 20, 28);
+                    length = 4;
+                } else {
+                    r = new Rectangle(x - 10, y - 40, 20, 40);
+                    length = 6;
+                }
+                g.FillRectangle(Brushes.Black, r);
+                g.DrawRectangle(Pens.White, r);
+                g.DrawString(value.ToString("X" + length.ToString()), unknownSpriteFont, Brushes.White, r, unknownSpriteStringFormat);
             }
-            // TODO: unknown sprites
         }
 
         public Rectangle GetRectangle(SpriteDisplay.Key.Type type, int value, int x, int y) {
             if (sprites[type].TryGetValue(value, out LoadedSprite s)) {
                 return s.GetRectangle(x, y);
+            } else {
+                if (type == SpriteDisplay.Key.Type.Item) {
+                    return new Rectangle(x - 8, y - 8, 17, 17);
+                } else if (type == SpriteDisplay.Key.Type.CreditHead) {
+                    return new Rectangle(x - 10, y - 28, 20, 28);
+                } else {
+                    return new Rectangle(x - 10, y - 40, 20, 40);
+                }
             }
-            // TODO: unknown sprites
-            return Rectangle.Empty;
         }
 
         public abstract class LoadedSprite : IDisposable
