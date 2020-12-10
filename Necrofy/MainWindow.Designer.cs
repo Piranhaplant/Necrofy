@@ -144,6 +144,7 @@
             this.openProjectDialog = new System.Windows.Forms.OpenFileDialog();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.buildStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripGrouper = new Necrofy.ToolStripGrouper(this.components);
             this.toolBarMenuLinker = new Necrofy.ToolBarMenuLinker(this.components);
             this.toolStrip1.SuspendLayout();
@@ -1002,38 +1003,38 @@
             // 
             this.toolStripGrouper.SetItemType(this.levelEditTitle, Necrofy.ToolStripGrouper.ItemType.LevelEditTitle);
             this.levelEditTitle.Name = "levelEditTitle";
-            this.levelEditTitle.Size = new System.Drawing.Size(180, 22);
+            this.levelEditTitle.Size = new System.Drawing.Size(159, 22);
             this.levelEditTitle.Text = "Edit Title...";
             // 
             // levelSettings
             // 
             this.toolStripGrouper.SetItemType(this.levelSettings, Necrofy.ToolStripGrouper.ItemType.LevelSettings);
             this.levelSettings.Name = "levelSettings";
-            this.levelSettings.Size = new System.Drawing.Size(180, 22);
+            this.levelSettings.Size = new System.Drawing.Size(159, 22);
             this.levelSettings.Text = "&Settings...";
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(156, 6);
             // 
             // levelClear
             // 
             this.toolStripGrouper.SetItemType(this.levelClear, Necrofy.ToolStripGrouper.ItemType.LevelClear);
             this.levelClear.Name = "levelClear";
-            this.levelClear.Size = new System.Drawing.Size(180, 22);
+            this.levelClear.Size = new System.Drawing.Size(159, 22);
             this.levelClear.Text = "Clear";
             // 
             // toolStripSeparator8
             // 
             this.toolStripSeparator8.Name = "toolStripSeparator8";
-            this.toolStripSeparator8.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator8.Size = new System.Drawing.Size(156, 6);
             // 
             // levelSaveAsImage
             // 
             this.toolStripGrouper.SetItemType(this.levelSaveAsImage, Necrofy.ToolStripGrouper.ItemType.LevelSaveAsImage);
             this.levelSaveAsImage.Name = "levelSaveAsImage";
-            this.levelSaveAsImage.Size = new System.Drawing.Size(180, 22);
+            this.levelSaveAsImage.Size = new System.Drawing.Size(159, 22);
             this.levelSaveAsImage.Text = "Save As Image...";
             // 
             // toolsMenu
@@ -1250,7 +1251,8 @@
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.statusLabel});
+            this.statusLabel,
+            this.buildStatusLabel});
             this.statusStrip1.Location = new System.Drawing.Point(0, 628);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(1061, 22);
@@ -1260,8 +1262,18 @@
             // statusLabel
             // 
             this.statusLabel.Name = "statusLabel";
-            this.statusLabel.Size = new System.Drawing.Size(38, 17);
+            this.statusLabel.Size = new System.Drawing.Size(930, 17);
+            this.statusLabel.Spring = true;
             this.statusLabel.Text = "status";
+            this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // buildStatusLabel
+            // 
+            this.buildStatusLabel.Image = global::Necrofy.Properties.Resources.tick_button;
+            this.buildStatusLabel.Name = "buildStatusLabel";
+            this.buildStatusLabel.Size = new System.Drawing.Size(85, 17);
+            this.buildStatusLabel.Text = "Build Status";
+            this.buildStatusLabel.Visible = false;
             // 
             // toolStripGrouper
             // 
@@ -1411,6 +1423,7 @@
         private System.Windows.Forms.ToolStripMenuItem levelSaveAsImage;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
+        private System.Windows.Forms.ToolStripStatusLabel buildStatusLabel;
     }
 }
 

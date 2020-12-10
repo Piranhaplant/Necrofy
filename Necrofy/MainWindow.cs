@@ -9,6 +9,8 @@ using System.Windows.Forms;
 using System.IO;
 using Newtonsoft.Json;
 using WeifenLuo.WinFormsUI.Docking;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Necrofy
 {
@@ -31,6 +33,8 @@ namespace Necrofy
         private readonly HashSet<EditorWindow> openEditors = new HashSet<EditorWindow>();
         private readonly HashSet<EditorWindow> dirtyEditors = new HashSet<EditorWindow>();
         private EditorWindow activeEditor = null;
+
+        private bool building = false;
         
         public MainWindow() {
             InitializeComponent();
@@ -431,20 +435,57 @@ namespace Necrofy
         }
 
         private void BuildProject(object sender, EventArgs e) {
-            // TODO prompt for saving
-            ShowBuildResults(project?.Build());
-            // TODO tell the user that it finished
+            DoBuild(() => project?.Build());
         }
 
         private void RunProject(object sender, EventArgs e) {
-            // TODO prompt for saving
-            ShowBuildResults(project?.Run());
+            DoBuild(() => project?.Run());
         }
 
         private void RunFromLevel(object sender, EventArgs e) {
             if (activeEditor?.LevelNumber != null) {
-                // TODO prompt for saving
-                ShowBuildResults(project?.RunFromLevel((int)activeEditor?.LevelNumber, savedRunSettings[currentRunSettings]));
+                DoBuild(() => project?.RunFromLevel((int)activeEditor?.LevelNumber, savedRunSettings[currentRunSettings]));
+            }
+        }
+
+        private CancellationTokenSource buildAnimationCancel = new CancellationTokenSource();
+
+        private async void DoBuild(Func<BuildResults> buildMethod) {
+            if (building) {
+                return;
+            }
+            SaveAll(this, EventArgs.Empty);
+            building = true;
+
+            buildStatusLabel.Text = "Building...";
+            buildStatusLabel.Visible = true;
+
+            buildAnimationCancel = new CancellationTokenSource();
+            ShowBuildAnimation(buildAnimationCancel.Token);
+            
+            BuildResults results = await Task.Run(buildMethod);
+            buildAnimationCancel.Cancel();
+            ShowBuildResults(results);
+
+            if (results.Success) {
+                buildStatusLabel.Text = "Build succeeded";
+                buildStatusLabel.Image = Properties.Resources.tick_button;
+            } else {
+                buildStatusLabel.Text = "Build failed";
+                buildStatusLabel.Image = Properties.Resources.cross_circle;
+            }
+            building = false;
+        }
+
+        private static readonly Image[] buildAnimationFrames = { Properties.Resources.arrow_circle, Properties.Resources.arrow_circle_2,
+            Properties.Resources.arrow_circle_3, Properties.Resources.arrow_circle_4 };
+
+        private async void ShowBuildAnimation(CancellationToken cancelToken) {
+            int frame = 0;
+            while (!cancelToken.IsCancellationRequested) {
+                buildStatusLabel.Image = buildAnimationFrames[frame];
+                frame = (frame + 1) % buildAnimationFrames.Length;
+                await Task.Delay(500);
             }
         }
 

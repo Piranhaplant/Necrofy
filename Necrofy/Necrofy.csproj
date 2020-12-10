@@ -550,10 +550,15 @@
     <None Include="Icons\arrow-stop-270.png" />
     <None Include="Icons\cross-circle.png" />
     <None Include="Icons\exclamation.png" />
+    <None Include="Icons\arrow-circle.png" />
+    <None Include="Icons\arrow-circle-2.png" />
+    <None Include="Icons\arrow-circle-3.png" />
+    <None Include="Icons\arrow-circle-4.png" />
     <Content Include="Icons\information-small.png" />
     <None Include="Icons\layers-alignment-center.png" />
     <None Include="Icons\layers-alignment-middle.png" />
     <None Include="Icons\information.png" />
+    <None Include="Icons\tick-button.png" />
     <Content Include="ProjectFiles\Patches\OtherExpand.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
