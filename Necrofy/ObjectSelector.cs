@@ -172,9 +172,8 @@ namespace Necrofy
 
                     TotalMoveX += dx;
                     TotalMoveY += dy;
-
-                    // TODO add snap
-                    host.MoveSelectedObjects(dx, dy, 1);
+                    
+                    host.MoveSelectedObjects(dx, dy);
                 }
             }
         }
@@ -212,8 +211,7 @@ namespace Necrofy
             ClampObjectMove(ref dx, ref dy);
 
             if (dx != 0 || dy != 0) {
-                // TODO add snap?
-                host.MoveSelectedObjects(dx, dy, 1);
+                host.MoveSelectedObjects(dx, dy);
             }
         }
 
@@ -233,7 +231,7 @@ namespace Necrofy
         {
             IEnumerable<T> GetObjects();
             void SelectionChanged();
-            void MoveSelectedObjects(int dx, int dy, int snap);
+            void MoveSelectedObjects(int dx, int dy);
             T CreateObject(int x, int y);
             IEnumerable<T> CloneSelection();
         }

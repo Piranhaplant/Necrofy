@@ -675,7 +675,7 @@ namespace Necrofy
             }
         }
 
-        public void MoveSelectedObjects(int dx, int dy, int snap) {
+        public void MoveSelectedObjects(int dx, int dy) {
             titleEditor.undoManager.Do(new MoveWordAction(SelectedWords, dx / 8, dy / 8));
         }
 

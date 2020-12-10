@@ -14,7 +14,7 @@ namespace Necrofy
     class SpriteTool : Tool, ObjectSelector<WrappedLevelObject>.IHost
     {
         private const string DefaultStatus = "Click to select or move. Hold shift to add to the selection. Hold alt to remove from the selection. Double click in the objects panel or hold ctrl and click on the level to create a new sprite.";
-        private const string DragStatus = "Move: {0}, {1}. Hold shift to snap to 8x8 grid.";
+        private const string DragStatus = "Move: {0}, {1}.";
 
         private static readonly SolidBrush selectionFillBrush = new SolidBrush(Color.FromArgb(96, 255, 255, 255));
 
@@ -49,8 +49,8 @@ namespace Necrofy
             }
         }
 
-        public void MoveSelectedObjects(int dx, int dy, int snap) {
-            editor.undoManager.Do(new MoveSpriteAction(objectSelector.GetSelectedObjects(), dx, dy, snap));
+        public void MoveSelectedObjects(int dx, int dy) {
+            editor.undoManager.Do(new MoveSpriteAction(objectSelector.GetSelectedObjects(), dx, dy));
             UpdateStatus();
         }
 
@@ -156,12 +156,12 @@ namespace Necrofy
                 switch (e.ChangedItem.Label) {
                     case WrappedLevelObject.XProperty:
                         ParsePositionProperty(value, o => o.X,
-                            dx => new MoveSpriteAction(objectSelector.GetSelectedObjects(), dx, 0, 1),
+                            dx => new MoveSpriteAction(objectSelector.GetSelectedObjects(), dx, 0),
                             x => new MoveSpriteAction(objectSelector.GetSelectedObjects(), x, null));
                         break;
                     case WrappedLevelObject.YProperty:
                         ParsePositionProperty(value, o => o.Y,
-                            dy => new MoveSpriteAction(objectSelector.GetSelectedObjects(), 0, dy, 1),
+                            dy => new MoveSpriteAction(objectSelector.GetSelectedObjects(), 0, dy),
                             y => new MoveSpriteAction(objectSelector.GetSelectedObjects(), null, y));
                         break;
                     case WrappedLevelObject.PointerProperty:
