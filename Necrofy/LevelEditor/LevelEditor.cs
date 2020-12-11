@@ -523,7 +523,7 @@ namespace Necrofy
         };
 
         public override void ToolStripItemCheckedChanged(ToolStripGrouper.ItemType item) {
-            if (IsActivated && spriteCategoryForMenuItem.TryGetValue(item, out SpriteDisplay.Category category)) {
+            if (DockPanel.ActiveDocument == this && spriteCategoryForMenuItem.TryGetValue(item, out SpriteDisplay.Category category)) {
                 UpdateSpriteCategory(category, mainWindow.GetToolStripItem(item).Checked);
             } else if (item == ToolStripGrouper.ItemType.ViewAnimate) {
                 UpdateAnimationState();
@@ -544,14 +544,16 @@ namespace Necrofy
         public bool PlayersEnabled => spriteCategoryEnabled[SpriteDisplay.Category.Player];
 
         private void UpdateSpriteCategory(SpriteDisplay.Category category, bool enabled) {
-            spriteCategoryEnabled[category] = enabled;
-            if (enabled && category != SpriteDisplay.Category.Player) {
-                spriteObjectBrowserContents.AddCategory(category);
-            } else {
-                spriteObjectBrowserContents.RemoveCategory(category);
+            if (spriteCategoryEnabled[category] != enabled) {
+                spriteCategoryEnabled[category] = enabled;
+                if (enabled && category != SpriteDisplay.Category.Player) {
+                    spriteObjectBrowserContents.AddCategory(category);
+                } else {
+                    spriteObjectBrowserContents.RemoveCategory(category);
+                }
+                ChangeTool(spriteTool);
+                UpdateSpriteSelection();
             }
-            ChangeTool(spriteTool);
-            UpdateSpriteSelection();
         }
     }
 }

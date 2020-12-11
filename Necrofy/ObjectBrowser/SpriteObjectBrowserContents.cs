@@ -43,13 +43,18 @@ namespace Necrofy
         }
 
         private void UpdateSpriteList(bool scrollToTop = true) {
-            // TODO: update selected index
+            SpriteDisplay.Key oldSelectedSprite = SelectedSprite;
             sprites.Clear();
             categoryForSprites.Clear();
+
             foreach (SpriteDisplay.Category category in categories.OrderBy(c => c)) {
                 List<LoadedSpriteGraphics.LoadedSprite> s = level.spriteGraphics.spritesByCategory[category];
                 sprites.AddRange(s);
                 categoryForSprites.AddRange(s.Select(o => category));
+            }
+
+            if (oldSelectedSprite != null) {
+                SelectedIndex = sprites.FindIndex(s => s.Key == oldSelectedSprite);
             }
             RaiseObjectsChangedEvent(scrollToTop);
         }

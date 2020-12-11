@@ -447,9 +447,7 @@ namespace Necrofy
                 DoBuild(() => project?.RunFromLevel((int)activeEditor?.LevelNumber, savedRunSettings[currentRunSettings]));
             }
         }
-
-        private CancellationTokenSource buildAnimationCancel = new CancellationTokenSource();
-
+        
         private async void DoBuild(Func<BuildResults> buildMethod) {
             if (building) {
                 return;
@@ -460,7 +458,7 @@ namespace Necrofy
             buildStatusLabel.Text = "Building...";
             buildStatusLabel.Visible = true;
 
-            buildAnimationCancel = new CancellationTokenSource();
+            CancellationTokenSource buildAnimationCancel = new CancellationTokenSource();
             ShowBuildAnimation(buildAnimationCancel.Token);
             
             BuildResults results = await Task.Run(buildMethod);
