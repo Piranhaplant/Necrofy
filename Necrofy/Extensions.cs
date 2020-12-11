@@ -62,5 +62,18 @@ namespace Necrofy
                     break;
             }
         }
+
+        public static TreeNode FindNodeByTag(this TreeNodeCollection nodes, object tag) {
+            foreach (TreeNode node in nodes) {
+                if (node.Tag == tag) {
+                    return node;
+                }
+                TreeNode child = node.Nodes.FindNodeByTag(tag);
+                if (child != null) {
+                    return child;
+                }
+            }
+            return null;
+        }
     }
 }

@@ -33,7 +33,6 @@ namespace Necrofy
 
         private readonly MainWindow mainWindow;
         private Project project;
-        private readonly Dictionary<Asset.NameInfo, TreeNode> nodeForAsset = new Dictionary<Asset.NameInfo, TreeNode>();
 
         public ProjectBrowser(MainWindow mainWindow) {
             InitializeComponent();
@@ -46,7 +45,6 @@ namespace Necrofy
         public void OpenProject(Project project) {
             this.project = project;
             tree.Nodes.Clear();
-            nodeForAsset.Clear();
 
             if (project != null) {
                 PopulateTree(tree.Nodes, project.Assets.Root);
@@ -59,33 +57,71 @@ namespace Necrofy
                     tree.SelectedNode = tree.Nodes[0]; // Scroll to the top regardless of what folders were opened
                 }
                 project.Assets.AssetChanged += AssetChanged;
+                project.Assets.AssetAdded += AssetAdded;
+                project.Assets.AssetRemoved += AssetRemoved;
+                project.Assets.FolderAdded += FolderAdded;
+                project.Assets.FolderRemoved += FolderRemoved;
             }
         }
 
         private void PopulateTree(TreeNodeCollection parent, AssetTree.Folder folder) {
             foreach (AssetTree.Folder subFolder in folder.Folders) {
-                TreeNode child = parent.Add(subFolder.Name);
-                child.Name = child.Text;
-                child.ImageIndex = FolderImageIndex;
-                child.SelectedImageIndex = FolderImageIndex;
+                PopulateFolder(parent, subFolder);
+            }
 
-                PopulateTree(child.Nodes, subFolder);
+            foreach (AssetTree.AssetEntry entry in folder.Assets) {
+                PopulateAsset(parent, entry);
             }
-            
-            foreach (Asset.NameInfo info in folder.Assets) {
-                TreeNode child = parent.Add(info.DisplayName);
-                child.Name = child.Text;
-                SetImage(child, info.Category);
-                child.Tag = info;
-                nodeForAsset[info] = child;
-            }
+        }
+
+        private void PopulateFolder(TreeNodeCollection parent, AssetTree.Folder subFolder) {
+            TreeNode child = parent.Add(subFolder.Name);
+            child.Name = child.Text;
+            child.ImageIndex = FolderImageIndex;
+            child.SelectedImageIndex = FolderImageIndex;
+            child.Tag = subFolder;
+
+            PopulateTree(child.Nodes, subFolder);
+        }
+
+        private void PopulateAsset(TreeNodeCollection parent, AssetTree.AssetEntry entry) {
+            TreeNode child = parent.Add(entry.Asset.DisplayName);
+            child.Name = child.Text;
+            SetImage(child, entry.Asset.Category);
+            child.Tag = entry;
         }
 
         private void AssetChanged(object sender, AssetEventArgs e) {
             Invoke((MethodInvoker)delegate {
-                TreeNode node = nodeForAsset[e.Asset];
-                node.Text = e.Asset.DisplayName;
+                TreeNode node = tree.Nodes.FindNodeByTag(e.Asset);
+                node.Text = e.Asset.Asset.DisplayName;
                 node.Name = node.Text;
+            });
+        }
+
+        private void AssetAdded(object sender, AssetEventArgs e) {
+            Invoke((MethodInvoker)delegate {
+                TreeNode parent = tree.Nodes.FindNodeByTag(e.Asset.Parent);
+                PopulateAsset(parent.Nodes, e.Asset);
+            });
+        }
+
+        private void AssetRemoved(object sender, AssetEventArgs e) {
+            Invoke((MethodInvoker)delegate {
+                tree.Nodes.FindNodeByTag(e.Asset).Remove();
+            });
+        }
+
+        private void FolderAdded(object sender, FolderEventArgs e) {
+            Invoke((MethodInvoker)delegate {
+                TreeNode parent = tree.Nodes.FindNodeByTag(e.Folder.Parent);
+                PopulateFolder(parent.Nodes, e.Folder);
+            });
+        }
+
+        private void FolderRemoved(object sender, FolderEventArgs e) {
+            Invoke((MethodInvoker)delegate {
+                tree.Nodes.FindNodeByTag(e.Folder).Remove();
             });
         }
 
@@ -136,11 +172,11 @@ namespace Necrofy
             if (!e.Node.IsSelected) {
                 return;
             }
-            if (e.Node.Tag is Asset.NameInfo info) {
+            if (e.Node.Tag is AssetTree.AssetEntry entry) {
                 try {
-                    mainWindow.OpenAsset(info);
+                    mainWindow.OpenAsset(entry.Asset);
                 } catch (Exception ex) {
-                    MessageBox.Show($"Could not open file {info.GetFilename("")}:{Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Could not open file {entry.Asset.GetFilename("")}:{Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
