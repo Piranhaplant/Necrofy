@@ -12,7 +12,7 @@ namespace Necrofy
         public const string RadiusProperty = "Radius";
         public const string DelayProperty = "Delay";
 
-        public WrappedMonster(Monster monster, LoadedSpriteGraphics spriteGraphics) : base(monster, spriteGraphics) { }
+        public WrappedMonster(Monster monster, LoadedLevelSprites spriteGraphics) : base(monster, spriteGraphics) { }
 
         public override SpriteDisplay.Category Category => SpriteDisplay.Category.Monster;
 

@@ -12,7 +12,7 @@ namespace Necrofy
         public readonly LevelAsset levelAsset;
         public LoadedGraphics graphics;
         public LoadedTilesetTilemap tilemap;
-        public LoadedSpriteGraphics spriteGraphics;
+        public LoadedLevelSprites spriteGraphics;
 
         public Bitmap[] tiles;
         public Bitmap[] priorityTiles;
@@ -56,7 +56,7 @@ namespace Necrofy
 
         public void LoadSprites(Project project) {
             DisposeSprites();
-            spriteGraphics = new LoadedSpriteGraphics(project, Level.spritePaletteName);
+            spriteGraphics = new LoadedLevelSprites(project, Level.spritePaletteName);
             SpritesChanged?.Invoke(this, EventArgs.Empty);
         }
 

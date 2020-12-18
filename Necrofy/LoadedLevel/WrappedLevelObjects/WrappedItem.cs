@@ -11,7 +11,7 @@ namespace Necrofy
     {
         public const string TypeProperty = "Type";
 
-        public WrappedItem(Item item, LoadedSpriteGraphics spriteGraphics) : base(item, spriteGraphics) { }
+        public WrappedItem(Item item, LoadedLevelSprites spriteGraphics) : base(item, spriteGraphics) { }
 
         public override SpriteDisplay.Category Category => SpriteDisplay.Category.Item;
 

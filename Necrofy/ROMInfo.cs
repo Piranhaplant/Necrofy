@@ -24,9 +24,9 @@ namespace Necrofy
             Freespace = new Freespace((int)s.Length);
 
             // First get a list of all the level pointers
-            s.Seek(ROMPointers.LevelPointers, SeekOrigin.Begin);
+            s.Seek(ROMPointers.LevelPointers);
             int levelCount = s.ReadInt16();
-            s.Seek(ROMPointers.BonusLevelNums, SeekOrigin.Begin);
+            s.Seek(ROMPointers.BonusLevelNums);
             int maxBonusLevel = levelCount;
             // Assume that there aren't any skipped level numbers
             for (int i = 0; i <= levelCount; i++) {
@@ -35,7 +35,7 @@ namespace Necrofy
                     maxBonusLevel = bonusLevelNum;
                 }
             }
-            s.Seek(ROMPointers.LevelPointers + 2, SeekOrigin.Begin); // Skip past the first 2 bytes which indicate how many levels there are
+            s.Seek(ROMPointers.LevelPointers + 2); // Skip past the first 2 bytes which indicate how many levels there are
 
             // If the fourth byte is zero, then the ROM is using 4-byte level pointers
             s.Seek(3, SeekOrigin.Current);

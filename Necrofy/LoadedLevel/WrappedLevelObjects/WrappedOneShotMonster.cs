@@ -17,7 +17,7 @@ namespace Necrofy
             Alignment = StringAlignment.Center
         };
 
-        public WrappedOneShotMonster(OneShotMonster monster, LoadedSpriteGraphics spriteGraphics) : base(monster, spriteGraphics) { }
+        public WrappedOneShotMonster(OneShotMonster monster, LoadedLevelSprites spriteGraphics) : base(monster, spriteGraphics) { }
 
         public override SpriteDisplay.Category Category {
             get {

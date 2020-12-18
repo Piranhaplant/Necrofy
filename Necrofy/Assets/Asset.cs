@@ -58,7 +58,7 @@ namespace Necrofy
             if (pointer == null) {
                 pointer = romInfo.Freespace.Claim(data.Length);
             }
-            rom.Seek((int)pointer, SeekOrigin.Begin);
+            rom.Seek((int)pointer);
             rom.Write(data, 0, data.Length);
             romInfo.AddAssetPointer(Category, Name, (int)pointer);
         }
@@ -138,7 +138,7 @@ namespace Necrofy
         private static void CreateAsset(NStream romStream, ROMInfo romInfo, Creator creator, NameInfo nameInfo, int pointer, int? size) {
             romStream.PushPosition();
 
-            romStream.Seek(pointer, SeekOrigin.Begin);
+            romStream.Seek(pointer);
             long startPos = romStream.Position;
             Asset asset = creator.FromRom(nameInfo, romStream, size, out bool trackFreespace);
             if (trackFreespace) {

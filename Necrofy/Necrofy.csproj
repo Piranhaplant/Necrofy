@@ -198,7 +198,15 @@
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedPlayerStartPosition.cs" />
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedPositionLevelMonster.cs" />
     <Compile Include="LevelEditor\TitleEditor\WrappedTitleWord.cs" />
+    <Compile Include="LoadedLevel\LoadedSprites.cs" />
     <Compile Include="ObjectBrowser\LevelTitleObjectBrowserContents.cs" />
+    <Compile Include="ObjectBrowser\SpriteEditorObjectBrowserContents.cs" />
+    <Compile Include="SpriteEditor\SpriteEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SpriteEditor\SpriteEditor.Designer.cs">
+      <DependentUpon>SpriteEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="TextDisplayForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -266,7 +274,7 @@
     <Compile Include="LevelEditor\LevelEditor.Designer.cs">
       <DependentUpon>LevelEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="LoadedLevel\LoadedSpriteGraphics.cs" />
+    <Compile Include="LoadedLevel\LoadedLevelSprites.cs" />
     <Compile Include="LoadedLevel\LoadedCollision.cs" />
     <Compile Include="LoadedLevel\LoadedLevel.cs" />
     <Compile Include="LoadedLevel\LoadedTilesetTilemap.cs" />

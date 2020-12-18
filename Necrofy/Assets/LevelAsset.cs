@@ -47,9 +47,9 @@ namespace Necrofy
             int pointer = romInfo.Freespace.Claim(levelData.GetSize());
             byte[] data = levelData.Build(pointer);
 
-            rom.Seek(pointer, SeekOrigin.Begin);
+            rom.Seek(pointer);
             rom.Write(data, 0, data.Length);
-            rom.Seek(GetPointerPosition(nameInfo.levelNum), SeekOrigin.Begin);
+            rom.Seek(GetPointerPosition(nameInfo.levelNum));
             rom.WritePointer(pointer);
         }
 

@@ -33,8 +33,8 @@ namespace Necrofy
 
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
             int i = 0;
-            i = Sprite.WriteToROM(sprites, i, rom, ROMPointers.SpriteData1);
-            i = Sprite.WriteToROM(sprites, i, rom, ROMPointers.SpriteData2);
+            i = Sprite.WriteToROM(sprites, i, rom, ROMPointers.SpriteData1, romInfo.Freespace);
+            i = Sprite.WriteToROM(sprites, i, rom, ROMPointers.SpriteData2, romInfo.Freespace);
         }
 
         protected override AssetCategory Category => nameInfo.Category;
@@ -84,6 +84,10 @@ namespace Necrofy
 
             protected override PathParts GetPathParts() {
                 return new PathParts(Folder, FileName, Extension, null, false);
+            }
+
+            public override EditorWindow GetEditor(Project project) {
+                return new SpriteEditor(new LoadedSprites(project));
             }
 
             public static SpritesNameInfo FromPath(PathParts parts) {

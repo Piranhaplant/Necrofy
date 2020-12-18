@@ -55,7 +55,7 @@ namespace Necrofy
             int pointer = s.ReadPointer();
             if (pointer < 0)
                 throw new Exception(string.Format("Cannot move stream to invalid pointer. Found at {0:X}", s.Position - 4));
-            s.Seek(pointer, SeekOrigin.Begin);
+            s.Seek(pointer);
         }
 
         /// <summary>Moves the stream position to the address specified in the 2-byte SNES LoROM pointer relative to the given bank.</summary>
@@ -65,7 +65,7 @@ namespace Necrofy
             int pointer = s.ReadRelativePointer(bank);
             if (pointer < 0)
                 throw new Exception(string.Format("Cannot move stream to invalid pointer. Found at {0:X}", s.Position - 2));
-            s.Seek(pointer, SeekOrigin.Begin);
+            s.Seek(pointer);
         }
 
         /// <summary>Moves the stream position to the address specified in the 2-byte SNES LoROM pointer relative to the bank the stream is positioned in.</summary>
@@ -82,7 +82,7 @@ namespace Necrofy
             if (pointer < 0)
                 throw new Exception(string.Format("Cannot move stream to invalid pointer. Found at {0:X}", s.Position - 4));
             s.PushPosition();
-            s.Seek(pointer, SeekOrigin.Begin);
+            s.Seek(pointer);
         }
 
         /// <summary>Moves the stream position to the address specified in the 2-byte SNES LoROM pointer relative to the given bank and pushes the position after the pointer.</summary>
@@ -93,7 +93,7 @@ namespace Necrofy
             if (pointer < 0)
                 throw new Exception(string.Format("Cannot move stream to invalid pointer. Found at {0:X}", s.Position - 2));
             s.PushPosition();
-            s.Seek(pointer, SeekOrigin.Begin);
+            s.Seek(pointer);
         }
 
         /// <summary>Moves the stream position to the address specified in the 2-byte SNES LoROM pointer relative to the bank the stream is positioned in and pushes the position after the pointer.</summary>

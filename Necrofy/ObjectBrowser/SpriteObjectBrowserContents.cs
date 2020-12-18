@@ -10,7 +10,7 @@ namespace Necrofy
     {
         private readonly LoadedLevel level;
         private readonly HashSet<SpriteDisplay.Category> categories = new HashSet<SpriteDisplay.Category>();
-        private readonly List<LoadedSpriteGraphics.LoadedSprite> sprites = new List<LoadedSpriteGraphics.LoadedSprite>();
+        private readonly List<LoadedLevelSprites.LoadedSprite> sprites = new List<LoadedLevelSprites.LoadedSprite>();
         private readonly List<SpriteDisplay.Category> categoryForSprites = new List<SpriteDisplay.Category>();
         private HashSet<SpriteDisplay.Category> highlighedCategories = new HashSet<SpriteDisplay.Category>();
 
@@ -48,7 +48,7 @@ namespace Necrofy
             categoryForSprites.Clear();
 
             foreach (SpriteDisplay.Category category in categories.OrderBy(c => c)) {
-                List<LoadedSpriteGraphics.LoadedSprite> s = level.spriteGraphics.spritesByCategory[category];
+                List<LoadedLevelSprites.LoadedSprite> s = level.spriteGraphics.spritesByCategory[category];
                 sprites.AddRange(s);
                 categoryForSprites.AddRange(s.Select(o => category));
             }

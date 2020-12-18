@@ -117,7 +117,7 @@ namespace Necrofy
         /// <param name="value">The value to fill with</param>
         public void Fill(Stream s, byte value) {
             foreach (FreeBlock block in blocks) {
-                s.Seek(block.Start, SeekOrigin.Begin);
+                s.Seek(block.Start);
                 for (int i = block.Start; i < block.End; i++) {
                     s.WriteByte(value);
                 }

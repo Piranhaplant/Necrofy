@@ -10,9 +10,9 @@ namespace Necrofy
     abstract class WrappedLevelObject<T> : WrappedLevelObject
     {
         protected readonly T wrappedObject;
-        protected readonly LoadedSpriteGraphics spriteGraphics;
+        protected readonly LoadedLevelSprites spriteGraphics;
 
-        public WrappedLevelObject(T wrappedObject, LoadedSpriteGraphics spriteGraphics) {
+        public WrappedLevelObject(T wrappedObject, LoadedLevelSprites spriteGraphics) {
             this.wrappedObject = wrappedObject;
             this.spriteGraphics = spriteGraphics;
         }

@@ -115,7 +115,7 @@ namespace Necrofy
             s.EndBlock(r.Freespace);
 
             background = new ushort[width, height];
-            s.Seek(backgroundPtr, SeekOrigin.Begin);
+            s.Seek(backgroundPtr);
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     background[x, y] = s.ReadInt16();

@@ -161,12 +161,12 @@ namespace Necrofy
         public static int Insert(Stream s, Freespace freespace, byte[] compressedData, int? pointer = null) {
             if (pointer == null) {
                 int newPointer = freespace.Claim(compressedData.Length + 2);
-                s.Seek(newPointer, SeekOrigin.Begin);
+                s.Seek(newPointer);
                 s.WriteInt16((ushort)compressedData.Length);
                 s.Write(compressedData, 0, compressedData.Length);
                 return newPointer;
             } else {
-                s.Seek((int)pointer, SeekOrigin.Begin);
+                s.Seek((int)pointer);
                 int size = s.PeekInt16();
                 if (compressedData.Length <= size) {
                     s.WriteInt16((ushort)compressedData.Length);
@@ -180,7 +180,7 @@ namespace Necrofy
                     s.Write(compressedData, 0, firstSize);
                     s.WritePointer(secondPointer);
 
-                    s.Seek(secondPointer, SeekOrigin.Begin);
+                    s.Seek(secondPointer);
                     s.WriteInt16((ushort)secondSize);
                     s.Write(compressedData, firstSize, secondSize);
                 }

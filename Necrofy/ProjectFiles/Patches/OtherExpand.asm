@@ -56,6 +56,28 @@ BRA read_byte
 SEC
 RTS
 
+next_sprite_tile:
+; Code from original subroutine
+STA $8A
+DEC $86
+; New code
+LDA $86
+CMP #$0080
+BNE +
+LDA [$8A]
+TAY
+INC $8A
+INC $8A
+LDA [$8A]
+STY $8A
+STA $8C
+LDA [$8A]
+AND #$00FF
+STA $86
++:
+LDA $86
+RTS
+
 warnpc $80B547
 
 
@@ -116,6 +138,18 @@ RTS
 
 warnpc $80BA51
 
+org $80BAB1
+JSR next_sprite_tile
+NOP
+org $80BB24
+JSR next_sprite_tile
+NOP
+org $80BB9A
+JSR next_sprite_tile
+NOP
+org $80BC17
+JSR next_sprite_tile
+NOP
 
 org $80CD20
 

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -18,6 +19,10 @@ namespace Necrofy
 
         public static int GetHeight<T>(this T[,] array) {
             return array.GetLength(1);
+        }
+
+        public static long Seek(this Stream s, long position) {
+            return s.Seek(position, SeekOrigin.Begin);
         }
         
         public static void SetSplitPosition(this PropertyGrid propertyGrid, int position) {

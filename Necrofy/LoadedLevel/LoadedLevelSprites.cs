@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace Necrofy
 {
-    class LoadedSpriteGraphics : IDisposable
+    class LoadedLevelSprites : IDisposable
     {
         private static readonly Font unknownSpriteFont = new Font(FontFamily.GenericMonospace, 8);
         private static readonly StringFormat unknownSpriteStringFormat = new StringFormat() {
@@ -19,7 +19,7 @@ namespace Necrofy
         public readonly Dictionary<SpriteDisplay.Key.Type, Dictionary<int, LoadedSprite>> sprites;
         public readonly Dictionary<SpriteDisplay.Category, List<LoadedSprite>> spritesByCategory;
 
-        public LoadedSpriteGraphics(Project project, string spritePaletteName) {
+        public LoadedLevelSprites(Project project, string spritePaletteName) {
             LoadedPalette loadedPalette = new LoadedPalette(project, spritePaletteName, transparent: true);
             LoadedGraphics loadedGraphics = new LoadedGraphics(project, Asset.SpritesFolder + Asset.FolderSeparator + GraphicsAsset.DefaultName);
             SpritesAsset spritesAsset = SpritesAsset.FromProject(project);
@@ -114,29 +114,7 @@ namespace Necrofy
             private readonly int anchorY;
 
             public ImageLoadedSprite(ImageSpriteDisplay spriteDisplay, Sprite sprite, LoadedGraphics.LinearGraphics graphics, Color[] colors) : base(spriteDisplay) {
-                int minX = 0, maxX = 0, minY = 0, maxY = 0;
-                foreach (Sprite.Tile t in sprite.tiles) {
-                    minX = Math.Min(minX, t.xOffset);
-                    maxX = Math.Max(maxX, t.xOffset + 16);
-                    minY = Math.Min(minY, t.yOffset + 1);
-                    maxY = Math.Max(maxY, t.yOffset + 1 + 16);
-                }
-
-                anchorX = -minX;
-                anchorY = -minY;
-                if (sprite.tiles.Length > 0) {
-                    image = new Bitmap(maxX - minX, maxY - minY);
-                } else {
-                    image = new Bitmap(1, 1);
-                }
-
-                foreach (Sprite.Tile t in sprite.tiles) {
-                    int palette = spriteDisplay.overridePalette ?? t.palette;
-                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 8 : 0), anchorY + t.yOffset + 1 + (t.yFlip ? 8 : 0), graphics[t.tileNum * 4 + 0], colors, palette * 0x10, t.xFlip, t.yFlip);
-                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 0 : 8), anchorY + t.yOffset + 1 + (t.yFlip ? 8 : 0), graphics[t.tileNum * 4 + 1], colors, palette * 0x10, t.xFlip, t.yFlip);
-                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 8 : 0), anchorY + t.yOffset + 1 + (t.yFlip ? 0 : 8), graphics[t.tileNum * 4 + 2], colors, palette * 0x10, t.xFlip, t.yFlip);
-                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 0 : 8), anchorY + t.yOffset + 1 + (t.yFlip ? 0 : 8), graphics[t.tileNum * 4 + 3], colors, palette * 0x10, t.xFlip, t.yFlip);
-                }
+                image = sprite.Render(graphics, colors, spriteDisplay.overridePalette, out anchorX, out anchorY);
             }
 
             public override void Dispose() {

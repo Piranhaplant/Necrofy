@@ -9,7 +9,7 @@ namespace Necrofy
 {
     class WrappedPositionLevelMonster : WrappedLevelObject<PositionLevelMonster>
     {
-        public WrappedPositionLevelMonster(PositionLevelMonster monster, LoadedSpriteGraphics spriteGraphics) : base(monster, spriteGraphics) { }
+        public WrappedPositionLevelMonster(PositionLevelMonster monster, LoadedLevelSprites spriteGraphics) : base(monster, spriteGraphics) { }
 
         public override SpriteDisplay.Category Category => SpriteDisplay.Category.LevelMonster;
 

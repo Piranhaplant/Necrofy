@@ -10,7 +10,7 @@ namespace Necrofy
     {
         protected readonly Level level;
 
-        public WrappedPlayerStartPosition(int playerNum, LoadedSpriteGraphics spriteGraphics, Level level) : base(playerNum, spriteGraphics) {
+        public WrappedPlayerStartPosition(int playerNum, LoadedLevelSprites spriteGraphics, Level level) : base(playerNum, spriteGraphics) {
             this.level = level;
         }
 
@@ -40,7 +40,7 @@ namespace Necrofy
 
     class WrappedPlayer1StartPosition : WrappedPlayerStartPosition
     {
-        public WrappedPlayer1StartPosition(LoadedSpriteGraphics spriteGraphics, Level level) : base(0, spriteGraphics, level) { }
+        public WrappedPlayer1StartPosition(LoadedLevelSprites spriteGraphics, Level level) : base(0, spriteGraphics, level) { }
         
         public override ushort X { get => level.p1startX; set => level.p1startX = value; }
         public override ushort Y { get => level.p1startY; set => level.p1startY = value; }
@@ -48,7 +48,7 @@ namespace Necrofy
 
     class WrappedPlayer2StartPosition : WrappedPlayerStartPosition
     {
-        public WrappedPlayer2StartPosition(LoadedSpriteGraphics spriteGraphics, Level level) : base(1, spriteGraphics, level) { }
+        public WrappedPlayer2StartPosition(LoadedLevelSprites spriteGraphics, Level level) : base(1, spriteGraphics, level) { }
 
         public override ushort X { get => level.p2startX; set => level.p2startX = value; }
         public override ushort Y { get => level.p2startY; set => level.p2startY = value; }
