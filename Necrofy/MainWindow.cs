@@ -370,7 +370,9 @@ namespace Necrofy
                     if (info != null) {
                         try {
                             OpenAsset(info);
-                        } catch (Exception) { }
+                        } catch (Exception e) {
+                            Console.WriteLine(e.StackTrace);
+                        }
                     }
                 }
             }
@@ -538,10 +540,6 @@ namespace Necrofy
             //        File.WriteAllBytes(sfd.FileName, output.ToArray());
             //    }
             //}
-
-            if (project == null)
-                return;
-            new SpriteViewer().Show(project);
         }
 
         private void windowProject_Click(object sender, EventArgs e) {

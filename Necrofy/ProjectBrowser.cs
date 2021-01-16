@@ -176,6 +176,7 @@ namespace Necrofy
                 try {
                     mainWindow.OpenAsset(entry.Asset);
                 } catch (Exception ex) {
+                    Console.WriteLine(ex.StackTrace);
                     MessageBox.Show($"Could not open file {entry.Asset.GetFilename("")}:{Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }

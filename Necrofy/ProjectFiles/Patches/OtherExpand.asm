@@ -74,6 +74,7 @@ STA $8C
 LDA [$8A]
 AND #$00FF
 STA $86
+INC $8A
 +:
 LDA $86
 RTS

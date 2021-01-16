@@ -59,6 +59,14 @@ namespace Necrofy
         [Browsable(false)]
         public abstract bool Removable { get; }
 
+        public int GetX() {
+            return X;
+        }
+
+        public int GetY() {
+            return Y;
+        }
+
         public abstract void Render(Graphics g);
         public virtual void RenderExtras(Graphics g, bool showRespawnAreas) { }
         public abstract void Add(Level level);

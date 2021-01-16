@@ -290,6 +290,8 @@ namespace Necrofy
             showTilePriority = mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewTilePriority).Checked;
             showRespawnAreas = mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewRespawnAreas).Checked;
             showScreenSizeGuide = mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewScreenSizeGuide).Checked;
+
+            tilesetObjectBrowserContents.SolidOnly = solidTilesOnly;
         }
 
         private void SaveAsImage(string filename) {
@@ -529,7 +531,6 @@ namespace Necrofy
                 UpdateAnimationState();
             } else if (viewOptionsItems.Contains(item)) {
                 UpdateViewOptions();
-                tilesetObjectBrowserContents.SolidOnly = solidTilesOnly;
                 if (DockVisible) {
                     Repaint();
                 }

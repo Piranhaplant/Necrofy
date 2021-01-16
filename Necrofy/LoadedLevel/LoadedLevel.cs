@@ -13,6 +13,7 @@ namespace Necrofy
         public LoadedGraphics graphics;
         public LoadedTilesetTilemap tilemap;
         public LoadedLevelSprites spriteGraphics;
+        public LoadedCollision collision;
 
         public Bitmap[] tiles;
         public Bitmap[] priorityTiles;
@@ -74,7 +75,7 @@ namespace Necrofy
             DisposeTiles();
 
             tilemap = new LoadedTilesetTilemap(project, Level.tilesetTilemapName);
-            LoadedCollision collision = new LoadedCollision(project, Level.tilesetCollisionName);
+            collision = new LoadedCollision(project, Level.tilesetCollisionName);
             graphics = new LoadedGraphics(project, Level.tilesetGraphicsName);
             LoadedPalette palette = new LoadedPalette(project, Level.paletteName);
 

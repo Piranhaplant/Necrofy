@@ -32,9 +32,14 @@ namespace Necrofy
         /// <summary>X position for the left side of each character in the word. Includes an extra element at the end for the right side of the last character</summary>
         [Browsable(false)]
         public List<int> CharXPositions { get; private set; } = new List<int>();
+        
+        int ISelectableObject.GetX() {
+            return word.x * 8;
+        }
+        int ISelectableObject.GetY() {
+            return word.y * 8;
+        }
 
-        ushort ISelectableObject.X => (ushort)(word.x * 8);
-        ushort ISelectableObject.Y => (ushort)(word.y * 8);
         private Rectangle selectableObjectBounds;
         Rectangle ISelectableObject.Bounds => selectableObjectBounds;
 
@@ -140,6 +145,7 @@ namespace Necrofy
             browsableY = null;
             browsablePalette = null;
         }
+
         [DisplayName(XProperty)]
         public string BrowsableX { get => browsableX ?? X.ToString(); set => browsableX = value; }
         [DisplayName(YProperty)]

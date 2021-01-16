@@ -199,6 +199,7 @@
     <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedPositionLevelMonster.cs" />
     <Compile Include="LevelEditor\TitleEditor\WrappedTitleWord.cs" />
     <Compile Include="LoadedLevel\LoadedSprites.cs" />
+    <Compile Include="LoadedLevel\WrappedSpriteTile.cs" />
     <Compile Include="ObjectBrowser\LevelTitleObjectBrowserContents.cs" />
     <Compile Include="ObjectBrowser\SpriteEditorObjectBrowserContents.cs" />
     <Compile Include="SpriteEditor\SpriteEditor.cs">
@@ -206,6 +207,12 @@
     </Compile>
     <Compile Include="SpriteEditor\SpriteEditor.Designer.cs">
       <DependentUpon>SpriteEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SpriteEditor\SpriteTilePicker.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SpriteEditor\SpriteTilePicker.Designer.cs">
+      <DependentUpon>SpriteTilePicker.cs</DependentUpon>
     </Compile>
     <Compile Include="TextDisplayForm.cs">
       <SubType>Form</SubType>
@@ -320,17 +327,12 @@
     <Compile Include="SNESGraphics.cs" />
     <Compile Include="Sprite.cs" />
     <Compile Include="SpriteDisplayList.cs" />
-    <Compile Include="SpriteViewer.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SpriteViewer.Designer.cs">
-      <DependentUpon>SpriteViewer.cs</DependentUpon>
-    </Compile>
     <Compile Include="TilesetSuggestions.cs" />
     <Compile Include="TupleList.cs" />
     <Compile Include="Undo\LevelEditorAction.cs" />
     <Compile Include="Undo\LevelTitleAction.cs" />
     <Compile Include="Undo\SpriteAction.cs" />
+    <Compile Include="Undo\SpriteEditorAction.cs" />
     <Compile Include="Undo\TileAction.cs" />
     <Compile Include="Undo\UndoManager.cs" />
     <Compile Include="ZAMNCompress.cs" />
@@ -387,8 +389,11 @@
     <EmbeddedResource Include="RunSettingsDialog.resx">
       <DependentUpon>RunSettingsDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SpriteViewer.resx">
-      <DependentUpon>SpriteViewer.cs</DependentUpon>
+    <EmbeddedResource Include="SpriteEditor\SpriteEditor.resx">
+      <DependentUpon>SpriteEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SpriteEditor\SpriteTilePicker.resx">
+      <DependentUpon>SpriteTilePicker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TextDisplayForm.resx">
       <DependentUpon>TextDisplayForm.cs</DependentUpon>

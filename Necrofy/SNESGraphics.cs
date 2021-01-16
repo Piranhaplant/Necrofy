@@ -124,14 +124,17 @@ namespace Necrofy
             }
             bmp.Palette = pal;
         }
-
         public static void DrawWithPlt(Graphics g, int x, int y, Bitmap bmp, Color[] plt, int colorIdx, int colorCount) {
+            DrawWithPlt(g, x, y, bmp, plt, colorIdx, colorCount, false, false);
+        }
+
+        public static void DrawWithPlt(Graphics g, int x, int y, Bitmap bmp, Color[] plt, int colorIdx, int colorCount, bool flipX, bool flipY) {
             ColorPalette pal = bmp.Palette;
             for (int i = 0; i < colorCount; i++) {
                 pal.Entries[i] = plt[(i + colorIdx) % plt.Length];
             }
             bmp.Palette = pal;
-            g.DrawImage(bmp, x, y);
+            g.DrawImage(bmp, x + (flipX ? bmp.Width : 0), y + (flipY ? bmp.Height : 0), bmp.Width * (flipX ? -1 : 1), bmp.Height * (flipY ? -1 : 1));
         }
     }
 }

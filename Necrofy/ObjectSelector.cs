@@ -16,8 +16,10 @@ namespace Necrofy
 
         private readonly IHost host;
         private readonly int positionStep;
-        private readonly int width;
-        private readonly int height;
+        private readonly int maxX;
+        private readonly int maxY;
+        private readonly int minX;
+        private readonly int minY;
 
         private HashSet<T> selectedObjects = new HashSet<T>();
 
@@ -37,11 +39,13 @@ namespace Necrofy
         private int dragStartX;
         private int dragStartY;
 
-        public ObjectSelector(IHost host, int positionStep = 1, int width = ushort.MaxValue, int height = ushort.MaxValue) {
+        public ObjectSelector(IHost host, int positionStep = 1, int maxX = ushort.MaxValue, int maxY = ushort.MaxValue, int minX = 0, int minY = 0) {
             this.host = host;
             this.positionStep = positionStep;
-            this.width = width;
-            this.height = height;
+            this.maxX = maxX;
+            this.maxY = maxY;
+            this.minX = minX;
+            this.minY = minY;
         }
 
         public HashSet<T> GetSelectedObjects() {
@@ -216,13 +220,13 @@ namespace Necrofy
         }
 
         private void ClampObjectMove(ref int dx, ref int dy) {
-            int minX = selectedObjects.Min(o => o.X);
-            int minY = selectedObjects.Min(o => o.Y);
-            int maxX = selectedObjects.Max(o => o.X);
-            int maxY = selectedObjects.Max(o => o.Y);
+            int minX = selectedObjects.Min(o => o.GetX());
+            int minY = selectedObjects.Min(o => o.GetY());
+            int maxX = selectedObjects.Max(o => o.GetX());
+            int maxY = selectedObjects.Max(o => o.GetY());
 
-            dx = Math.Min(width - maxX, Math.Max(-minX, dx));
-            dy = Math.Min(height - maxY, Math.Max(-minY, dy));
+            dx = Math.Min(this.maxX - maxX, Math.Max(this.minX - minX, dx));
+            dy = Math.Min(this.maxY - maxY, Math.Max(this.minY - minY, dy));
             dx = (dx / positionStep) * positionStep;
             dy = (dy / positionStep) * positionStep;
         }
@@ -240,7 +244,7 @@ namespace Necrofy
     public interface ISelectableObject
     {
         Rectangle Bounds { get; }
-        ushort X { get; }
-        ushort Y { get; }
+        int GetX();
+        int GetY();
     }
 }
