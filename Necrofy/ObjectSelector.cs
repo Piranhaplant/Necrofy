@@ -48,24 +48,35 @@ namespace Necrofy
             this.minY = minY;
         }
 
+        private IEnumerable<T> SelectableObjects => host.GetObjects().Where(o => o.Selectable);
+
         public HashSet<T> GetSelectedObjects() {
             return selectedObjects;
         }
 
-        public void DrawSelectionRectangle(Graphics g) {
+        public void DrawSelectionRectangle(Graphics g, float zoom = 1.0f) {
             if (makingSelectionRectangle) {
+                Pen whitePen = new Pen(Color.White, 1 / zoom);
+                Pen dashPen = new Pen(Color.Black, 1 / zoom) {
+                    DashOffset = 0,
+                    DashPattern = new float[] { 4 / zoom, 4 / zoom },
+                };
+
                 if (selectionRectangle.Width == 0 || selectionRectangle.Height == 0) {
-                    g.DrawLine(Pens.White, selectionRectangle.X, selectionRectangle.Y, selectionRectangle.Right, selectionRectangle.Bottom);
-                    g.DrawLine(selectionBorderDashPen, selectionRectangle.X, selectionRectangle.Y, selectionRectangle.Right, selectionRectangle.Bottom);
+                    g.DrawLine(whitePen, selectionRectangle.X, selectionRectangle.Y, selectionRectangle.Right, selectionRectangle.Bottom);
+                    g.DrawLine(dashPen, selectionRectangle.X, selectionRectangle.Y, selectionRectangle.Right, selectionRectangle.Bottom);
                 } else {
-                    g.DrawRectangle(Pens.White, selectionRectangle);
-                    g.DrawRectangle(selectionBorderDashPen, selectionRectangle);
+                    g.DrawRectangle(whitePen, selectionRectangle);
+                    g.DrawRectangle(dashPen, selectionRectangle);
                 }
+
+                whitePen.Dispose();
+                dashPen.Dispose();
             }
         }
 
         public void SelectAll() {
-            selectedObjects = new HashSet<T>(host.GetObjects());
+            selectedObjects = new HashSet<T>(SelectableObjects);
             host.SelectionChanged();
         }
 
@@ -80,7 +91,7 @@ namespace Necrofy
         }
 
         public void UpdateSelection() {
-            selectedObjects = new HashSet<T>(selectedObjects.Intersect(host.GetObjects()));
+            selectedObjects = new HashSet<T>(selectedObjects.Intersect(SelectableObjects));
             host.SelectionChanged();
         }
 
@@ -91,7 +102,7 @@ namespace Necrofy
 
             T hitObject = default(T);
             bool hitObjectFound = false;
-            foreach (T obj in host.GetObjects().Reverse()) {
+            foreach (T obj in SelectableObjects.Reverse()) {
                 if (obj.Bounds.Contains(x, y)) {
                     hitObject = obj;
                     hitObjectFound = true;
@@ -145,7 +156,7 @@ namespace Necrofy
                 selectedObjects = new HashSet<T>(baseSelectedObjects);
 
                 selectionRectangle = new Rectangle(Math.Min(dragStartX, x), Math.Min(dragStartY, y), Math.Abs(x - dragStartX), Math.Abs(y - dragStartY));
-                foreach (T obj in host.GetObjects()) {
+                foreach (T obj in SelectableObjects) {
                     if (selectionRectangle.IntersectsWith(obj.Bounds)) {
                         if (removeFromSelection) {
                             selectedObjects.Remove(obj);
@@ -231,6 +242,81 @@ namespace Necrofy
             dy = (dy / positionStep) * positionStep;
         }
 
+        public void CenterHorizontally() {
+            int min = selectedObjects.Min(o => o.Bounds.Left);
+            int max = selectedObjects.Max(o => o.Bounds.Right);
+            int selectionCenter = (((min + max) / 2) / positionStep) * positionStep;
+            int areaCenter = (((maxX + minX + positionStep) / 2) / positionStep) * positionStep;
+
+            int dx = areaCenter - selectionCenter;
+            int dy = 0;
+            ClampObjectMove(ref dx, ref dy);
+            host.MoveSelectedObjects(dx, dy);
+        }
+
+        public void CenterVertically() {
+            int min = selectedObjects.Min(o => o.Bounds.Top);
+            int max = selectedObjects.Max(o => o.Bounds.Bottom);
+            int selectionCenter = (((min + max) / 2) / positionStep) * positionStep;
+            int areaCenter = (((maxY + minY + positionStep) / 2) / positionStep) * positionStep;
+
+            int dx = 0;
+            int dy = areaCenter - selectionCenter;
+            ClampObjectMove(ref dx, ref dy);
+            host.MoveSelectedObjects(dx, dy);
+        }
+
+        public List<int> SortAndGetZIndexes(List<T> objs) {
+            List<T> allObjs = new List<T>(host.GetObjects());
+            objs.Sort((a, b) => allObjs.IndexOf(a).CompareTo(allObjs.IndexOf(b)));
+            return objs.Select(w => allObjs.IndexOf(w)).ToList();
+        }
+
+        public void MoveUp(out List<T> objs, out List<int> oldZIndexes, out List<int> newZIndexes) {
+            List<T> allObjs = new List<T>(host.GetObjects());
+            objs = new List<T>(selectedObjects);
+            oldZIndexes = SortAndGetZIndexes(objs);
+            newZIndexes = new List<int>(oldZIndexes);
+            for (int i = objs.Count - 1; i >= 0; i--) {
+                while (newZIndexes[i] < allObjs.Count - 1 && (newZIndexes[i] == oldZIndexes[i] || !allObjs[newZIndexes[i]].Selectable)) {
+                    newZIndexes[i]++;
+                }
+                allObjs.Remove(objs[i]);
+            }
+        }
+
+        public void MoveDown(out List<T> objs, out List<int> oldZIndexes, out List<int> newZIndexes) {
+            List<T> allObjs = new List<T>(host.GetObjects());
+            objs = new List<T>(selectedObjects);
+            oldZIndexes = SortAndGetZIndexes(objs);
+            newZIndexes = new List<int>(oldZIndexes);
+            for (int i = 0; i < objs.Count; i++) {
+                while (newZIndexes[i] > i && (newZIndexes[i] == oldZIndexes[i] || !allObjs[newZIndexes[i] - i].Selectable)) {
+                    newZIndexes[i]--;
+                }
+                allObjs.Remove(objs[i]);
+            }
+        }
+
+        public void MoveToFront(out List<T> objs, out List<int> oldZIndexes, out List<int> newZIndexes) {
+            int totalObjCount = host.GetObjects().Count();
+            objs = new List<T>(selectedObjects);
+            oldZIndexes = SortAndGetZIndexes(objs);
+            newZIndexes = new List<int>();
+            for (int i = 0; i < objs.Count; i++) {
+                newZIndexes.Add(totalObjCount - objs.Count + i);
+            }
+        }
+
+        public void MoveToBack(out List<T> objs, out List<int> oldZIndexes, out List<int> newZIndexes) {
+            objs = new List<T>(selectedObjects);
+            oldZIndexes = SortAndGetZIndexes(objs);
+            newZIndexes = new List<int>();
+            for (int i = 0; i < objs.Count; i++) {
+                newZIndexes.Add(i);
+            }
+        }
+
         public interface IHost
         {
             IEnumerable<T> GetObjects();
@@ -246,5 +332,6 @@ namespace Necrofy
         Rectangle Bounds { get; }
         int GetX();
         int GetY();
+        bool Selectable { get; }
     }
 }

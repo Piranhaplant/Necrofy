@@ -29,6 +29,7 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -572,6 +573,10 @@
     <None Include="Icons\layers-alignment-middle.png" />
     <None Include="Icons\information.png" />
     <None Include="Icons\tick-button.png" />
+    <None Include="Icons\magnifier-zoom-out.png" />
+    <None Include="Icons\magnifier-zoom-in.png" />
+    <None Include="Icons\layer-flip.png" />
+    <None Include="Icons\layer-flip-vertical.png" />
     <Content Include="ProjectFiles\Patches\OtherExpand.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

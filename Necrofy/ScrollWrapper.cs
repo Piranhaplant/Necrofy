@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -31,6 +32,20 @@ namespace Necrofy
         
         public bool ExpandingDrag { get; set; }
 
+        private float zoom = 1.0f;
+        public float Zoom {
+            get {
+                return zoom;
+            }
+            set {
+                if (value != zoom) {
+                    zoom = value;
+                    xDimension.SetZoom(zoom);
+                    yDimension.SetZoom(zoom);
+                }
+            }
+        }
+
         public ScrollWrapper(Control control, HScrollBar hscroll, VScrollBar vscroll, bool autoSize = true) {
             this.control = control;
 
@@ -58,10 +73,14 @@ namespace Necrofy
             private readonly Func<int> controlSize;
 
             private int clientSize;
+            private float zoom = 1.0f;
+
+            private int scaledClientSize;
             private int clientPosition;
             private int dragStart;
 
             public int Position { get; private set; }
+            public int Padding { get; set; }
 
             public event EventHandler Scrolled;
 
@@ -76,8 +95,15 @@ namespace Necrofy
             }
 
             public void SetClientSize(int size) {
-                clientSize = size - 1;
+                clientSize = size;
                 UpdateSize();
+            }
+
+            public void SetZoom(float zoom) {
+                int center = (int)((controlSize() / 2 - Position) / this.zoom);
+                this.zoom = zoom;
+                UpdateSize();
+                SetScrollBarValue((int)(center * zoom) - controlSize() / 2);
             }
 
             public void ScrollToPoint(int point) {
@@ -91,12 +117,13 @@ namespace Necrofy
             }
 
             public void UpdateSize() {
-                clientPosition = Math.Max(0, (controlSize() - clientSize) / 2);
+                scaledClientSize = (int)(clientSize * zoom - 1);
+                clientPosition = Math.Max(0, (controlSize() - scaledClientSize) / 2);
 
                 scrollBar.Minimum = 0;
-                scrollBar.Maximum = Math.Max(controlSize() - 1, clientSize);
+                scrollBar.Maximum = Math.Max(controlSize() - 1, scaledClientSize);
                 scrollBar.LargeChange = controlSize();
-                scrollBar.Enabled = clientSize > controlSize();
+                scrollBar.Enabled = scaledClientSize > controlSize();
                 SetScrollBarValue(scrollBar.Value);
 
                 UpdatePosition();
@@ -172,14 +199,32 @@ namespace Necrofy
             }
         }
 
+        public void SetPadding(int x, int y) {
+            xDimension.Padding = x;
+            yDimension.Padding = y;
+        }
+
         public void SetClientSize(int width, int height) {
             xDimension.SetClientSize(width);
             yDimension.SetClientSize(height);
         }
-
+        
         public void ScrollToPoint(int x, int y) {
             xDimension.ScrollToPoint(x);
             yDimension.ScrollToPoint(y);
+        }
+
+        public void TransformGraphics(Graphics g) {
+            g.InterpolationMode = InterpolationMode.NearestNeighbor;
+            g.PixelOffsetMode = PixelOffsetMode.Half;
+            g.TranslateTransform(xDimension.Position + xDimension.Padding * zoom, yDimension.Position + yDimension.Padding * zoom);
+            g.ScaleTransform(zoom, zoom);
+        }
+
+        public MouseEventArgs TransformMouseArgs(MouseEventArgs e) {
+            int x = (int)((e.X - xDimension.Position) / zoom) - xDimension.Padding;
+            int y = (int)((e.Y - yDimension.Position) / zoom) - yDimension.Padding;
+            return new MouseEventArgs(e.Button, e.Clicks, x, y, e.Delta);
         }
 
         private void Control_SizeChanged(object sender, EventArgs e) {

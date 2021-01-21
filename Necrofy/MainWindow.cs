@@ -17,6 +17,7 @@ namespace Necrofy
     partial class MainWindow : Form
     {
         private static readonly string DefaultStatusText = Application.ProductName + " " + Application.ProductVersion;
+        private static readonly float[] zoomLevels = new float[] { 0.25f, 0.33f, 0.5f, 0.75f, 1.0f, 2.0f, 4.0f, 8.0f };
 
         private Project project;
 
@@ -276,6 +277,7 @@ namespace Necrofy
             buildRunFromLevel.Enabled = activeEditor?.LevelNumber != null;
             fileClose.Enabled = activeEditor != null;
             UpdateStatusText();
+            UpdateZoom();
         }
 
         private void UpdateWindowText() {
@@ -287,6 +289,18 @@ namespace Necrofy
 
         private void UpdateStatusText() {
             statusLabel.Text = activeEditor?.Status ?? DefaultStatusText;
+        }
+
+        private void UpdateZoom() {
+            bool enabled = activeEditor?.CanZoom ?? false;
+            if (enabled) {
+                int zoomIndex = Array.IndexOf(zoomLevels, activeEditor.Zoom);
+                viewZoomOut.Enabled = zoomIndex > 0;
+                viewZoomIn.Enabled = zoomIndex < zoomLevels.Length - 1;
+            } else {
+                viewZoomOut.Enabled = false;
+                viewZoomIn.Enabled = false;
+            }
         }
 
         private void PropertyBrowser_PropertyChanged(object sender, PropertyValueChangedEventArgs e) {
@@ -542,6 +556,24 @@ namespace Necrofy
             //}
         }
 
+        private void ZoomOut(object sender, EventArgs e) {
+            doZoom(-1);
+        }
+
+        private void ZoomIn(object sender, EventArgs e) {
+            doZoom(1);
+        }
+
+        private void doZoom(int direction) {
+            if (activeEditor != null) {
+                int zoomIndex = Array.IndexOf(zoomLevels, activeEditor.Zoom) + direction;
+                if (zoomIndex >= 0 && zoomIndex < zoomLevels.Length) {
+                    activeEditor.Zoom = zoomLevels[zoomIndex];
+                    UpdateZoom();
+                }
+            }
+        }
+
         private void windowProject_Click(object sender, EventArgs e) {
             ShowDockContent(ProjectBrowser);
         }
@@ -577,6 +609,18 @@ namespace Necrofy
 
         public ToolStripGrouper.ItemProxy GetToolStripItem(ToolStripGrouper.ItemType type) {
             return toolStripGrouper.GetItem(type);
+        }
+
+        private void MainWindow_KeyDown(object sender, KeyEventArgs e) {
+            if (e.Modifiers == Keys.Control) {
+                if (e.KeyCode == Keys.Subtract || e.KeyCode == Keys.OemMinus) {
+                    ZoomOut(sender, e);
+                    e.Handled = true;
+                } else if (e.KeyCode == Keys.Add || e.KeyCode == Keys.Oemplus) {
+                    ZoomIn(sender, e);
+                    e.Handled = true;
+                }
+            }
         }
     }
 }

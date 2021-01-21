@@ -57,9 +57,6 @@ SEC
 RTS
 
 next_sprite_tile:
-; Code from original subroutine
-STA $8A
-DEC $86
 ; New code
 LDA $86
 CMP #$0080
@@ -76,7 +73,8 @@ AND #$00FF
 STA $86
 INC $8A
 +:
-LDA $86
+; Code from original subroutine
+LDY #$0002
 RTS
 
 warnpc $80B547
@@ -139,18 +137,14 @@ RTS
 
 warnpc $80BA51
 
-org $80BAB1
+org $80BA53
 JSR next_sprite_tile
-NOP
-org $80BB24
+org $80BABC
 JSR next_sprite_tile
-NOP
-org $80BB9A
+org $80BB32
 JSR next_sprite_tile
-NOP
-org $80BC17
+org $80BBA8
 JSR next_sprite_tile
-NOP
 
 org $80CD20
 

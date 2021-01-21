@@ -36,7 +36,7 @@ namespace Necrofy
             }
         }
 
-        public IEnumerable<WrappedTitleWord> SelectableWords => wrappedWords.Where(w => w.Chars.Count > 0);
+        public IEnumerable<WrappedTitleWord> SelectableWords => wrappedWords.Where(w => w.Selectable);
 
         private CancellationTokenSource caretBlinkCancel = new CancellationTokenSource();
         private bool caretBlinkOn = false;
@@ -280,10 +280,9 @@ namespace Necrofy
             } else {
                 TextSelectionStart = -1;
                 TextSelectionEnd = -1;
-                foreach (WrappedTitleWord word in wrappedWords) {
-                    word.UseExtendedBounds(word == hoveredWord);
-                }
+                hoveredWord?.UseExtendedBounds(true);
                 objectSelector.MouseDown(e.X, e.Y);
+                hoveredWord?.UseExtendedBounds(false);
             }
             prevClickLocation = e.Location;
         }
@@ -554,12 +553,9 @@ namespace Necrofy
         }
 
         public void Delete() {
-            titleEditor.undoManager.Do(new RemoveWordAction(this, SelectedWords));
-        }
-
-        public List<int> SortAndGetZIndexes(List<WrappedTitleWord> words) {
-            words.Sort((a, b) => wrappedWords.IndexOf(a).CompareTo(wrappedWords.IndexOf(b)));
-            return words.Select(w => wrappedWords.IndexOf(w)).ToList();
+            List<WrappedTitleWord> words = new List<WrappedTitleWord>(SelectedWords);
+            List<int> zIndexes = objectSelector.SortAndGetZIndexes(words);
+            titleEditor.undoManager.Do(new RemoveWordAction(this, words, zIndexes));
         }
 
         public void AddWords(List<WrappedTitleWord> words, List<int> zIndexes = null) {
@@ -589,75 +585,37 @@ namespace Necrofy
         }
 
         public void CenterHorizontally() {
-            int min = SelectedWords.Min(w => w.X);
-            int max = SelectedWords.Max(w => w.VisibleBounds.Right / 8);
-            int center = (min + max) / 2;
-            int pageCenter = (Width / 8) / 2;
-            int delta = Math.Max(-min, pageCenter - center);
-            titleEditor.undoManager.Do(new MoveWordAction(SelectedWords, delta, 0));
+            objectSelector.CenterHorizontally();
             titleEditor.undoManager.ForceNoMerge();
         }
 
         public void CenterVertically() {
-            int min = SelectedWords.Min(w => w.Y);
-            int max = SelectedWords.Max(w => w.VisibleBounds.Bottom / 8);
-            int center = (min + max) / 2;
-            int pageCenter = (Height / 8) / 2;
-            int delta = Math.Max(-min, pageCenter - center);
-            titleEditor.undoManager.Do(new MoveWordAction(SelectedWords, 0, delta));
+            objectSelector.CenterVertically();
             titleEditor.undoManager.ForceNoMerge();
         }
 
         public void MoveUp() {
-            List<WrappedTitleWord> allWords = new List<WrappedTitleWord>(wrappedWords);
-            List<WrappedTitleWord> words = new List<WrappedTitleWord>(SelectedWords);
-            List<int> oldZIndexes = SortAndGetZIndexes(words);
-            List<int> newZIndexes = new List<int>(oldZIndexes);
-            for (int i = words.Count - 1; i >= 0; i--) {
-                while (newZIndexes[i] < allWords.Count - 1 && (newZIndexes[i] == oldZIndexes[i] || allWords[newZIndexes[i]].Chars.Count == 0)) {
-                    newZIndexes[i]++;
-                }
-                allWords.Remove(words[i]);
-            }
+            objectSelector.MoveUp(out List<WrappedTitleWord> words, out List<int> oldZIndexes, out List<int> newZIndexes);
             titleEditor.undoManager.Do(new ChangeWordZIndexAction(this, words, oldZIndexes, newZIndexes));
         }
 
         public void MoveDown() {
-            List<WrappedTitleWord> allWords = new List<WrappedTitleWord>(wrappedWords);
-            List<WrappedTitleWord> words = new List<WrappedTitleWord>(SelectedWords);
-            List<int> oldZIndexes = SortAndGetZIndexes(words);
-            List<int> newZIndexes = new List<int>(oldZIndexes);
-            for (int i = 0; i < words.Count; i++) {
-                while (newZIndexes[i] > i && (newZIndexes[i] == oldZIndexes[i] || allWords[newZIndexes[i] - i].Chars.Count == 0)) {
-                    newZIndexes[i]--;
-                }
-                allWords.Remove(words[i]);
-            }
+            objectSelector.MoveDown(out List<WrappedTitleWord> words, out List<int> oldZIndexes, out List<int> newZIndexes);
             titleEditor.undoManager.Do(new ChangeWordZIndexAction(this, words, oldZIndexes, newZIndexes));
         }
 
         public void MoveToFront() {
-            List<WrappedTitleWord> words = new List<WrappedTitleWord>(SelectedWords);
-            List<int> oldZIndexes = SortAndGetZIndexes(words);
-            List<int> newZIndexes = new List<int>();
-            for (int i = 0; i < words.Count; i++) {
-                newZIndexes.Add(wrappedWords.Count - words.Count + i);
-            }
+            objectSelector.MoveToFront(out List<WrappedTitleWord> words, out List<int> oldZIndexes, out List<int> newZIndexes);
             titleEditor.undoManager.Do(new ChangeWordZIndexAction(this, words, oldZIndexes, newZIndexes));
         }
 
         public void MoveToBack() {
-            List<WrappedTitleWord> words = new List<WrappedTitleWord>(SelectedWords);
-            List<int> oldZIndexes = SortAndGetZIndexes(words);
-            List<int> newZIndexes = new List<int>();
-            for (int i = 0; i < words.Count; i++) {
-                newZIndexes.Add(i);
-            }
+            objectSelector.MoveToBack(out List<WrappedTitleWord> words, out List<int> oldZIndexes, out List<int> newZIndexes);
             titleEditor.undoManager.Do(new ChangeWordZIndexAction(this, words, oldZIndexes, newZIndexes));
         }
         
         public IEnumerable<WrappedTitleWord> GetObjects() {
-            return SelectableWords;
+            return wrappedWords;
         }
 
         private bool keepTextEditWord = false;

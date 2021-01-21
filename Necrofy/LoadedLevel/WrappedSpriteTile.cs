@@ -14,6 +14,8 @@ namespace Necrofy
         public const string YProperty = "Y";
         public const string PaletteProperty = "Palette";
         public const string TileNumProperty = "TileNum";
+        public const string XFlipProperty = "Flip Horizontal";
+        public const string YFlipProperty = "Flip Vertical";
 
         public readonly Sprite.Tile tile;
 
@@ -23,12 +25,13 @@ namespace Necrofy
         
         [Browsable(false)]
         public Rectangle Bounds => new Rectangle(X, Y, 16, 16);
-        public int GetX() {
+        int ISelectableObject.GetX() {
             return X;
         }
-        public int GetY() {
+        int ISelectableObject.GetY() {
             return Y;
         }
+        bool ISelectableObject.Selectable => true;
 
         [Browsable(false)]
         public short X { get => tile.xOffset; set => tile.xOffset = value; }
@@ -44,11 +47,15 @@ namespace Necrofy
         private string browsableY = null;
         private string browsablePalette = null;
         private string browsableTileNum = null;
+        private bool? browsableXFlip = null;
+        private bool? browsableYFlip = null;
         public void ClearBrowsableProperties() {
             browsableX = null;
             browsableY = null;
             browsablePalette = null;
             browsableTileNum = null;
+            browsableXFlip = null;
+            browsableYFlip = null;
         }
         [DisplayName(XProperty)]
         public string BrowsableX { get => browsableX ?? X.ToString(); set => browsableX = value; }
@@ -58,6 +65,10 @@ namespace Necrofy
         public string BrowsablePalette { get => browsablePalette ?? tile.palette.ToString(); set => browsablePalette = value; }
         [DisplayName(TileNumProperty)]
         public string BrowsableTileNum { get => browsableTileNum ?? tile.tileNum.ToString(); set => browsableTileNum = value; }
+        [DisplayName(XFlipProperty)]
+        public bool BrowsableXFlip { get => browsableXFlip ?? tile.xFlip; set => browsableXFlip = value; }
+        [DisplayName(YFlipProperty)]
+        public bool BrowsableYFlip { get => browsableYFlip ?? tile.yFlip; set => browsableYFlip = value; }
 
         public override int GetHashCode() {
             return tile.GetHashCode();

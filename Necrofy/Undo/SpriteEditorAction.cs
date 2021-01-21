@@ -89,15 +89,12 @@ namespace Necrofy
 
     class DeleteSpriteTileAction : SpriteEditorAction
     {
-        private List<int> zIndexes;
+        private readonly List<int> zIndexes;
 
-        public DeleteSpriteTileAction(Sprite sprite, IEnumerable<WrappedSpriteTile> objs) : base(sprite, objs) { }
-
-        public override void SetEditor(SpriteEditor editor) {
-            base.SetEditor(editor);
-            zIndexes = editor.SortAndGetZIndexes(sprite, this.objs);
+        public DeleteSpriteTileAction(Sprite sprite, IEnumerable<WrappedSpriteTile> objs, List<int> zIndexes) : base(sprite, objs) {
+            this.zIndexes = zIndexes;
         }
-
+        
         protected override void Undo() {
             editor.AddTiles(sprite, objs, zIndexes);
         }
@@ -228,7 +225,49 @@ namespace Necrofy
         }
 
         public override string ToString() {
-            return "Change palette";
+            if (objs.Count == 1) {
+                return "Change tile palette";
+            } else {
+                return "Change " + objs.Count.ToString() + " tile palettes";
+            }
+        }
+    }
+
+    class ChangeSpriteTileZIndexAction : SpriteEditorAction
+    {
+        private readonly List<int> oldZIndexes;
+        private List<int> newZIndexes;
+
+        public ChangeSpriteTileZIndexAction(Sprite sprite, IEnumerable<WrappedSpriteTile> objs, List<int> oldZIndexes, List<int> newZIndexes) : base(sprite, objs) {
+            this.oldZIndexes = oldZIndexes;
+            this.newZIndexes = newZIndexes;
+            if (newZIndexes.SequenceEqual(oldZIndexes)) {
+                cancel = true;
+            }
+        }
+
+        protected override void Undo() {
+            editor.RemoveTiles(sprite, objs, updateSelection: false);
+            editor.AddTiles(sprite, objs, oldZIndexes);
+        }
+
+        protected override void Redo() {
+            editor.RemoveTiles(sprite, objs, updateSelection: false);
+            editor.AddTiles(sprite, objs, newZIndexes);
+        }
+
+        public override bool Merge(UndoAction<SpriteEditor> action) {
+            if (action is ChangeSpriteTileZIndexAction changeSpriteTileZIndexAction) {
+                if (changeSpriteTileZIndexAction.objs.SequenceEqual(objs)) {
+                    newZIndexes = changeSpriteTileZIndexAction.newZIndexes;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public override string ToString() {
+            return "Change tile order";
         }
     }
 }

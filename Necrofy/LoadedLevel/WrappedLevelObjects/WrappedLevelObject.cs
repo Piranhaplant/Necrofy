@@ -59,13 +59,15 @@ namespace Necrofy
         [Browsable(false)]
         public abstract bool Removable { get; }
 
-        public int GetX() {
+        int ISelectableObject.GetX() {
             return X;
         }
 
-        public int GetY() {
+        int ISelectableObject.GetY() {
             return Y;
         }
+
+        bool ISelectableObject.Selectable => true;
 
         public abstract void Render(Graphics g);
         public virtual void RenderExtras(Graphics g, bool showRespawnAreas) { }

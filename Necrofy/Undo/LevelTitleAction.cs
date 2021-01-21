@@ -120,10 +120,10 @@ namespace Necrofy
         private readonly List<WrappedTitleWord> words;
         private readonly List<int> zIndexes;
 
-        public RemoveWordAction(PageEditor pageEditor, IEnumerable<WrappedTitleWord> words) {
+        public RemoveWordAction(PageEditor pageEditor, IEnumerable<WrappedTitleWord> words, List<int> zIndexes) {
             this.pageEditor = pageEditor;
             this.words = new List<WrappedTitleWord>(words);
-            zIndexes = pageEditor.SortAndGetZIndexes(this.words);
+            this.zIndexes = zIndexes;
         }
 
         protected override void Undo() {

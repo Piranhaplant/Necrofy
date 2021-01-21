@@ -68,7 +68,7 @@ namespace Necrofy
             }
             tilesPerRow = canvas.Width / 16;
             int height = (int)Math.Ceiling(tiles.Length / (double)tilesPerRow);
-            scrollWrapper.SetClientSize(canvas.Width, height * 16);
+            scrollWrapper.SetClientSize(canvas.Width, Math.Max(canvas.Height, height * 16));
             canvas.Invalidate();
         }
 

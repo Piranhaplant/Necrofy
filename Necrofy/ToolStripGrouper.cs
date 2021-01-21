@@ -64,10 +64,12 @@ namespace Necrofy
 
         public void SetItemSet(ToolStripItem item, ItemSet set) {
             setOfItem[item] = set;
-            if (!itemsForSet.ContainsKey(set)) {
-                itemsForSet[set] = new HashSet<ToolStripItem>();
+            foreach (ItemSet s in set.GetFlags()) {
+                if (!itemsForSet.ContainsKey(s)) {
+                    itemsForSet[s] = new HashSet<ToolStripItem>();
+                }
+                itemsForSet[s].Add(item);
             }
-            itemsForSet[set].Add(item);
         }
 
         public IEnumerable<ToolStripItem> GetItemsInSet(ItemSet set) {
@@ -78,7 +80,7 @@ namespace Necrofy
         }
 
         public IEnumerable<ToolStripItem> GetAllSetItems() {
-            return setOfItem.Keys;
+            return new HashSet<ToolStripItem>(setOfItem.Keys);
         }
 
         public ItemProxy GetItem(ItemType type) {
@@ -224,6 +226,8 @@ namespace Necrofy
             SpritesPlayers,
             SpritesAll,
 
+            FlipHorizontally,
+            FlipVertically,
             CenterHorizontally,
             CenterVertically,
             MoveUp,
@@ -232,11 +236,13 @@ namespace Necrofy
             MoveToBack,
         }
 
+        [Flags]
         public enum ItemSet
         {
-            None,
-            LevelEditor,
-            LevelTitle,
+            None = 0,
+            LevelEditor = 1,
+            LevelTitle = 2,
+            SpriteEditor = 4,
         }
     }
 }

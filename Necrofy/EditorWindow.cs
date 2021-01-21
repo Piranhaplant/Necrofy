@@ -169,7 +169,22 @@ namespace Necrofy
         public virtual void Delete() { }
         public virtual void SelectAll() { }
         public virtual void SelectNone() { }
-        
+
+        public virtual bool CanZoom => false;
+        private float zoom = 1.0f;
+        public float Zoom {
+            get {
+                return zoom;
+            }
+            set {
+                if (value != zoom) {
+                    zoom = value;
+                    ZoomChanged();
+                }
+            }
+        }
+        protected virtual void ZoomChanged() { }
+
         public virtual void PropertyBrowserPropertyChanged(PropertyValueChangedEventArgs e) { }
 
         // Level number used for the "run from level" feature

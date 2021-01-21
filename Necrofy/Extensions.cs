@@ -21,6 +21,14 @@ namespace Necrofy
             return array.GetLength(1);
         }
 
+        public static IEnumerable<T> GetFlags<T>(this T e) where T : Enum {
+            foreach (Enum value in Enum.GetValues(typeof(T))) {
+                if (!Equals(Convert.ChangeType(value, value.GetTypeCode()), 0) && e.HasFlag(value)) {
+                    yield return (T)value;
+                }
+            }
+        }
+
         public static long Seek(this Stream s, long position) {
             return s.Seek(position, SeekOrigin.Begin);
         }

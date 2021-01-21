@@ -48,6 +48,9 @@
             this.buildProjectButton = new System.Windows.Forms.ToolStripButton();
             this.runProjectButton = new System.Windows.Forms.ToolStripButton();
             this.runFromLevelButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
+            this.zoomOutButton = new System.Windows.Forms.ToolStripButton();
+            this.zoomInButton = new System.Windows.Forms.ToolStripButton();
             this.levelToolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.paintbrushButton = new System.Windows.Forms.ToolStripButton();
             this.tileSuggestButton = new System.Windows.Forms.ToolStripButton();
@@ -64,6 +67,9 @@
             this.spritesPlayers = new Necrofy.SeparateCheckToolStripMenuItem();
             this.spritesSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.spritesAll = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
+            this.flipHorizontalButton = new System.Windows.Forms.ToolStripButton();
+            this.flipVerticalButton = new System.Windows.Forms.ToolStripButton();
             this.levelTitleToolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.centerHorizontallyButton = new System.Windows.Forms.ToolStripButton();
             this.centerVerticallyButton = new System.Windows.Forms.ToolStripButton();
@@ -112,6 +118,9 @@
             this.viewAnimate = new System.Windows.Forms.ToolStripMenuItem();
             this.viewNextFrame = new System.Windows.Forms.ToolStripMenuItem();
             this.viewRestartAnimation = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
+            this.viewZoomOut = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewZoomIn = new System.Windows.Forms.ToolStripMenuItem();
             this.levelMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.levelEditTitle = new System.Windows.Forms.ToolStripMenuItem();
             this.levelSettings = new System.Windows.Forms.ToolStripMenuItem();
@@ -127,14 +136,17 @@
             this.toolsTileSelect = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsResizeLevel = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsSprites = new System.Windows.Forms.ToolStripMenuItem();
-            this.titleMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.titleCenterHorizontally = new System.Windows.Forms.ToolStripMenuItem();
-            this.titleCenterVertically = new System.Windows.Forms.ToolStripMenuItem();
+            this.arrangeMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.arrangeFlipHorizontal = new System.Windows.Forms.ToolStripMenuItem();
+            this.arrangeFlipVertical = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
+            this.arrangeCenterHorizontally = new System.Windows.Forms.ToolStripMenuItem();
+            this.arrangeCenterVertically = new System.Windows.Forms.ToolStripMenuItem();
             this.titleSeparator = new System.Windows.Forms.ToolStripSeparator();
-            this.titleMoveUp = new System.Windows.Forms.ToolStripMenuItem();
-            this.titleMoveDown = new System.Windows.Forms.ToolStripMenuItem();
-            this.titleMoveToFront = new System.Windows.Forms.ToolStripMenuItem();
-            this.titleMoveToBack = new System.Windows.Forms.ToolStripMenuItem();
+            this.arrangeMoveUp = new System.Windows.Forms.ToolStripMenuItem();
+            this.arrangeMoveDown = new System.Windows.Forms.ToolStripMenuItem();
+            this.arrangeMoveToFront = new System.Windows.Forms.ToolStripMenuItem();
+            this.arrangeMoveToBack = new System.Windows.Forms.ToolStripMenuItem();
             this.windowMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.windowProject = new System.Windows.Forms.ToolStripMenuItem();
             this.windowObjects = new System.Windows.Forms.ToolStripMenuItem();
@@ -188,6 +200,9 @@
             this.buildProjectButton,
             this.runProjectButton,
             this.runFromLevelButton,
+            this.toolStripSeparator9,
+            this.zoomOutButton,
+            this.zoomInButton,
             this.levelToolStripSeparator,
             this.paintbrushButton,
             this.tileSuggestButton,
@@ -196,6 +211,9 @@
             this.tileSelectButton,
             this.resizeLevelButton,
             this.spritesButton,
+            this.toolStripSeparator11,
+            this.flipHorizontalButton,
+            this.flipVerticalButton,
             this.levelTitleToolStripSeparator,
             this.centerHorizontallyButton,
             this.centerVerticallyButton,
@@ -355,6 +373,33 @@
             this.runFromLevelButton.Size = new System.Drawing.Size(23, 22);
             this.runFromLevelButton.Text = "Run From Level";
             this.runFromLevelButton.Click += new System.EventHandler(this.RunFromLevel);
+            // 
+            // toolStripSeparator9
+            // 
+            this.toolStripSeparator9.Name = "toolStripSeparator9";
+            this.toolStripSeparator9.Size = new System.Drawing.Size(6, 25);
+            // 
+            // zoomOutButton
+            // 
+            this.zoomOutButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.zoomOutButton.Enabled = false;
+            this.zoomOutButton.Image = global::Necrofy.Properties.Resources.magnifier_zoom_out;
+            this.zoomOutButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.zoomOutButton.Name = "zoomOutButton";
+            this.zoomOutButton.Size = new System.Drawing.Size(23, 22);
+            this.zoomOutButton.Text = "Zoom Out";
+            this.zoomOutButton.Click += new System.EventHandler(this.ZoomOut);
+            // 
+            // zoomInButton
+            // 
+            this.zoomInButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.zoomInButton.Enabled = false;
+            this.zoomInButton.Image = global::Necrofy.Properties.Resources.magnifier_zoom_in;
+            this.zoomInButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.zoomInButton.Name = "zoomInButton";
+            this.zoomInButton.Size = new System.Drawing.Size(23, 22);
+            this.zoomInButton.Text = "Zoom In";
+            this.zoomInButton.Click += new System.EventHandler(this.ZoomIn);
             // 
             // levelToolStripSeparator
             // 
@@ -522,9 +567,37 @@
             this.spritesAll.Size = new System.Drawing.Size(184, 22);
             this.spritesAll.Text = "All";
             // 
+            // toolStripSeparator11
+            // 
+            this.toolStripGrouper.SetItemSet(this.toolStripSeparator11, Necrofy.ToolStripGrouper.ItemSet.SpriteEditor);
+            this.toolStripSeparator11.Name = "toolStripSeparator11";
+            this.toolStripSeparator11.Size = new System.Drawing.Size(6, 25);
+            // 
+            // flipHorizontalButton
+            // 
+            this.flipHorizontalButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.flipHorizontalButton.Image = global::Necrofy.Properties.Resources.layer_flip;
+            this.flipHorizontalButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripGrouper.SetItemSet(this.flipHorizontalButton, Necrofy.ToolStripGrouper.ItemSet.SpriteEditor);
+            this.toolStripGrouper.SetItemType(this.flipHorizontalButton, Necrofy.ToolStripGrouper.ItemType.FlipHorizontally);
+            this.flipHorizontalButton.Name = "flipHorizontalButton";
+            this.flipHorizontalButton.Size = new System.Drawing.Size(23, 22);
+            this.flipHorizontalButton.Text = "Flip Horizontally";
+            // 
+            // flipVerticalButton
+            // 
+            this.flipVerticalButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.flipVerticalButton.Image = global::Necrofy.Properties.Resources.layer_flip_vertical;
+            this.flipVerticalButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripGrouper.SetItemSet(this.flipVerticalButton, Necrofy.ToolStripGrouper.ItemSet.SpriteEditor);
+            this.toolStripGrouper.SetItemType(this.flipVerticalButton, Necrofy.ToolStripGrouper.ItemType.FlipVertically);
+            this.flipVerticalButton.Name = "flipVerticalButton";
+            this.flipVerticalButton.Size = new System.Drawing.Size(23, 22);
+            this.flipVerticalButton.Text = "Flip Vertical";
+            // 
             // levelTitleToolStripSeparator
             // 
-            this.toolStripGrouper.SetItemSet(this.levelTitleToolStripSeparator, Necrofy.ToolStripGrouper.ItemSet.LevelTitle);
+            this.toolStripGrouper.SetItemSet(this.levelTitleToolStripSeparator, ((Necrofy.ToolStripGrouper.ItemSet)((Necrofy.ToolStripGrouper.ItemSet.LevelTitle | Necrofy.ToolStripGrouper.ItemSet.SpriteEditor))));
             this.levelTitleToolStripSeparator.Name = "levelTitleToolStripSeparator";
             this.levelTitleToolStripSeparator.Size = new System.Drawing.Size(6, 25);
             // 
@@ -533,7 +606,7 @@
             this.centerHorizontallyButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.centerHorizontallyButton.Image = global::Necrofy.Properties.Resources.layers_alignment_center;
             this.centerHorizontallyButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripGrouper.SetItemSet(this.centerHorizontallyButton, Necrofy.ToolStripGrouper.ItemSet.LevelTitle);
+            this.toolStripGrouper.SetItemSet(this.centerHorizontallyButton, ((Necrofy.ToolStripGrouper.ItemSet)((Necrofy.ToolStripGrouper.ItemSet.LevelTitle | Necrofy.ToolStripGrouper.ItemSet.SpriteEditor))));
             this.toolStripGrouper.SetItemType(this.centerHorizontallyButton, Necrofy.ToolStripGrouper.ItemType.CenterHorizontally);
             this.centerHorizontallyButton.Name = "centerHorizontallyButton";
             this.centerHorizontallyButton.Size = new System.Drawing.Size(23, 22);
@@ -544,7 +617,7 @@
             this.centerVerticallyButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.centerVerticallyButton.Image = global::Necrofy.Properties.Resources.layers_alignment_middle;
             this.centerVerticallyButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripGrouper.SetItemSet(this.centerVerticallyButton, Necrofy.ToolStripGrouper.ItemSet.LevelTitle);
+            this.toolStripGrouper.SetItemSet(this.centerVerticallyButton, ((Necrofy.ToolStripGrouper.ItemSet)((Necrofy.ToolStripGrouper.ItemSet.LevelTitle | Necrofy.ToolStripGrouper.ItemSet.SpriteEditor))));
             this.toolStripGrouper.SetItemType(this.centerVerticallyButton, Necrofy.ToolStripGrouper.ItemType.CenterVertically);
             this.centerVerticallyButton.Name = "centerVerticallyButton";
             this.centerVerticallyButton.Size = new System.Drawing.Size(23, 22);
@@ -552,7 +625,7 @@
             // 
             // toolStripSeparator4
             // 
-            this.toolStripGrouper.SetItemSet(this.toolStripSeparator4, Necrofy.ToolStripGrouper.ItemSet.LevelTitle);
+            this.toolStripGrouper.SetItemSet(this.toolStripSeparator4, ((Necrofy.ToolStripGrouper.ItemSet)((Necrofy.ToolStripGrouper.ItemSet.LevelTitle | Necrofy.ToolStripGrouper.ItemSet.SpriteEditor))));
             this.toolStripSeparator4.Name = "toolStripSeparator4";
             this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
             // 
@@ -561,7 +634,7 @@
             this.moveUpButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.moveUpButton.Image = global::Necrofy.Properties.Resources.arrow_090;
             this.moveUpButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripGrouper.SetItemSet(this.moveUpButton, Necrofy.ToolStripGrouper.ItemSet.LevelTitle);
+            this.toolStripGrouper.SetItemSet(this.moveUpButton, ((Necrofy.ToolStripGrouper.ItemSet)((Necrofy.ToolStripGrouper.ItemSet.LevelTitle | Necrofy.ToolStripGrouper.ItemSet.SpriteEditor))));
             this.toolStripGrouper.SetItemType(this.moveUpButton, Necrofy.ToolStripGrouper.ItemType.MoveUp);
             this.moveUpButton.Name = "moveUpButton";
             this.moveUpButton.Size = new System.Drawing.Size(23, 22);
@@ -572,7 +645,7 @@
             this.moveDownButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.moveDownButton.Image = global::Necrofy.Properties.Resources.arrow_270;
             this.moveDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripGrouper.SetItemSet(this.moveDownButton, Necrofy.ToolStripGrouper.ItemSet.LevelTitle);
+            this.toolStripGrouper.SetItemSet(this.moveDownButton, ((Necrofy.ToolStripGrouper.ItemSet)((Necrofy.ToolStripGrouper.ItemSet.LevelTitle | Necrofy.ToolStripGrouper.ItemSet.SpriteEditor))));
             this.toolStripGrouper.SetItemType(this.moveDownButton, Necrofy.ToolStripGrouper.ItemType.MoveDown);
             this.moveDownButton.Name = "moveDownButton";
             this.moveDownButton.Size = new System.Drawing.Size(23, 22);
@@ -583,7 +656,7 @@
             this.moveToFrontButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.moveToFrontButton.Image = global::Necrofy.Properties.Resources.arrow_stop_090;
             this.moveToFrontButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripGrouper.SetItemSet(this.moveToFrontButton, Necrofy.ToolStripGrouper.ItemSet.LevelTitle);
+            this.toolStripGrouper.SetItemSet(this.moveToFrontButton, ((Necrofy.ToolStripGrouper.ItemSet)((Necrofy.ToolStripGrouper.ItemSet.LevelTitle | Necrofy.ToolStripGrouper.ItemSet.SpriteEditor))));
             this.toolStripGrouper.SetItemType(this.moveToFrontButton, Necrofy.ToolStripGrouper.ItemType.MoveToFront);
             this.moveToFrontButton.Name = "moveToFrontButton";
             this.moveToFrontButton.Size = new System.Drawing.Size(23, 22);
@@ -594,7 +667,7 @@
             this.moveToBackButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.moveToBackButton.Image = global::Necrofy.Properties.Resources.arrow_stop_270;
             this.moveToBackButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripGrouper.SetItemSet(this.moveToBackButton, Necrofy.ToolStripGrouper.ItemSet.LevelTitle);
+            this.toolStripGrouper.SetItemSet(this.moveToBackButton, ((Necrofy.ToolStripGrouper.ItemSet)((Necrofy.ToolStripGrouper.ItemSet.LevelTitle | Necrofy.ToolStripGrouper.ItemSet.SpriteEditor))));
             this.toolStripGrouper.SetItemType(this.moveToBackButton, Necrofy.ToolStripGrouper.ItemType.MoveToBack);
             this.moveToBackButton.Name = "moveToBackButton";
             this.moveToBackButton.Size = new System.Drawing.Size(23, 22);
@@ -609,7 +682,7 @@
             this.viewMenu,
             this.levelMenu,
             this.toolsMenu,
-            this.titleMenu,
+            this.arrangeMenu,
             this.windowMenu});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -900,8 +973,11 @@
             this.toolStripSeparator7,
             this.viewAnimate,
             this.viewNextFrame,
-            this.viewRestartAnimation});
-            this.toolStripGrouper.SetItemSet(this.viewMenu, Necrofy.ToolStripGrouper.ItemSet.LevelEditor);
+            this.viewRestartAnimation,
+            this.toolStripSeparator10,
+            this.viewZoomOut,
+            this.viewZoomIn});
+            this.toolStripGrouper.SetItemSet(this.viewMenu, ((Necrofy.ToolStripGrouper.ItemSet)((Necrofy.ToolStripGrouper.ItemSet.LevelEditor | Necrofy.ToolStripGrouper.ItemSet.SpriteEditor))));
             this.viewMenu.Name = "viewMenu";
             this.viewMenu.Size = new System.Drawing.Size(44, 20);
             this.viewMenu.Text = "&View";
@@ -909,6 +985,7 @@
             // viewGrid
             // 
             this.viewGrid.CheckOnClick = true;
+            this.toolStripGrouper.SetItemSet(this.viewGrid, Necrofy.ToolStripGrouper.ItemSet.LevelEditor);
             this.toolStripGrouper.SetItemType(this.viewGrid, Necrofy.ToolStripGrouper.ItemType.ViewGrid);
             this.viewGrid.Name = "viewGrid";
             this.viewGrid.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
@@ -918,6 +995,7 @@
             // viewSolidTilesOnly
             // 
             this.viewSolidTilesOnly.CheckOnClick = true;
+            this.toolStripGrouper.SetItemSet(this.viewSolidTilesOnly, Necrofy.ToolStripGrouper.ItemSet.LevelEditor);
             this.toolStripGrouper.SetItemType(this.viewSolidTilesOnly, Necrofy.ToolStripGrouper.ItemType.ViewSolidTilesOnly);
             this.viewSolidTilesOnly.Name = "viewSolidTilesOnly";
             this.viewSolidTilesOnly.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.H)));
@@ -927,6 +1005,7 @@
             // viewTilePriority
             // 
             this.viewTilePriority.CheckOnClick = true;
+            this.toolStripGrouper.SetItemSet(this.viewTilePriority, Necrofy.ToolStripGrouper.ItemSet.LevelEditor);
             this.toolStripGrouper.SetItemType(this.viewTilePriority, Necrofy.ToolStripGrouper.ItemType.ViewTilePriority);
             this.viewTilePriority.Name = "viewTilePriority";
             this.viewTilePriority.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
@@ -935,12 +1014,14 @@
             // 
             // toolStripSeparator6
             // 
+            this.toolStripGrouper.SetItemSet(this.toolStripSeparator6, Necrofy.ToolStripGrouper.ItemSet.LevelEditor);
             this.toolStripSeparator6.Name = "toolStripSeparator6";
             this.toolStripSeparator6.Size = new System.Drawing.Size(205, 6);
             // 
             // viewRespawnAreas
             // 
             this.viewRespawnAreas.CheckOnClick = true;
+            this.toolStripGrouper.SetItemSet(this.viewRespawnAreas, Necrofy.ToolStripGrouper.ItemSet.LevelEditor);
             this.toolStripGrouper.SetItemType(this.viewRespawnAreas, Necrofy.ToolStripGrouper.ItemType.ViewRespawnAreas);
             this.viewRespawnAreas.Name = "viewRespawnAreas";
             this.viewRespawnAreas.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
@@ -950,6 +1031,7 @@
             // viewScreenSizeGuide
             // 
             this.viewScreenSizeGuide.CheckOnClick = true;
+            this.toolStripGrouper.SetItemSet(this.viewScreenSizeGuide, Necrofy.ToolStripGrouper.ItemSet.LevelEditor);
             this.toolStripGrouper.SetItemType(this.viewScreenSizeGuide, Necrofy.ToolStripGrouper.ItemType.ViewScreenSizeGuide);
             this.viewScreenSizeGuide.Name = "viewScreenSizeGuide";
             this.viewScreenSizeGuide.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.U)));
@@ -958,12 +1040,14 @@
             // 
             // toolStripSeparator7
             // 
+            this.toolStripGrouper.SetItemSet(this.toolStripSeparator7, Necrofy.ToolStripGrouper.ItemSet.LevelEditor);
             this.toolStripSeparator7.Name = "toolStripSeparator7";
             this.toolStripSeparator7.Size = new System.Drawing.Size(205, 6);
             // 
             // viewAnimate
             // 
             this.viewAnimate.CheckOnClick = true;
+            this.toolStripGrouper.SetItemSet(this.viewAnimate, Necrofy.ToolStripGrouper.ItemSet.LevelEditor);
             this.toolStripGrouper.SetItemType(this.viewAnimate, Necrofy.ToolStripGrouper.ItemType.ViewAnimate);
             this.viewAnimate.Name = "viewAnimate";
             this.viewAnimate.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.M)));
@@ -972,6 +1056,7 @@
             // 
             // viewNextFrame
             // 
+            this.toolStripGrouper.SetItemSet(this.viewNextFrame, Necrofy.ToolStripGrouper.ItemSet.LevelEditor);
             this.toolStripGrouper.SetItemType(this.viewNextFrame, Necrofy.ToolStripGrouper.ItemType.ViewNextFrame);
             this.viewNextFrame.Name = "viewNextFrame";
             this.viewNextFrame.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
@@ -980,10 +1065,37 @@
             // 
             // viewRestartAnimation
             // 
+            this.toolStripGrouper.SetItemSet(this.viewRestartAnimation, Necrofy.ToolStripGrouper.ItemSet.LevelEditor);
             this.toolStripGrouper.SetItemType(this.viewRestartAnimation, Necrofy.ToolStripGrouper.ItemType.ViewRestartAnimation);
             this.viewRestartAnimation.Name = "viewRestartAnimation";
             this.viewRestartAnimation.Size = new System.Drawing.Size(208, 22);
             this.viewRestartAnimation.Text = "&Restart Animation";
+            // 
+            // toolStripSeparator10
+            // 
+            this.toolStripGrouper.SetItemSet(this.toolStripSeparator10, Necrofy.ToolStripGrouper.ItemSet.LevelEditor);
+            this.toolStripSeparator10.Name = "toolStripSeparator10";
+            this.toolStripSeparator10.Size = new System.Drawing.Size(205, 6);
+            // 
+            // viewZoomOut
+            // 
+            this.viewZoomOut.Image = global::Necrofy.Properties.Resources.magnifier_zoom_out;
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.viewZoomOut, this.zoomOutButton);
+            this.viewZoomOut.Name = "viewZoomOut";
+            this.viewZoomOut.ShortcutKeyDisplayString = "Ctrl+-";
+            this.viewZoomOut.Size = new System.Drawing.Size(208, 22);
+            this.viewZoomOut.Text = "Zoom Out";
+            this.viewZoomOut.Click += new System.EventHandler(this.ZoomOut);
+            // 
+            // viewZoomIn
+            // 
+            this.viewZoomIn.Image = global::Necrofy.Properties.Resources.magnifier_zoom_in;
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.viewZoomIn, this.zoomInButton);
+            this.viewZoomIn.Name = "viewZoomIn";
+            this.viewZoomIn.ShortcutKeyDisplayString = "Ctrl++";
+            this.viewZoomIn.Size = new System.Drawing.Size(208, 22);
+            this.viewZoomIn.Text = "Zoom In";
+            this.viewZoomIn.Click += new System.EventHandler(this.ZoomIn);
             // 
             // levelMenu
             // 
@@ -1124,79 +1236,115 @@
             this.toolsSprites.Size = new System.Drawing.Size(174, 22);
             this.toolsSprites.Text = "Spr&ites";
             // 
-            // titleMenu
+            // arrangeMenu
             // 
-            this.titleMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.titleCenterHorizontally,
-            this.titleCenterVertically,
+            this.arrangeMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.arrangeFlipHorizontal,
+            this.arrangeFlipVertical,
+            this.toolStripSeparator12,
+            this.arrangeCenterHorizontally,
+            this.arrangeCenterVertically,
             this.titleSeparator,
-            this.titleMoveUp,
-            this.titleMoveDown,
-            this.titleMoveToFront,
-            this.titleMoveToBack});
-            this.toolStripGrouper.SetItemSet(this.titleMenu, Necrofy.ToolStripGrouper.ItemSet.LevelTitle);
-            this.titleMenu.Name = "titleMenu";
-            this.titleMenu.Size = new System.Drawing.Size(41, 20);
-            this.titleMenu.Text = "&Title";
+            this.arrangeMoveUp,
+            this.arrangeMoveDown,
+            this.arrangeMoveToFront,
+            this.arrangeMoveToBack});
+            this.toolStripGrouper.SetItemSet(this.arrangeMenu, ((Necrofy.ToolStripGrouper.ItemSet)((Necrofy.ToolStripGrouper.ItemSet.LevelTitle | Necrofy.ToolStripGrouper.ItemSet.SpriteEditor))));
+            this.arrangeMenu.Name = "arrangeMenu";
+            this.arrangeMenu.Size = new System.Drawing.Size(61, 20);
+            this.arrangeMenu.Text = "&Arrange";
             // 
-            // titleCenterHorizontally
+            // arrangeFlipHorizontal
             // 
-            this.titleCenterHorizontally.Image = global::Necrofy.Properties.Resources.layers_alignment_center;
-            this.toolStripGrouper.SetItemType(this.titleCenterHorizontally, Necrofy.ToolStripGrouper.ItemType.CenterHorizontally);
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.titleCenterHorizontally, this.centerHorizontallyButton);
-            this.titleCenterHorizontally.Name = "titleCenterHorizontally";
-            this.titleCenterHorizontally.Size = new System.Drawing.Size(176, 22);
-            this.titleCenterHorizontally.Text = "Center &Horizontally";
+            this.arrangeFlipHorizontal.Image = global::Necrofy.Properties.Resources.layer_flip;
+            this.toolStripGrouper.SetItemSet(this.arrangeFlipHorizontal, Necrofy.ToolStripGrouper.ItemSet.SpriteEditor);
+            this.toolStripGrouper.SetItemType(this.arrangeFlipHorizontal, Necrofy.ToolStripGrouper.ItemType.FlipHorizontally);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.arrangeFlipHorizontal, this.flipHorizontalButton);
+            this.arrangeFlipHorizontal.Name = "arrangeFlipHorizontal";
+            this.arrangeFlipHorizontal.Size = new System.Drawing.Size(180, 22);
+            this.arrangeFlipHorizontal.Text = "Flip Horizontally";
             // 
-            // titleCenterVertically
+            // arrangeFlipVertical
             // 
-            this.titleCenterVertically.Image = global::Necrofy.Properties.Resources.layers_alignment_middle;
-            this.toolStripGrouper.SetItemType(this.titleCenterVertically, Necrofy.ToolStripGrouper.ItemType.CenterVertically);
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.titleCenterVertically, this.centerVerticallyButton);
-            this.titleCenterVertically.Name = "titleCenterVertically";
-            this.titleCenterVertically.Size = new System.Drawing.Size(176, 22);
-            this.titleCenterVertically.Text = "Center &Vertically";
+            this.arrangeFlipVertical.Image = global::Necrofy.Properties.Resources.layer_flip_vertical;
+            this.toolStripGrouper.SetItemSet(this.arrangeFlipVertical, Necrofy.ToolStripGrouper.ItemSet.SpriteEditor);
+            this.toolStripGrouper.SetItemType(this.arrangeFlipVertical, Necrofy.ToolStripGrouper.ItemType.FlipVertically);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.arrangeFlipVertical, this.flipVerticalButton);
+            this.arrangeFlipVertical.Name = "arrangeFlipVertical";
+            this.arrangeFlipVertical.Size = new System.Drawing.Size(180, 22);
+            this.arrangeFlipVertical.Text = "Flip Vertically";
+            // 
+            // toolStripSeparator12
+            // 
+            this.toolStripGrouper.SetItemSet(this.toolStripSeparator12, Necrofy.ToolStripGrouper.ItemSet.SpriteEditor);
+            this.toolStripSeparator12.Name = "toolStripSeparator12";
+            this.toolStripSeparator12.Size = new System.Drawing.Size(177, 6);
+            // 
+            // arrangeCenterHorizontally
+            // 
+            this.arrangeCenterHorizontally.Image = global::Necrofy.Properties.Resources.layers_alignment_center;
+            this.toolStripGrouper.SetItemSet(this.arrangeCenterHorizontally, ((Necrofy.ToolStripGrouper.ItemSet)((Necrofy.ToolStripGrouper.ItemSet.LevelTitle | Necrofy.ToolStripGrouper.ItemSet.SpriteEditor))));
+            this.toolStripGrouper.SetItemType(this.arrangeCenterHorizontally, Necrofy.ToolStripGrouper.ItemType.CenterHorizontally);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.arrangeCenterHorizontally, this.centerHorizontallyButton);
+            this.arrangeCenterHorizontally.Name = "arrangeCenterHorizontally";
+            this.arrangeCenterHorizontally.Size = new System.Drawing.Size(180, 22);
+            this.arrangeCenterHorizontally.Text = "Center &Horizontally";
+            // 
+            // arrangeCenterVertically
+            // 
+            this.arrangeCenterVertically.Image = global::Necrofy.Properties.Resources.layers_alignment_middle;
+            this.toolStripGrouper.SetItemSet(this.arrangeCenterVertically, ((Necrofy.ToolStripGrouper.ItemSet)((Necrofy.ToolStripGrouper.ItemSet.LevelTitle | Necrofy.ToolStripGrouper.ItemSet.SpriteEditor))));
+            this.toolStripGrouper.SetItemType(this.arrangeCenterVertically, Necrofy.ToolStripGrouper.ItemType.CenterVertically);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.arrangeCenterVertically, this.centerVerticallyButton);
+            this.arrangeCenterVertically.Name = "arrangeCenterVertically";
+            this.arrangeCenterVertically.Size = new System.Drawing.Size(180, 22);
+            this.arrangeCenterVertically.Text = "Center &Vertically";
             // 
             // titleSeparator
             // 
+            this.toolStripGrouper.SetItemSet(this.titleSeparator, ((Necrofy.ToolStripGrouper.ItemSet)((Necrofy.ToolStripGrouper.ItemSet.LevelTitle | Necrofy.ToolStripGrouper.ItemSet.SpriteEditor))));
             this.titleSeparator.Name = "titleSeparator";
-            this.titleSeparator.Size = new System.Drawing.Size(173, 6);
+            this.titleSeparator.Size = new System.Drawing.Size(177, 6);
             // 
-            // titleMoveUp
+            // arrangeMoveUp
             // 
-            this.titleMoveUp.Image = global::Necrofy.Properties.Resources.arrow_090;
-            this.toolStripGrouper.SetItemType(this.titleMoveUp, Necrofy.ToolStripGrouper.ItemType.MoveUp);
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.titleMoveUp, this.moveUpButton);
-            this.titleMoveUp.Name = "titleMoveUp";
-            this.titleMoveUp.Size = new System.Drawing.Size(176, 22);
-            this.titleMoveUp.Text = "Move &Up";
+            this.arrangeMoveUp.Image = global::Necrofy.Properties.Resources.arrow_090;
+            this.toolStripGrouper.SetItemSet(this.arrangeMoveUp, ((Necrofy.ToolStripGrouper.ItemSet)((Necrofy.ToolStripGrouper.ItemSet.LevelTitle | Necrofy.ToolStripGrouper.ItemSet.SpriteEditor))));
+            this.toolStripGrouper.SetItemType(this.arrangeMoveUp, Necrofy.ToolStripGrouper.ItemType.MoveUp);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.arrangeMoveUp, this.moveUpButton);
+            this.arrangeMoveUp.Name = "arrangeMoveUp";
+            this.arrangeMoveUp.Size = new System.Drawing.Size(180, 22);
+            this.arrangeMoveUp.Text = "Move &Up";
             // 
-            // titleMoveDown
+            // arrangeMoveDown
             // 
-            this.titleMoveDown.Image = global::Necrofy.Properties.Resources.arrow_270;
-            this.toolStripGrouper.SetItemType(this.titleMoveDown, Necrofy.ToolStripGrouper.ItemType.MoveDown);
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.titleMoveDown, this.moveDownButton);
-            this.titleMoveDown.Name = "titleMoveDown";
-            this.titleMoveDown.Size = new System.Drawing.Size(176, 22);
-            this.titleMoveDown.Text = "Move &Down";
+            this.arrangeMoveDown.Image = global::Necrofy.Properties.Resources.arrow_270;
+            this.toolStripGrouper.SetItemSet(this.arrangeMoveDown, ((Necrofy.ToolStripGrouper.ItemSet)((Necrofy.ToolStripGrouper.ItemSet.LevelTitle | Necrofy.ToolStripGrouper.ItemSet.SpriteEditor))));
+            this.toolStripGrouper.SetItemType(this.arrangeMoveDown, Necrofy.ToolStripGrouper.ItemType.MoveDown);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.arrangeMoveDown, this.moveDownButton);
+            this.arrangeMoveDown.Name = "arrangeMoveDown";
+            this.arrangeMoveDown.Size = new System.Drawing.Size(180, 22);
+            this.arrangeMoveDown.Text = "Move &Down";
             // 
-            // titleMoveToFront
+            // arrangeMoveToFront
             // 
-            this.titleMoveToFront.Image = global::Necrofy.Properties.Resources.arrow_stop_090;
-            this.toolStripGrouper.SetItemType(this.titleMoveToFront, Necrofy.ToolStripGrouper.ItemType.MoveToFront);
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.titleMoveToFront, this.moveToFrontButton);
-            this.titleMoveToFront.Name = "titleMoveToFront";
-            this.titleMoveToFront.Size = new System.Drawing.Size(176, 22);
-            this.titleMoveToFront.Text = "Move to &Front";
+            this.arrangeMoveToFront.Image = global::Necrofy.Properties.Resources.arrow_stop_090;
+            this.toolStripGrouper.SetItemSet(this.arrangeMoveToFront, ((Necrofy.ToolStripGrouper.ItemSet)((Necrofy.ToolStripGrouper.ItemSet.LevelTitle | Necrofy.ToolStripGrouper.ItemSet.SpriteEditor))));
+            this.toolStripGrouper.SetItemType(this.arrangeMoveToFront, Necrofy.ToolStripGrouper.ItemType.MoveToFront);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.arrangeMoveToFront, this.moveToFrontButton);
+            this.arrangeMoveToFront.Name = "arrangeMoveToFront";
+            this.arrangeMoveToFront.Size = new System.Drawing.Size(180, 22);
+            this.arrangeMoveToFront.Text = "Move to &Front";
             // 
-            // titleMoveToBack
+            // arrangeMoveToBack
             // 
-            this.titleMoveToBack.Image = global::Necrofy.Properties.Resources.arrow_stop_270;
-            this.toolStripGrouper.SetItemType(this.titleMoveToBack, Necrofy.ToolStripGrouper.ItemType.MoveToBack);
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.titleMoveToBack, this.moveToBackButton);
-            this.titleMoveToBack.Name = "titleMoveToBack";
-            this.titleMoveToBack.Size = new System.Drawing.Size(176, 22);
-            this.titleMoveToBack.Text = "Move to &Back";
+            this.arrangeMoveToBack.Image = global::Necrofy.Properties.Resources.arrow_stop_270;
+            this.toolStripGrouper.SetItemSet(this.arrangeMoveToBack, ((Necrofy.ToolStripGrouper.ItemSet)((Necrofy.ToolStripGrouper.ItemSet.LevelTitle | Necrofy.ToolStripGrouper.ItemSet.SpriteEditor))));
+            this.toolStripGrouper.SetItemType(this.arrangeMoveToBack, Necrofy.ToolStripGrouper.ItemType.MoveToBack);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.arrangeMoveToBack, this.moveToBackButton);
+            this.arrangeMoveToBack.Name = "arrangeMoveToBack";
+            this.arrangeMoveToBack.Size = new System.Drawing.Size(180, 22);
+            this.arrangeMoveToBack.Text = "Move to &Back";
             // 
             // windowMenu
             // 
@@ -1262,7 +1410,7 @@
             // statusLabel
             // 
             this.statusLabel.Name = "statusLabel";
-            this.statusLabel.Size = new System.Drawing.Size(930, 17);
+            this.statusLabel.Size = new System.Drawing.Size(1046, 17);
             this.statusLabel.Spring = true;
             this.statusLabel.Text = "status";
             this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -1290,10 +1438,12 @@
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.statusStrip1);
             this.IsMdiContainer = true;
+            this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainWindow";
             this.Text = "Necrofy";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainWindow_FormClosed);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainWindow_KeyDown);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
@@ -1398,14 +1548,14 @@
         private System.Windows.Forms.ToolStripButton moveDownButton;
         private System.Windows.Forms.ToolStripButton moveToFrontButton;
         private System.Windows.Forms.ToolStripButton moveToBackButton;
-        private System.Windows.Forms.ToolStripMenuItem titleMenu;
-        private System.Windows.Forms.ToolStripMenuItem titleCenterHorizontally;
-        private System.Windows.Forms.ToolStripMenuItem titleCenterVertically;
+        private System.Windows.Forms.ToolStripMenuItem arrangeMenu;
+        private System.Windows.Forms.ToolStripMenuItem arrangeCenterHorizontally;
+        private System.Windows.Forms.ToolStripMenuItem arrangeCenterVertically;
         private System.Windows.Forms.ToolStripSeparator titleSeparator;
-        private System.Windows.Forms.ToolStripMenuItem titleMoveUp;
-        private System.Windows.Forms.ToolStripMenuItem titleMoveDown;
-        private System.Windows.Forms.ToolStripMenuItem titleMoveToFront;
-        private System.Windows.Forms.ToolStripMenuItem titleMoveToBack;
+        private System.Windows.Forms.ToolStripMenuItem arrangeMoveUp;
+        private System.Windows.Forms.ToolStripMenuItem arrangeMoveDown;
+        private System.Windows.Forms.ToolStripMenuItem arrangeMoveToFront;
+        private System.Windows.Forms.ToolStripMenuItem arrangeMoveToBack;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem levelClear;
         private System.Windows.Forms.ToolStripMenuItem viewMenu;
@@ -1424,6 +1574,18 @@
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
         private System.Windows.Forms.ToolStripStatusLabel buildStatusLabel;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
+        private System.Windows.Forms.ToolStripButton zoomOutButton;
+        private System.Windows.Forms.ToolStripButton zoomInButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
+        private System.Windows.Forms.ToolStripMenuItem viewZoomOut;
+        private System.Windows.Forms.ToolStripMenuItem viewZoomIn;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator11;
+        private System.Windows.Forms.ToolStripButton flipHorizontalButton;
+        private System.Windows.Forms.ToolStripButton flipVerticalButton;
+        private System.Windows.Forms.ToolStripMenuItem arrangeFlipHorizontal;
+        private System.Windows.Forms.ToolStripMenuItem arrangeFlipVertical;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
     }
 }
 

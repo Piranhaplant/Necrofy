@@ -27,6 +27,14 @@ namespace Necrofy
 
         private Sprite currentSprite = null;
 
+        public override ToolStripGrouper.ItemSet ToolStripItemSet => ToolStripGrouper.ItemSet.SpriteEditor;
+        private static readonly ToolStripGrouper.ItemType[] wordSelectedItems = new ToolStripGrouper.ItemType[] {
+            ToolStripGrouper.ItemType.FlipHorizontally, ToolStripGrouper.ItemType.FlipVertically,
+            ToolStripGrouper.ItemType.CenterHorizontally, ToolStripGrouper.ItemType.CenterVertically,
+            ToolStripGrouper.ItemType.MoveUp, ToolStripGrouper.ItemType.MoveDown,
+            ToolStripGrouper.ItemType.MoveToFront, ToolStripGrouper.ItemType.MoveToBack
+        };
+
         public SpriteEditor(LoadedSprites loadedSprites) {
             InitializeComponent();
             Disposed += SpriteEditor_Disposed;
@@ -38,6 +46,7 @@ namespace Necrofy
 
             scrollWrapper = new ScrollWrapper(canvas, hscroll, vscroll);
             scrollWrapper.Scrolled += scrollWrapper_Scrolled;
+            scrollWrapper.SetPadding(MaxDimension, MaxDimension);
             scrollWrapper.SetClientSize(AllowedSize, AllowedSize);
 
             browserContents = new SpriteEditorObjectBrowserContents(loadedSprites);
@@ -56,6 +65,17 @@ namespace Necrofy
             return undoManager;
         }
 
+        public override void Displayed() {
+            base.Displayed();
+            UpdateToolbar();
+        }
+
+        private void UpdateToolbar() {
+            foreach (ToolStripGrouper.ItemType item in wordSelectedItems) {
+                mainWindow.GetToolStripItem(item).Enabled = selectedObjects.Count > 0;
+            }
+        }
+
         protected override void DoSave(Project project) {
             loadedSprites.spritesAsset.WriteFile(project);
         }
@@ -64,6 +84,7 @@ namespace Necrofy
         public override bool CanPaste => true;
         public override bool CanDelete => selectedObjects.Count > 0;
         public override bool HasSelection => true;
+        public override bool CanZoom => true;
 
         public override void Copy() {
             Clipboard.SetText(JsonConvert.SerializeObject(selectedObjects.Select(t => t.tile)));
@@ -78,7 +99,54 @@ namespace Necrofy
         }
 
         public override void Delete() {
-            undoManager.Do(new DeleteSpriteTileAction(currentSprite, selectedObjects));
+            List<WrappedSpriteTile> tiles = new List<WrappedSpriteTile>(selectedObjects);
+            List<int> zIndexes = objectSelector.SortAndGetZIndexes(tiles);
+            undoManager.Do(new DeleteSpriteTileAction(currentSprite, tiles, zIndexes));
+        }
+
+        public override void SelectAll() {
+            objectSelector.SelectAll();
+        }
+
+        public override void SelectNone() {
+            objectSelector.SelectNone();
+        }
+
+        protected override void ZoomChanged() {
+            scrollWrapper.Zoom = Zoom;
+        }
+
+        public override void ToolStripItemClicked(ToolStripGrouper.ItemType item) {
+            switch (item) {
+                case ToolStripGrouper.ItemType.CenterHorizontally:
+                    objectSelector.CenterHorizontally();
+                    undoManager.ForceNoMerge();
+                    break;
+                case ToolStripGrouper.ItemType.CenterVertically:
+                    objectSelector.CenterVertically();
+                    undoManager.ForceNoMerge();
+                    break;
+                case ToolStripGrouper.ItemType.MoveUp: {
+                    objectSelector.MoveUp(out List<WrappedSpriteTile> tiles, out List<int> oldZIndexes, out List<int> newZIndexes);
+                    undoManager.Do(new ChangeSpriteTileZIndexAction(currentSprite, tiles, oldZIndexes, newZIndexes));
+                    break;
+                }
+                case ToolStripGrouper.ItemType.MoveDown: {
+                    objectSelector.MoveDown(out List<WrappedSpriteTile> tiles, out List<int> oldZIndexes, out List<int> newZIndexes);
+                    undoManager.Do(new ChangeSpriteTileZIndexAction(currentSprite, tiles, oldZIndexes, newZIndexes));
+                    break;
+                }
+                case ToolStripGrouper.ItemType.MoveToFront: {
+                    objectSelector.MoveToFront(out List<WrappedSpriteTile> tiles, out List<int> oldZIndexes, out List<int> newZIndexes);
+                    undoManager.Do(new ChangeSpriteTileZIndexAction(currentSprite, tiles, oldZIndexes, newZIndexes));
+                    break;
+                }
+                case ToolStripGrouper.ItemType.MoveToBack: {
+                    objectSelector.MoveToBack(out List<WrappedSpriteTile> tiles, out List<int> oldZIndexes, out List<int> newZIndexes);
+                    undoManager.Do(new ChangeSpriteTileZIndexAction(currentSprite, tiles, oldZIndexes, newZIndexes));
+                    break;
+                }
+            }
         }
 
         public void Repaint() {
@@ -94,11 +162,7 @@ namespace Necrofy
             browserContents.SelectedIndex = Array.IndexOf(loadedSprites.spritesAsset.sprites, currentSprite);
             Repaint();
         }
-
-        public Point GetViewCenter() {
-            return new Point(canvas.Width / 2 - scrollWrapper.LeftPosition - MaxDimension, canvas.Height / 2 - scrollWrapper.TopPosition - MaxDimension);
-        }
-
+        
         private void scrollWrapper_Scrolled(object sender, EventArgs e) {
             Repaint();
         }
@@ -117,20 +181,24 @@ namespace Necrofy
                 return;
             }
 
-            e.Graphics.TranslateTransform(scrollWrapper.LeftPosition + MaxDimension, scrollWrapper.TopPosition + MaxDimension);
+            scrollWrapper.TransformGraphics(e.Graphics);
             e.Graphics.FillRectangle(SystemBrushes.ControlDark, new Rectangle(-MaxDimension, -MaxDimension, AllowedSize, AllowedSize));
-            e.Graphics.DrawLine(Pens.Black, -MaxDimension, 0, MaxDimension, 0);
-            e.Graphics.DrawLine(Pens.Black, 0, -MaxDimension, 0, MaxDimension);
+            // Move by 0.5 to make it so the lines still line up when zoomed in with "Half" PixelOffsetMode
+            e.Graphics.DrawLine(Pens.Black, -MaxDimension, -0.5f, MaxDimension, -0.5f);
+            e.Graphics.DrawLine(Pens.Black, -0.5f, -MaxDimension, -0.5f, MaxDimension);
 
             foreach (Sprite.Tile tile in currentSprite.tiles) {
                 SNESGraphics.DrawWithPlt(e.Graphics, tile.xOffset, tile.yOffset, loadedSprites.tileImages[tile.tileNum], loadedSprites.loadedPalette.colors, tile.palette * 0x10, 0x10, tile.xFlip, tile.yFlip);
             }
-            objectSelector.DrawSelectionRectangle(e.Graphics);
+            objectSelector.DrawSelectionRectangle(e.Graphics, Zoom);
+
+            Pen p = new Pen(Color.White, 1 / Zoom);
             foreach (WrappedSpriteTile tile in selectedObjects) {
                 Rectangle bounds = tile.Bounds;
                 e.Graphics.FillRectangle(selectionFillBrush, bounds);
-                e.Graphics.DrawRectangle(Pens.White, bounds);
+                e.Graphics.DrawRectangle(p, bounds);
             }
+            p.Dispose();
         }
 
         public IEnumerable<WrappedSpriteTile> GetObjects() {
@@ -158,6 +226,7 @@ namespace Necrofy
                     tilePicker.SelectedTile = selectedObjects.First().TileNum;
                     updatingSelectedTile = false;
                 }
+                UpdateToolbar();
             }
         }
 
@@ -203,13 +272,15 @@ namespace Necrofy
 
         private void canvas_MouseDown(object sender, MouseEventArgs e) {
             if (e.Button == MouseButtons.Left) {
-                objectSelector.MouseDown(e.X - scrollWrapper.LeftPosition - MaxDimension, e.Y - scrollWrapper.TopPosition - MaxDimension);
+                MouseEventArgs transformed = scrollWrapper.TransformMouseArgs(e);
+                objectSelector.MouseDown(transformed.X, transformed.Y);
                 mouseDown = true;
             }
         }
 
         private void canvas_MouseMove(object sender, MouseEventArgs e) {
-            objectSelector.MouseMove(e.X - scrollWrapper.LeftPosition - MaxDimension, e.Y - scrollWrapper.TopPosition - MaxDimension);
+            MouseEventArgs transformed = scrollWrapper.TransformMouseArgs(e);
+            objectSelector.MouseMove(transformed.X, transformed.Y);
         }
 
         private void canvas_MouseUp(object sender, MouseEventArgs e) {
@@ -228,12 +299,7 @@ namespace Necrofy
         private void canvas_KeyDown(object sender, KeyEventArgs e) {
             objectSelector.KeyDown(e.KeyData);
         }
-
-        public List<int> SortAndGetZIndexes(Sprite s, List<WrappedSpriteTile> tiles) {
-            tiles.Sort((a, b) => s.tiles.IndexOf(a.tile).CompareTo(s.tiles.IndexOf(b.tile)));
-            return tiles.Select(t => s.tiles.IndexOf(t.tile)).ToList();
-        }
-
+        
         public void AddTiles(Sprite s, List<WrappedSpriteTile> tiles, List<int> zIndexes = null) {
             for (int i = 0; i < tiles.Count; i++) {
                 if (zIndexes == null) {
