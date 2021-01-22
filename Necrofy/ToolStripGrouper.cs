@@ -207,6 +207,8 @@ namespace Necrofy
             ViewAnimate,
             ViewNextFrame,
             ViewRestartAnimation,
+            ViewAxes,
+            ViewTileBorders,
             LevelEditTitle,
             LevelSettings,
             LevelClear,

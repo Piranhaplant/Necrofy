@@ -70,6 +70,8 @@ namespace Necrofy
             LoadRunSettings();
             viewAnimate.Checked = Properties.Settings.Default.AnimateLevelEditor;
             viewRespawnAreas.Checked = Properties.Settings.Default.ShowRespawnAreas;
+            viewAxes.Checked = Properties.Settings.Default.ShowAxes;
+            viewTileBorders.Checked = Properties.Settings.Default.ShowTileBorders;
 
             projectMenuItems = new List<ToolStripMenuItem>() { buildBuildProject, buildRunProject };
             HideAllEditorToolStripItems();
@@ -84,6 +86,8 @@ namespace Necrofy
             }
             Properties.Settings.Default.AnimateLevelEditor = viewAnimate.Checked;
             Properties.Settings.Default.ShowRespawnAreas = viewRespawnAreas.Checked;
+            Properties.Settings.Default.ShowTileBorders = viewAxes.Checked;
+            Properties.Settings.Default.ShowAxes = viewTileBorders.Checked;
             Properties.Settings.Default.Save();
 
             CloseProject(closeEditors: false);
@@ -612,7 +616,7 @@ namespace Necrofy
         }
 
         private void MainWindow_KeyDown(object sender, KeyEventArgs e) {
-            if (e.Modifiers == Keys.Control) {
+            if (dockPanel.ActiveContent is EditorWindow || e.Modifiers == Keys.Control) {
                 if (e.KeyCode == Keys.Subtract || e.KeyCode == Keys.OemMinus) {
                     ZoomOut(sender, e);
                     e.Handled = true;

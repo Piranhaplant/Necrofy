@@ -106,5 +106,29 @@ namespace Necrofy.Properties {
                 this["ShowRespawnAreas"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowAxes {
+            get {
+                return ((bool)(this["ShowAxes"]));
+            }
+            set {
+                this["ShowAxes"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ShowTileBorders {
+            get {
+                return ((bool)(this["ShowTileBorders"]));
+            }
+            set {
+                this["ShowTileBorders"] = value;
+            }
+        }
     }
 }

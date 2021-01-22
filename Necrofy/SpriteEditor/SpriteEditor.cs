@@ -26,6 +26,8 @@ namespace Necrofy
         public UndoManager<SpriteEditor> undoManager;
 
         private Sprite currentSprite = null;
+        private bool showAxes;
+        private bool showTileBorders;
 
         public override ToolStripGrouper.ItemSet ToolStripItemSet => ToolStripGrouper.ItemSet.SpriteEditor;
         private static readonly ToolStripGrouper.ItemType[] wordSelectedItems = new ToolStripGrouper.ItemType[] {
@@ -68,6 +70,12 @@ namespace Necrofy
         public override void Displayed() {
             base.Displayed();
             UpdateToolbar();
+            UpdateViewOptions();
+        }
+
+        private void UpdateViewOptions() {
+            showAxes = mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewAxes).Checked;
+            showTileBorders = mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewTileBorders).Checked;
         }
 
         private void UpdateToolbar() {
@@ -155,6 +163,15 @@ namespace Necrofy
             }
         }
 
+        public override void ToolStripItemCheckedChanged(ToolStripGrouper.ItemType item) {
+            if (item == ToolStripGrouper.ItemType.ViewAxes || item == ToolStripGrouper.ItemType.ViewTileBorders) {
+                UpdateViewOptions();
+                if (DockVisible) {
+                    Repaint();
+                }
+            }
+        }
+
         public void Repaint() {
             canvas.Invalidate();
         }
@@ -189,13 +206,24 @@ namespace Necrofy
 
             scrollWrapper.TransformGraphics(e.Graphics);
             e.Graphics.FillRectangle(SystemBrushes.ControlDark, new Rectangle(-MaxDimension, -MaxDimension, AllowedSize, AllowedSize));
-            // Move by 0.5 to make it so the lines still line up when zoomed in with "Half" PixelOffsetMode
-            e.Graphics.DrawLine(Pens.Black, -MaxDimension, -0.5f, MaxDimension, -0.5f);
-            e.Graphics.DrawLine(Pens.Black, -0.5f, -MaxDimension, -0.5f, MaxDimension);
+            if (showAxes) {
+                // Move by 0.5 to make it so the lines still line up when zoomed in with "Half" PixelOffsetMode
+                e.Graphics.DrawLine(Pens.BlueViolet, -MaxDimension, -0.5f, MaxDimension, -0.5f);
+                e.Graphics.DrawLine(Pens.BlueViolet, -0.5f, -MaxDimension, -0.5f, MaxDimension);
+            }
 
             foreach (Sprite.Tile tile in currentSprite.tiles) {
                 SNESGraphics.DrawWithPlt(e.Graphics, tile.xOffset, tile.yOffset, loadedSprites.tileImages[tile.tileNum], loadedSprites.loadedPalette.colors, tile.palette * 0x10, 0x10, tile.xFlip, tile.yFlip);
             }
+
+            if (showTileBorders) {
+                Pen borderPen = new Pen(Color.LawnGreen, 1 / Zoom);
+                foreach (Sprite.Tile tile in currentSprite.tiles) {
+                    e.Graphics.DrawRectangle(borderPen, tile.xOffset, tile.yOffset, 16, 16);
+                }
+                borderPen.Dispose();
+            }
+
             objectSelector.DrawSelectionRectangle(e.Graphics, Zoom);
 
             Pen p = new Pen(Color.White, 1 / Zoom);
