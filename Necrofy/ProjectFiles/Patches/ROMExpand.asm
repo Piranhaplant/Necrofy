@@ -16,11 +16,11 @@ STA $00AA
 LDA #$007E
 STA $00AC
 ;LDX $10
-;LDA $9F0004,X	; Tile data pointer
+;LDA $9F0004,X	; Tilemap
   LDY #$0004
   LDA [$10],Y
 STA $00A6
-;LDA $9F0006,X	; Tile data pointer
+;LDA $9F0006,X	; Tilemap
   INY #2
   LDA [$10],Y
 STA $00A8
@@ -37,9 +37,9 @@ STA $00A8
 JSL $80ACA2
 JSL $80AD2B
 ;LDX $10
-;LDA $9F000A,X	; Map 16
+;LDA $9F000A,X	; Collision
 ;TAY
-;LDA $9F0008,X	; Map 16
+;LDA $9F0008,X	; Collision
   LDY #$000A
   LDA [$10],Y
   TAX

@@ -146,6 +146,12 @@ namespace Necrofy
                     undoManager.Do(new ChangeSpriteTileZIndexAction(currentSprite, tiles, oldZIndexes, newZIndexes));
                     break;
                 }
+                case ToolStripGrouper.ItemType.FlipHorizontally:
+                    undoManager.Do(new FlipSpriteTilesHorizontallyAction(currentSprite, selectedObjects));
+                    break;
+                case ToolStripGrouper.ItemType.FlipVertically:
+                    undoManager.Do(new FlipSpriteTilesVerticallyAction(currentSprite, selectedObjects));
+                    break;
             }
         }
 
@@ -223,7 +229,7 @@ namespace Necrofy
                 UpdateSelectedPalette();
                 if (selectedObjects.Count == 1) {
                     updatingSelectedTile = true;
-                    tilePicker.SelectedTile = selectedObjects.First().TileNum;
+                    tilePicker.SelectedTile = selectedObjects.First().tile.tileNum;
                     updatingSelectedTile = false;
                 }
                 UpdateToolbar();
@@ -232,7 +238,7 @@ namespace Necrofy
 
         public void UpdateSelectedPalette() {
             if (selectedObjects.Count >= 1) {
-                tilePicker.Palette = selectedObjects.First().Palette;
+                tilePicker.Palette = selectedObjects.First().tile.palette;
             }
         }
 

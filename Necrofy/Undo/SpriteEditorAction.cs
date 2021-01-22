@@ -35,33 +35,33 @@ namespace Necrofy
 
         public MoveSpriteTileAction(Sprite sprite, IEnumerable<WrappedSpriteTile> objs, int dx, int dy) : base(sprite, objs) {
             foreach (WrappedSpriteTile obj in objs) {
-                prevX.Add(obj.X);
-                prevY.Add(obj.Y);
-                newX.Add((short)(obj.X + dx));
-                newY.Add((short)(obj.Y + dy));
+                prevX.Add(obj.tile.xOffset);
+                prevY.Add(obj.tile.yOffset);
+                newX.Add((short)(obj.tile.xOffset + dx));
+                newY.Add((short)(obj.tile.yOffset + dy));
             }
         }
 
         public MoveSpriteTileAction(Sprite sprite, IEnumerable<WrappedSpriteTile> objs, ushort? x, ushort? y) : base(sprite, objs) {
             foreach (WrappedSpriteTile obj in objs) {
-                prevX.Add(obj.X);
-                prevY.Add(obj.Y);
-                newX.Add(x == null ? obj.X : (short)x);
-                newY.Add(y == null ? obj.Y : (short)y);
+                prevX.Add(obj.tile.xOffset);
+                prevY.Add(obj.tile.yOffset);
+                newX.Add(x == null ? obj.tile.xOffset : (short)x);
+                newY.Add(y == null ? obj.tile.yOffset : (short)y);
             }
         }
 
         protected override void Undo() {
             for (int i = 0; i < objs.Count; i++) {
-                objs[i].X = prevX[i];
-                objs[i].Y = prevY[i];
+                objs[i].tile.xOffset = prevX[i];
+                objs[i].tile.yOffset = prevY[i];
             }
         }
 
         protected override void Redo() {
             for (int i = 0; i < objs.Count; i++) {
-                objs[i].X = newX[i];
-                objs[i].Y = newY[i];
+                objs[i].tile.xOffset = newX[i];
+                objs[i].tile.yOffset = newY[i];
             }
         }
 
@@ -150,19 +150,19 @@ namespace Necrofy
         public ChangeSpriteTileNumAction(Sprite sprite, IEnumerable<WrappedSpriteTile> objs, ushort newType) : base(sprite, objs) {
             this.newType = newType;
             foreach (WrappedSpriteTile obj in base.objs) {
-                prevType.Add(obj.TileNum);
+                prevType.Add(obj.tile.tileNum);
             }
         }
 
         protected override void Undo() {
             for (int i = 0; i < objs.Count; i++) {
-                objs[i].TileNum = prevType[i];
+                objs[i].tile.tileNum = prevType[i];
             }
         }
 
         protected override void Redo() {
             for (int i = 0; i < objs.Count; i++) {
-                objs[i].TileNum = newType;
+                objs[i].tile.tileNum = newType;
             }
         }
 
@@ -203,19 +203,19 @@ namespace Necrofy
         public ChangeSpriteTilePaletteAction(Sprite sprite, IEnumerable<WrappedSpriteTile> objs, int palette) : base(sprite, objs) {
             newPalette = palette;
             foreach (WrappedSpriteTile obj in objs) {
-                prevPalette.Add(obj.Palette);
+                prevPalette.Add(obj.tile.palette);
             }
         }
 
         protected override void Undo() {
             for (int i = 0; i < objs.Count; i++) {
-                objs[i].Palette = prevPalette[i];
+                objs[i].tile.palette = prevPalette[i];
             }
         }
 
         protected override void Redo() {
             for (int i = 0; i < objs.Count; i++) {
-                objs[i].Palette = newPalette;
+                objs[i].tile.palette = newPalette;
             }
         }
 
@@ -268,6 +268,60 @@ namespace Necrofy
 
         public override string ToString() {
             return "Change tile order";
+        }
+    }
+
+    class FlipSpriteTilesHorizontallyAction : SpriteEditorAction
+    {
+        public FlipSpriteTilesHorizontallyAction(Sprite sprite, IEnumerable<WrappedSpriteTile> objs) : base(sprite, objs) { }
+
+        protected override void Undo() {
+            short min = objs.Min(o => o.tile.xOffset);
+            short max = objs.Max(o => o.tile.xOffset);
+            int center = (min + max) / 2;
+            foreach (WrappedSpriteTile obj in objs) {
+                obj.tile.xOffset = (short)(center - (obj.tile.xOffset - center));
+                obj.tile.xFlip = !obj.tile.xFlip;
+            }
+        }
+
+        protected override void Redo() {
+            Undo();
+        }
+
+        public override string ToString() {
+            if (objs.Count == 1) {
+                return "Flip tile horizontally";
+            } else {
+                return "Flip " + objs.Count.ToString() + " tiles horizontally";
+            }
+        }
+    }
+
+    class FlipSpriteTilesVerticallyAction : SpriteEditorAction
+    {
+        public FlipSpriteTilesVerticallyAction(Sprite sprite, IEnumerable<WrappedSpriteTile> objs) : base(sprite, objs) { }
+
+        protected override void Undo() {
+            short min = objs.Min(o => o.tile.yOffset);
+            short max = objs.Max(o => o.tile.yOffset);
+            int center = (min + max) / 2;
+            foreach (WrappedSpriteTile obj in objs) {
+                obj.tile.yOffset = (short)(center - (obj.tile.yOffset - center));
+                obj.tile.yFlip = !obj.tile.yFlip;
+            }
+        }
+
+        protected override void Redo() {
+            Undo();
+        }
+
+        public override string ToString() {
+            if (objs.Count == 1) {
+                return "Flip tile vertically";
+            } else {
+                return "Flip " + objs.Count.ToString() + " tiles vertically";
+            }
         }
     }
 }

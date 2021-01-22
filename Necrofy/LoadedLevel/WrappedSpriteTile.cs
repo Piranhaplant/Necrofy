@@ -24,24 +24,15 @@ namespace Necrofy
         }
         
         [Browsable(false)]
-        public Rectangle Bounds => new Rectangle(X, Y, 16, 16);
+        public Rectangle Bounds => new Rectangle(tile.xOffset, tile.yOffset, 16, 16);
         int ISelectableObject.GetX() {
-            return X;
+            return tile.xOffset;
         }
         int ISelectableObject.GetY() {
-            return Y;
+            return tile.yOffset;
         }
         bool ISelectableObject.Selectable => true;
-
-        [Browsable(false)]
-        public short X { get => tile.xOffset; set => tile.xOffset = value; }
-        [Browsable(false)]
-        public short Y { get => tile.yOffset; set => tile.yOffset = value; }
-        [Browsable(false)]
-        public int Palette { get => tile.palette; set => tile.palette = value; }
-        [Browsable(false)]
-        public ushort TileNum { get => tile.tileNum; set => tile.tileNum = value; }
-
+        
         // Properties used in the property browser
         private string browsableX = null;
         private string browsableY = null;
@@ -58,9 +49,9 @@ namespace Necrofy
             browsableYFlip = null;
         }
         [DisplayName(XProperty)]
-        public string BrowsableX { get => browsableX ?? X.ToString(); set => browsableX = value; }
+        public string BrowsableX { get => browsableX ?? tile.xOffset.ToString(); set => browsableX = value; }
         [DisplayName(YProperty)]
-        public string BrowsableY { get => browsableY ?? Y.ToString(); set => browsableY = value; }
+        public string BrowsableY { get => browsableY ?? tile.yOffset.ToString(); set => browsableY = value; }
         [DisplayName(PaletteProperty)]
         public string BrowsablePalette { get => browsablePalette ?? tile.palette.ToString(); set => browsablePalette = value; }
         [DisplayName(TileNumProperty)]
