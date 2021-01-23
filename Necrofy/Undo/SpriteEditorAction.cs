@@ -42,7 +42,7 @@ namespace Necrofy
             }
         }
 
-        public MoveSpriteTileAction(Sprite sprite, IEnumerable<WrappedSpriteTile> objs, ushort? x, ushort? y) : base(sprite, objs) {
+        public MoveSpriteTileAction(Sprite sprite, IEnumerable<WrappedSpriteTile> objs, short? x, short? y) : base(sprite, objs) {
             foreach (WrappedSpriteTile obj in objs) {
                 prevX.Add(obj.tile.xOffset);
                 prevY.Add(obj.tile.yOffset);
@@ -321,6 +321,72 @@ namespace Necrofy
                 return "Flip tile vertically";
             } else {
                 return "Flip " + objs.Count.ToString() + " tiles vertically";
+            }
+        }
+    }
+
+    class SetSpriteTilesXFlip : SpriteEditorAction
+    {
+        private readonly List<bool> prevValues = new List<bool>();
+        private readonly bool newValue;
+
+        public SetSpriteTilesXFlip(Sprite sprite, IEnumerable<WrappedSpriteTile> objs, bool value) : base(sprite, objs) {
+            newValue = value;
+            foreach (WrappedSpriteTile obj in objs) {
+                prevValues.Add(obj.tile.xFlip);
+            }
+        }
+
+        protected override void Undo() {
+            for (int i = 0; i < objs.Count; i++) {
+                objs[i].tile.xFlip = prevValues[i];
+            }
+        }
+
+        protected override void Redo() {
+            for (int i = 0; i < objs.Count; i++) {
+                objs[i].tile.xFlip = newValue;
+            }
+        }
+
+        public override string ToString() {
+            if (objs.Count == 1) {
+                return "Set tile X flip";
+            } else {
+                return "Set " + objs.Count.ToString() + " tiles X flip";
+            }
+        }
+    }
+
+    class SetSpriteTilesYFlip : SpriteEditorAction
+    {
+        private readonly List<bool> prevValues = new List<bool>();
+        private readonly bool newValue;
+
+        public SetSpriteTilesYFlip(Sprite sprite, IEnumerable<WrappedSpriteTile> objs, bool value) : base(sprite, objs) {
+            newValue = value;
+            foreach (WrappedSpriteTile obj in objs) {
+                prevValues.Add(obj.tile.yFlip);
+            }
+        }
+
+        protected override void Undo() {
+            for (int i = 0; i < objs.Count; i++) {
+                objs[i].tile.yFlip = prevValues[i];
+            }
+        }
+
+        protected override void Redo() {
+            for (int i = 0; i < objs.Count; i++) {
+                objs[i].tile.yFlip = newValue;
+            }
+        }
+
+        public override string ToString() {
+            if (objs.Count == 1) {
+                return "Set tile Y flip";
+            } else {
+                return "Set " + objs.Count.ToString() + " tiles Y flip";
             }
         }
     }

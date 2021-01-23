@@ -249,14 +249,10 @@ namespace Necrofy
                 value = value.Trim();
                 switch (e.ChangedItem.Label) {
                     case WrappedTitleWord.XProperty:
-                        ParsePositionProperty(value, o => o.X,
-                            dx => new MoveWordAction(activeEditor.SelectedWords, dx, 0),
-                            x => new MoveWordAction(activeEditor.SelectedWords, x, null));
+                        activeEditor.ParsePositionChange(value, isX: true);
                         break;
                     case WrappedTitleWord.YProperty:
-                        ParsePositionProperty(value, o => o.Y,
-                            dy => new MoveWordAction(activeEditor.SelectedWords, 0, dy),
-                            y => new MoveWordAction(activeEditor.SelectedWords, null, y));
+                        activeEditor.ParsePositionChange(value, isX: false);
                         break;
                     case WrappedTitleWord.PaletteProperty:
                         if (byte.TryParse(value, out byte palette)) {
@@ -266,19 +262,7 @@ namespace Necrofy
                 }
             }
         }
-
-        private void ParsePositionProperty(string value, Func<WrappedTitleWord, byte> getter, Func<int, MoveWordAction> deltaMoveGetter, Func<byte, MoveWordAction> absoluteMoveGetter) {
-            if (int.TryParse(value, out int intValue)) {
-                if (value.StartsWith("+") || value.StartsWith("-")) {
-                    int min = activeEditor.SelectedWords.Min(getter);
-                    int max = activeEditor.SelectedWords.Max(getter);
-                    undoManager.Do(deltaMoveGetter(Math.Max(-min, Math.Min(byte.MaxValue - max, intValue))));
-                } else if (intValue >= byte.MinValue && intValue <= byte.MaxValue) {
-                    undoManager.Do(absoluteMoveGetter((byte)intValue));
-                }
-            }
-        }
-
+        
         public override void ToolStripItemClicked(ToolStripGrouper.ItemType item) {
             switch (item) {
                 case ToolStripGrouper.ItemType.CenterHorizontally:

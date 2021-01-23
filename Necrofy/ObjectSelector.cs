@@ -242,6 +242,24 @@ namespace Necrofy
             dy = (dy / positionStep) * positionStep;
         }
 
+        public void ParsePositionChange(string value, bool isX) {
+            int intValue;
+            if (int.TryParse(value, out intValue) || value.StartsWith("+") && int.TryParse(value.Substring(1), out intValue)) {
+                if (value.StartsWith("+") || value.StartsWith("-") && minX >= 0) {
+                    int dx = (isX ? intValue : 0) * positionStep;
+                    int dy = (isX ? 0 : intValue) * positionStep;
+                    ClampObjectMove(ref dx, ref dy);
+                    host.MoveSelectedObjects(dx, dy);
+                } else if (intValue >= minX && intValue <= maxX) {
+                    if (isX) {
+                        host.SetSelectedObjectsPosition(intValue, null);
+                    } else {
+                        host.SetSelectedObjectsPosition(null, intValue);
+                    }
+                }
+            }
+        }
+
         public void CenterHorizontally() {
             int min = selectedObjects.Min(o => o.Bounds.Left);
             int max = selectedObjects.Max(o => o.Bounds.Right);
@@ -322,6 +340,7 @@ namespace Necrofy
             IEnumerable<T> GetObjects();
             void SelectionChanged();
             void MoveSelectedObjects(int dx, int dy);
+            void SetSelectedObjectsPosition(int? x, int? y);
             T CreateObject(int x, int y);
             IEnumerable<T> CloneSelection();
         }

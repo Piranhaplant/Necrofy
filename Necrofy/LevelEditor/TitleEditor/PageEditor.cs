@@ -613,6 +613,10 @@ namespace Necrofy
             objectSelector.MoveToBack(out List<WrappedTitleWord> words, out List<int> oldZIndexes, out List<int> newZIndexes);
             titleEditor.undoManager.Do(new ChangeWordZIndexAction(this, words, oldZIndexes, newZIndexes));
         }
+
+        public void ParsePositionChange(string position, bool isX) {
+            objectSelector.ParsePositionChange(position, isX);
+        }
         
         public IEnumerable<WrappedTitleWord> GetObjects() {
             return wrappedWords;
@@ -635,6 +639,10 @@ namespace Necrofy
 
         public void MoveSelectedObjects(int dx, int dy) {
             titleEditor.undoManager.Do(new MoveWordAction(SelectedWords, dx / 8, dy / 8));
+        }
+
+        public void SetSelectedObjectsPosition(int? x, int? y) {
+            titleEditor.undoManager.Do(new MoveWordAction(SelectedWords, (byte?)x, (byte?)y));
         }
 
         public WrappedTitleWord CreateObject(int x, int y) {

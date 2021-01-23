@@ -37,21 +37,25 @@ namespace Necrofy
                 players: editor.PlayersEnabled);
         }
 
-        private HashSet<WrappedLevelObject> prevSelectedObjects = new HashSet<WrappedLevelObject>();
+        private HashSet<WrappedLevelObject> selectedObjects = new HashSet<WrappedLevelObject>();
 
         public void SelectionChanged() {
             editor.Repaint();
-            if (!prevSelectedObjects.SetEquals(objectSelector.GetSelectedObjects())) {
-                prevSelectedObjects = new HashSet<WrappedLevelObject>(objectSelector.GetSelectedObjects());
+            if (!selectedObjects.SetEquals(objectSelector.GetSelectedObjects())) {
+                selectedObjects = new HashSet<WrappedLevelObject>(objectSelector.GetSelectedObjects());
                 editor.NonTileSelectionChanged();
-                editor.spriteObjectBrowserContents.SetHighlightedCategories(objectSelector.GetSelectedObjects().Select(o => o.Category));
-                PropertyBrowserObjects = objectSelector.GetSelectedObjects().ToArray();
+                editor.spriteObjectBrowserContents.SetHighlightedCategories(selectedObjects.Select(o => o.Category));
+                PropertyBrowserObjects = selectedObjects.ToArray();
             }
         }
 
         public void MoveSelectedObjects(int dx, int dy) {
-            editor.undoManager.Do(new MoveSpriteAction(objectSelector.GetSelectedObjects(), dx, dy));
+            editor.undoManager.Do(new MoveSpriteAction(selectedObjects, dx, dy));
             UpdateStatus();
+        }
+
+        public void SetSelectedObjectsPosition(int? x, int? y) {
+            editor.undoManager.Do(new MoveSpriteAction(selectedObjects, (ushort?)x, (ushort?)y));
         }
 
         private WrappedLevelObject GetCreationObject(int x, int y) {
@@ -120,7 +124,7 @@ namespace Necrofy
         public override void SpriteChanged() {
             prevChangeSpriteAction2 = prevChangeSpriteAction1;
             if (editor.spriteObjectBrowserContents.SelectedSprite != null) {
-                prevChangeSpriteAction1 = new ChangeSpriteTypeAction(objectSelector.GetSelectedObjects(), (SpriteDisplay.Category)editor.spriteObjectBrowserContents.SelectedCategory, editor.spriteObjectBrowserContents.SelectedSprite.value);
+                prevChangeSpriteAction1 = new ChangeSpriteTypeAction(selectedObjects, (SpriteDisplay.Category)editor.spriteObjectBrowserContents.SelectedCategory, editor.spriteObjectBrowserContents.SelectedSprite.value);
                 editor.undoManager.Do(prevChangeSpriteAction1);
             } else {
                 prevChangeSpriteAction1 = null;
@@ -148,59 +152,43 @@ namespace Necrofy
 
         public override void PropertyBrowserPropertyChanged(PropertyValueChangedEventArgs e) {
             string value = e.ChangedItem.Value as string;
-            foreach (WrappedLevelObject o in objectSelector.GetSelectedObjects()) {
+            foreach (WrappedLevelObject o in selectedObjects) {
                 o.ClearBrowsableProperties();
             }
             if (value != null) {
                 value = value.Trim();
                 switch (e.ChangedItem.Label) {
                     case WrappedLevelObject.XProperty:
-                        ParsePositionProperty(value, o => o.X,
-                            dx => new MoveSpriteAction(objectSelector.GetSelectedObjects(), dx, 0),
-                            x => new MoveSpriteAction(objectSelector.GetSelectedObjects(), x, null));
+                        objectSelector.ParsePositionChange(value, isX: true);
                         break;
                     case WrappedLevelObject.YProperty:
-                        ParsePositionProperty(value, o => o.Y,
-                            dy => new MoveSpriteAction(objectSelector.GetSelectedObjects(), 0, dy),
-                            y => new MoveSpriteAction(objectSelector.GetSelectedObjects(), null, y));
+                        objectSelector.ParsePositionChange(value, isX: false);
                         break;
                     case WrappedLevelObject.PointerProperty:
                         if (ROMPointers.ParsePointer(value, out int pointer)) {
-                            editor.undoManager.Do(new ChangeSpriteTypeAction(objectSelector.GetSelectedObjects().Where(o => o.Category != SpriteDisplay.Category.Item && o.Category != SpriteDisplay.Category.Player), pointer));
+                            editor.undoManager.Do(new ChangeSpriteTypeAction(selectedObjects.Where(o => o.Category != SpriteDisplay.Category.Item && o.Category != SpriteDisplay.Category.Player), pointer));
                         }
                         break;
                     case WrappedItem.TypeProperty:
                         if (byte.TryParse(value, out byte type)) {
-                            editor.undoManager.Do(new ChangeSpriteTypeAction(objectSelector.GetSelectedObjects(), SpriteDisplay.Category.Item, type));
+                            editor.undoManager.Do(new ChangeSpriteTypeAction(selectedObjects, SpriteDisplay.Category.Item, type));
                         }
                         break;
                     case WrappedMonster.RadiusProperty:
                         if (byte.TryParse(value, out byte radius)) {
-                            editor.undoManager.Do(new ChangeMonsterRadiusAction(objectSelector.GetSelectedObjects(), radius));
+                            editor.undoManager.Do(new ChangeMonsterRadiusAction(selectedObjects, radius));
                         }
                         break;
                     case WrappedMonster.DelayProperty:
                         if (byte.TryParse(value, out byte delay)) {
-                            editor.undoManager.Do(new ChangeMonsterDelayAction(objectSelector.GetSelectedObjects(), delay));
+                            editor.undoManager.Do(new ChangeMonsterDelayAction(selectedObjects, delay));
                         }
                         break;
                     case WrappedOneShotMonster.ExtraProperty:
                         if (ushort.TryParse(value, out ushort extra)) {
-                            editor.undoManager.Do(new ChangeOneShotMonsterExtraAction(objectSelector.GetSelectedObjects(), extra));
+                            editor.undoManager.Do(new ChangeOneShotMonsterExtraAction(selectedObjects, extra));
                         }
                         break;
-                }
-            }
-        }
-
-        private void ParsePositionProperty(string value, Func<WrappedLevelObject, ushort> getter, Func<int, MoveSpriteAction> deltaMoveGetter, Func<ushort, MoveSpriteAction> absoluteMoveGetter) {
-            if (int.TryParse(value, out int intValue)) {
-                if (value.StartsWith("+") || value.StartsWith("-")) {
-                    int min = objectSelector.GetSelectedObjects().Min(getter);
-                    int max = objectSelector.GetSelectedObjects().Max(getter);
-                    editor.undoManager.Do(deltaMoveGetter(Math.Max(-min, Math.Min(ushort.MaxValue - max, intValue))));
-                } else if (intValue >= ushort.MinValue && intValue <= ushort.MaxValue) {
-                    editor.undoManager.Do(absoluteMoveGetter((ushort)intValue));
                 }
             }
         }
@@ -208,16 +196,16 @@ namespace Necrofy
         public override void Paint(Graphics g) {
             objectSelector.DrawSelectionRectangle(g);
 
-            foreach (WrappedLevelObject obj in objectSelector.GetSelectedObjects()) {
+            foreach (WrappedLevelObject obj in selectedObjects) {
                 Rectangle bounds = obj.Bounds;
                 g.FillRectangle(selectionFillBrush, bounds);
                 g.DrawRectangle(Pens.White, bounds);
             }
         }
 
-        public override bool CanCopy => objectSelector.GetSelectedObjects().Any(o => o.Removable);
+        public override bool CanCopy => selectedObjects.Any(o => o.Removable);
         public override bool CanPaste => true;
-        public override bool CanDelete => objectSelector.GetSelectedObjects().Any(o => o.Removable);
+        public override bool CanDelete => selectedObjects.Any(o => o.Removable);
         public override bool HasSelection => true;
 
         public override void Copy() {
@@ -250,7 +238,7 @@ namespace Necrofy
 
         private SpriteClipboardContents SelectionToClipboard() {
             SpriteClipboardContents contents = new SpriteClipboardContents();
-            foreach (WrappedLevelObject obj in objectSelector.GetSelectedObjects()) {
+            foreach (WrappedLevelObject obj in selectedObjects) {
                 obj.AddToClipboard(contents);
             }
             return contents;
@@ -282,7 +270,7 @@ namespace Necrofy
         }
 
         public override void Delete() {
-            editor.undoManager.Do(new DeleteSpriteAction(objectSelector.GetSelectedObjects()));
+            editor.undoManager.Do(new DeleteSpriteAction(selectedObjects));
         }
 
         private void UpdateStatus() {

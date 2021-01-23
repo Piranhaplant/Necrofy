@@ -175,6 +175,43 @@ namespace Necrofy
             }
         }
 
+        public override void PropertyBrowserPropertyChanged(PropertyValueChangedEventArgs e) {
+            object value = e.ChangedItem.Value;
+            foreach (WrappedSpriteTile o in selectedObjects) {
+                o.ClearBrowsableProperties();
+            }
+            if (value is string stringValue) {
+                stringValue = stringValue.Trim();
+                switch (e.ChangedItem.Label) {
+                    case WrappedSpriteTile.XProperty:
+                        objectSelector.ParsePositionChange(stringValue, isX: true);
+                        break;
+                    case WrappedSpriteTile.YProperty:
+                        objectSelector.ParsePositionChange(stringValue, isX: false);
+                        break;
+                    case WrappedSpriteTile.PaletteProperty:
+                        if (int.TryParse(stringValue, out int palette) && palette >= 0 && palette <= 7) {
+                            undoManager.Do(new ChangeSpriteTilePaletteAction(currentSprite, selectedObjects, palette));
+                        }
+                        break;
+                    case WrappedSpriteTile.TileNumProperty:
+                        if (ushort.TryParse(stringValue, out ushort tileNum)) {
+                            undoManager.Do(new ChangeSpriteTileNumAction(currentSprite, selectedObjects, tileNum));
+                        }
+                        break;
+                }
+            } else if (value is bool boolValue) {
+                switch (e.ChangedItem.Label) {
+                    case WrappedSpriteTile.XFlipProperty:
+                        undoManager.Do(new SetSpriteTilesXFlip(currentSprite, selectedObjects, boolValue));
+                        break;
+                    case WrappedSpriteTile.YFlipProperty:
+                        undoManager.Do(new SetSpriteTilesYFlip(currentSprite, selectedObjects, boolValue));
+                        break;
+                }
+            }
+        }
+
         public void Repaint() {
             canvas.Invalidate();
         }
@@ -215,8 +252,14 @@ namespace Necrofy
                 e.Graphics.DrawLine(Pens.BlueViolet, -0.5f, -MaxDimension, -0.5f, MaxDimension);
             }
 
+            Pen linePen = new Pen(Color.White, 1 / Zoom);
             foreach (Sprite.Tile tile in currentSprite.tiles) {
-                SNESGraphics.DrawWithPlt(e.Graphics, tile.xOffset, tile.yOffset, loadedSprites.tileImages[tile.tileNum], loadedSprites.loadedPalette.colors, tile.palette * 0x10, 0x10, tile.xFlip, tile.yFlip);
+                if (tile.tileNum < loadedSprites.tileImages.Length) {
+                    SNESGraphics.DrawWithPlt(e.Graphics, tile.xOffset, tile.yOffset, loadedSprites.tileImages[tile.tileNum], loadedSprites.loadedPalette.colors, tile.palette * 0x10, 0x10, tile.xFlip, tile.yFlip);
+                } else {
+                    e.Graphics.DrawLine(linePen, tile.xOffset, tile.yOffset, tile.xOffset + 16, tile.yOffset + 16);
+                    e.Graphics.DrawLine(linePen, tile.xOffset + 16, tile.yOffset, tile.xOffset, tile.yOffset + 16);
+                }
             }
 
             if (showTileBorders) {
@@ -229,13 +272,12 @@ namespace Necrofy
 
             objectSelector.DrawSelectionRectangle(e.Graphics, Zoom);
 
-            Pen p = new Pen(Color.White, 1 / Zoom);
             foreach (WrappedSpriteTile tile in selectedObjects) {
                 Rectangle bounds = tile.Bounds;
                 e.Graphics.FillRectangle(selectionFillBrush, bounds);
-                e.Graphics.DrawRectangle(p, bounds);
+                e.Graphics.DrawRectangle(linePen, bounds);
             }
-            p.Dispose();
+            linePen.Dispose();
         }
 
         public IEnumerable<WrappedSpriteTile> GetObjects() {
@@ -287,6 +329,10 @@ namespace Necrofy
 
         public void MoveSelectedObjects(int dx, int dy) {
             undoManager.Do(new MoveSpriteTileAction(currentSprite, selectedObjects, dx, dy));
+        }
+
+        public void SetSelectedObjectsPosition(int? x, int? y) {
+            undoManager.Do(new MoveSpriteTileAction(currentSprite, selectedObjects, (short?)x, (short?)y));
         }
 
         public WrappedSpriteTile CreateObject(int x, int y) {
