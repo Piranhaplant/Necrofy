@@ -18,6 +18,8 @@ namespace Necrofy
 
         private static readonly SolidBrush selectionFillBrush = new SolidBrush(Color.FromArgb(96, 255, 255, 255));
 
+        private readonly RadioButton[] paletteButtons;
+
         private readonly LoadedSprites loadedSprites;
         private readonly SpriteEditorObjectBrowserContents browserContents;
         private readonly ObjectSelector<WrappedSpriteTile> objectSelector;
@@ -40,6 +42,7 @@ namespace Necrofy
         public SpriteEditor(LoadedSprites loadedSprites) {
             InitializeComponent();
             Disposed += SpriteEditor_Disposed;
+            paletteButtons = new RadioButton[] { palette0Button, palette1Button, palette2Button, palette3Button, palette4Button, palette5Button, palette6Button, palette7Button };
 
             this.loadedSprites = loadedSprites;
             Title = "Sprites";
@@ -245,7 +248,7 @@ namespace Necrofy
         }
 
         private HashSet<WrappedSpriteTile> selectedObjects = new HashSet<WrappedSpriteTile>();
-        private bool updatingSelectedTile = false;
+        private int updatingUI = 0;
 
         void ObjectSelector<WrappedSpriteTile>.IHost.SelectionChanged() {
             Repaint();
@@ -256,9 +259,7 @@ namespace Necrofy
 
                 UpdateSelectedPalette();
                 if (selectedObjects.Count == 1) {
-                    updatingSelectedTile = true;
-                    tilePicker.SelectedTile = selectedObjects.First().tile.tileNum;
-                    updatingSelectedTile = false;
+                    UpdateUI(() => tilePicker.SelectedTile = selectedObjects.First().tile.tileNum);
                 }
                 UpdateToolbar();
             }
@@ -266,8 +267,22 @@ namespace Necrofy
 
         public void UpdateSelectedPalette() {
             if (selectedObjects.Count >= 1) {
-                tilePicker.Palette = selectedObjects.First().tile.palette;
+                int palette = selectedObjects.First().tile.palette;
+                tilePicker.Palette = palette;
+                if (selectedObjects.All(t => t.tile.palette == palette)) {
+                    UpdateUI(() => paletteButtons[palette].Checked = true);
+                } else {
+                    foreach (RadioButton button in paletteButtons) {
+                        button.Checked = false;
+                    }
+                }
             }
+        }
+
+        private void UpdateUI(Action action) {
+            updatingUI++;
+            action();
+            updatingUI--;
         }
 
         public void MoveSelectedObjects(int dx, int dy) {
@@ -297,7 +312,7 @@ namespace Necrofy
         }
 
         private void tilePicker_SelectedTileChanged(object sender, EventArgs e) {
-            if (!updatingSelectedTile && tilePicker.SelectedTile >= 0 && selectedObjects.Count > 0) {
+            if (updatingUI == 0 && tilePicker.SelectedTile >= 0 && selectedObjects.Count > 0) {
                 undoManager.Do(new ChangeSpriteTileNumAction(currentSprite, selectedObjects, (ushort)tilePicker.SelectedTile));
             }
         }
@@ -330,8 +345,16 @@ namespace Necrofy
             }
         }
 
+        private static readonly Dictionary<Keys, int> paletteKeys = new Dictionary<Keys, int>() {
+            { Keys.D0, 0 }, { Keys.D1, 1 }, { Keys.D2, 2 }, { Keys.D3, 3 }, { Keys.D4, 4 }, { Keys.D5, 5 }, { Keys.D6, 6 },{ Keys.D7, 7 },
+            { Keys.NumPad0, 0 }, { Keys.NumPad1, 1 }, { Keys.NumPad2, 2 }, { Keys.NumPad3, 3 }, { Keys.NumPad4, 4 }, { Keys.NumPad5, 5 }, { Keys.NumPad6, 6 }, { Keys.NumPad7, 7 }
+        };
+
         private void canvas_KeyDown(object sender, KeyEventArgs e) {
             objectSelector.KeyDown(e.KeyData);
+            if (paletteKeys.TryGetValue(e.KeyCode, out int palette)) {
+                paletteButtons[palette].Checked = true;
+            }
         }
         
         public void AddTiles(Sprite s, List<WrappedSpriteTile> tiles, List<int> zIndexes = null) {
@@ -350,6 +373,15 @@ namespace Necrofy
             }
             if (updateSelection) {
                 objectSelector.UpdateSelection();
+            }
+        }
+
+        private void paletteButton_CheckedChanged(object sender, EventArgs e) {
+            if (updatingUI == 0 && sender is RadioButton button && button.Checked) {
+                int palette = Array.IndexOf(paletteButtons, button);
+                tilePicker.Palette = palette;
+                undoManager.Do(new ChangeSpriteTilePaletteAction(currentSprite, selectedObjects, palette));
+                canvas.Focus();
             }
         }
     }

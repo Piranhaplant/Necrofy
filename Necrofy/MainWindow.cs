@@ -86,8 +86,8 @@ namespace Necrofy
             }
             Properties.Settings.Default.AnimateLevelEditor = viewAnimate.Checked;
             Properties.Settings.Default.ShowRespawnAreas = viewRespawnAreas.Checked;
-            Properties.Settings.Default.ShowTileBorders = viewAxes.Checked;
-            Properties.Settings.Default.ShowAxes = viewTileBorders.Checked;
+            Properties.Settings.Default.ShowTileBorders = viewTileBorders.Checked;
+            Properties.Settings.Default.ShowAxes = viewAxes.Checked;
             Properties.Settings.Default.Save();
 
             CloseProject(closeEditors: false);

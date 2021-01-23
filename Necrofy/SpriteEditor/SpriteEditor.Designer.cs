@@ -30,10 +30,21 @@
             this.canvas = new Necrofy.Canvas();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tilePicker = new Necrofy.SpriteTilePicker();
+            this.palettePanel = new System.Windows.Forms.Panel();
+            this.palette7Button = new System.Windows.Forms.RadioButton();
+            this.palette6Button = new System.Windows.Forms.RadioButton();
+            this.palette5Button = new System.Windows.Forms.RadioButton();
+            this.palette4Button = new System.Windows.Forms.RadioButton();
+            this.palette3Button = new System.Windows.Forms.RadioButton();
+            this.palette2Button = new System.Windows.Forms.RadioButton();
+            this.palette1Button = new System.Windows.Forms.RadioButton();
+            this.palette0Button = new System.Windows.Forms.RadioButton();
+            this.paletteLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.palettePanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // vscroll
@@ -85,6 +96,8 @@
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.tilePicker);
+            this.splitContainer1.Panel1.Controls.Add(this.palettePanel);
+            this.splitContainer1.Panel1MinSize = 273;
             // 
             // splitContainer1.Panel2
             // 
@@ -99,13 +112,145 @@
             // tilePicker
             // 
             this.tilePicker.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tilePicker.Location = new System.Drawing.Point(0, 0);
+            this.tilePicker.Location = new System.Drawing.Point(0, 29);
             this.tilePicker.Name = "tilePicker";
             this.tilePicker.Palette = 0;
             this.tilePicker.SelectedTile = -1;
-            this.tilePicker.Size = new System.Drawing.Size(273, 901);
+            this.tilePicker.Size = new System.Drawing.Size(273, 872);
             this.tilePicker.TabIndex = 7;
             this.tilePicker.SelectedTileChanged += new Necrofy.SpriteTilePicker.SelectedTileChangedDelegate(this.tilePicker_SelectedTileChanged);
+            // 
+            // palettePanel
+            // 
+            this.palettePanel.Controls.Add(this.palette7Button);
+            this.palettePanel.Controls.Add(this.palette6Button);
+            this.palettePanel.Controls.Add(this.palette5Button);
+            this.palettePanel.Controls.Add(this.palette4Button);
+            this.palettePanel.Controls.Add(this.palette3Button);
+            this.palettePanel.Controls.Add(this.palette2Button);
+            this.palettePanel.Controls.Add(this.palette1Button);
+            this.palettePanel.Controls.Add(this.palette0Button);
+            this.palettePanel.Controls.Add(this.paletteLabel);
+            this.palettePanel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.palettePanel.Location = new System.Drawing.Point(0, 0);
+            this.palettePanel.Name = "palettePanel";
+            this.palettePanel.Size = new System.Drawing.Size(273, 29);
+            this.palettePanel.TabIndex = 8;
+            // 
+            // palette7Button
+            // 
+            this.palette7Button.Appearance = System.Windows.Forms.Appearance.Button;
+            this.palette7Button.AutoSize = true;
+            this.palette7Button.Location = new System.Drawing.Point(248, 3);
+            this.palette7Button.Name = "palette7Button";
+            this.palette7Button.Size = new System.Drawing.Size(23, 23);
+            this.palette7Button.TabIndex = 8;
+            this.palette7Button.Text = "7";
+            this.palette7Button.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.palette7Button.UseVisualStyleBackColor = true;
+            this.palette7Button.CheckedChanged += new System.EventHandler(this.paletteButton_CheckedChanged);
+            // 
+            // palette6Button
+            // 
+            this.palette6Button.Appearance = System.Windows.Forms.Appearance.Button;
+            this.palette6Button.AutoSize = true;
+            this.palette6Button.Location = new System.Drawing.Point(219, 3);
+            this.palette6Button.Name = "palette6Button";
+            this.palette6Button.Size = new System.Drawing.Size(23, 23);
+            this.palette6Button.TabIndex = 7;
+            this.palette6Button.Text = "6";
+            this.palette6Button.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.palette6Button.UseVisualStyleBackColor = true;
+            this.palette6Button.CheckedChanged += new System.EventHandler(this.paletteButton_CheckedChanged);
+            // 
+            // palette5Button
+            // 
+            this.palette5Button.Appearance = System.Windows.Forms.Appearance.Button;
+            this.palette5Button.AutoSize = true;
+            this.palette5Button.Location = new System.Drawing.Point(190, 3);
+            this.palette5Button.Name = "palette5Button";
+            this.palette5Button.Size = new System.Drawing.Size(23, 23);
+            this.palette5Button.TabIndex = 6;
+            this.palette5Button.Text = "5";
+            this.palette5Button.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.palette5Button.UseVisualStyleBackColor = true;
+            this.palette5Button.CheckedChanged += new System.EventHandler(this.paletteButton_CheckedChanged);
+            // 
+            // palette4Button
+            // 
+            this.palette4Button.Appearance = System.Windows.Forms.Appearance.Button;
+            this.palette4Button.AutoSize = true;
+            this.palette4Button.Location = new System.Drawing.Point(161, 3);
+            this.palette4Button.Name = "palette4Button";
+            this.palette4Button.Size = new System.Drawing.Size(23, 23);
+            this.palette4Button.TabIndex = 5;
+            this.palette4Button.Text = "4";
+            this.palette4Button.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.palette4Button.UseVisualStyleBackColor = true;
+            this.palette4Button.CheckedChanged += new System.EventHandler(this.paletteButton_CheckedChanged);
+            // 
+            // palette3Button
+            // 
+            this.palette3Button.Appearance = System.Windows.Forms.Appearance.Button;
+            this.palette3Button.AutoSize = true;
+            this.palette3Button.Location = new System.Drawing.Point(132, 3);
+            this.palette3Button.Name = "palette3Button";
+            this.palette3Button.Size = new System.Drawing.Size(23, 23);
+            this.palette3Button.TabIndex = 4;
+            this.palette3Button.Text = "3";
+            this.palette3Button.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.palette3Button.UseVisualStyleBackColor = true;
+            this.palette3Button.CheckedChanged += new System.EventHandler(this.paletteButton_CheckedChanged);
+            // 
+            // palette2Button
+            // 
+            this.palette2Button.Appearance = System.Windows.Forms.Appearance.Button;
+            this.palette2Button.AutoSize = true;
+            this.palette2Button.Location = new System.Drawing.Point(103, 3);
+            this.palette2Button.Name = "palette2Button";
+            this.palette2Button.Size = new System.Drawing.Size(23, 23);
+            this.palette2Button.TabIndex = 3;
+            this.palette2Button.Text = "2";
+            this.palette2Button.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.palette2Button.UseVisualStyleBackColor = true;
+            this.palette2Button.CheckedChanged += new System.EventHandler(this.paletteButton_CheckedChanged);
+            // 
+            // palette1Button
+            // 
+            this.palette1Button.Appearance = System.Windows.Forms.Appearance.Button;
+            this.palette1Button.AutoSize = true;
+            this.palette1Button.Location = new System.Drawing.Point(74, 3);
+            this.palette1Button.Name = "palette1Button";
+            this.palette1Button.Size = new System.Drawing.Size(23, 23);
+            this.palette1Button.TabIndex = 2;
+            this.palette1Button.Text = "1";
+            this.palette1Button.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.palette1Button.UseVisualStyleBackColor = true;
+            this.palette1Button.CheckedChanged += new System.EventHandler(this.paletteButton_CheckedChanged);
+            // 
+            // palette0Button
+            // 
+            this.palette0Button.Appearance = System.Windows.Forms.Appearance.Button;
+            this.palette0Button.AutoSize = true;
+            this.palette0Button.Checked = true;
+            this.palette0Button.Location = new System.Drawing.Point(45, 3);
+            this.palette0Button.Name = "palette0Button";
+            this.palette0Button.Size = new System.Drawing.Size(23, 23);
+            this.palette0Button.TabIndex = 1;
+            this.palette0Button.TabStop = true;
+            this.palette0Button.Text = "0";
+            this.palette0Button.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.palette0Button.UseVisualStyleBackColor = true;
+            this.palette0Button.CheckedChanged += new System.EventHandler(this.paletteButton_CheckedChanged);
+            // 
+            // paletteLabel
+            // 
+            this.paletteLabel.AutoSize = true;
+            this.paletteLabel.Location = new System.Drawing.Point(1, 8);
+            this.paletteLabel.Name = "paletteLabel";
+            this.paletteLabel.Size = new System.Drawing.Size(43, 13);
+            this.paletteLabel.TabIndex = 0;
+            this.paletteLabel.Text = "Palette:";
             // 
             // SpriteEditor
             // 
@@ -120,6 +265,8 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.palettePanel.ResumeLayout(false);
+            this.palettePanel.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -131,5 +278,15 @@
         private Canvas canvas;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private SpriteTilePicker tilePicker;
+        private System.Windows.Forms.Panel palettePanel;
+        private System.Windows.Forms.RadioButton palette7Button;
+        private System.Windows.Forms.RadioButton palette6Button;
+        private System.Windows.Forms.RadioButton palette5Button;
+        private System.Windows.Forms.RadioButton palette4Button;
+        private System.Windows.Forms.RadioButton palette3Button;
+        private System.Windows.Forms.RadioButton palette2Button;
+        private System.Windows.Forms.RadioButton palette1Button;
+        private System.Windows.Forms.RadioButton palette0Button;
+        private System.Windows.Forms.Label paletteLabel;
     }
 }
