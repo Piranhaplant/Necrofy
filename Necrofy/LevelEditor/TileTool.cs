@@ -39,8 +39,12 @@ namespace Necrofy
                 }
 
                 g.FillPath(LevelEditor.selectionFillBrush, pasteTilesPath);
-                g.DrawPath(Pens.White, pasteTilesPath);
-                g.DrawPath(LevelEditor.selectionBorderDashPen, pasteTilesPath);
+
+                using (Pen pen = editor.CreateSelectionBorderPen())
+                using (Pen dashPen = editor.CreateSelectionBorderDashPen()) {
+                    g.DrawPath(pen, pasteTilesPath);
+                    g.DrawPath(dashPen, pasteTilesPath);
+                }
             } else {
                 Paint2(g);
             }

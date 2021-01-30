@@ -18,17 +18,6 @@ namespace Necrofy
 
         private readonly Dimension xDimension;
         private readonly Dimension yDimension;
-
-        public int LeftPosition {
-            get {
-                return xDimension.Position;
-            }
-        }
-        public int TopPosition {
-            get {
-                return yDimension.Position;
-            }
-        }
         
         public bool ExpandingDrag { get; set; }
 
@@ -197,6 +186,14 @@ namespace Necrofy
                 }
                 return false;
             }
+
+            public int TransformPosition(int pos) {
+                return (int)((pos - Position) / zoom) - Padding;
+            }
+
+            public int GetViewCenter() {
+                return controlSize() / 2 - Position - Padding;
+            }
         }
 
         public void SetPadding(int x, int y) {
@@ -221,10 +218,12 @@ namespace Necrofy
             g.ScaleTransform(zoom, zoom);
         }
 
-        public MouseEventArgs TransformMouseArgs(MouseEventArgs e) {
-            int x = (int)((e.X - xDimension.Position) / zoom) - xDimension.Padding;
-            int y = (int)((e.Y - yDimension.Position) / zoom) - yDimension.Padding;
-            return new MouseEventArgs(e.Button, e.Clicks, x, y, e.Delta);
+        public Point TransformPoint(Point p) {
+            return new Point(xDimension.TransformPosition(p.X), yDimension.TransformPosition(p.Y));
+        }
+
+        public Point GetViewCenter() {
+            return new Point(xDimension.GetViewCenter(), yDimension.GetViewCenter());
         }
 
         private void Control_SizeChanged(object sender, EventArgs e) {

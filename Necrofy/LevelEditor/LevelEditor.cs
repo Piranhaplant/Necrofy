@@ -32,10 +32,6 @@ namespace Necrofy
 
         public static readonly SolidBrush selectionFillBrush = new SolidBrush(Color.FromArgb(96, 0, 0, 0));
         public static readonly SolidBrush eraserFillBrush = new SolidBrush(Color.FromArgb(128, 255, 255, 255));
-        public static readonly Pen selectionBorderDashPen = new Pen(Color.Black) {
-            DashOffset = 0,
-            DashPattern = new float[] { 4f, 4f },
-        };
         
         private readonly SpriteTool spriteTool;
         
@@ -57,6 +53,7 @@ namespace Necrofy
             UpdateTitle();
 
             scrollWrapper = new ScrollWrapper(canvas, hscroll, vscroll);
+            scrollWrapper.SetPadding(LevelPadding, LevelPadding);
             scrollWrapper.Scrolled += scrollWrapper_Scrolled;
             UpdateLevelSize();
 
@@ -130,7 +127,7 @@ namespace Necrofy
         }
 
         public Point GetViewCenter() {
-            return new Point(canvas.Width / 2 - scrollWrapper.LeftPosition - LevelPadding, canvas.Height / 2 - scrollWrapper.TopPosition - LevelPadding);
+            return scrollWrapper.GetViewCenter();
         }
 
         public void SetCursor(Cursor cursor) {
@@ -191,6 +188,7 @@ namespace Necrofy
         public override bool CanPaste => currentTool.CanPaste;
         public override bool CanDelete => currentTool.CanDelete;
         public override bool HasSelection => currentTool.HasSelection;
+        public override bool CanZoom => true;
 
         public override void Copy() {
             currentTool.Copy();
@@ -210,6 +208,10 @@ namespace Necrofy
 
         public override void SelectNone() {
             currentTool.SelectNone();
+        }
+
+        protected override void ZoomChanged() {
+            scrollWrapper.Zoom = Zoom;
         }
 
         public override int? LevelNumber => level.levelAsset.LevelNumber;
@@ -306,16 +308,43 @@ namespace Necrofy
             if (level == null) {
                 return;
             }
-            e.Graphics.TranslateTransform(scrollWrapper.LeftPosition + LevelPadding, scrollWrapper.TopPosition + LevelPadding);
+            scrollWrapper.TransformGraphics(e.Graphics);
             RenderLevel(e.Graphics);
+
+            using (Pen selectionBorderDashPen = CreateSelectionBorderDashPen())
+            using (Pen selectionBorderPen = CreateSelectionBorderPen()) {
+                if (TileSelectionExists) {
+                    e.Graphics.FillPath(selectionFillBrush, tileSelectionPath);
+                    e.Graphics.DrawPath(selectionBorderPen, tileSelectionPath);
+                    e.Graphics.DrawPath(selectionBorderDashPen, tileSelectionPath);
+                }
+                if (tileSelectionEraserRect != Rectangle.Empty) {
+                    e.Graphics.FillRectangle(eraserFillBrush, tileSelectionEraserRect);
+                    e.Graphics.DrawRectangle(selectionBorderPen, tileSelectionEraserRect);
+                    e.Graphics.DrawRectangle(selectionBorderDashPen, tileSelectionEraserRect);
+                }
+
+                if (showGrid) {
+                    for (int x = 1; x < level.Level.width; x++) {
+                        e.Graphics.DrawLine(selectionBorderPen, x * 64, 0, x * 64, level.Level.height * 64);
+                    }
+                    for (int y = 1; y < level.Level.height; y++) {
+                        e.Graphics.DrawLine(selectionBorderPen, 0, y * 64, level.Level.width * 64, y * 64);
+                    }
+                }
+            }
+
             currentTool.Paint(e.Graphics);
 
             if (showScreenSizeGuide && screenSizeGuidePosition != Point.Empty) {
                 int left = screenSizeGuidePosition.X - SNESGraphics.ScreenWidth / 2;
                 int top = screenSizeGuidePosition.Y - SNESGraphics.ScreenHeight / 2;
-                e.Graphics.DrawRectangle(Pens.Snow, left, top, SNESGraphics.ScreenWidth, SNESGraphics.ScreenHeight);
-                e.Graphics.DrawLine(Pens.Snow, left, screenSizeGuidePosition.Y, left + SNESGraphics.ScreenWidth, screenSizeGuidePosition.Y);
-                e.Graphics.DrawLine(Pens.Snow, screenSizeGuidePosition.X, top, screenSizeGuidePosition.X, top + SNESGraphics.ScreenHeight);
+
+                using (Pen pen = new Pen(Color.Snow, 1 / Zoom)) {
+                    e.Graphics.DrawRectangle(pen, left, top, SNESGraphics.ScreenWidth, SNESGraphics.ScreenHeight);
+                    e.Graphics.DrawLine(pen, left, screenSizeGuidePosition.Y, left + SNESGraphics.ScreenWidth, screenSizeGuidePosition.Y);
+                    e.Graphics.DrawLine(pen, screenSizeGuidePosition.X, top, screenSizeGuidePosition.X, top + SNESGraphics.ScreenHeight);
+                }
             }
         }
 
@@ -336,27 +365,7 @@ namespace Necrofy
             }
 
             foreach (WrappedLevelObject obj in objects) {
-                obj.RenderExtras(g, showRespawnAreas);
-            }
-
-            if (showGrid) {
-                for (int x = 1; x < level.Level.width; x++) {
-                    g.DrawLine(Pens.White, x * 64, 0, x * 64, level.Level.height * 64);
-                }
-                for (int y = 1; y < level.Level.height; y++) {
-                    g.DrawLine(Pens.White, 0, y * 64, level.Level.width * 64, y * 64);
-                }
-            }
-
-            if (TileSelectionExists) {
-                g.FillPath(selectionFillBrush, tileSelectionPath);
-                g.DrawPath(Pens.White, tileSelectionPath);
-                g.DrawPath(selectionBorderDashPen, tileSelectionPath);
-            }
-            if (tileSelectionEraserRect != Rectangle.Empty) {
-                g.FillRectangle(eraserFillBrush, tileSelectionEraserRect);
-                g.DrawRectangle(Pens.White, tileSelectionEraserRect);
-                g.DrawRectangle(selectionBorderDashPen, tileSelectionEraserRect);
+                obj.RenderExtras(g, showRespawnAreas, Zoom);
             }
         }
 
@@ -368,15 +377,30 @@ namespace Necrofy
             }
         }
 
+        public Pen CreateSelectionBorderPen() {
+            return new Pen(Color.White, 1 / Zoom);
+        }
+
+        public Pen CreateSelectionBorderDashPen() {
+            Pen dashPen = new Pen(Color.Black, 1 / Zoom);
+            if (Zoom >= 1.0f) {
+                dashPen.DashPattern = new float[] { 4 / Zoom, 4 / Zoom };
+            } else {
+                dashPen.DashPattern = new float[] { 4, 4 };
+            }
+            return dashPen;
+        }
+
         // Double clicking on the title bar to maximize the window causes mouse up events to be sent without a mouse down. This is used to ignore those.
         private bool mouseDown = false;
         // Used to ignore mouse move events that are generated by setting the property grid objects
         private Point prevMousePosition = new Point(int.MinValue, int.MinValue);
         private Point screenSizeGuidePosition = Point.Empty;
 
-        private void UpdateScreenSizeGuide(int mouseX, int mouseY) {
-            int screenSizeGuideX = mouseX - scrollWrapper.LeftPosition - LevelPadding;
-            int screenSizeGuideY = mouseY - scrollWrapper.TopPosition - LevelPadding;
+        private void UpdateScreenSizeGuide(MouseEventArgs e) {
+            Point transformed = scrollWrapper.TransformPoint(e.Location);
+            int screenSizeGuideX = transformed.X;
+            int screenSizeGuideY = transformed.Y;
             int maxX = level.Level.width * 64;
             int maxY = level.Level.height * 64;
 
@@ -418,7 +442,7 @@ namespace Necrofy
         }
 
         private void DoMouseMove(MouseEventArgs e) {
-            UpdateScreenSizeGuide(e.X, e.Y);
+            UpdateScreenSizeGuide(e);
             if (TransformMouseArgs(e, out LevelMouseEventArgs args)) {
                 currentTool.MouseMove(args);
             }
@@ -426,14 +450,17 @@ namespace Necrofy
 
         private void canvas_MouseLeave(object sender, EventArgs e) {
             prevMousePosition = new Point(int.MinValue, int.MinValue);
-            UpdateScreenSizeGuide(int.MaxValue / 2, int.MaxValue / 2);
+
+            screenSizeGuidePosition = Point.Empty;
+            if (showScreenSizeGuide) {
+                Repaint();
+            }
         }
 
         private bool TransformMouseArgs(MouseEventArgs e, out LevelMouseEventArgs ret, bool mouseDownOnly = false) {
-            int x = e.X - scrollWrapper.LeftPosition - LevelPadding;
-            int y = e.Y - scrollWrapper.TopPosition - LevelPadding;
             if ((mouseDown && e.Button == MouseButtons.Left) || (!mouseDown && !mouseDownOnly)) {
-                ret = new LevelMouseEventArgs(e.Button, e.Clicks, x, y, e.Delta, level.Level.width, level.Level.height, mouseDown);
+                Point transformed = scrollWrapper.TransformPoint(e.Location);
+                ret = new LevelMouseEventArgs(e.Button, e.Clicks, transformed.X, transformed.Y, e.Delta, level.Level.width, level.Level.height, mouseDown);
                 return true;
             }
             ret = null;

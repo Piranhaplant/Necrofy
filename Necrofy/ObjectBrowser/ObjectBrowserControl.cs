@@ -106,7 +106,7 @@ namespace Necrofy
             if (contents == null) {
                 return;
             }
-            e.Graphics.TranslateTransform(scrollWrapper.LeftPosition, scrollWrapper.TopPosition);
+            scrollWrapper.TransformGraphics(e.Graphics);
             for (int i = 0; i < objects.Count; i++) {
                 ObjectBrowserObject obj = objects[i];
                 if (i == contents.SelectedIndex) {
@@ -128,10 +128,9 @@ namespace Necrofy
             if (contents == null || e.Button != MouseButtons.Left) {
                 return;
             }
-            int x = e.X - scrollWrapper.LeftPosition;
-            int y = e.Y - scrollWrapper.TopPosition;
+            Point transformed = scrollWrapper.TransformPoint(e.Location);
             for (int i = 0; i < objects.Count; i++) {
-                if (objects[i].DisplayBounds.Contains(x, y)) {
+                if (objects[i].DisplayBounds.Contains(transformed.X, transformed.Y)) {
                     contents.SelectedIndex = i;
                     return;
                 }
@@ -157,11 +156,10 @@ namespace Necrofy
         }
 
         public string GetToolTipAtPoint(Point p) {
-            int x = p.X - scrollWrapper.LeftPosition;
-            int y = p.Y - scrollWrapper.TopPosition;
-            
+            Point transformed = scrollWrapper.TransformPoint(p);
+
             foreach (ObjectBrowserObject obj in objects) {
-                if (obj.DisplayBounds.Contains(x, y)) {
+                if (obj.DisplayBounds.Contains(transformed.X, transformed.Y)) {
                     return obj.Description;
                 }
             }

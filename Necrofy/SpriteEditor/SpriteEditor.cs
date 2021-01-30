@@ -252,32 +252,32 @@ namespace Necrofy
                 e.Graphics.DrawLine(Pens.BlueViolet, -0.5f, -MaxDimension, -0.5f, MaxDimension);
             }
 
-            Pen linePen = new Pen(Color.White, 1 / Zoom);
-            foreach (Sprite.Tile tile in currentSprite.tiles) {
-                if (tile.tileNum < loadedSprites.tileImages.Length) {
-                    SNESGraphics.DrawWithPlt(e.Graphics, tile.xOffset, tile.yOffset, loadedSprites.tileImages[tile.tileNum], loadedSprites.loadedPalette.colors, tile.palette * 0x10, 0x10, tile.xFlip, tile.yFlip);
-                } else {
-                    e.Graphics.DrawLine(linePen, tile.xOffset, tile.yOffset, tile.xOffset + 16, tile.yOffset + 16);
-                    e.Graphics.DrawLine(linePen, tile.xOffset + 16, tile.yOffset, tile.xOffset, tile.yOffset + 16);
-                }
-            }
-
-            if (showTileBorders) {
-                Pen borderPen = new Pen(Color.LawnGreen, 1 / Zoom);
+            using (Pen linePen = new Pen(Color.White, 1 / Zoom)) {
                 foreach (Sprite.Tile tile in currentSprite.tiles) {
-                    e.Graphics.DrawRectangle(borderPen, tile.xOffset, tile.yOffset, 16, 16);
+                    if (tile.tileNum < loadedSprites.tileImages.Length) {
+                        SNESGraphics.DrawWithPlt(e.Graphics, tile.xOffset, tile.yOffset, loadedSprites.tileImages[tile.tileNum], loadedSprites.loadedPalette.colors, tile.palette * 0x10, 0x10, tile.xFlip, tile.yFlip);
+                    } else {
+                        e.Graphics.DrawLine(linePen, tile.xOffset, tile.yOffset, tile.xOffset + 16, tile.yOffset + 16);
+                        e.Graphics.DrawLine(linePen, tile.xOffset + 16, tile.yOffset, tile.xOffset, tile.yOffset + 16);
+                    }
                 }
-                borderPen.Dispose();
-            }
 
-            objectSelector.DrawSelectionRectangle(e.Graphics, Zoom);
+                if (showTileBorders) {
+                    using (Pen borderPen = new Pen(Color.LawnGreen, 1 / Zoom)) {
+                        foreach (Sprite.Tile tile in currentSprite.tiles) {
+                            e.Graphics.DrawRectangle(borderPen, tile.xOffset, tile.yOffset, 16, 16);
+                        }
+                    }
+                }
 
-            foreach (WrappedSpriteTile tile in selectedObjects) {
-                Rectangle bounds = tile.Bounds;
-                e.Graphics.FillRectangle(selectionFillBrush, bounds);
-                e.Graphics.DrawRectangle(linePen, bounds);
+                objectSelector.DrawSelectionRectangle(e.Graphics, Zoom);
+
+                foreach (WrappedSpriteTile tile in selectedObjects) {
+                    Rectangle bounds = tile.Bounds;
+                    e.Graphics.FillRectangle(selectionFillBrush, bounds);
+                    e.Graphics.DrawRectangle(linePen, bounds);
+                }
             }
-            linePen.Dispose();
         }
 
         public IEnumerable<WrappedSpriteTile> GetObjects() {
@@ -367,14 +367,14 @@ namespace Necrofy
 
         private void canvas_MouseDown(object sender, MouseEventArgs e) {
             if (e.Button == MouseButtons.Left) {
-                MouseEventArgs transformed = scrollWrapper.TransformMouseArgs(e);
+                Point transformed = scrollWrapper.TransformPoint(e.Location);
                 objectSelector.MouseDown(transformed.X, transformed.Y);
                 mouseDown = true;
             }
         }
 
         private void canvas_MouseMove(object sender, MouseEventArgs e) {
-            MouseEventArgs transformed = scrollWrapper.TransformMouseArgs(e);
+            Point transformed = scrollWrapper.TransformPoint(e.Location);
             objectSelector.MouseMove(transformed.X, transformed.Y);
         }
 

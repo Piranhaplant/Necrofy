@@ -56,22 +56,22 @@ namespace Necrofy
 
         public void DrawSelectionRectangle(Graphics g, float zoom = 1.0f) {
             if (makingSelectionRectangle) {
-                Pen whitePen = new Pen(Color.White, 1 / zoom);
-                Pen dashPen = new Pen(Color.Black, 1 / zoom) {
-                    DashOffset = 0,
-                    DashPattern = new float[] { 4 / zoom, 4 / zoom },
-                };
+                using (Pen whitePen = new Pen(Color.White, 1 / zoom))
+                using (Pen dashPen = new Pen(Color.Black, 1 / zoom)) {
+                    if (zoom >= 1.0f) {
+                        dashPen.DashPattern = new float[] { 4 / zoom, 4 / zoom };
+                    } else {
+                        dashPen.DashPattern = new float[] { 4, 4 };
+                    }
 
-                if (selectionRectangle.Width == 0 || selectionRectangle.Height == 0) {
-                    g.DrawLine(whitePen, selectionRectangle.X, selectionRectangle.Y, selectionRectangle.Right, selectionRectangle.Bottom);
-                    g.DrawLine(dashPen, selectionRectangle.X, selectionRectangle.Y, selectionRectangle.Right, selectionRectangle.Bottom);
-                } else {
-                    g.DrawRectangle(whitePen, selectionRectangle);
-                    g.DrawRectangle(dashPen, selectionRectangle);
+                    if (selectionRectangle.Width == 0 || selectionRectangle.Height == 0) {
+                        g.DrawLine(whitePen, selectionRectangle.X, selectionRectangle.Y, selectionRectangle.Right, selectionRectangle.Bottom);
+                        g.DrawLine(dashPen, selectionRectangle.X, selectionRectangle.Y, selectionRectangle.Right, selectionRectangle.Bottom);
+                    } else {
+                        g.DrawRectangle(whitePen, selectionRectangle);
+                        g.DrawRectangle(dashPen, selectionRectangle);
+                    }
                 }
-
-                whitePen.Dispose();
-                dashPen.Dispose();
             }
         }
 

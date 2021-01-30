@@ -84,7 +84,7 @@ namespace Necrofy
             if (tiles == null) {
                 return;
             }
-            e.Graphics.TranslateTransform(scrollWrapper.LeftPosition, scrollWrapper.TopPosition);
+            scrollWrapper.TransformGraphics(e.Graphics);
 
             for (int i = 0; i < tiles.Length; i++) {
                 SNESGraphics.DrawWithPlt(e.Graphics, (i % tilesPerRow) * 16, (i / tilesPerRow) * 16, tiles[i], colors, palette * 16, 16);
@@ -95,8 +95,9 @@ namespace Necrofy
         }
 
         private void canvas_MouseDown(object sender, MouseEventArgs e) {
-            int tile = e.X / 16 + ((e.Y - scrollWrapper.TopPosition) / 16) * tilesPerRow;
-            if (tile < tiles.Length) {
+            Point transformed = scrollWrapper.TransformPoint(e.Location);
+            int tile = Math.Min(tilesPerRow - 1, transformed.X / 16) + (transformed.Y / 16) * tilesPerRow;
+            if (tile < tiles.Length && e.Button == MouseButtons.Left) {
                 SelectedTile = tile;
                 canvas.Invalidate();
             }

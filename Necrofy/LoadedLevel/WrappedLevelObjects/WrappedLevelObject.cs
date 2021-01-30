@@ -70,7 +70,7 @@ namespace Necrofy
         bool ISelectableObject.Selectable => true;
 
         public abstract void Render(Graphics g);
-        public virtual void RenderExtras(Graphics g, bool showRespawnAreas) { }
+        public virtual void RenderExtras(Graphics g, bool showRespawnAreas, float zoom) { }
         public abstract void Add(Level level);
         public abstract void Remove(Level level);
         public abstract void AddToClipboard(SpriteClipboardContents clipboard);

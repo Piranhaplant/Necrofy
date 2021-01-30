@@ -1109,6 +1109,7 @@
             // 
             // viewZoomOut
             // 
+            this.viewZoomOut.Enabled = false;
             this.viewZoomOut.Image = global::Necrofy.Properties.Resources.magnifier_zoom_out;
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.viewZoomOut, this.zoomOutButton);
             this.viewZoomOut.Name = "viewZoomOut";
@@ -1119,6 +1120,7 @@
             // 
             // viewZoomIn
             // 
+            this.viewZoomIn.Enabled = false;
             this.viewZoomIn.Image = global::Necrofy.Properties.Resources.magnifier_zoom_in;
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.viewZoomIn, this.zoomInButton);
             this.viewZoomIn.Name = "viewZoomIn";
@@ -1145,38 +1147,38 @@
             // 
             this.toolStripGrouper.SetItemType(this.levelEditTitle, Necrofy.ToolStripGrouper.ItemType.LevelEditTitle);
             this.levelEditTitle.Name = "levelEditTitle";
-            this.levelEditTitle.Size = new System.Drawing.Size(159, 22);
+            this.levelEditTitle.Size = new System.Drawing.Size(180, 22);
             this.levelEditTitle.Text = "Edit Title...";
             // 
             // levelSettings
             // 
             this.toolStripGrouper.SetItemType(this.levelSettings, Necrofy.ToolStripGrouper.ItemType.LevelSettings);
             this.levelSettings.Name = "levelSettings";
-            this.levelSettings.Size = new System.Drawing.Size(159, 22);
+            this.levelSettings.Size = new System.Drawing.Size(180, 22);
             this.levelSettings.Text = "&Settings...";
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(156, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(177, 6);
             // 
             // levelClear
             // 
             this.toolStripGrouper.SetItemType(this.levelClear, Necrofy.ToolStripGrouper.ItemType.LevelClear);
             this.levelClear.Name = "levelClear";
-            this.levelClear.Size = new System.Drawing.Size(159, 22);
+            this.levelClear.Size = new System.Drawing.Size(180, 22);
             this.levelClear.Text = "Clear";
             // 
             // toolStripSeparator8
             // 
             this.toolStripSeparator8.Name = "toolStripSeparator8";
-            this.toolStripSeparator8.Size = new System.Drawing.Size(156, 6);
+            this.toolStripSeparator8.Size = new System.Drawing.Size(177, 6);
             // 
             // levelSaveAsImage
             // 
             this.toolStripGrouper.SetItemType(this.levelSaveAsImage, Necrofy.ToolStripGrouper.ItemType.LevelSaveAsImage);
             this.levelSaveAsImage.Name = "levelSaveAsImage";
-            this.levelSaveAsImage.Size = new System.Drawing.Size(159, 22);
+            this.levelSaveAsImage.Size = new System.Drawing.Size(180, 22);
             this.levelSaveAsImage.Text = "Save As Image...";
             // 
             // toolsMenu

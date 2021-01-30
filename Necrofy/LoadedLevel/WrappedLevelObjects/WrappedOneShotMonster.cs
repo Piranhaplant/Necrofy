@@ -66,7 +66,7 @@ namespace Necrofy
             }
         }
 
-        public override void RenderExtras(Graphics g, bool showRespawnAreas) {
+        public override void RenderExtras(Graphics g, bool showRespawnAreas, float zoom) {
             if (wrappedObject.victimNumber > 0) {
                 Rectangle bounds = Bounds;
                 int x = bounds.X + bounds.Width / 2;

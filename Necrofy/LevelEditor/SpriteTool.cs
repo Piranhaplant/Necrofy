@@ -194,12 +194,14 @@ namespace Necrofy
         }
 
         public override void Paint(Graphics g) {
-            objectSelector.DrawSelectionRectangle(g);
+            objectSelector.DrawSelectionRectangle(g, zoom: editor.Zoom);
 
-            foreach (WrappedLevelObject obj in selectedObjects) {
-                Rectangle bounds = obj.Bounds;
-                g.FillRectangle(selectionFillBrush, bounds);
-                g.DrawRectangle(Pens.White, bounds);
+            using (Pen p = new Pen(Color.White, 1 / editor.Zoom)) {
+                foreach (WrappedLevelObject obj in selectedObjects) {
+                    Rectangle bounds = obj.Bounds;
+                    g.FillRectangle(selectionFillBrush, bounds);
+                    g.DrawRectangle(p, bounds);
+                }
             }
         }
 

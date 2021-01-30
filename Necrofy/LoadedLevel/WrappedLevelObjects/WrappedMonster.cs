@@ -47,12 +47,14 @@ namespace Necrofy
             spriteGraphics.Render(SpriteDisplay.Key.Type.Pointer, wrappedObject.type, g, X, Y);
         }
 
-        public override void RenderExtras(Graphics g, bool showRespawnAreas) {
+        public override void RenderExtras(Graphics g, bool showRespawnAreas, float zoom) {
             if (showRespawnAreas) {
                 Rectangle bounds = Bounds;
-                g.DrawRectangle(Pens.LightSteelBlue,
-                    bounds.X - wrappedObject.radius / 2, bounds.Y - wrappedObject.radius / 2,
-                    bounds.Width + wrappedObject.radius, bounds.Height + wrappedObject.radius);
+                using (Pen p = new Pen(Color.LightSteelBlue, 1 / zoom)) {
+                    g.DrawRectangle(p,
+                        bounds.X - wrappedObject.radius / 2, bounds.Y - wrappedObject.radius / 2,
+                        bounds.Width + wrappedObject.radius, bounds.Height + wrappedObject.radius);
+                }
             }
         }
 
