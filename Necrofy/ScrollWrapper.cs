@@ -192,7 +192,7 @@ namespace Necrofy
             }
 
             public int GetViewCenter() {
-                return controlSize() / 2 - Position - Padding;
+                return (int)((controlSize() / 2 - Position) / zoom) - Padding;
             }
         }
 
@@ -214,7 +214,7 @@ namespace Necrofy
         public void TransformGraphics(Graphics g) {
             g.InterpolationMode = InterpolationMode.NearestNeighbor;
             g.PixelOffsetMode = PixelOffsetMode.Half;
-            g.TranslateTransform(xDimension.Position + xDimension.Padding * zoom, yDimension.Position + yDimension.Padding * zoom);
+            g.TranslateTransform(xDimension.Position + xDimension.Padding * zoom + 0.5f, yDimension.Position + yDimension.Padding * zoom + 0.5f);
             g.ScaleTransform(zoom, zoom);
         }
 

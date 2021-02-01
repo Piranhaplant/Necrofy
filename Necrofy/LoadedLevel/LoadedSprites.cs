@@ -24,7 +24,7 @@ namespace Necrofy
 
             images = new Bitmap[spritesAsset.sprites.Length];
             for (int i = 0; i < images.Length; i++) {
-                images[i] = spritesAsset.sprites[i].Render(loadedGraphics.linearGraphics, loadedPalette.colors, null, out int anchorX, out int anchorY);
+                LoadSprite(i);
             }
 
             tileImages = new Bitmap[loadedGraphics.linearGraphics.Length / 4];
@@ -42,8 +42,15 @@ namespace Necrofy
             }
         }
 
+        public void LoadSprite(int i) {
+            images[i] = spritesAsset.sprites[i].Render(loadedGraphics.linearGraphics, loadedPalette.colors, null, out int anchorX, out int anchorY);
+        }
+
         public void Dispose() {
             foreach (Bitmap image in images) {
+                image.Dispose();
+            }
+            foreach (Bitmap image in tileImages) {
                 image.Dispose();
             }
         }

@@ -42,6 +42,7 @@
             this.canvas.TabIndex = 4;
             this.canvas.SizeChanged += new System.EventHandler(this.canvas_SizeChanged);
             this.canvas.Paint += new System.Windows.Forms.PaintEventHandler(this.canvas_Paint);
+            this.canvas.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.canvas_MouseDoubleClick);
             this.canvas.MouseDown += new System.Windows.Forms.MouseEventHandler(this.canvas_MouseDown);
             // 
             // vScrollBar

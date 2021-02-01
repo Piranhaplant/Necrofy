@@ -16,6 +16,9 @@ namespace Necrofy
         private const int AllowedSize = 512;
         private const int MaxDimension = AllowedSize / 2;
 
+        private const string DefaultStatus = "Click to select or move. Hold shift to add to the selection. Hold alt to remove from the selection. Double click in the tile panel or hold ctrl and click on the sprite area to create a new tile.";
+        private const string DragStatus = "Move: {0}, {1}.";
+
         private static readonly SolidBrush selectionFillBrush = new SolidBrush(Color.FromArgb(96, 255, 255, 255));
 
         private readonly RadioButton[] paletteButtons;
@@ -26,6 +29,7 @@ namespace Necrofy
 
         public readonly ScrollWrapper scrollWrapper;
         public UndoManager<SpriteEditor> undoManager;
+        private HashSet<Sprite> modifiedSprites = new HashSet<Sprite>();
 
         private Sprite currentSprite = null;
         private bool showAxes;
@@ -59,10 +63,12 @@ namespace Necrofy
             BrowserContents = browserContents;
 
             tilePicker.SetTiles(loadedSprites.tileImages, loadedSprites.loadedPalette.colors);
+
+            UpdateStatus();
         }
 
         private void SpriteEditor_Disposed(object sender, EventArgs e) {
-            // TODO
+            loadedSprites.Dispose();
         }
 
         protected override UndoManager Setup() {
@@ -89,6 +95,7 @@ namespace Necrofy
 
         protected override void DoSave(Project project) {
             loadedSprites.spritesAsset.WriteFile(project);
+            UpdateSpritePreviews();
         }
 
         public override bool CanCopy => selectedObjects.Count > 0;
@@ -222,6 +229,7 @@ namespace Necrofy
             }
             currentSprite = s;
             objectSelector.SelectNone();
+            UpdateSpritePreviews();
             browserContents.SelectedIndex = Array.IndexOf(loadedSprites.spritesAsset.sprites, currentSprite);
             Repaint();
         }
@@ -238,7 +246,7 @@ namespace Necrofy
                 SetCurrentSprite(loadedSprites.spritesAsset.sprites[browserContents.SelectedIndex]);
             }
         }
-
+        
         private void canvas_Paint(object sender, PaintEventArgs e) {
             if (currentSprite == null) {
                 return;
@@ -329,6 +337,7 @@ namespace Necrofy
 
         public void MoveSelectedObjects(int dx, int dy) {
             undoManager.Do(new MoveSpriteTileAction(currentSprite, selectedObjects, dx, dy));
+            UpdateStatus();
         }
 
         public void SetSelectedObjectsPosition(int? x, int? y) {
@@ -336,8 +345,17 @@ namespace Necrofy
         }
 
         public WrappedSpriteTile CreateObject(int x, int y) {
+            WrappedSpriteTile tile = GetCreationObject(x, y);
+            if (tile != null) {
+                undoManager.Do(new AddSpriteTileAction(currentSprite, new[] { tile }));
+                return tile;
+            }
+            return null;
+        }
+
+        private WrappedSpriteTile GetCreationObject(int x, int y) {
             if (currentSprite != null && tilePicker.SelectedTile >= 0) {
-                WrappedSpriteTile tile = new WrappedSpriteTile(new Sprite.Tile {
+                return new WrappedSpriteTile(new Sprite.Tile {
                     palette = tilePicker.Palette,
                     tileNum = (ushort)tilePicker.SelectedTile,
                     xOffset = (short)(x - 8),
@@ -345,8 +363,6 @@ namespace Necrofy
                     xFlip = false,
                     yFlip = false
                 });
-                undoManager.Do(new AddSpriteTileAction(currentSprite, new[] { tile }));
-                return tile;
             }
             return null;
         }
@@ -357,9 +373,31 @@ namespace Necrofy
             return clone;
         }
 
+        ChangeSpriteTileNumAction prevChangeTileAction1 = null;
+        ChangeSpriteTileNumAction prevChangeTileAction2 = null;
+
         private void tilePicker_SelectedTileChanged(object sender, EventArgs e) {
-            if (updatingUI == 0 && tilePicker.SelectedTile >= 0 && selectedObjects.Count > 0) {
-                undoManager.Do(new ChangeSpriteTileNumAction(currentSprite, selectedObjects, (ushort)tilePicker.SelectedTile));
+            if (updatingUI == 0) {
+                prevChangeTileAction2 = prevChangeTileAction1;
+                if (tilePicker.SelectedTile >= 0 && selectedObjects.Count > 0) {
+                    prevChangeTileAction1 = new ChangeSpriteTileNumAction(currentSprite, selectedObjects, (ushort)tilePicker.SelectedTile);
+                    undoManager.Do(prevChangeTileAction1);
+                } else {
+                    prevChangeTileAction1 = null;
+                }
+            }
+        }
+
+        private void tilePicker_TileDoubleClicked(object sender, EventArgs e) {
+            Point center = scrollWrapper.GetViewCenter();
+            WrappedSpriteTile newObject = GetCreationObject(center.X, center.Y);
+            if (newObject != null) {
+                undoManager.Revert(prevChangeTileAction1);
+                undoManager.Revert(prevChangeTileAction2);
+                undoManager.Do(new AddSpriteTileAction(currentSprite, new[] { newObject }));
+
+                objectSelector.SelectObjects(new[] { newObject });
+                Activate();
             }
         }
 
@@ -370,6 +408,7 @@ namespace Necrofy
                 Point transformed = scrollWrapper.TransformPoint(e.Location);
                 objectSelector.MouseDown(transformed.X, transformed.Y);
                 mouseDown = true;
+                UpdateStatus();
             }
         }
 
@@ -382,6 +421,7 @@ namespace Necrofy
             if (mouseDown) {
                 objectSelector.MouseUp();
                 mouseDown = false;
+                UpdateStatus();
             }
         }
 
@@ -422,12 +462,33 @@ namespace Necrofy
             }
         }
 
+        public void AddModifiedSprite(Sprite sprite) {
+            modifiedSprites.Add(sprite);
+        }
+
+        private void UpdateSpritePreviews() {
+            foreach (Sprite s in modifiedSprites) {
+                int index = Array.IndexOf(loadedSprites.spritesAsset.sprites, s);
+                loadedSprites.LoadSprite(index);
+            }
+            modifiedSprites.Clear();
+            browserContents.Refresh();
+        }
+
         private void paletteButton_CheckedChanged(object sender, EventArgs e) {
             if (updatingUI == 0 && sender is RadioButton button && button.Checked) {
                 int palette = Array.IndexOf(paletteButtons, button);
                 tilePicker.Palette = palette;
                 undoManager.Do(new ChangeSpriteTilePaletteAction(currentSprite, selectedObjects, palette));
                 canvas.Focus();
+            }
+        }
+
+        private void UpdateStatus() {
+            if (objectSelector.MovingObjects) {
+                Status = string.Format(DragStatus, objectSelector.TotalMoveX, objectSelector.TotalMoveY);
+            } else {
+                Status = DefaultStatus;
             }
         }
     }

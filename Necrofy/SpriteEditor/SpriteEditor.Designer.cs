@@ -119,6 +119,7 @@
             this.tilePicker.Size = new System.Drawing.Size(273, 872);
             this.tilePicker.TabIndex = 7;
             this.tilePicker.SelectedTileChanged += new Necrofy.SpriteTilePicker.SelectedTileChangedDelegate(this.tilePicker_SelectedTileChanged);
+            this.tilePicker.TileDoubleClicked += new Necrofy.SpriteTilePicker.TileDoubleClickedDelegate(this.tilePicker_TileDoubleClicked);
             // 
             // palettePanel
             // 

@@ -40,7 +40,7 @@ namespace Necrofy
         }
 
         public void Revert(UndoAction<T> action) {
-            if (undoActions.Count > 0) {
+            if (action != null && undoActions.Count > 0) {
                 if (undoActions.Peek() == action) {
                     undoActions.Pop();
                 } else if (undoActions.Peek().Unmerge(action)) {

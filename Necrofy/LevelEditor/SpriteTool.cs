@@ -135,21 +135,15 @@ namespace Necrofy
             Point center = editor.GetViewCenter();
             WrappedLevelObject newObject = GetCreationObject(Math.Max(0, center.X), Math.Max(0, center.Y));
             if (newObject != null) {
-                Cancel(prevChangeSpriteAction1);
-                Cancel(prevChangeSpriteAction2);
+                editor.undoManager.Revert(prevChangeSpriteAction1);
+                editor.undoManager.Revert(prevChangeSpriteAction2);
                 editor.undoManager.Do(new AddSpriteAction(new[] { newObject }));
 
                 objectSelector.SelectObjects(new[] { newObject });
                 editor.Activate();
             }
         }
-
-        private void Cancel(ChangeSpriteTypeAction action) {
-            if (action != null) {
-                editor.undoManager.Revert(action);
-            }
-        }
-
+        
         public override void PropertyBrowserPropertyChanged(PropertyValueChangedEventArgs e) {
             string value = e.ChangedItem.Value as string;
             foreach (WrappedLevelObject o in selectedObjects) {

@@ -18,11 +18,12 @@ namespace Necrofy
                 cancel = true;
             }
         }
-
+        
         protected override void AfterAction() {
             editor.SetCurrentSprite(sprite);
             editor.Repaint();
             editor.RefreshPropertyBrowser();
+            editor.AddModifiedSprite(sprite);
         }
     }
 

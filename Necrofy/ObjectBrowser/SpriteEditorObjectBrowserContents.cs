@@ -15,6 +15,10 @@ namespace Necrofy
             this.sprites = sprites;
         }
 
+        public void Refresh() {
+            RaiseObjectsChangedEvent(scrollToTop: false);
+        }
+
         public override IEnumerable<ObjectBrowserObject> Objects {
             get {
                 foreach (Bitmap image in sprites.images) {

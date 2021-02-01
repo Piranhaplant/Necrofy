@@ -34,18 +34,18 @@ namespace Necrofy
         public delegate void SelectedTileChangedDelegate(object sender, EventArgs e);
         public event SelectedTileChangedDelegate SelectedTileChanged;
 
+        public delegate void TileDoubleClickedDelegate(object sender, EventArgs e);
+        public event TileDoubleClickedDelegate TileDoubleClicked;
+
         private int selectedTile = -1;
         public int SelectedTile {
             get {
                 return selectedTile;
             }
             set {
-                if (value != selectedTile) {
-                    selectedTile = value;
-                    SelectedTileChanged?.Invoke(this, EventArgs.Empty);
-                    //scrollWrapper.ScrollToPoint(0, selectedTile / tilesPerRow * 16 + 8);
-                    canvas.Invalidate();
-                }
+                selectedTile = value;
+                SelectedTileChanged?.Invoke(this, EventArgs.Empty);
+                canvas.Invalidate();
             }
         }
 
@@ -100,6 +100,15 @@ namespace Necrofy
             if (tile < tiles.Length && e.Button == MouseButtons.Left) {
                 SelectedTile = tile;
                 canvas.Invalidate();
+            }
+        }
+
+        private void canvas_MouseDoubleClick(object sender, MouseEventArgs e) {
+            if (e.Button != MouseButtons.Left) {
+                return;
+            }
+            if (selectedTile >= 0) {
+                TileDoubleClicked?.Invoke(this, EventArgs.Empty);
             }
         }
     }
