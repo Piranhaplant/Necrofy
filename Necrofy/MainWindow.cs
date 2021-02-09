@@ -301,9 +301,12 @@ namespace Necrofy
                 int zoomIndex = Array.IndexOf(zoomLevels, activeEditor.Zoom);
                 viewZoomOut.Enabled = zoomIndex > 0;
                 viewZoomIn.Enabled = zoomIndex < zoomLevels.Length - 1;
+                zoomLevelLabel.Enabled = true;
+                zoomLevelLabel.Text = $"{activeEditor.Zoom:P0}";
             } else {
                 viewZoomOut.Enabled = false;
                 viewZoomIn.Enabled = false;
+                zoomLevelLabel.Enabled = false;
             }
         }
 
