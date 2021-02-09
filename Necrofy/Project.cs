@@ -14,9 +14,13 @@ namespace Necrofy
         public const string baseROMFilename = "base.sfc";
         public const string buildFilename = "build.sfc";
         public const string runFromLevelFilename = "runFromLevel.sfc";
-        private const string internalProjectFilesFolder = "ProjectFiles";
-        public static readonly string internalProjectFilesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, internalProjectFilesFolder);
+        public static readonly string internalProjectFilesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ProjectFiles");
+        public static readonly string internalPatchesPath = Path.Combine(internalProjectFilesPath, "Patches");
         private static readonly HashSet<string> ignoredFileExtensions = new HashSet<string>() { ".sfc", ".nfyz", ".nfyp" };
+
+        public const string ROMExpandPatchName = "ROMExpand.asm";
+        public const string OtherExpandPatchName = "OtherExpand.asm";
+        public const string RunFromLevelPatchName = "RunFromLevel.asm";
 
         public readonly string path;
         public readonly string settingsFilename;
@@ -50,7 +54,7 @@ namespace Necrofy
 
             s.Close();
             settingsFilename = "project.nfyp";
-            settings = new ProjectSettings();
+            settings = ProjectSettings.CreateNew();
             WriteSettings();
             ReadAssets();
         }
@@ -95,46 +99,47 @@ namespace Necrofy
                 string outputROM = Path.Combine(path, buildFilename);
                 File.Copy(Path.Combine(path, baseROMFilename), outputROM, true);
 
-                NStream s = new NStream(new FileStream(outputROM, FileMode.Open, FileAccess.ReadWrite, FileShare.Read));
-                ROMInfo info = new ROMInfo(s);
-                info.assets.Clear();
-                AddEndOfBankFreespace(s, info.Freespace);
+                using (NStream s = new NStream(new FileStream(outputROM, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))) {
+                    ROMInfo info = new ROMInfo(s);
+                    info.assets.Clear();
+                    AddEndOfBankFreespace(s, info.Freespace);
 
-                foreach (string filename in Directory.GetFiles(path, "*", SearchOption.AllDirectories)) {
-                    string relativeFilename = GetRelativePath(filename);
-                    try {
-                        Asset asset = Asset.FromFile(this, relativeFilename);
-                        if (asset == null) {
-                            if (!ignoredFileExtensions.Contains(Path.GetExtension(filename))) {
-                                results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.WARNING, relativeFilename, "Unknown asset"));
+                    foreach (string filename in Directory.GetFiles(path, "*", SearchOption.AllDirectories)) {
+                        string relativeFilename = GetRelativePath(filename);
+                        try {
+                            Asset asset = Asset.FromFile(this, relativeFilename);
+                            if (asset == null) {
+                                if (!ignoredFileExtensions.Contains(Path.GetExtension(filename))) {
+                                    results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.WARNING, relativeFilename, "Unknown asset"));
+                                }
+                                continue;
                             }
-                            continue;
+                            info.assets.Add(asset);
+                        } catch (Exception ex) {
+                            results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, relativeFilename, ex.Message, ex.StackTrace));
                         }
-                        info.assets.Add(asset);
-                    } catch (Exception ex) {
-                        results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, relativeFilename, ex.Message, ex.StackTrace));
                     }
+
+                    info.assets.Sort();
+                    foreach (Asset asset in info.assets) {
+                        asset.ReserveSpace(info.Freespace);
+                    }
+                    foreach (Asset asset in info.assets) {
+                        asset.Insert(s, info, this);
+                    }
+
+                    // Round size up to the nearest bank
+                    s.SetLength((long)Math.Ceiling(s.Length / (double)Freespace.BankSize) * Freespace.BankSize);
+                    byte sizeValue = (byte)(Math.Ceiling(Math.Log(s.Length, 2)) - 10);
+                    s.Seek(ROMPointers.ROMSize);
+                    s.WriteByte(sizeValue);
+
+                    info.Freespace.Fill(s, 0xFF);
                 }
 
-                info.assets.Sort();
-                foreach (Asset asset in info.assets) {
-                    asset.ReserveSpace(info.Freespace);
+                foreach (ProjectSettings.Patch patch in settings.EnabledPatches) {
+                    Patch(outputROM, patch.Name, results);
                 }
-                foreach (Asset asset in info.assets) {
-                    asset.Insert(s, info, this);
-                }
-
-                // Round size up to the nearest bank
-                s.SetLength((long)Math.Ceiling(s.Length / (double)Freespace.BankSize) * Freespace.BankSize);
-                byte sizeValue = (byte)(Math.Ceiling(Math.Log(s.Length, 2)) - 10);
-                s.Seek(ROMPointers.ROMSize);
-                s.WriteByte(sizeValue);
-
-                info.Freespace.Fill(s, 0xFF);
-                s.Close();
-
-                Patch(outputROM, "ROMExpand.asm", results);
-                Patch(outputROM, "OtherExpand.asm", results);
             } catch (Exception ex) {
                 results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, "", ex.Message, ex.StackTrace));
             }
@@ -171,7 +176,7 @@ namespace Necrofy
                         defines["SPECIAL" + i.ToString()] = "$" + settings.specialAmounts[i].ToString();
                     }
 
-                    Patch(runROM, "RunFromLevel.asm", results, defines);
+                    Patch(runROM, RunFromLevelPatchName, results, defines);
                 } catch (Exception ex) {
                     results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, "", ex.Message, ex.StackTrace));
                 }
@@ -205,7 +210,7 @@ namespace Necrofy
                     args += string.Format("\"-D{0}={1}\" ", define.Key, define.Value);
                 }
             }
-            args += string.Format("\"{0}\" \"{1}\"", Path.Combine(internalProjectFilesPath, "Patches", patch), rom);
+            args += string.Format("\"{0}\" \"{1}\"", Path.Combine(internalPatchesPath, patch), rom);
 
             ProcessStartInfo processInfo = new ProcessStartInfo(Path.Combine("Tools", "asar.exe")) {
                 Arguments = args,

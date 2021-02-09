@@ -17,10 +17,18 @@ namespace Necrofy
         public List<FolderState> FolderStates { get; set; }
         /// <summary>List of asset files that are currently opened for editing</summary>
         public List<string> OpenFiles { get; set; }
+        /// <summary>List of the built-in patches that will be applied on build</summary>
+        public List<Patch> EnabledPatches { get; set; } = new List<Patch>();
 
-        public ProjectSettings() {
-            MajorVersion = CurMajorVersion;
-            MinorVersion = CurMinorVersion;
+        private ProjectSettings() { }
+
+        public static ProjectSettings CreateNew() {
+            ProjectSettings settings = new ProjectSettings();
+            settings.MajorVersion = CurMajorVersion;
+            settings.MinorVersion = CurMinorVersion;
+            settings.EnabledPatches.Add(new Patch(Project.ROMExpandPatchName));
+            settings.EnabledPatches.Add(new Patch(Project.OtherExpandPatchName));
+            return settings;
         }
 
         public class FolderState
@@ -28,6 +36,21 @@ namespace Necrofy
             public string Name { get; set; }
             public bool Expanded { get; set; }
             public List<FolderState> Children { get; set; }
+        }
+
+        public class Patch
+        {
+            public string Name { get; set; }
+
+            public Patch() { }
+
+            public Patch(string name) {
+                Name = name;
+            }
+
+            public override string ToString() {
+                return Name;
+            }
         }
     }
 }

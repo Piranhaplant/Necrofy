@@ -203,6 +203,12 @@
     <Compile Include="LoadedLevel\WrappedSpriteTile.cs" />
     <Compile Include="ObjectBrowser\LevelTitleObjectBrowserContents.cs" />
     <Compile Include="ObjectBrowser\SpriteEditorObjectBrowserContents.cs" />
+    <Compile Include="ProjectSettingsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProjectSettingsDialog.Designer.cs">
+      <DependentUpon>ProjectSettingsDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpriteEditor\SpriteEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -369,6 +375,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ObjectBrowser\ObjectBrowserForm.resx">
       <DependentUpon>ObjectBrowserForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProjectSettingsDialog.resx">
+      <DependentUpon>ProjectSettingsDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PropertyBrowser.resx">
       <DependentUpon>PropertyBrowser.cs</DependentUpon>
@@ -538,6 +547,9 @@
     <None Include="Icons\cross-script.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ProjectFiles\Patches\SkullKeyDoorWeedWhackerFix.asm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="ProjectFiles\Patches\RunFromLevel.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -578,6 +590,9 @@
     <None Include="Icons\layer-flip.png" />
     <None Include="Icons\layer-flip-vertical.png" />
     <Content Include="ProjectFiles\Patches\OtherExpand.asm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectFiles\Patches\ReverseCycling.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="ProjectFiles\Patches\ROMExpand.asm">

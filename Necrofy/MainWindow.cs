@@ -73,7 +73,7 @@ namespace Necrofy
             viewAxes.Checked = Properties.Settings.Default.ShowAxes;
             viewTileBorders.Checked = Properties.Settings.Default.ShowTileBorders;
 
-            projectMenuItems = new List<ToolStripMenuItem>() { buildBuildProject, buildRunProject };
+            projectMenuItems = new List<ToolStripMenuItem>() { projectBuildProject, projectRunProject, projectSettings };
             HideAllEditorToolStripItems();
             UpdateStatusText();
         }
@@ -278,7 +278,7 @@ namespace Necrofy
             Editor_SelectionChanged(editor, e);
             ObjectBrowser.Browser.Contents = activeEditor?.BrowserContents;
             PropertyBrowser.SetObjects(activeEditor?.PropertyBrowserObjects);
-            buildRunFromLevel.Enabled = activeEditor?.LevelNumber != null;
+            projectRunFromLevel.Enabled = activeEditor?.LevelNumber != null;
             fileClose.Enabled = activeEditor != null;
             UpdateStatusText();
             UpdateZoom();
@@ -528,6 +528,15 @@ namespace Necrofy
                 SaveRunSettings();
             };
             dialog.Show();
+        }
+
+        private void projectSettings_Click(object sender, EventArgs e) {
+            if (project == null) {
+                return;
+            }
+            if (new ProjectSettingsDialog(project.settings).ShowDialog() == DialogResult.OK) {
+                project.WriteSettings();
+            }
         }
 
         private void debugToolStripMenuItem_Click(object sender, EventArgs e) {
