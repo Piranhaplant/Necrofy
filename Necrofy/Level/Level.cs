@@ -74,7 +74,7 @@ namespace Necrofy
 
             AddAllObjects(s, () => {
                 Monster m = new Monster(s);
-                // In level 29, there are some invalid monsters, so remove them now
+                // In level 29, there are some invalid monsters from the monster data running in to the victim data, so remove them
                 if (m.type > -1) {
                     monsters.Add(m);
                 }

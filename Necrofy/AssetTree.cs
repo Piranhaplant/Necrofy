@@ -25,6 +25,8 @@ namespace Necrofy
         public AssetTree(Project project) {
             this.project = project;
 
+            Root = ReadAssets(project.path, null);
+
             watcher = new FileSystemWatcher(project.path);
             watcher.IncludeSubdirectories = true;
             watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
@@ -33,8 +35,6 @@ namespace Necrofy
             watcher.Deleted += File_Deleted;
             watcher.Renamed += File_Renamed;
             watcher.EnableRaisingEvents = true;
-
-            Root = ReadAssets(project.path, null);
         }
 
         private Folder ReadAssets(string folder, Folder parent) {

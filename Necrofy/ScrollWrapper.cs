@@ -214,7 +214,7 @@ namespace Necrofy
         public void TransformGraphics(Graphics g) {
             g.InterpolationMode = InterpolationMode.NearestNeighbor;
             g.PixelOffsetMode = PixelOffsetMode.Half;
-            g.TranslateTransform(xDimension.Position + xDimension.Padding * zoom + 0.5f, yDimension.Position + yDimension.Padding * zoom + 0.5f);
+            g.TranslateTransform(xDimension.Position + xDimension.Padding * zoom + 1f, yDimension.Position + yDimension.Padding * zoom + 1f);
             g.ScaleTransform(zoom, zoom);
         }
 

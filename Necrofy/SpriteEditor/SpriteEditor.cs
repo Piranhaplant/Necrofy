@@ -235,6 +235,7 @@ namespace Necrofy
         }
         
         private void scrollWrapper_Scrolled(object sender, EventArgs e) {
+            canvas.GenerateMouseMove();
             Repaint();
         }
 
@@ -401,13 +402,10 @@ namespace Necrofy
             }
         }
 
-        private bool mouseDown = false;
-
         private void canvas_MouseDown(object sender, MouseEventArgs e) {
             if (e.Button == MouseButtons.Left) {
                 Point transformed = scrollWrapper.TransformPoint(e.Location);
                 objectSelector.MouseDown(transformed.X, transformed.Y);
-                mouseDown = true;
                 UpdateStatus();
             }
         }
@@ -418,9 +416,8 @@ namespace Necrofy
         }
 
         private void canvas_MouseUp(object sender, MouseEventArgs e) {
-            if (mouseDown) {
+            if (e.Button == MouseButtons.Left) {
                 objectSelector.MouseUp();
-                mouseDown = false;
                 UpdateStatus();
             }
         }
