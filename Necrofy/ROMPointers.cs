@@ -17,6 +17,8 @@ namespace Necrofy
         public const int LevelPointers = 0xf8000;
         /// <summary>Pointer to the table that indicates which bonus level follows each level</summary>
         public const int BonusLevelNums = 0x1517e;
+        /// <summary>Pointer to the table that indicates what code to execute for the secret bonus on each level</summary>
+        public const int SecretBonusCodePointers = 0x151ee;
         /// <summary>Pointer to the ROM size in the SNES header</summary>
         public const int ROMSize = 0x7fd7;
         /// <summary>Pointer to the first chunk of sprite data</summary>

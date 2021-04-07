@@ -77,6 +77,13 @@ namespace Necrofy
                     bonusList.SetItemChecked(bonusList.Items.Count - 1, true);
                 }
             }
+
+            if (presets.secretBonuses != null) {
+                secretBonusTypeSelector.Items.AddRange(presets.secretBonuses.ToArray());
+                secretBonusTypeSelector.SelectedItem = presets.secretBonuses.Where(p => p.value == level.Level.secretBonusCodePointer).FirstOrDefault();
+            }
+
+            bonusLevelSelector.Value = level.Level.bonusLevelNumber;
             
             foreach (LevelMonster monster in level.Level.levelMonsters) {
                 if (monster is PaletteFadeLevelMonster paletteFadeLevelMonster) {
@@ -221,6 +228,12 @@ namespace Necrofy
             if (soundsSelector.SelectedIndex > -1) {
                 level.Level.sounds = ((LevelSettingsPresets.Preset<ushort>)soundsSelector.SelectedItem).value;
             }
+
+            if (secretBonusTypeSelector.SelectedIndex > -1) {
+                level.Level.secretBonusCodePointer = ((LevelSettingsPresets.Preset<ushort>)secretBonusTypeSelector.SelectedItem).value;
+            }
+
+            level.Level.bonusLevelNumber = (ushort)bonusLevelSelector.Value;
 
             level.Level.bonuses.Clear();
             for (int i = 0; i < bonusList.Items.Count; i++) {

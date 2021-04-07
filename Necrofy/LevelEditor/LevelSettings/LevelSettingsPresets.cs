@@ -12,6 +12,7 @@ namespace Necrofy
         public List<Preset<ushort>> music;
         public List<Preset<ushort>> sounds;
         public List<Preset<ushort>> bonuses;
+        public List<Preset<ushort>> secretBonuses;
         public List<Preset<List<TileAnimLevelMonster.Entry>>> tileAnimations;
 
         public class Preset<T>

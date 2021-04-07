@@ -8,6 +8,8 @@ namespace Necrofy
 {
     class ZAMNCompress
     {
+        // TODO: read expanded compressed data
+
         /// <summary>Decompresses the data that the stream is positioned at</summary>
         /// <param name="s">The stream holding the compressed data</param>
         /// <returns>The decompressed data</returns>

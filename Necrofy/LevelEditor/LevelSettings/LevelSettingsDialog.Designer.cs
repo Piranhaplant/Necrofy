@@ -57,6 +57,10 @@
             this.spritesGroup = new System.Windows.Forms.GroupBox();
             this.spritePaletteSelector = new Necrofy.AssetComboBox();
             this.bonusesGroup = new System.Windows.Forms.GroupBox();
+            this.bonusLevelSelector = new System.Windows.Forms.NumericUpDown();
+            this.secretBonusTypeSelector = new System.Windows.Forms.ComboBox();
+            this.bonusLevelLabel = new System.Windows.Forms.Label();
+            this.secretBonusTypeLabel = new System.Windows.Forms.Label();
             this.bonusList = new System.Windows.Forms.CheckedListBox();
             this.levelEffectsGroup = new System.Windows.Forms.GroupBox();
             this.levelMonsterList = new Necrofy.LevelMonsterList();
@@ -71,6 +75,7 @@
             this.audioGroup.SuspendLayout();
             this.spritesGroup.SuspendLayout();
             this.bonusesGroup.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bonusLevelSelector)).BeginInit();
             this.levelEffectsGroup.SuspendLayout();
             this.addLevelEffectMenu.SuspendLayout();
             this.SuspendLayout();
@@ -403,6 +408,10 @@
             // 
             this.bonusesGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.bonusesGroup.Controls.Add(this.bonusLevelSelector);
+            this.bonusesGroup.Controls.Add(this.secretBonusTypeSelector);
+            this.bonusesGroup.Controls.Add(this.bonusLevelLabel);
+            this.bonusesGroup.Controls.Add(this.secretBonusTypeLabel);
             this.bonusesGroup.Controls.Add(this.bonusList);
             this.bonusesGroup.Location = new System.Drawing.Point(314, 12);
             this.bonusesGroup.Name = "bonusesGroup";
@@ -410,6 +419,45 @@
             this.bonusesGroup.TabIndex = 11;
             this.bonusesGroup.TabStop = false;
             this.bonusesGroup.Text = "Bonuses";
+            // 
+            // bonusLevelSelector
+            // 
+            this.bonusLevelSelector.Location = new System.Drawing.Point(81, 344);
+            this.bonusLevelSelector.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.bonusLevelSelector.Name = "bonusLevelSelector";
+            this.bonusLevelSelector.Size = new System.Drawing.Size(90, 20);
+            this.bonusLevelSelector.TabIndex = 23;
+            // 
+            // secretBonusTypeSelector
+            // 
+            this.secretBonusTypeSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.secretBonusTypeSelector.FormattingEnabled = true;
+            this.secretBonusTypeSelector.Location = new System.Drawing.Point(6, 317);
+            this.secretBonusTypeSelector.Name = "secretBonusTypeSelector";
+            this.secretBonusTypeSelector.Size = new System.Drawing.Size(165, 21);
+            this.secretBonusTypeSelector.TabIndex = 22;
+            // 
+            // bonusLevelLabel
+            // 
+            this.bonusLevelLabel.AutoSize = true;
+            this.bonusLevelLabel.Location = new System.Drawing.Point(6, 346);
+            this.bonusLevelLabel.Name = "bonusLevelLabel";
+            this.bonusLevelLabel.Size = new System.Drawing.Size(69, 13);
+            this.bonusLevelLabel.TabIndex = 21;
+            this.bonusLevelLabel.Text = "Bonus Level:";
+            // 
+            // secretBonusTypeLabel
+            // 
+            this.secretBonusTypeLabel.AutoSize = true;
+            this.secretBonusTypeLabel.Location = new System.Drawing.Point(6, 301);
+            this.secretBonusTypeLabel.Name = "secretBonusTypeLabel";
+            this.secretBonusTypeLabel.Size = new System.Drawing.Size(101, 13);
+            this.secretBonusTypeLabel.TabIndex = 20;
+            this.secretBonusTypeLabel.Text = "Secret Bonus Type:";
             // 
             // bonusList
             // 
@@ -420,7 +468,7 @@
             this.bonusList.FormattingEnabled = true;
             this.bonusList.Location = new System.Drawing.Point(6, 19);
             this.bonusList.Name = "bonusList";
-            this.bonusList.Size = new System.Drawing.Size(171, 349);
+            this.bonusList.Size = new System.Drawing.Size(171, 274);
             this.bonusList.TabIndex = 12;
             // 
             // levelEffectsGroup
@@ -519,6 +567,8 @@
             this.spritesGroup.ResumeLayout(false);
             this.spritesGroup.PerformLayout();
             this.bonusesGroup.ResumeLayout(false);
+            this.bonusesGroup.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bonusLevelSelector)).EndInit();
             this.levelEffectsGroup.ResumeLayout(false);
             this.addLevelEffectMenu.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -566,5 +616,9 @@
         private System.Windows.Forms.ToolStripMenuItem addPaletteFade;
         private System.Windows.Forms.ToolStripMenuItem addTileAnimation;
         private System.Windows.Forms.Button removeLevelEffect;
+        private System.Windows.Forms.NumericUpDown bonusLevelSelector;
+        private System.Windows.Forms.ComboBox secretBonusTypeSelector;
+        private System.Windows.Forms.Label bonusLevelLabel;
+        private System.Windows.Forms.Label secretBonusTypeLabel;
     }
 }

@@ -183,8 +183,9 @@ LDA #$C8F6
 LDY #$0080
 JSL $80825E
 ;CLC
-LDA #$003C
+;LDA #$003C
 ;ADC $10
+  LDA #$0040 ; This has been moved back by 4 bytes to insert secret bonus data
 PHA
 
 -:
@@ -471,3 +472,32 @@ SEC
 RTS
 
 warnpc $82C2C6
+
+; Modify secret bonus code to load from level data instead of a fixed table
+
+org $82D0E0
+JSR run_secret_bonus
+org $82D104
+JSR run_secret_bonus
+org $82D11D
+JSR get_bonus_level
+
+org $82D17E
+run_secret_bonus:
+LDY #$003C
+LDA [$10],Y
+
+PEA .return-1
+
+DEC A
+PHA
+RTS
+.return:
+RTS
+
+get_bonus_level:
+LDY #$003E
+LDA [$10],Y
+RTS
+
+warnpc $82D25E

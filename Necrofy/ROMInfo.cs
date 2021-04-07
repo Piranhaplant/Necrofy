@@ -52,12 +52,21 @@ namespace Necrofy
 
             // Load all levels. Even if they aren't going to be used, this is still necessary to track the space used by them.
             for (int i = 0; i <= maxBonusLevel; i++) {
+                Level level;
                 if (fullLevelPointers) {
                     s.GoToPointerPush();
+                    level = new Level(this, s);
                 } else {
+                    s.PushPosition();
+                    s.Seek(ROMPointers.SecretBonusCodePointers + i * 2);
+                    ushort secretBonusCodePointer = s.ReadInt16();
+                    s.Seek(ROMPointers.BonusLevelNums + i * 2);
+                    ushort bonusLevelNum = s.ReadInt16();
+                    s.PopPosition();
+
                     s.GoToRelativePointerPush();
+                    level = new Level(this, s, secretBonusCodePointer, bonusLevelNum);
                 }
-                Level level = new Level(this, s);
                 assets.Add(new LevelAsset(i, level));
                 s.PopPosition();
             }

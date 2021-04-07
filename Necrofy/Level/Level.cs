@@ -49,13 +49,28 @@ namespace Necrofy
 
         public TitlePage title1 { get; set; }
         public TitlePage title2 { get; set; }
+
+        public ushort secretBonusCodePointer { get; set; }
+        public ushort bonusLevelNumber { get; set; }
         
         public Level() { }
 
-        /// <summary>Loads a level from a ROM file</summary>
+        /// <summary>Loads a level from a ROM file that has not been modified by Necrofy</summary>
         /// <param name="r">The ROMInfo that freespace, etc. will be saved to</param>
         /// <param name="s">A stream for the ROM file that is positioned at the beginning of the level</param>
-        public Level(ROMInfo r, NStream s) {
+        /// <param name="secretBonusCodePointer">The secret bonus code pointer</param>
+        /// <param name="bonusLevelNumber">The bonus level number</param>
+        public Level(ROMInfo r, NStream s, ushort secretBonusCodePointer, ushort bonusLevelNumber) : this(r, s, false) {
+            this.secretBonusCodePointer = secretBonusCodePointer;
+            this.bonusLevelNumber = bonusLevelNumber;
+        }
+
+        /// <summary>Loads a level from a ROM file that has been modified by Necrofy</summary>
+        /// <param name="r">The ROMInfo that freespace, etc. will be saved to</param>
+        /// <param name="s">A stream for the ROM file that is positioned at the beginning of the level</param>
+        public Level(ROMInfo r, NStream s) : this(r, s, true) { }
+
+        private Level(ROMInfo r, NStream s, bool necrofy) {
             monsters = new List<Monster>();
             oneShotMonsters = new List<OneShotMonster>();
             items = new List<Item>();
@@ -106,6 +121,11 @@ namespace Necrofy
                 AddAllObjects(s, () => bonuses.Add(s.ReadInt16()));
             } else {
                 s.ReadInt16();
+            }
+
+            if (necrofy) {
+                secretBonusCodePointer = s.ReadInt16();
+                bonusLevelNumber = s.ReadInt16();
             }
 
             while (s.PeekPointer() > -1) {
@@ -206,6 +226,9 @@ namespace Necrofy
             } else {
                 data.data.AddInt16(0);
             }
+
+            data.data.AddInt16(secretBonusCodePointer);
+            data.data.AddInt16(bonusLevelNumber);
 
             foreach (LevelMonster levelMonster in levelMonsters) {
                 levelMonster.Build(data, rom);
