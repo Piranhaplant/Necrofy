@@ -49,7 +49,7 @@ namespace Necrofy
 
         public TitlePage title1 { get; set; }
         public TitlePage title2 { get; set; }
-
+        
         public Level() { }
 
         /// <summary>Loads a level from a ROM file</summary>
@@ -74,7 +74,7 @@ namespace Necrofy
 
             AddAllObjects(s, () => {
                 Monster m = new Monster(s);
-                // In level 29, there are some invalid monsters from the monster data running in to the victim data, so remove them
+                // In level 29, there are some invalid monsters from the monster data running into the victim data, so remove them
                 if (m.type > -1) {
                     monsters.Add(m);
                 }

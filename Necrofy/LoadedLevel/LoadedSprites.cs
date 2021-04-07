@@ -17,9 +17,9 @@ namespace Necrofy
         public readonly Bitmap[] images;
         public readonly Bitmap[] tileImages;
 
-        public LoadedSprites(Project project) {
-            spritesAsset = SpritesAsset.FromProject(project);
-            loadedGraphics = new LoadedGraphics(project, Asset.SpritesFolder + Asset.FolderSeparator + GraphicsAsset.DefaultName);
+        public LoadedSprites(Project project, string folder) {
+            spritesAsset = SpritesAsset.FromProject(project, folder);
+            loadedGraphics = new LoadedGraphics(project, folder + Asset.FolderSeparator + GraphicsAsset.DefaultName);
             loadedPalette = new LoadedPalette(project, Asset.SpritesFolder + Asset.FolderSeparator + PaletteAsset.DefaultSpritePaletteName, transparent: true);
 
             images = new Bitmap[spritesAsset.sprites.Length];

@@ -437,9 +437,27 @@ namespace Necrofy
             objectSelector.KeyDown(e.KeyData);
             if (paletteKeys.TryGetValue(e.KeyCode, out int palette)) {
                 paletteButtons[palette].Checked = true;
+            } else if (e.KeyData == (Keys.Control | Keys.Alt | Keys.L)) {
+                CopySpriteASMText(); // TODO: Remove
             }
         }
-        
+
+        private void CopySpriteASMText() {
+            if (currentSprite == null) {
+                return;
+            }
+            StringBuilder s = new StringBuilder();
+            s.AppendLine($"db #{currentSprite.tiles.Count}");
+            for (int i = currentSprite.tiles.Count - 1; i >= 0; i--) {
+                Sprite.Tile tile = currentSprite.tiles[i];
+                s.AppendLine($"dw #{tile.xOffset}");
+                s.AppendLine($"dw #{tile.yOffset}");
+                s.AppendLine($"dw #${tile.GetProperties():X4}");
+                s.AppendLine($"dw #${tile.tileNum + 0xC03:X4}");
+            }
+            Clipboard.SetText(s.ToString());
+        }
+
         public void AddTiles(Sprite s, List<WrappedSpriteTile> tiles, List<int> zIndexes = null) {
             for (int i = 0; i < tiles.Count; i++) {
                 if (zIndexes == null) {

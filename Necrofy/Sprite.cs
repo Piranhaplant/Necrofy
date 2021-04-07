@@ -19,6 +19,25 @@ namespace Necrofy
             public bool xFlip;
             public bool yFlip;
             public int palette;
+
+            public Tile() { }
+
+            public Tile(short xOffset, short yOffset, ushort properties, ushort tileNum) {
+                this.xOffset = xOffset;
+                this.yOffset = yOffset;
+                this.tileNum = tileNum;
+                palette = (properties >> 9) & 7;
+                xFlip = (properties & 0x4000) > 0;
+                yFlip = (properties & 0x8000) > 0;
+            }
+
+            public ushort GetProperties() {
+                int properties = 0;
+                properties |= palette << 9;
+                properties |= (xFlip ? 1 : 0) << 14;
+                properties |= (yFlip ? 1 : 0) << 15;
+                return (ushort)properties;
+            }
         }
 
         public Rectangle GetBounds() {
@@ -73,20 +92,9 @@ namespace Necrofy
                 for (int i = tileCount - 1; i >= 0; i--) {
                     short xOffset = (short)romStream.ReadInt16();
                     short yOffset = (short)romStream.ReadInt16();
-                    int properties = romStream.ReadInt16();
+                    ushort properties = romStream.ReadInt16();
                     ushort tileNum = romStream.ReadInt16();
-                    
-                    int palette = (properties >> 9) & 7;
-                    bool xFlip = (properties & 0x4000) > 0;
-                    bool yFlip = (properties & 0x8000) > 0;
-                    s.tiles[i] = new Tile {
-                        tileNum = tileNum,
-                        xOffset = xOffset,
-                        yOffset = yOffset,
-                        xFlip = xFlip,
-                        yFlip = yFlip,
-                        palette = palette
-                    };
+                    s.tiles[i] = new Tile(xOffset, yOffset, properties, tileNum);
                 }
                 sprites.Add(s);
             }
@@ -128,14 +136,9 @@ namespace Necrofy
                         romStream.WriteByte((byte)extraTileCount);
                     }
 
-                    int properties = 0;
-                    properties |= t.palette << 9;
-                    properties |= (t.xFlip ? 1 : 0) << 14;
-                    properties |= (t.yFlip ? 1 : 0) << 15;
-
                     romStream.WriteInt16((ushort)t.xOffset);
                     romStream.WriteInt16((ushort)t.yOffset);
-                    romStream.WriteInt16((ushort)properties);
+                    romStream.WriteInt16(t.GetProperties());
                     romStream.WriteInt16(t.tileNum);
                 }
                 // If there's extra space, fill it with 0s

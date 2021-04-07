@@ -18,8 +18,8 @@ namespace Necrofy
         private readonly SpritesNameInfo nameInfo;
         public readonly Sprite[] sprites;
 
-        public static SpritesAsset FromProject(Project project) {
-            return new SpritesCreator().FromProject(project);
+        public static SpritesAsset FromProject(Project project, string folder) {
+            return new SpritesCreator().FromProject(project, folder);
         }
 
         private SpritesAsset(SpritesNameInfo nameInfo, Sprite[] sprites) {
@@ -42,8 +42,8 @@ namespace Necrofy
 
         class SpritesCreator : Creator
         {
-            public SpritesAsset FromProject(Project project) {
-                NameInfo nameInfo = new SpritesNameInfo();
+            public SpritesAsset FromProject(Project project, string folder) {
+                NameInfo nameInfo = new SpritesNameInfo(folder);
                 string filename = nameInfo.FindFilename(project.path);
                 return (SpritesAsset)FromFile(nameInfo, filename);
             }
@@ -58,7 +58,7 @@ namespace Necrofy
 
             public override List<DefaultParams> GetDefaults() {
                 return new List<DefaultParams>() {
-                    new DefaultParams(0, new SpritesNameInfo()),
+                    new DefaultParams(0, new SpritesNameInfo(SpritesFolder)),
                 };
             }
 
@@ -73,29 +73,31 @@ namespace Necrofy
 
         class SpritesNameInfo : NameInfo
         {
-            private const string Folder = SpritesFolder;
             private const string FileName = "Sprites";
             private const string Extension = "spr";
 
-            public SpritesNameInfo() : base(FileName) { }
+            public readonly string folder;
+
+            public SpritesNameInfo(string folder) : base(folder, FileName) {
+                this.folder = folder;
+            }
 
             public override string DisplayName => FileName;
             public override AssetCategory Category => AssetCat;
 
             protected override PathParts GetPathParts() {
-                return new PathParts(Folder, FileName, Extension, null, false);
+                return new PathParts(folder, FileName, Extension, null, false);
             }
 
             public override EditorWindow GetEditor(Project project) {
-                return new SpriteEditor(new LoadedSprites(project));
+                return new SpriteEditor(new LoadedSprites(project, folder));
             }
 
             public static SpritesNameInfo FromPath(PathParts parts) {
-                if (parts.folder != Folder) return null;
                 if (parts.name != FileName) return null;
                 if (parts.fileExtension != Extension) return null;
                 if (parts.pointer != null) return null;
-                return new SpritesNameInfo();
+                return new SpritesNameInfo(parts.folder);
             }
         }
     }
