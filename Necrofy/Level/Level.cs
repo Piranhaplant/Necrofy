@@ -78,7 +78,7 @@ namespace Necrofy
                 if (m.type > -1) {
                     monsters.Add(m);
                 }
-            });
+            }, stream => stream.PeekByte());
             AddAllObjects(s, () => oneShotMonsters.Add(new OneShotMonster(s)));
             AddAllObjects(s, () => items.Add(new Item(s)));
 
@@ -125,8 +125,12 @@ namespace Necrofy
         }
 
         private static void AddAllObjects(NStream s, Action add) {
+            AddAllObjects(s, add, stream => stream.PeekInt16());
+        }
+
+        private static void AddAllObjects(NStream s, Action add, Func<Stream, int> peekValue) {
             s.GoToRelativePointerPush();
-            while (s.PeekInt16() > 0) {
+            while (peekValue(s) > 0) {
                 add();
             }
             s.PopPosition();

@@ -68,7 +68,7 @@ namespace Necrofy
                         newObject = new WrappedItem(new Item((ushort)x, (ushort)y, (byte)selectedSprite.value), editor.level.spriteGraphics);
                         break;
                     case SpriteDisplay.Category.Monster:
-                        newObject = new WrappedMonster(new Monster((ushort)x, (ushort)y, 0, 0, selectedSprite.value), editor.level.spriteGraphics);
+                        newObject = new WrappedMonster(new Monster((ushort)x, (ushort)y, 0, 20, selectedSprite.value), editor.level.spriteGraphics);
                         break;
                     case SpriteDisplay.Category.OneShotMonster:
                         newObject = new WrappedOneShotMonster(new OneShotMonster((ushort)x, (ushort)y, 0, 0, selectedSprite.value), editor.level.spriteGraphics);

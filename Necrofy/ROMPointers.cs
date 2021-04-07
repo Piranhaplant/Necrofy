@@ -31,9 +31,8 @@ namespace Necrofy
         /// <returns>The pointer as a PC address or -1 if the end of the stream was reached or there was an invalid pointer at the current position.</returns>
         public static int ReadPointer(this Stream s) {
             int address = s.ReadInt16();
-            int bank = s.ReadByte();
-            s.ReadByte(); // The fourth byte is useless, but in ZAMN it is always included as far as I know
-            if (address < 0x8000 || bank < 0x80)
+            int bank = s.ReadInt16();
+            if (address < 0x8000 || bank < 0x80 || bank > 0xFF)
                 return -1;
             return (bank - 0x80) * 0x8000 + address - 0x8000;
         }
@@ -207,9 +206,20 @@ namespace Necrofy
             return data;
         }
 
+        /// <summary>Reads a byte from the stream without advancing the position</summary>
+        /// <param name="s">The stream</param>
+        /// <returns>The byte</returns>
+        public static byte PeekByte(this Stream s) {
+            int value = s.ReadByte();
+            if (value < 0)
+                throw new EndOfStreamException();
+            s.Seek(-1, SeekOrigin.Current);
+            return (byte)value;
+        }
+
         /// <summary>Reads an unsigned little-endian 16-bit integer from the stream without advancing the position.</summary>
         /// <param name="s">The stream</param>
-        /// <returns>The integer or -1 if the stream reached the end</returns>
+        /// <returns>The integer</returns>
         public static ushort PeekInt16(this Stream s) {
             ushort value = s.ReadInt16();
             s.Seek(-2, SeekOrigin.Current);
@@ -218,7 +228,7 @@ namespace Necrofy
 
         /// <summary>Reads a 4-byte SNES LoROM pointer from the stream without advancing the position.</summary>
         /// <param name="s">The stream</param>
-        /// <returns>The pointer as a PC address or -1 if the end of the stream was reached or there was an invalid pointer at the current position.</returns>
+        /// <returns>The pointer as a PC address or -1 if there was an invalid pointer at the current position.</returns>
         public static int PeekPointer(this Stream s) {
             int value = s.ReadPointer();
             s.Seek(-4, SeekOrigin.Current);

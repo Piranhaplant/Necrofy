@@ -14,7 +14,17 @@ namespace Necrofy
         public ushort x { get; set; }
         public ushort y { get; set; }
         public byte radius { get; set; }
-        public byte delay { get; set; }
+
+        private byte _delay;
+        public byte delay {
+            get {
+                return _delay;
+            }
+            set {
+                _delay = Math.Max((byte)1, value);
+            }
+        }
+
         public int type { get; set; }
 
         [JsonConstructor]
