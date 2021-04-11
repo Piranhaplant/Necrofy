@@ -73,6 +73,13 @@ namespace Necrofy
             viewAxes.Checked = Properties.Settings.Default.ShowAxes;
             viewTileBorders.Checked = Properties.Settings.Default.ShowTileBorders;
 
+            if (Properties.Settings.Default.WindowSize != Size.Empty) {
+                Size = Properties.Settings.Default.WindowSize;
+                if (Properties.Settings.Default.Maximized) {
+                    WindowState = FormWindowState.Maximized;
+                }
+            }
+
             projectMenuItems = new List<ToolStripMenuItem>() { projectBuildProject, projectRunProject, projectSettings };
             HideAllEditorToolStripItems();
             UpdateStatusText();
@@ -88,6 +95,13 @@ namespace Necrofy
             Properties.Settings.Default.ShowRespawnAreas = viewRespawnAreas.Checked;
             Properties.Settings.Default.ShowTileBorders = viewTileBorders.Checked;
             Properties.Settings.Default.ShowAxes = viewAxes.Checked;
+            if (WindowState.HasFlag(FormWindowState.Maximized)) {
+                Properties.Settings.Default.WindowSize = RestoreBounds.Size;
+                Properties.Settings.Default.Maximized = true;
+            } else {
+                Properties.Settings.Default.WindowSize = Size;
+                Properties.Settings.Default.Maximized = false;
+            }
             Properties.Settings.Default.Save();
 
             CloseProject(closeEditors: false);
