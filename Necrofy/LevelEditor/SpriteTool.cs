@@ -14,11 +14,16 @@ namespace Necrofy
     class SpriteTool : Tool, ObjectSelector<WrappedLevelObject>.IHost
     {
         private const string DefaultStatus = "Click to select or move. Hold shift to add to the selection. Hold alt to remove from the selection. Double click in the objects panel or hold ctrl and click on the level to create a new sprite.";
+        private const string ResizeStatus = "Monster respawn area size: {0}.";
         private const string DragStatus = "Move: {0}, {1}.";
 
         private static readonly SolidBrush selectionFillBrush = new SolidBrush(Color.FromArgb(96, 255, 255, 255));
+        private const int respawnAreaSizeHandleSize = 6;
 
         private readonly ObjectSelector<WrappedLevelObject> objectSelector;
+
+        private bool isResizingMonsterArea = false;
+        private WrappedMonster resizeMonster = null;
 
         public SpriteTool(LevelEditor editor) : base(editor) {
             objectSelector = new ObjectSelector<WrappedLevelObject>(this);
@@ -100,16 +105,54 @@ namespace Necrofy
         }
 
         public override void MouseDown(LevelMouseEventArgs e) {
-            objectSelector.MouseDown(e.X, e.Y);
+            if (isResizingMonsterArea) {
+                objectSelector.SelectObjects(new WrappedLevelObject[] { resizeMonster });
+            } else {
+                objectSelector.MouseDown(e.X, e.Y);
+            }
             UpdateStatus();
         }
 
         public override void MouseMove(LevelMouseEventArgs e) {
-            objectSelector.MouseMove(e.X, e.Y);
+            if (!e.MouseIsDown) {
+                isResizingMonsterArea = false;
+                resizeMonster = null;
+                Cursor cursor = Cursors.Default;
+
+                ForEachResizeHandleArea((monster, rect) => {
+                    if (rect.Contains(e.Location)) {
+                        isResizingMonsterArea = true;
+                        resizeMonster = monster;
+                        cursor = Cursors.SizeNWSE;
+                    }
+                });
+                editor.SetCursor(cursor);
+            } else {
+                if (isResizingMonsterArea) {
+                    Rectangle bounds = resizeMonster.Bounds;
+                    int size = Math.Min(byte.MaxValue, Math.Max(0, 2 * Math.Max(e.X - bounds.Right, e.Y - bounds.Bottom)));
+                    for (int i = 0; i <= byte.MaxValue; i = (i << 1) + 1) {
+                        if (size <= i + (i + 1) / 2) {
+                            size = i;
+                            break;
+                        }
+                    }
+                    if (size != resizeMonster.Radius) {
+                        editor.undoManager.Do(new ChangeMonsterRadiusAction(new WrappedLevelObject[] { resizeMonster }, (byte)size));
+                        UpdateStatus();
+                    }
+                } else {
+                    objectSelector.MouseMove(e.X, e.Y);
+                }
+            }
         }
 
         public override void MouseUp(LevelMouseEventArgs e) {
-            objectSelector.MouseUp();
+            if (isResizingMonsterArea) {
+                editor.GenerateMouseMove();
+            } else {
+                objectSelector.MouseUp();
+            }
             editor.undoManager.ForceNoMerge();
             UpdateStatus();
         }
@@ -184,6 +227,7 @@ namespace Necrofy
                         }
                         break;
                 }
+                editor.undoManager.ForceNoMerge();
             }
         }
 
@@ -195,6 +239,21 @@ namespace Necrofy
                     Rectangle bounds = obj.Bounds;
                     g.FillRectangle(selectionFillBrush, bounds);
                     g.DrawRectangle(p, bounds);
+                }
+            }
+
+            ForEachResizeHandleArea((monster, rect) => {
+                g.FillRectangle(Brushes.Black, rect);
+                g.DrawRectangle(Pens.LightSteelBlue, rect);
+            });
+        }
+
+        private void ForEachResizeHandleArea(Action<WrappedMonster, Rectangle> action) {
+            if (editor.showRespawnAreas) {
+                foreach (WrappedMonster m in editor.level.GetAllObjects(items: false, victims: false, oneShotMonsters: false, monsters: true, bossMonsters: false, players: false)) {
+                    Rectangle bounds = m.Bounds;
+                    Rectangle handleRect = new Rectangle(bounds.Right + m.Radius / 2 - respawnAreaSizeHandleSize / 2, bounds.Bottom + m.Radius / 2 - respawnAreaSizeHandleSize / 2, respawnAreaSizeHandleSize, respawnAreaSizeHandleSize);
+                    action(m, handleRect);
                 }
             }
         }
@@ -272,6 +331,8 @@ namespace Necrofy
         private void UpdateStatus() {
             if (objectSelector.MovingObjects) {
                 Status = string.Format(DragStatus, objectSelector.TotalMoveX, objectSelector.TotalMoveY);
+            } else if (isResizingMonsterArea) {
+                Status = string.Format(ResizeStatus, resizeMonster.Radius);
             } else {
                 Status = DefaultStatus;
             }

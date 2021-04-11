@@ -202,7 +202,7 @@ namespace Necrofy
     abstract class ChangeSpritePropertyAction<ObjectType, PropertyType> : LevelEditorAction where ObjectType : WrappedLevelObject
     {
         protected readonly List<ObjectType> objs;
-        private readonly PropertyType newValue;
+        private PropertyType newValue;
         private readonly List<PropertyType> oldValues = new List<PropertyType>();
 
         public ChangeSpritePropertyAction(IEnumerable<WrappedLevelObject> objs, PropertyType newValue) {
@@ -226,6 +226,17 @@ namespace Necrofy
             for (int i = 0; i < objs.Count; i++) {
                 SetProperty(objs[i], oldValues[i]);
             }
+        }
+
+        public override bool Merge(UndoAction<LevelEditor> action) {
+            if (this.GetType() == action.GetType()) {
+                ChangeSpritePropertyAction<ObjectType, PropertyType> changeSpritePropertyAction = action as ChangeSpritePropertyAction<ObjectType, PropertyType>;
+                if (changeSpritePropertyAction.objs.SequenceEqual(objs)) {
+                    newValue = changeSpritePropertyAction.newValue;
+                    return true;
+                }
+            }
+            return false;
         }
     }
 

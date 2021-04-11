@@ -283,7 +283,7 @@ namespace Necrofy
         private bool showGrid;
         private bool solidTilesOnly;
         private bool showTilePriority;
-        private bool showRespawnAreas;
+        public bool showRespawnAreas { get; private set; }
         private bool showScreenSizeGuide;
 
         private void UpdateViewOptions() {
