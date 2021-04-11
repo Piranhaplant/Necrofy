@@ -12,7 +12,7 @@ namespace Necrofy
 
         private const AssetCategory AssetCat = AssetCategory.Graphics;
 
-        public static void RegisterLoader() {
+        static GraphicsAsset() {
             AddCreator(new GraphicsCreator());
         }
         

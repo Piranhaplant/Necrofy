@@ -11,7 +11,7 @@ namespace Necrofy
     {
         private const AssetCategory AssetCat = AssetCategory.Editor;
 
-        public static void RegisterLoader() {
+        static TilesetSuggestionsAsset() {
             AddCreator(new TilesetSuggestionsCreator());
         }
         

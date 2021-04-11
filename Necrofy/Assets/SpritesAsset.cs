@@ -11,7 +11,7 @@ namespace Necrofy
     {
         private const AssetCategory AssetCat = AssetCategory.Sprites;
 
-        public static void RegisterLoader() {
+        static SpritesAsset() {
             AddCreator(new SpritesCreator());
         }
 

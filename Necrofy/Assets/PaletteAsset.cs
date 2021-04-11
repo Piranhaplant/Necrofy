@@ -13,7 +13,7 @@ namespace Necrofy
 
         private const AssetCategory AssetCat = AssetCategory.Palette;
 
-        public static void RegisterLoader() {
+        static PaletteAsset() {
             AddCreator(new PaletteCreator());
         }
         

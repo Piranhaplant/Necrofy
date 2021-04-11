@@ -12,7 +12,7 @@ namespace Necrofy
     {
         private const AssetCategory AssetCat = AssetCategory.Passwords;
 
-        public static void RegisterLoader() {
+        static PasswordsAsset() {
             AddCreator(new PasswordsCreator());
         }
 

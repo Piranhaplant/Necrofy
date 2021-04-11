@@ -13,7 +13,7 @@ namespace Necrofy
 
         private const AssetCategory AssetCat = AssetCategory.Tilemap;
 
-        public static void RegisterLoader() {
+        static TilemapAsset() {
             AddCreator(new TilemapCreator());
         }
 

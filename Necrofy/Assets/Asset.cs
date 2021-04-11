@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 
 namespace Necrofy
 {
@@ -159,15 +160,9 @@ namespace Necrofy
         
         // Have to init all of the loaders here since the static constructors of the subclasses won't be called
         static Asset() {
-            CollisionAsset.RegisterLoader();
-            DataAsset.RegisterLoader();
-            GraphicsAsset.RegisterLoader();
-            LevelAsset.RegisterLoader();
-            PaletteAsset.RegisterLoader();
-            PasswordsAsset.RegisterLoader();
-            SpritesAsset.RegisterLoader();
-            TilemapAsset.RegisterLoader();
-            TilesetSuggestionsAsset.RegisterLoader();
+            foreach (Type subclass in typeof(Asset).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Asset)))) {
+                RuntimeHelpers.RunClassConstructor(subclass.TypeHandle);
+            }
         }
 
         public int CompareTo(Asset other) {

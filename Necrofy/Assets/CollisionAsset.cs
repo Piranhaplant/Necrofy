@@ -12,7 +12,7 @@ namespace Necrofy
         public const string DefaultName = "Collision";
         private const AssetCategory AssetCat = AssetCategory.Collision;
 
-        public static void RegisterLoader() {
+        static CollisionAsset() {
             AddCreator(new CollisionCreator());
         }
 

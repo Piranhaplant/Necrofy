@@ -13,7 +13,7 @@ namespace Necrofy
 
         private const AssetCategory AssetCat = AssetCategory.Data;
 
-        public static void RegisterLoader() {
+        static DataAsset() {
             AddCreator(new DataCreator());
         }
 

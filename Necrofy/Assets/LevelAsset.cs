@@ -14,7 +14,7 @@ namespace Necrofy
 
         private const AssetCategory AssetCat = AssetCategory.Level;
 
-        public static void RegisterLoader() {
+        static LevelAsset() {
             AddCreator(new LevelCreator());
         }
 
