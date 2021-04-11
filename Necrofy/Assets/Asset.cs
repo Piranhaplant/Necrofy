@@ -16,6 +16,7 @@ namespace Necrofy
     {
         Editor,
         Data,
+        Passwords,
         Sprites,
         Collision,
         Graphics,
@@ -32,6 +33,7 @@ namespace Necrofy
         public const string LevelTitleFolder = "Level Title";
         public const string SpritesFolder = "Sprites";
         public const string TilesetFolder = "Tilesets";
+        public const string MiscFolder = "Misc";
 
         protected const string Castle = "Castle";
         protected const string Grass = "Grass";
@@ -162,6 +164,7 @@ namespace Necrofy
             GraphicsAsset.RegisterLoader();
             LevelAsset.RegisterLoader();
             PaletteAsset.RegisterLoader();
+            PasswordsAsset.RegisterLoader();
             SpritesAsset.RegisterLoader();
             TilemapAsset.RegisterLoader();
             TilesetSuggestionsAsset.RegisterLoader();

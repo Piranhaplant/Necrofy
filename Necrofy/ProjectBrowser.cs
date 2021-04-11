@@ -25,6 +25,7 @@ namespace Necrofy
             { AssetCategory.Graphics, Resources.image },
             { AssetCategory.Level, Resources.map },
             { AssetCategory.Palette, Resources.color },
+            { AssetCategory.Passwords, Resources.document_binary },
             { AssetCategory.Sprites, Resources.leaf },
             { AssetCategory.Tilemap, Resources.layout_4 },
         };

@@ -25,6 +25,10 @@ namespace Necrofy
         public const int SpriteData1 = 0x7d300;
         /// <summary>Pointer to the second chunk of sprite data</summary>
         public const int SpriteData2 = 0x80000;
+        /// <summary>Pointer to the first two characters in the level 0 password</summary>
+        public const int Level0Password1 = 0x1301c;
+        /// <summary>Pointer to the last two characters in the level 0 password</summary>
+        public const int Level0Password2 = 0x13024;
 
         // NOTE: in these functions I am using "address" to refer to the lower 16 bits of the full 24 bit LoROM address.
 
@@ -196,6 +200,13 @@ namespace Necrofy
         public static void WriteInt16(this Stream s, ushort value) {
             s.WriteByte((byte)(value & 0xff));
             s.WriteByte((byte)(value >> 8));
+        }
+
+        /// <summary>Writes all of the bytes in the given array to the stream</summary>
+        /// <param name="s">The stream</param>
+        /// <param name="bytes">The bytes</param>
+        public static void Write(this Stream s, byte[] bytes) {
+            s.Write(bytes, 0, bytes.Length);
         }
 
         /// <summary>Reads the specified number of bytes from the stream.</summary>

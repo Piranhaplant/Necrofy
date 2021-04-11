@@ -73,6 +73,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -106,6 +107,7 @@
     <Compile Include="Assets\GraphicsAsset.cs" />
     <Compile Include="Assets\LevelAsset.cs" />
     <Compile Include="Assets\PaletteAsset.cs" />
+    <Compile Include="Assets\PasswordsAsset.cs" />
     <Compile Include="Assets\SpritesAsset.cs" />
     <Compile Include="Assets\TilemapAsset.cs" />
     <Compile Include="Assets\TilesetSuggestionsAsset.cs" />
@@ -203,6 +205,13 @@
     <Compile Include="LoadedLevel\WrappedSpriteTile.cs" />
     <Compile Include="ObjectBrowser\LevelTitleObjectBrowserContents.cs" />
     <Compile Include="ObjectBrowser\SpriteEditorObjectBrowserContents.cs" />
+    <Compile Include="PasswordData.cs" />
+    <Compile Include="PasswordEditor\PasswordEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PasswordEditor\PasswordEditor.Designer.cs">
+      <DependentUpon>PasswordEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="ProjectSettingsDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -338,6 +347,7 @@
     <Compile Include="TupleList.cs" />
     <Compile Include="Undo\LevelEditorAction.cs" />
     <Compile Include="Undo\LevelTitleAction.cs" />
+    <Compile Include="Undo\PasswordEditorAction.cs" />
     <Compile Include="Undo\SpriteAction.cs" />
     <Compile Include="Undo\SpriteEditorAction.cs" />
     <Compile Include="Undo\TileAction.cs" />
@@ -375,6 +385,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ObjectBrowser\ObjectBrowserForm.resx">
       <DependentUpon>ObjectBrowserForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PasswordEditor\PasswordEditor.resx">
+      <DependentUpon>PasswordEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ProjectSettingsDialog.resx">
       <DependentUpon>ProjectSettingsDialog.cs</DependentUpon>
@@ -547,6 +560,9 @@
     <None Include="Icons\cross-script.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Icons\dice-1.png" />
+    <None Include="Icons\dice-2.png" />
+    <None Include="Icons\dice-3.png" />
     <Content Include="ProjectFiles\Patches\PerfectPlayerFix.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

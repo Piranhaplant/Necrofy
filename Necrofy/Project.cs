@@ -99,8 +99,9 @@ namespace Necrofy
                 string outputROM = Path.Combine(path, buildFilename);
                 File.Copy(Path.Combine(path, baseROMFilename), outputROM, true);
 
+                ROMInfo info;
                 using (NStream s = new NStream(new FileStream(outputROM, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))) {
-                    ROMInfo info = new ROMInfo(s);
+                    info = new ROMInfo(s);
                     info.assets.Clear();
                     AddEndOfBankFreespace(s, info.Freespace);
 
@@ -138,7 +139,7 @@ namespace Necrofy
                 }
 
                 foreach (ProjectSettings.Patch patch in settings.EnabledPatches) {
-                    Patch(outputROM, patch.Name, results);
+                    Patch(outputROM, patch.Name, results, info.exportedDefines);
                 }
             } catch (Exception ex) {
                 results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, "", ex.Message, ex.StackTrace));

@@ -56,6 +56,8 @@
             this.editSelectNone = new System.Windows.Forms.ToolStripMenuItem();
             this.projectMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.projectRunSettings = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
+            this.projectSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.debugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.viewGrid = new System.Windows.Forms.ToolStripMenuItem();
@@ -83,6 +85,8 @@
             this.arrangeMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
             this.titleSeparator = new System.Windows.Forms.ToolStripSeparator();
+            this.passwordsMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator15 = new System.Windows.Forms.ToolStripSeparator();
             this.windowMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.windowProject = new System.Windows.Forms.ToolStripMenuItem();
             this.windowObjects = new System.Windows.Forms.ToolStripMenuItem();
@@ -92,11 +96,6 @@
             this.openProjectDialog = new System.Windows.Forms.OpenFileDialog();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.recentProjects = new Necrofy.RecentFilesMenu();
-            this.toolStripGrouper = new Necrofy.ToolStripGrouper(this.components);
-            this.toolBarMenuLinker = new Necrofy.ToolBarMenuLinker(this.components);
-            this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
-            this.projectSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.createProjectButton = new System.Windows.Forms.ToolStripButton();
             this.openProjectButton = new System.Windows.Forms.ToolStripButton();
             this.saveButton = new System.Windows.Forms.ToolStripButton();
@@ -117,15 +116,6 @@
             this.pencilSelectButton = new System.Windows.Forms.ToolStripButton();
             this.tileSelectButton = new System.Windows.Forms.ToolStripButton();
             this.resizeLevelButton = new System.Windows.Forms.ToolStripButton();
-            this.spritesButton = new Necrofy.CheckableToolStripSplitButton();
-            this.spritesItems = new Necrofy.SeparateCheckToolStripMenuItem();
-            this.spritesVictims = new Necrofy.SeparateCheckToolStripMenuItem();
-            this.spritesOneShotMonsters = new Necrofy.SeparateCheckToolStripMenuItem();
-            this.spritesMonsters = new Necrofy.SeparateCheckToolStripMenuItem();
-            this.spritesBossMonsters = new Necrofy.SeparateCheckToolStripMenuItem();
-            this.spritesPlayers = new Necrofy.SeparateCheckToolStripMenuItem();
-            this.spritesSeparator = new System.Windows.Forms.ToolStripSeparator();
-            this.spritesAll = new System.Windows.Forms.ToolStripMenuItem();
             this.flipHorizontalButton = new System.Windows.Forms.ToolStripButton();
             this.flipVerticalButton = new System.Windows.Forms.ToolStripButton();
             this.centerHorizontallyButton = new System.Windows.Forms.ToolStripButton();
@@ -155,7 +145,6 @@
             this.toolsPencilSelect = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsTileSelect = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsResizeLevel = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolsSprites = new System.Windows.Forms.ToolStripMenuItem();
             this.arrangeFlipHorizontal = new System.Windows.Forms.ToolStripMenuItem();
             this.arrangeFlipVertical = new System.Windows.Forms.ToolStripMenuItem();
             this.arrangeCenterHorizontally = new System.Windows.Forms.ToolStripMenuItem();
@@ -164,7 +153,30 @@
             this.arrangeMoveDown = new System.Windows.Forms.ToolStripMenuItem();
             this.arrangeMoveToFront = new System.Windows.Forms.ToolStripMenuItem();
             this.arrangeMoveToBack = new System.Windows.Forms.ToolStripMenuItem();
+            this.passwordsGenerateDefault = new System.Windows.Forms.ToolStripMenuItem();
+            this.passwordsGenerateLetters = new System.Windows.Forms.ToolStripMenuItem();
+            this.passwordsGenerateAllChars = new System.Windows.Forms.ToolStripMenuItem();
+            this.addRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.buildStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripSeparator16 = new System.Windows.Forms.ToolStripSeparator();
+            this.generatePasswordsDefaultButton = new System.Windows.Forms.ToolStripButton();
+            this.generatePasswordsLettersButton = new System.Windows.Forms.ToolStripButton();
+            this.generatePasswordsAllCharsButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator17 = new System.Windows.Forms.ToolStripSeparator();
+            this.addPasswordsRowButton = new System.Windows.Forms.ToolStripButton();
+            this.spritesButton = new Necrofy.CheckableToolStripSplitButton();
+            this.spritesItems = new Necrofy.SeparateCheckToolStripMenuItem();
+            this.spritesVictims = new Necrofy.SeparateCheckToolStripMenuItem();
+            this.spritesOneShotMonsters = new Necrofy.SeparateCheckToolStripMenuItem();
+            this.spritesMonsters = new Necrofy.SeparateCheckToolStripMenuItem();
+            this.spritesBossMonsters = new Necrofy.SeparateCheckToolStripMenuItem();
+            this.spritesPlayers = new Necrofy.SeparateCheckToolStripMenuItem();
+            this.spritesSeparator = new System.Windows.Forms.ToolStripSeparator();
+            this.spritesAll = new System.Windows.Forms.ToolStripMenuItem();
+            this.recentProjects = new Necrofy.RecentFilesMenu();
+            this.toolsSprites = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripGrouper = new Necrofy.ToolStripGrouper(this.components);
+            this.toolBarMenuLinker = new Necrofy.ToolBarMenuLinker(this.components);
             this.toolStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -228,7 +240,13 @@
             this.moveUpButton,
             this.moveDownButton,
             this.moveToFrontButton,
-            this.moveToBackButton});
+            this.moveToBackButton,
+            this.toolStripSeparator16,
+            this.generatePasswordsDefaultButton,
+            this.generatePasswordsLettersButton,
+            this.generatePasswordsAllCharsButton,
+            this.toolStripSeparator17,
+            this.addPasswordsRowButton});
             this.toolStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
@@ -298,6 +316,7 @@
             this.levelMenu,
             this.toolsMenu,
             this.arrangeMenu,
+            this.passwordsMenu,
             this.windowMenu});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -420,6 +439,19 @@
             this.projectRunSettings.Size = new System.Drawing.Size(210, 22);
             this.projectRunSettings.Text = "Run From Level &Settings...";
             this.projectRunSettings.Click += new System.EventHandler(this.RunFromLevelSettings);
+            // 
+            // toolStripSeparator14
+            // 
+            this.toolStripSeparator14.Name = "toolStripSeparator14";
+            this.toolStripSeparator14.Size = new System.Drawing.Size(207, 6);
+            // 
+            // projectSettings
+            // 
+            this.projectSettings.Enabled = false;
+            this.projectSettings.Name = "projectSettings";
+            this.projectSettings.Size = new System.Drawing.Size(210, 22);
+            this.projectSettings.Text = "&Project Settings...";
+            this.projectSettings.Click += new System.EventHandler(this.projectSettings_Click);
             // 
             // debugToolStripMenuItem
             // 
@@ -670,6 +702,24 @@
             this.titleSeparator.Name = "titleSeparator";
             this.titleSeparator.Size = new System.Drawing.Size(173, 6);
             // 
+            // passwordsMenu
+            // 
+            this.passwordsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.passwordsGenerateDefault,
+            this.passwordsGenerateLetters,
+            this.passwordsGenerateAllChars,
+            this.toolStripSeparator15,
+            this.addRowToolStripMenuItem});
+            this.toolStripGrouper.SetItemSet(this.passwordsMenu, Necrofy.ToolStripGrouper.ItemSet.Passwords);
+            this.passwordsMenu.Name = "passwordsMenu";
+            this.passwordsMenu.Size = new System.Drawing.Size(74, 20);
+            this.passwordsMenu.Text = "Pa&sswords";
+            // 
+            // toolStripSeparator15
+            // 
+            this.toolStripSeparator15.Name = "toolStripSeparator15";
+            this.toolStripSeparator15.Size = new System.Drawing.Size(233, 6);
+            // 
             // windowMenu
             // 
             this.windowMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -738,35 +788,6 @@
             this.statusLabel.Spring = true;
             this.statusLabel.Text = "status";
             this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // recentProjects
-            // 
-            this.recentProjects.Files = ((System.Collections.Generic.IEnumerable<string>)(resources.GetObject("recentProjects.Files")));
-            this.recentProjects.MaxItems = 10;
-            this.recentProjects.MaxLength = 60;
-            this.recentProjects.Name = "recentProjects";
-            this.recentProjects.Separator = this.fileSeparator3;
-            this.recentProjects.Size = new System.Drawing.Size(195, 22);
-            this.recentProjects.Text = "Recent Projects";
-            this.recentProjects.FileClicked += new Necrofy.RecentFilesMenu.FileClickedDelegate(this.recentProjects_FileClicked);
-            // 
-            // toolStripGrouper
-            // 
-            this.toolStripGrouper.ItemClick += new System.EventHandler<Necrofy.ToolStripGrouper.ItemEventArgs>(this.toolStripGrouper_ItemClick);
-            this.toolStripGrouper.ItemCheckedChanged += new System.EventHandler<Necrofy.ToolStripGrouper.ItemEventArgs>(this.toolStripGrouper_ItemCheckedChanged);
-            // 
-            // toolStripSeparator14
-            // 
-            this.toolStripSeparator14.Name = "toolStripSeparator14";
-            this.toolStripSeparator14.Size = new System.Drawing.Size(207, 6);
-            // 
-            // projectSettings
-            // 
-            this.projectSettings.Enabled = false;
-            this.projectSettings.Name = "projectSettings";
-            this.projectSettings.Size = new System.Drawing.Size(210, 22);
-            this.projectSettings.Text = "&Project Settings...";
-            this.projectSettings.Click += new System.EventHandler(this.projectSettings_Click);
             // 
             // createProjectButton
             // 
@@ -987,98 +1008,6 @@
             this.resizeLevelButton.Name = "resizeLevelButton";
             this.resizeLevelButton.Size = new System.Drawing.Size(23, 22);
             this.resizeLevelButton.Text = "Resize Level";
-            // 
-            // spritesButton
-            // 
-            this.spritesButton.Checked = false;
-            this.spritesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.spritesButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.spritesItems,
-            this.spritesVictims,
-            this.spritesOneShotMonsters,
-            this.spritesMonsters,
-            this.spritesBossMonsters,
-            this.spritesPlayers,
-            this.spritesSeparator,
-            this.spritesAll});
-            this.spritesButton.Image = global::Necrofy.Properties.Resources.leaf;
-            this.spritesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripGrouper.SetItemSet(this.spritesButton, Necrofy.ToolStripGrouper.ItemSet.LevelEditor);
-            this.toolStripGrouper.SetItemType(this.spritesButton, Necrofy.ToolStripGrouper.ItemType.SpriteTool);
-            this.spritesButton.Name = "spritesButton";
-            this.spritesButton.Size = new System.Drawing.Size(32, 22);
-            this.spritesButton.Text = "Sprites";
-            // 
-            // spritesItems
-            // 
-            this.spritesItems.Checked = true;
-            this.spritesItems.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.spritesItems.Image = global::Necrofy.Properties.Resources.item;
-            this.toolStripGrouper.SetItemType(this.spritesItems, Necrofy.ToolStripGrouper.ItemType.SpritesItems);
-            this.spritesItems.Name = "spritesItems";
-            this.spritesItems.Size = new System.Drawing.Size(184, 22);
-            this.spritesItems.Text = "Items";
-            // 
-            // spritesVictims
-            // 
-            this.spritesVictims.Checked = true;
-            this.spritesVictims.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.spritesVictims.Image = global::Necrofy.Properties.Resources.victim;
-            this.toolStripGrouper.SetItemType(this.spritesVictims, Necrofy.ToolStripGrouper.ItemType.SpritesVictims);
-            this.spritesVictims.Name = "spritesVictims";
-            this.spritesVictims.Size = new System.Drawing.Size(184, 22);
-            this.spritesVictims.Text = "Victims";
-            // 
-            // spritesOneShotMonsters
-            // 
-            this.spritesOneShotMonsters.Checked = true;
-            this.spritesOneShotMonsters.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.spritesOneShotMonsters.Image = global::Necrofy.Properties.Resources.one_shot_monster;
-            this.toolStripGrouper.SetItemType(this.spritesOneShotMonsters, Necrofy.ToolStripGrouper.ItemType.SpritesOneShotMonsters);
-            this.spritesOneShotMonsters.Name = "spritesOneShotMonsters";
-            this.spritesOneShotMonsters.Size = new System.Drawing.Size(184, 22);
-            this.spritesOneShotMonsters.Text = "One-shot Monsters";
-            // 
-            // spritesMonsters
-            // 
-            this.spritesMonsters.Checked = true;
-            this.spritesMonsters.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.spritesMonsters.Image = global::Necrofy.Properties.Resources.monster;
-            this.toolStripGrouper.SetItemType(this.spritesMonsters, Necrofy.ToolStripGrouper.ItemType.SpritesMonsters);
-            this.spritesMonsters.Name = "spritesMonsters";
-            this.spritesMonsters.Size = new System.Drawing.Size(184, 22);
-            this.spritesMonsters.Text = "Monsters";
-            // 
-            // spritesBossMonsters
-            // 
-            this.spritesBossMonsters.Checked = true;
-            this.spritesBossMonsters.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.spritesBossMonsters.Image = global::Necrofy.Properties.Resources.boss_monster;
-            this.toolStripGrouper.SetItemType(this.spritesBossMonsters, Necrofy.ToolStripGrouper.ItemType.SpritesBossMonsters);
-            this.spritesBossMonsters.Name = "spritesBossMonsters";
-            this.spritesBossMonsters.Size = new System.Drawing.Size(184, 22);
-            this.spritesBossMonsters.Text = "Boss Monsters";
-            // 
-            // spritesPlayers
-            // 
-            this.spritesPlayers.Checked = true;
-            this.spritesPlayers.Image = global::Necrofy.Properties.Resources.zeke;
-            this.toolStripGrouper.SetItemType(this.spritesPlayers, Necrofy.ToolStripGrouper.ItemType.SpritesPlayers);
-            this.spritesPlayers.Name = "spritesPlayers";
-            this.spritesPlayers.Size = new System.Drawing.Size(184, 22);
-            this.spritesPlayers.Text = "Player Start Positions";
-            // 
-            // spritesSeparator
-            // 
-            this.spritesSeparator.Name = "spritesSeparator";
-            this.spritesSeparator.Size = new System.Drawing.Size(181, 6);
-            // 
-            // spritesAll
-            // 
-            this.toolStripGrouper.SetItemType(this.spritesAll, Necrofy.ToolStripGrouper.ItemType.SpritesAll);
-            this.spritesAll.Name = "spritesAll";
-            this.spritesAll.Size = new System.Drawing.Size(184, 22);
-            this.spritesAll.Text = "All";
             // 
             // flipHorizontalButton
             // 
@@ -1391,16 +1320,6 @@
             this.toolsResizeLevel.Size = new System.Drawing.Size(174, 22);
             this.toolsResizeLevel.Text = "Resize &Level";
             // 
-            // toolsSprites
-            // 
-            this.toolsSprites.Image = global::Necrofy.Properties.Resources.leaf;
-            this.toolStripGrouper.SetItemType(this.toolsSprites, Necrofy.ToolStripGrouper.ItemType.SpriteTool);
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsSprites, this.spritesButton);
-            this.toolsSprites.Name = "toolsSprites";
-            this.toolsSprites.ShortcutKeyDisplayString = "I";
-            this.toolsSprites.Size = new System.Drawing.Size(174, 22);
-            this.toolsSprites.Text = "Spr&ites";
-            // 
             // arrangeFlipHorizontal
             // 
             this.arrangeFlipHorizontal.Image = global::Necrofy.Properties.Resources.layer_flip;
@@ -1481,6 +1400,42 @@
             this.arrangeMoveToBack.Size = new System.Drawing.Size(176, 22);
             this.arrangeMoveToBack.Text = "Move to &Back";
             // 
+            // passwordsGenerateDefault
+            // 
+            this.passwordsGenerateDefault.Image = global::Necrofy.Properties.Resources.dice_1;
+            this.toolStripGrouper.SetItemType(this.passwordsGenerateDefault, Necrofy.ToolStripGrouper.ItemType.GeneratePasswordsDefault);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.passwordsGenerateDefault, this.passwordsGenerateDefault);
+            this.passwordsGenerateDefault.Name = "passwordsGenerateDefault";
+            this.passwordsGenerateDefault.Size = new System.Drawing.Size(236, 22);
+            this.passwordsGenerateDefault.Text = "Generate (&Default ZAMN Style)";
+            // 
+            // passwordsGenerateLetters
+            // 
+            this.passwordsGenerateLetters.Image = global::Necrofy.Properties.Resources.dice_2;
+            this.toolStripGrouper.SetItemType(this.passwordsGenerateLetters, Necrofy.ToolStripGrouper.ItemType.GeneratePasswordsLetters);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.passwordsGenerateLetters, this.passwordsGenerateLetters);
+            this.passwordsGenerateLetters.Name = "passwordsGenerateLetters";
+            this.passwordsGenerateLetters.Size = new System.Drawing.Size(236, 22);
+            this.passwordsGenerateLetters.Text = "Generate (All &Letters)";
+            // 
+            // passwordsGenerateAllChars
+            // 
+            this.passwordsGenerateAllChars.Image = global::Necrofy.Properties.Resources.dice_3;
+            this.toolStripGrouper.SetItemType(this.passwordsGenerateAllChars, Necrofy.ToolStripGrouper.ItemType.GeneratePasswordsAllChars);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.passwordsGenerateAllChars, this.generatePasswordsAllCharsButton);
+            this.passwordsGenerateAllChars.Name = "passwordsGenerateAllChars";
+            this.passwordsGenerateAllChars.Size = new System.Drawing.Size(236, 22);
+            this.passwordsGenerateAllChars.Text = "Generate (All &Characters)";
+            // 
+            // addRowToolStripMenuItem
+            // 
+            this.addRowToolStripMenuItem.Image = global::Necrofy.Properties.Resources.plus;
+            this.toolStripGrouper.SetItemType(this.addRowToolStripMenuItem, Necrofy.ToolStripGrouper.ItemType.AddPasswordRow);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.addRowToolStripMenuItem, this.addPasswordsRowButton);
+            this.addRowToolStripMenuItem.Name = "addRowToolStripMenuItem";
+            this.addRowToolStripMenuItem.Size = new System.Drawing.Size(236, 22);
+            this.addRowToolStripMenuItem.Text = "&Add Row";
+            // 
             // buildStatusLabel
             // 
             this.buildStatusLabel.Image = global::Necrofy.Properties.Resources.tick_button;
@@ -1488,6 +1443,180 @@
             this.buildStatusLabel.Size = new System.Drawing.Size(85, 17);
             this.buildStatusLabel.Text = "Build Status";
             this.buildStatusLabel.Visible = false;
+            // 
+            // toolStripSeparator16
+            // 
+            this.toolStripGrouper.SetItemSet(this.toolStripSeparator16, Necrofy.ToolStripGrouper.ItemSet.Passwords);
+            this.toolStripSeparator16.Name = "toolStripSeparator16";
+            this.toolStripSeparator16.Size = new System.Drawing.Size(6, 25);
+            // 
+            // generatePasswordsDefaultButton
+            // 
+            this.generatePasswordsDefaultButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.generatePasswordsDefaultButton.Image = global::Necrofy.Properties.Resources.dice_1;
+            this.generatePasswordsDefaultButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripGrouper.SetItemSet(this.generatePasswordsDefaultButton, Necrofy.ToolStripGrouper.ItemSet.Passwords);
+            this.toolStripGrouper.SetItemType(this.generatePasswordsDefaultButton, Necrofy.ToolStripGrouper.ItemType.GeneratePasswordsDefault);
+            this.generatePasswordsDefaultButton.Name = "generatePasswordsDefaultButton";
+            this.generatePasswordsDefaultButton.Size = new System.Drawing.Size(23, 22);
+            this.generatePasswordsDefaultButton.Text = "Generate (Default ZAMN Style)";
+            // 
+            // generatePasswordsLettersButton
+            // 
+            this.generatePasswordsLettersButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.generatePasswordsLettersButton.Image = global::Necrofy.Properties.Resources.dice_2;
+            this.generatePasswordsLettersButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripGrouper.SetItemSet(this.generatePasswordsLettersButton, Necrofy.ToolStripGrouper.ItemSet.Passwords);
+            this.toolStripGrouper.SetItemType(this.generatePasswordsLettersButton, Necrofy.ToolStripGrouper.ItemType.GeneratePasswordsLetters);
+            this.generatePasswordsLettersButton.Name = "generatePasswordsLettersButton";
+            this.generatePasswordsLettersButton.Size = new System.Drawing.Size(23, 22);
+            this.generatePasswordsLettersButton.Text = "Generate (All Letters)";
+            // 
+            // generatePasswordsAllCharsButton
+            // 
+            this.generatePasswordsAllCharsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.generatePasswordsAllCharsButton.Image = global::Necrofy.Properties.Resources.dice_3;
+            this.generatePasswordsAllCharsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripGrouper.SetItemSet(this.generatePasswordsAllCharsButton, Necrofy.ToolStripGrouper.ItemSet.Passwords);
+            this.toolStripGrouper.SetItemType(this.generatePasswordsAllCharsButton, Necrofy.ToolStripGrouper.ItemType.GeneratePasswordsAllChars);
+            this.generatePasswordsAllCharsButton.Name = "generatePasswordsAllCharsButton";
+            this.generatePasswordsAllCharsButton.Size = new System.Drawing.Size(23, 22);
+            this.generatePasswordsAllCharsButton.Text = "Generate (All Characters)";
+            // 
+            // toolStripSeparator17
+            // 
+            this.toolStripGrouper.SetItemSet(this.toolStripSeparator17, Necrofy.ToolStripGrouper.ItemSet.Passwords);
+            this.toolStripSeparator17.Name = "toolStripSeparator17";
+            this.toolStripSeparator17.Size = new System.Drawing.Size(6, 25);
+            // 
+            // addPasswordsRowButton
+            // 
+            this.addPasswordsRowButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.addPasswordsRowButton.Image = global::Necrofy.Properties.Resources.plus;
+            this.addPasswordsRowButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripGrouper.SetItemSet(this.addPasswordsRowButton, Necrofy.ToolStripGrouper.ItemSet.Passwords);
+            this.toolStripGrouper.SetItemType(this.addPasswordsRowButton, Necrofy.ToolStripGrouper.ItemType.AddPasswordRow);
+            this.addPasswordsRowButton.Name = "addPasswordsRowButton";
+            this.addPasswordsRowButton.Size = new System.Drawing.Size(23, 22);
+            this.addPasswordsRowButton.Text = "Add Row";
+            // 
+            // spritesButton
+            // 
+            this.spritesButton.Checked = false;
+            this.spritesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.spritesButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.spritesItems,
+            this.spritesVictims,
+            this.spritesOneShotMonsters,
+            this.spritesMonsters,
+            this.spritesBossMonsters,
+            this.spritesPlayers,
+            this.spritesSeparator,
+            this.spritesAll});
+            this.spritesButton.Image = global::Necrofy.Properties.Resources.leaf;
+            this.spritesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripGrouper.SetItemSet(this.spritesButton, Necrofy.ToolStripGrouper.ItemSet.LevelEditor);
+            this.toolStripGrouper.SetItemType(this.spritesButton, Necrofy.ToolStripGrouper.ItemType.SpriteTool);
+            this.spritesButton.Name = "spritesButton";
+            this.spritesButton.Size = new System.Drawing.Size(32, 22);
+            this.spritesButton.Text = "Sprites";
+            // 
+            // spritesItems
+            // 
+            this.spritesItems.Checked = true;
+            this.spritesItems.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.spritesItems.Image = global::Necrofy.Properties.Resources.item;
+            this.toolStripGrouper.SetItemType(this.spritesItems, Necrofy.ToolStripGrouper.ItemType.SpritesItems);
+            this.spritesItems.Name = "spritesItems";
+            this.spritesItems.Size = new System.Drawing.Size(184, 22);
+            this.spritesItems.Text = "Items";
+            // 
+            // spritesVictims
+            // 
+            this.spritesVictims.Checked = true;
+            this.spritesVictims.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.spritesVictims.Image = global::Necrofy.Properties.Resources.victim;
+            this.toolStripGrouper.SetItemType(this.spritesVictims, Necrofy.ToolStripGrouper.ItemType.SpritesVictims);
+            this.spritesVictims.Name = "spritesVictims";
+            this.spritesVictims.Size = new System.Drawing.Size(184, 22);
+            this.spritesVictims.Text = "Victims";
+            // 
+            // spritesOneShotMonsters
+            // 
+            this.spritesOneShotMonsters.Checked = true;
+            this.spritesOneShotMonsters.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.spritesOneShotMonsters.Image = global::Necrofy.Properties.Resources.one_shot_monster;
+            this.toolStripGrouper.SetItemType(this.spritesOneShotMonsters, Necrofy.ToolStripGrouper.ItemType.SpritesOneShotMonsters);
+            this.spritesOneShotMonsters.Name = "spritesOneShotMonsters";
+            this.spritesOneShotMonsters.Size = new System.Drawing.Size(184, 22);
+            this.spritesOneShotMonsters.Text = "One-shot Monsters";
+            // 
+            // spritesMonsters
+            // 
+            this.spritesMonsters.Checked = true;
+            this.spritesMonsters.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.spritesMonsters.Image = global::Necrofy.Properties.Resources.monster;
+            this.toolStripGrouper.SetItemType(this.spritesMonsters, Necrofy.ToolStripGrouper.ItemType.SpritesMonsters);
+            this.spritesMonsters.Name = "spritesMonsters";
+            this.spritesMonsters.Size = new System.Drawing.Size(184, 22);
+            this.spritesMonsters.Text = "Monsters";
+            // 
+            // spritesBossMonsters
+            // 
+            this.spritesBossMonsters.Checked = true;
+            this.spritesBossMonsters.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.spritesBossMonsters.Image = global::Necrofy.Properties.Resources.boss_monster;
+            this.toolStripGrouper.SetItemType(this.spritesBossMonsters, Necrofy.ToolStripGrouper.ItemType.SpritesBossMonsters);
+            this.spritesBossMonsters.Name = "spritesBossMonsters";
+            this.spritesBossMonsters.Size = new System.Drawing.Size(184, 22);
+            this.spritesBossMonsters.Text = "Boss Monsters";
+            // 
+            // spritesPlayers
+            // 
+            this.spritesPlayers.Checked = true;
+            this.spritesPlayers.Image = global::Necrofy.Properties.Resources.zeke;
+            this.toolStripGrouper.SetItemType(this.spritesPlayers, Necrofy.ToolStripGrouper.ItemType.SpritesPlayers);
+            this.spritesPlayers.Name = "spritesPlayers";
+            this.spritesPlayers.Size = new System.Drawing.Size(184, 22);
+            this.spritesPlayers.Text = "Player Start Positions";
+            // 
+            // spritesSeparator
+            // 
+            this.spritesSeparator.Name = "spritesSeparator";
+            this.spritesSeparator.Size = new System.Drawing.Size(181, 6);
+            // 
+            // spritesAll
+            // 
+            this.toolStripGrouper.SetItemType(this.spritesAll, Necrofy.ToolStripGrouper.ItemType.SpritesAll);
+            this.spritesAll.Name = "spritesAll";
+            this.spritesAll.Size = new System.Drawing.Size(184, 22);
+            this.spritesAll.Text = "All";
+            // 
+            // recentProjects
+            // 
+            this.recentProjects.Files = ((System.Collections.Generic.IEnumerable<string>)(resources.GetObject("recentProjects.Files")));
+            this.recentProjects.MaxItems = 10;
+            this.recentProjects.MaxLength = 60;
+            this.recentProjects.Name = "recentProjects";
+            this.recentProjects.Separator = this.fileSeparator3;
+            this.recentProjects.Size = new System.Drawing.Size(195, 22);
+            this.recentProjects.Text = "Recent Projects";
+            this.recentProjects.FileClicked += new Necrofy.RecentFilesMenu.FileClickedDelegate(this.recentProjects_FileClicked);
+            // 
+            // toolsSprites
+            // 
+            this.toolsSprites.Image = global::Necrofy.Properties.Resources.leaf;
+            this.toolStripGrouper.SetItemType(this.toolsSprites, Necrofy.ToolStripGrouper.ItemType.SpriteTool);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsSprites, this.spritesButton);
+            this.toolsSprites.Name = "toolsSprites";
+            this.toolsSprites.ShortcutKeyDisplayString = "I";
+            this.toolsSprites.Size = new System.Drawing.Size(174, 22);
+            this.toolsSprites.Text = "Spr&ites";
+            // 
+            // toolStripGrouper
+            // 
+            this.toolStripGrouper.ItemClick += new System.EventHandler<Necrofy.ToolStripGrouper.ItemEventArgs>(this.toolStripGrouper_ItemClick);
+            this.toolStripGrouper.ItemCheckedChanged += new System.EventHandler<Necrofy.ToolStripGrouper.ItemEventArgs>(this.toolStripGrouper_ItemCheckedChanged);
             // 
             // MainWindow
             // 
@@ -1653,6 +1782,18 @@
         private System.Windows.Forms.ToolStripLabel zoomLevelLabel;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator14;
         private System.Windows.Forms.ToolStripMenuItem projectSettings;
+        private System.Windows.Forms.ToolStripMenuItem passwordsMenu;
+        private System.Windows.Forms.ToolStripMenuItem passwordsGenerateDefault;
+        private System.Windows.Forms.ToolStripMenuItem passwordsGenerateLetters;
+        private System.Windows.Forms.ToolStripMenuItem passwordsGenerateAllChars;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator15;
+        private System.Windows.Forms.ToolStripMenuItem addRowToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator16;
+        private System.Windows.Forms.ToolStripButton generatePasswordsDefaultButton;
+        private System.Windows.Forms.ToolStripButton generatePasswordsLettersButton;
+        private System.Windows.Forms.ToolStripButton generatePasswordsAllCharsButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator17;
+        private System.Windows.Forms.ToolStripButton addPasswordsRowButton;
     }
 }
 

@@ -236,6 +236,11 @@ namespace Necrofy
             MoveDown,
             MoveToFront,
             MoveToBack,
+
+            GeneratePasswordsDefault,
+            GeneratePasswordsLetters,
+            GeneratePasswordsAllChars,
+            AddPasswordRow,
         }
 
         [Flags]
@@ -245,6 +250,7 @@ namespace Necrofy
             LevelEditor = 1,
             LevelTitle = 2,
             SpriteEditor = 4,
+            Passwords = 8,
         }
     }
 }

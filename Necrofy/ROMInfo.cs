@@ -18,6 +18,9 @@ namespace Necrofy
         /// <summary>The freespace that was found in the ROM</summary>
         public Freespace Freespace;
 
+        /// <summary>Definitions that will be available to patches</summary>
+        public Dictionary<string, string> exportedDefines = new Dictionary<string, string>();
+
         /// <summary>Loads the ROMInfo data from an already opened stream.</summary>
         /// <param name="s">A stream to a ROM file</param>
         public ROMInfo(NStream s) {

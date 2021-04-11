@@ -486,13 +486,8 @@ org $82D17E
 run_secret_bonus:
 LDY #$003C
 LDA [$10],Y
-
-PEA .return-1
-
 DEC A
 PHA
-RTS
-.return:
 RTS
 
 get_bonus_level:
@@ -501,3 +496,98 @@ LDA [$10],Y
 RTS
 
 warnpc $82D25E
+
+; Modify password code to use a set string for each password
+
+org $82B02D
+; Code for checking an entered password
+LDX #$0000 ; password data index
+LDY #$0001 ; victim count
+LDA #$0005
+STA $1E7C ; level
+BRA +
+
+-:
+	INX
+	INX
+	INY
+	CPY #$000B
+	BNE +
+	
+	LDY #$0001
+	LDA $1E7C
+	CLC
+	ADC #$0004
+	CMP.w #!PASSWORD_MAX_LEVEL
+	BEQ no_password_found
+	STA $1E7C
++:
+	LDA.l pctosnes(!PASSWORD_DATA),X
+	INX
+	INX
+	CMP $1EA0
+	BNE -
+
+	LDA.l pctosnes(!PASSWORD_DATA),X
+	CMP $1EA2
+BNE -
+
+; password found
+CPY #$000A
+BNE +
+	LDY #$0010
++:
+STY $1D52
+STY $1D50
+CLC
+RTL
+
+no_password_found:
+LDA #$0001
+STA $1E7C
+SEC
+RTL
+
+warnpc $82B0DE
+
+org $82B0DE
+; Code for getting the password to show
+
+; Get level index * 10
+LDA $1E7C
+LSR A
+DEC A
+DEC A
+STA $0038
+ASL A
+ASL A
+CLC
+ADC $0038
+STA $0038
+
+; Get total victims saved
+SED
+LDA $1F9C
+CLC
+ADC $1F9E
+SEC
+SBC #$0001
+CLD
+
+; Add together to get the final index
+CLC
+ADC $0038
+ASL A
+ASL A
+
+TAX
+LDA.l pctosnes(!PASSWORD_DATA),X
+STA $1EA0
+INX
+INX
+LDA.l pctosnes(!PASSWORD_DATA),X
+STA $1EA2
+STZ $1EA4
+RTL
+
+warnpc $82B14A
