@@ -148,13 +148,13 @@ namespace Necrofy
         }
 
         public override void MouseUp(LevelMouseEventArgs e) {
-            if (isResizingMonsterArea) {
-                editor.GenerateMouseMove();
-            } else {
+            if (!isResizingMonsterArea) {
                 objectSelector.MouseUp();
             }
-            editor.undoManager.ForceNoMerge();
+            isResizingMonsterArea = false;
             UpdateStatus();
+            editor.GenerateMouseMove();
+            editor.undoManager.ForceNoMerge();
         }
 
         public override void KeyDown(KeyEventArgs e) {
@@ -242,17 +242,20 @@ namespace Necrofy
                 }
             }
 
-            ForEachResizeHandleArea((monster, rect) => {
-                g.FillRectangle(Brushes.Black, rect);
-                g.DrawRectangle(Pens.LightSteelBlue, rect);
-            });
+            using (Pen p = new Pen(Color.LightSteelBlue, 1 / editor.Zoom)) {
+                ForEachResizeHandleArea((monster, rect) => {
+                    g.FillRectangle(Brushes.Black, rect);
+                    g.DrawRectangle(p, rect);
+                });
+            }
         }
 
         private void ForEachResizeHandleArea(Action<WrappedMonster, Rectangle> action) {
             if (editor.showRespawnAreas) {
                 foreach (WrappedMonster m in editor.level.GetAllObjects(items: false, victims: false, oneShotMonsters: false, monsters: true, bossMonsters: false, players: false)) {
                     Rectangle bounds = m.Bounds;
-                    Rectangle handleRect = new Rectangle(bounds.Right + m.Radius / 2 - respawnAreaSizeHandleSize / 2, bounds.Bottom + m.Radius / 2 - respawnAreaSizeHandleSize / 2, respawnAreaSizeHandleSize, respawnAreaSizeHandleSize);
+                    int offset = m.Radius - m.Radius / 2; // This is so it lines up with the respawn area rectangle perfectly
+                    Rectangle handleRect = new Rectangle(bounds.Right + offset - respawnAreaSizeHandleSize / 2, bounds.Bottom + offset - respawnAreaSizeHandleSize / 2, respawnAreaSizeHandleSize, respawnAreaSizeHandleSize);
                     action(m, handleRect);
                 }
             }

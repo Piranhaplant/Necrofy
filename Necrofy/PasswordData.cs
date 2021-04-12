@@ -14,6 +14,7 @@ namespace Necrofy
         public PasswordData() { }
 
         public PasswordData(NStream s) {
+            // TODO: loading from necrofy generated ROM
             byte[] innerCharsPerLevel = s.ReadBytes(26);
             byte[] outerCharsPerVictimCount = s.ReadBytes(20);
             string chars = Encoding.ASCII.GetString(s.ReadBytes(21));
