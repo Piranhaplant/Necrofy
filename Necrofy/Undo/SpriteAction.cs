@@ -240,18 +240,18 @@ namespace Necrofy
         }
     }
 
-    class ChangeMonsterRadiusAction : ChangeSpritePropertyAction<WrappedMonster, byte>
+    class ChangeMonsterAreaSizeAction : ChangeSpritePropertyAction<WrappedMonster, byte>
     {
-        public ChangeMonsterRadiusAction(IEnumerable<WrappedLevelObject> objs, byte newValue) : base(objs, newValue) { }
+        public ChangeMonsterAreaSizeAction(IEnumerable<WrappedLevelObject> objs, byte newValue) : base(objs, newValue) { }
 
-        protected override byte GetProperty(WrappedMonster obj) => obj.Radius;
-        protected override void SetProperty(WrappedMonster obj, byte value) => obj.Radius = value;
+        protected override byte GetProperty(WrappedMonster obj) => obj.AreaSize;
+        protected override void SetProperty(WrappedMonster obj, byte value) => obj.AreaSize = value;
 
         public override string ToString() {
             if (objs.Count == 1) {
-                return "Change monster radius";
+                return "Change monster area size";
             } else {
-                return "Change " + objs.Count.ToString() + " monsters' radii";
+                return "Change " + objs.Count.ToString() + " monsters' area sizes";
             }
         }
     }

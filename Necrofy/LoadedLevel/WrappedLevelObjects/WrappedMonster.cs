@@ -9,7 +9,7 @@ namespace Necrofy
 {
     class WrappedMonster : WrappedLevelObject<Monster>
     {
-        public const string RadiusProperty = "Radius";
+        public const string AreaSizeProperty = "Area Size";
         public const string DelayProperty = "Delay";
 
         public WrappedMonster(Monster monster, LoadedLevelSprites spriteGraphics) : base(monster, spriteGraphics) { }
@@ -22,22 +22,22 @@ namespace Necrofy
         public override ushort Y { get => wrappedObject.y; set => wrappedObject.y = value; }
         public override int Type { get => wrappedObject.type; set => wrappedObject.type = value; }
         [Browsable(false)]
-        public byte Radius { get => wrappedObject.radius; set => wrappedObject.radius = value; }
+        public byte AreaSize { get => wrappedObject.areaSize; set => wrappedObject.areaSize = value; }
         [Browsable(false)]
         public byte Delay { get => wrappedObject.delay; set => wrappedObject.delay = value; }
 
         // Properties used in the property browser
-        private string browsableRadius = null;
+        private string browsableAreaSize = null;
         private string browsableDelay = null;
         private string browsablePointer = null;
         public override void ClearBrowsableProperties() {
             base.ClearBrowsableProperties();
-            browsableRadius = null;
+            browsableAreaSize = null;
             browsableDelay = null;
             browsablePointer = null;
         }
-        [DisplayName(RadiusProperty)]
-        public string BrowsableRadius { get => browsableRadius ?? wrappedObject.radius.ToString(); set => browsableRadius = value; }
+        [DisplayName(AreaSizeProperty)]
+        public string BrowsableAreaSize { get => browsableAreaSize ?? wrappedObject.areaSize.ToString(); set => browsableAreaSize = value; }
         [DisplayName(DelayProperty)]
         public string BrowsableDelay { get => browsableDelay ?? wrappedObject.delay.ToString(); set => browsableDelay = value; }
         [DisplayName(PointerProperty)]
@@ -52,8 +52,8 @@ namespace Necrofy
                 Rectangle bounds = Bounds;
                 using (Pen p = new Pen(Color.LightSteelBlue, 1 / zoom)) {
                     g.DrawRectangle(p,
-                        bounds.X - wrappedObject.radius / 2, bounds.Y - wrappedObject.radius / 2,
-                        bounds.Width + wrappedObject.radius, bounds.Height + wrappedObject.radius);
+                        bounds.X - wrappedObject.areaSize / 2, bounds.Y - wrappedObject.areaSize / 2,
+                        bounds.Width + wrappedObject.areaSize, bounds.Height + wrappedObject.areaSize);
                 }
             }
         }

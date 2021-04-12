@@ -13,7 +13,7 @@ namespace Necrofy
     {
         public ushort x { get; set; }
         public ushort y { get; set; }
-        public byte radius { get; set; }
+        public byte areaSize { get; set; }
 
         private byte _delay;
         public byte delay {
@@ -28,10 +28,10 @@ namespace Necrofy
         public int type { get; set; }
 
         [JsonConstructor]
-        public Monster(ushort x, ushort y, byte radius, byte delay, int type) {
+        public Monster(ushort x, ushort y, byte areaSize, byte delay, int type) {
             this.x = x;
             this.y = y;
-            this.radius = radius;
+            this.areaSize = areaSize;
             this.delay = delay;
             this.type = type;
         }
@@ -40,7 +40,7 @@ namespace Necrofy
             delay = (byte)s.ReadByte();
             x = s.ReadInt16();
             y = s.ReadInt16();
-            radius = (byte)s.ReadByte();
+            areaSize = (byte)s.ReadByte();
             type = s.ReadPointer();
         }
 
@@ -48,7 +48,7 @@ namespace Necrofy
             data.data.Add(delay);
             data.data.AddInt16(x);
             data.data.AddInt16(y);
-            data.data.Add(radius);
+            data.data.Add(areaSize);
             data.data.AddPointer(type);
         }
     }

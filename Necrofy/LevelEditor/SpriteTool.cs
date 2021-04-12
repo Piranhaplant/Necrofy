@@ -137,8 +137,8 @@ namespace Necrofy
                             break;
                         }
                     }
-                    if (size != resizeMonster.Radius) {
-                        editor.undoManager.Do(new ChangeMonsterRadiusAction(new WrappedLevelObject[] { resizeMonster }, (byte)size));
+                    if (size != resizeMonster.AreaSize) {
+                        editor.undoManager.Do(new ChangeMonsterAreaSizeAction(new WrappedLevelObject[] { resizeMonster }, (byte)size));
                         UpdateStatus();
                     }
                 } else {
@@ -211,9 +211,9 @@ namespace Necrofy
                             editor.undoManager.Do(new ChangeSpriteTypeAction(selectedObjects, SpriteDisplay.Category.Item, type));
                         }
                         break;
-                    case WrappedMonster.RadiusProperty:
-                        if (byte.TryParse(value, out byte radius)) {
-                            editor.undoManager.Do(new ChangeMonsterRadiusAction(selectedObjects, radius));
+                    case WrappedMonster.AreaSizeProperty:
+                        if (byte.TryParse(value, out byte areaSize)) {
+                            editor.undoManager.Do(new ChangeMonsterAreaSizeAction(selectedObjects, areaSize));
                         }
                         break;
                     case WrappedMonster.DelayProperty:
@@ -254,7 +254,7 @@ namespace Necrofy
             if (editor.showRespawnAreas) {
                 foreach (WrappedMonster m in editor.level.GetAllObjects(items: false, victims: false, oneShotMonsters: false, monsters: true, bossMonsters: false, players: false)) {
                     Rectangle bounds = m.Bounds;
-                    int offset = m.Radius - m.Radius / 2; // This is so it lines up with the respawn area rectangle perfectly
+                    int offset = m.AreaSize - m.AreaSize / 2; // This is so it lines up with the respawn area rectangle perfectly
                     Rectangle handleRect = new Rectangle(bounds.Right + offset - respawnAreaSizeHandleSize / 2, bounds.Bottom + offset - respawnAreaSizeHandleSize / 2, respawnAreaSizeHandleSize, respawnAreaSizeHandleSize);
                     action(m, handleRect);
                 }
@@ -335,7 +335,7 @@ namespace Necrofy
             if (objectSelector.MovingObjects) {
                 Status = string.Format(DragStatus, objectSelector.TotalMoveX, objectSelector.TotalMoveY);
             } else if (isResizingMonsterArea) {
-                Status = string.Format(ResizeStatus, resizeMonster.Radius);
+                Status = string.Format(ResizeStatus, resizeMonster.AreaSize);
             } else {
                 Status = DefaultStatus;
             }
