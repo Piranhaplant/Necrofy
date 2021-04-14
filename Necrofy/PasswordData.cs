@@ -17,7 +17,7 @@ namespace Necrofy
             // TODO: loading from necrofy generated ROM
             byte[] innerCharsPerLevel = s.ReadBytes(26);
             byte[] outerCharsPerVictimCount = s.ReadBytes(20);
-            string chars = Encoding.ASCII.GetString(s.ReadBytes(21));
+            string chars = GameToASCII(Encoding.ASCII.GetString(s.ReadBytes(21)));
             byte[] outerCharsOffsetPerLevel = s.ReadBytes(26);
 
             normalPasswords = new string[outerCharsPerVictimCount.Length / 2, innerCharsPerLevel.Length / 2];
@@ -33,9 +33,9 @@ namespace Necrofy
 
             s.PushPosition();
             s.Seek(ROMPointers.Level0Password1);
-            level0Password += Encoding.ASCII.GetString(s.ReadBytes(2));
+            level0Password += GameToASCII(Encoding.ASCII.GetString(s.ReadBytes(2)));
             s.Seek(ROMPointers.Level0Password2);
-            level0Password += Encoding.ASCII.GetString(s.ReadBytes(2));
+            level0Password += GameToASCII(Encoding.ASCII.GetString(s.ReadBytes(2)));
             s.PopPosition();
         }
 
@@ -45,17 +45,25 @@ namespace Necrofy
 
             for (int level = 0; level < normalPasswords.GetLength(1); level++) {
                 for (int victims = 0; victims < normalPasswords.GetLength(0); victims++) {
-                    s.Write(Encoding.ASCII.GetBytes(normalPasswords[victims, level]));
+                    s.Write(Encoding.ASCII.GetBytes(ASCIIToGame(normalPasswords[victims, level])));
                 }
             }
 
             s.Seek(ROMPointers.Level0Password1);
-            s.Write(Encoding.ASCII.GetBytes(level0Password.Substring(0, 2)));
+            s.Write(Encoding.ASCII.GetBytes(ASCIIToGame(level0Password.Substring(0, 2))));
             s.Seek(ROMPointers.Level0Password2);
-            s.Write(Encoding.ASCII.GetBytes(level0Password.Substring(2, 2)));
+            s.Write(Encoding.ASCII.GetBytes(ASCIIToGame(level0Password.Substring(2, 2))));
 
             romInfo.exportedDefines["PASSWORD_DATA"] = pointer.ToString();
             romInfo.exportedDefines["PASSWORD_MAX_LEVEL"] = (normalPasswords.GetLength(1) * 4 + 5).ToString();
+        }
+
+        private string GameToASCII(string password) {
+            return password.Replace("?", "!").Replace("/", " ");
+        }
+
+        private string ASCIIToGame(string password) {
+            return password.Replace("!", "?").Replace(" ", "/");
         }
     }
 }
