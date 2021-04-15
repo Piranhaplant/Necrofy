@@ -58,6 +58,17 @@ namespace Necrofy
             }
         }
 
+        private string _removeFromEnd = null;
+        public string RemoveFromEnd {
+            get {
+                return _removeFromEnd;
+            }
+            set {
+                _removeFromEnd = value;
+                CreateItems();
+            }
+        }
+
         public delegate void FileClickedDelegate(string file);
         public event FileClickedDelegate FileClicked;
 
@@ -110,6 +121,9 @@ namespace Necrofy
         }
 
         private string TrimFile(string file) {
+            if (file.EndsWith(_removeFromEnd)) {
+                file = file.Substring(0, file.Length - _removeFromEnd.Length);
+            }
             if (file.Length > _maxLength) {
                 string start = file.Substring(0, file.IndexOf(Path.DirectorySeparatorChar) + 1);
                 string end = file.Substring(file.Length - (_maxLength - start.Length));

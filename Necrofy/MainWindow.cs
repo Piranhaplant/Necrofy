@@ -62,6 +62,7 @@ namespace Necrofy
             }
             menuStrip1.SendToBack(); // Deserializing the dock panel layout sometimes messes this order up
 
+            recentProjects.RemoveFromEnd = Path.DirectorySeparatorChar + Project.defaultProjectFilename;
             string recentProjectsString = Properties.Settings.Default.RecentProjects;
             if (recentProjectsString != "") {
                 recentProjects.Files = recentProjectsString.Split(Path.PathSeparator);
