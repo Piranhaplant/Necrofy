@@ -11,6 +11,7 @@ namespace Necrofy
     /// <summary>Manages aspects of a ROM hack project including creation, modification, and building.</summary>
     class Project
     {
+        public const string defaultProjectFilename = "project.nfyp";
         public const string baseROMFilename = "base.sfc";
         public const string buildFilename = "build.sfc";
         public const string runFromLevelFilename = "runFromLevel.sfc";
@@ -39,9 +40,9 @@ namespace Necrofy
             string newBaseROM = Path.Combine(path, baseROMFilename);
 
             byte[] romData = File.ReadAllBytes(baseROM);
-            int extraBytes = romData.Length % Freespace.BankSize;
-            if (extraBytes != 0x200 && extraBytes != 0) {
-                throw new Exception($"ROM has unrecognized size (0x{romData.Length:X})");
+            int extraBytes = romData.Length % 0x2000;
+            if (extraBytes != 0x200) {
+                extraBytes = 0;
             }
             NStream s = new NStream(new FileStream(newBaseROM, FileMode.Create, FileAccess.ReadWrite, FileShare.Read));
             s.Write(romData, extraBytes, romData.Length - extraBytes);
@@ -53,7 +54,7 @@ namespace Necrofy
             }
 
             s.Close();
-            settingsFilename = "project.nfyp";
+            settingsFilename = defaultProjectFilename;
             settings = ProjectSettings.CreateNew();
             WriteSettings();
             ReadAssets();
@@ -103,7 +104,8 @@ namespace Necrofy
                 using (NStream s = new NStream(new FileStream(outputROM, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))) {
                     info = new ROMInfo(s);
                     info.assets.Clear();
-                    AddEndOfBankFreespace(s, info.Freespace);
+                    AddEndOfBankFreespace(s, info.Freespace, 0xff);
+                    AddEndOfBankFreespace(s, info.Freespace, 0x00);
 
                     foreach (string filename in Directory.GetFiles(path, "*", SearchOption.AllDirectories)) {
                         string relativeFilename = GetRelativePath(filename);
@@ -188,15 +190,15 @@ namespace Necrofy
             return results;
         }
 
-        private static void AddEndOfBankFreespace(Stream s, Freespace freespace) {
+        private static void AddEndOfBankFreespace(Stream s, Freespace freespace, byte searchByte) {
             for (int bankEndPos = Freespace.BankSize - 1; bankEndPos < s.Length; bankEndPos += Freespace.BankSize) {
                 s.Seek(bankEndPos);
                 int length = 0;
-                while (s.ReadByte() == 0xff) {
+                while (s.ReadByte() == searchByte && length < Freespace.BankSize) {
                     length++;
                     s.Seek(-2, SeekOrigin.Current);
                 }
-                // Leave 2 bytes of 0xff in case they were part of the end of some data
+                // Leave 2 bytes in case they were part of the end of some data
                 if (length >= 2) {
                     freespace.AddSize((int)s.Position + 2, length - 2);
                 }

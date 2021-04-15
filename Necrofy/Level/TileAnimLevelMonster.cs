@@ -18,10 +18,14 @@ namespace Necrofy
         public static void RegisterLoader() {
             AddLoader(Type,
                 (r, s, tileset) => {
-                    s.GoToPointerPush();
-                    LevelMonster m = new TileAnimLevelMonster(s);
-                    s.PopPosition();
-                    return m;
+                    if (s.PeekPointer() >= 0) {
+                        s.GoToPointerPush();
+                        LevelMonster m = new TileAnimLevelMonster(s);
+                        s.PopPosition();
+                        return m;
+                    } else {
+                        return new TileAnimLevelMonster(new List<Entry>());
+                    }
                 },
                 () => new TileAnimLevelMonster(new List<Entry>()));
         }
@@ -33,7 +37,7 @@ namespace Necrofy
 
         public TileAnimLevelMonster(NStream s) : base(Type) {
             entries = new List<Entry>();
-            while (s.PeekInt16() > 0) {
+            while (s.PeekInt16() >= 0x8000) {
                 s.GoToRelativePointerPush();
                 entries.Add(new Entry(s));
                 s.PopPosition();
@@ -65,6 +69,11 @@ namespace Necrofy
                     ushort value = s.ReadInt16();
                     if (value >= 0xfffe) {
                         loop = value == 0xffff;
+                        return;
+                    } else if (value > 0x200 && tiles.Count % 2 == 0) {
+                        // Probably invalid data, just ignore
+                        tiles.Clear();
+                        tiles.Add(0);
                         return;
                     }
                     tiles.Add(value);

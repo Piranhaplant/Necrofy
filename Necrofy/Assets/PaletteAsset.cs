@@ -105,7 +105,7 @@ namespace Necrofy
             }
 
             public override NameInfo GetNameInfoForName(string name, string group) {
-                if (group == null) {
+                if (group == null || group == SpritesFolder) {
                     return new PaletteNameInfo(SpritesFolder, name);
                 } else {
                     return new PaletteNameInfo(GetTilesetFolder(group), name);

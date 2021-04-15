@@ -13,6 +13,7 @@ namespace Necrofy
         private Stack<long> posStack = new Stack<long>();
         private long readBlockStart = -1;
         private long readBlockEnd = -1;
+        private bool blockPaused = false;
 
         public NStream(Stream inner) {
             this.inner = inner;
@@ -42,6 +43,14 @@ namespace Necrofy
             freespace.Add((int)readBlockStart, (int)readBlockEnd);
             readBlockStart = -1;
             readBlockEnd = -1;
+            blockPaused = false;
+        }
+
+        /// <summary>Pauses or unpauses block tracking</summary>
+        public void TogglePauseBlock() {
+            if (readBlockStart < 0)
+                throw new InvalidOperationException("TogglePauseBlock called when not tracking a block");
+            blockPaused = !blockPaused;
         }
 
         // Base implementation
@@ -80,16 +89,14 @@ namespace Necrofy
         }
 
         public override int Read(byte[] buffer, int offset, int count) {
-            if (readBlockStart >= 0) {
-                readBlockStart = Math.Min(readBlockStart, Position);
+            if (readBlockStart >= 0 && !blockPaused) {
                 readBlockEnd = Math.Max(readBlockEnd, Position + count);
             }
             return inner.Read(buffer, offset, count);
         }
 
         public override int ReadByte() {
-            if (readBlockStart >= 0) {
-                readBlockStart = Math.Min(readBlockStart, Position);
+            if (readBlockStart >= 0 && !blockPaused) {
                 readBlockEnd = Math.Max(readBlockEnd, Position + 1);
             }
             return inner.ReadByte();

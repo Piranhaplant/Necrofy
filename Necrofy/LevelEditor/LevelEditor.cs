@@ -372,7 +372,12 @@ namespace Necrofy
         private void RenderBackground(Graphics g, Bitmap[] tiles) {
             for (int y = 0; y < level.Level.height; y++) {
                 for (int x = 0; x < level.Level.width; x++) {
-                    g.DrawImage(tiles[level.Level.background[x, y]], x * 64, y * 64);
+                    ushort tile = level.Level.background[x, y];
+                    if (tile < tiles.Length) {
+                        g.DrawImage(tiles[tile], x * 64, y * 64);
+                    } else {
+                        g.FillRectangle(Brushes.Red, x * 64, y * 64, 64, 64);
+                    }
                 }
             }
         }

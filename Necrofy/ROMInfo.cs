@@ -32,9 +32,10 @@ namespace Necrofy
             s.Seek(ROMPointers.BonusLevelNums);
             int maxBonusLevel = levelCount;
             // Assume that there aren't any skipped level numbers
+            // TODO: Make this work with Necrofy built ROMs
             for (int i = 0; i <= levelCount; i++) {
                 int bonusLevelNum = s.ReadInt16();
-                if (bonusLevelNum > maxBonusLevel) {
+                if (bonusLevelNum > maxBonusLevel && bonusLevelNum - maxBonusLevel <= 0x100) { // filter out likely invalid entries
                     maxBonusLevel = bonusLevelNum;
                 }
             }

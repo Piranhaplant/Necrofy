@@ -26,7 +26,9 @@ namespace Necrofy
         public TileAnimator(LoadedLevel level, TileAnimLevelMonster levelMonster) {
             entries = new Dictionary<int, Entry>();
             foreach (TileAnimLevelMonster.Entry e in levelMonster.entries) {
-                entries[e.tiles.FirstOrDefault()] = new Entry(level, e);
+                if (e.tiles.Count > 1) {
+                    entries[e.tiles.FirstOrDefault()] = new Entry(level, e);
+                }
             }
         }
 

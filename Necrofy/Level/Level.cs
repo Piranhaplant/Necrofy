@@ -78,14 +78,17 @@ namespace Necrofy
             levelMonsters = new List<LevelMonster>();
 
             s.StartBlock(); // Track the freespace used by the level
+
+            s.TogglePauseBlock(); // Don't want to track space used if a new asset needs to be extracted from the ROM
             tilesetTilemapName = TilemapAsset.GetAssetName(s, r, s.ReadPointer());
             string tileset = new Asset.ParsedName(tilesetTilemapName).Tileset;
             int backgroundPtr = s.ReadPointer();
             tilesetCollisionName = CollisionAsset.GetAssetName(s, r, s.ReadPointer(), tileset);
             tilesetGraphicsName = GraphicsAsset.GetAssetName(s, r, s.ReadPointer(), tileset);
             paletteName = PaletteAsset.GetAssetName(s, r, s.ReadPointer(), tileset);
-            spritePaletteName = PaletteAsset.GetAssetName(s, r, s.ReadPointer());
+            spritePaletteName = PaletteAsset.GetAssetName(s, r, s.ReadPointer(), Asset.SpritesFolder);
             paletteAnimationPtr = s.ReadPointer();
+            s.TogglePauseBlock();
 
             AddAllObjects(s, () => {
                 Monster m = new Monster(s);
