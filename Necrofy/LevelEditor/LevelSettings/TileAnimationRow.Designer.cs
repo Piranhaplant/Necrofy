@@ -68,6 +68,7 @@
             this.customizeButton.TabIndex = 7;
             this.customizeButton.Text = "Edit...";
             this.customizeButton.UseVisualStyleBackColor = true;
+            this.customizeButton.Visible = false;
             this.customizeButton.Click += new System.EventHandler(this.customizeButton_Click);
             // 
             // customizeLbl
@@ -78,6 +79,7 @@
             this.customizeLbl.Size = new System.Drawing.Size(58, 13);
             this.customizeLbl.TabIndex = 8;
             this.customizeLbl.Text = "Customize:";
+            this.customizeLbl.Visible = false;
             // 
             // TileAnimationRow
             // 
