@@ -58,31 +58,36 @@ namespace Necrofy
 
         public class Entry
         {
-            public List<ushort> tiles { get; set; }
+            public ushort initialTile { get; set; }
+            public List<Frame> frames { get; set; }
             public bool loop { get; set; }
 
             public Entry() { }
 
             public Entry(NStream s) {
-                tiles = new List<ushort>();
+                initialTile = s.ReadInt16();
+                frames = new List<Frame>();
                 while (true) {
-                    ushort value = s.ReadInt16();
-                    if (value >= 0xfffe) {
-                        loop = value == 0xffff;
-                        return;
-                    } else if (value > 0x200 && tiles.Count % 2 == 0) {
-                        // Probably invalid data, just ignore
-                        tiles.Clear();
-                        tiles.Add(0);
+                    ushort delay = s.ReadInt16();
+                    if (delay >= 0xfffe) {
+                        loop = delay == 0xffff;
                         return;
                     }
-                    tiles.Add(value);
+                    ushort tile = s.ReadInt16();
+                    if (tile > 0x200) {
+                        // Probably invalid data, just ignore
+                        frames.Clear();
+                        return;
+                    }
+                    frames.Add(new Frame(delay, tile));
                 }
             }
 
             public void Build(MovableData data) {
-                foreach (ushort tile in tiles) {
-                    data.data.AddInt16(tile);
+                data.data.AddInt16(initialTile);
+                foreach (Frame frame in frames) {
+                    data.data.AddInt16(frame.delay);
+                    data.data.AddInt16(frame.tile);
                 }
                 if (loop) {
                     data.data.AddInt16(0xffff);
@@ -94,15 +99,44 @@ namespace Necrofy
             public override bool Equals(object obj) {
                 var entry = obj as Entry;
                 return entry != null &&
-                       tiles.SequenceEqual(entry.tiles) &&
+                       initialTile == entry.initialTile &&
+                       frames.SequenceEqual(entry.frames) &&
                        loop == entry.loop;
             }
 
             public override int GetHashCode() {
-                var hashCode = 465692521;
-                hashCode = hashCode * -1521134295 + EqualityComparer<List<ushort>>.Default.GetHashCode(tiles);
+                var hashCode = 601590297;
+                hashCode = hashCode * -1521134295 + initialTile.GetHashCode();
+                foreach (Frame frame in frames) {
+                    hashCode = hashCode * -1521134295 + frame.GetHashCode();
+                }
                 hashCode = hashCode * -1521134295 + loop.GetHashCode();
                 return hashCode;
+            }
+            
+            public class Frame
+            {
+                public ushort delay { get; set; }
+                public ushort tile { get; set; }
+
+                public Frame(ushort delay, ushort tile) {
+                    this.delay = delay;
+                    this.tile = tile;
+                }
+
+                public override bool Equals(object obj) {
+                    var frame = obj as Frame;
+                    return frame != null &&
+                           delay == frame.delay &&
+                           tile == frame.tile;
+                }
+
+                public override int GetHashCode() {
+                    var hashCode = 1256124513;
+                    hashCode = hashCode * -1521134295 + delay.GetHashCode();
+                    hashCode = hashCode * -1521134295 + tile.GetHashCode();
+                    return hashCode;
+                }
             }
         }
     }

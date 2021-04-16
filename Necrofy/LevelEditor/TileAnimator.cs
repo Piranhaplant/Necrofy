@@ -26,8 +26,8 @@ namespace Necrofy
         public TileAnimator(LoadedLevel level, TileAnimLevelMonster levelMonster) {
             entries = new Dictionary<int, Entry>();
             foreach (TileAnimLevelMonster.Entry e in levelMonster.entries) {
-                if (e.tiles.Count > 1) {
-                    entries[e.tiles.FirstOrDefault()] = new Entry(level, e);
+                if (e.frames.Count > 0) {
+                    entries[e.initialTile] = new Entry(level, e);
                 }
             }
         }
@@ -101,10 +101,10 @@ namespace Necrofy
             private readonly TileAnimLevelMonster.Entry entry;
             private readonly List<Location> locations = new List<Location>();
 
-            private int curIndex = 0;
+            private int curAnimationFrame = 0;
             private int curFrame = 0;
 
-            public bool Done => curIndex < 0;
+            public bool Done => curAnimationFrame < 0;
 
             public Entry(LoadedLevel level, TileAnimLevelMonster.Entry entry) {
                 this.level = level;
@@ -121,11 +121,11 @@ namespace Necrofy
                 }
 
                 curFrame++;
-                if (curFrame == entry.tiles[curIndex + 1]) {
-                    curIndex += 2;
+                if (curFrame == entry.frames[curAnimationFrame].delay) {
                     RenderFrame();
-                    if (curIndex >= entry.tiles.Count - 2) {
-                        curIndex = entry.loop ? 0 : -1;
+                    curAnimationFrame++;
+                    if (curAnimationFrame >= entry.frames.Count) {
+                        curAnimationFrame = entry.loop ? 0 : -1;
                     }
                     curFrame = 0;
                     return true;
@@ -134,7 +134,7 @@ namespace Necrofy
             }
 
             public void Restart() {
-                curIndex = 0;
+                curAnimationFrame = 0;
                 curFrame = 0;
                 RenderFrame();
             }
@@ -143,7 +143,7 @@ namespace Necrofy
                 foreach (Location location in locations) {
                     Bitmap image = level.tiles[location.bgTile];
                     BitmapData data = image.LockBits(new Rectangle(location.x * 8, location.y * 8, 8, 8), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
-                    SNESGraphics.DrawTile(data, 0, 0, new LoadedTilemap.Tile(level.tilemap.tiles[location.bgTile][location.x, location.y], entry.tiles[curIndex]), level.graphics.linearGraphics);
+                    SNESGraphics.DrawTile(data, 0, 0, new LoadedTilemap.Tile(level.tilemap.tiles[location.bgTile][location.x, location.y], entry.frames[curAnimationFrame].tile), level.graphics.linearGraphics);
                     image.UnlockBits(data);
                 }
             }
