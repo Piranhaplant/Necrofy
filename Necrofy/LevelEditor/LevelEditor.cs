@@ -171,7 +171,14 @@ namespace Necrofy
             }
             ChangeTool(spriteTool);
         }
-        
+
+        public override void Hidden() {
+            base.Hidden();
+            if (!DockVisible) {
+                level.tileAnimator.Pause();
+            }
+        }
+
         private void UpdateAnimationState() {
             if (mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewAnimate).Checked) {
                 level.tileAnimator.Run();

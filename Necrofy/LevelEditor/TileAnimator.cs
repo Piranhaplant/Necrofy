@@ -54,7 +54,7 @@ namespace Necrofy
             animationCancel = new CancellationTokenSource();
             Running = false;
         }
-
+        
         public void Advance() {
             if (entries.Values.All(e => e.Done)) {
                 return;

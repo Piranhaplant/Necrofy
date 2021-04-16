@@ -279,6 +279,7 @@ namespace Necrofy
 
             if (activeEditor != null) {
                 HideAllEditorToolStripItems();
+                activeEditor.Hidden();
             }
 
             activeEditor = editor;

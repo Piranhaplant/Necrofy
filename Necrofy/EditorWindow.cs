@@ -131,6 +131,10 @@ namespace Necrofy
         public virtual void Displayed() {
             undoManager?.RefreshItems();
         }
+
+        public virtual void Hidden() {
+
+        }
         
         public void Save() {
             DoSave(project);
