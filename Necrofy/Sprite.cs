@@ -4,11 +4,14 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace Necrofy
 {
     class Sprite
     {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public int? pointer = null;
         public List<Tile> tiles;
 
         public class Tile
@@ -78,6 +81,7 @@ namespace Necrofy
         public static void AddFromROM(List<Sprite> sprites, Stream romStream, int address) {
             romStream.Seek(address);
             while (true) {
+                int pointer = (int)romStream.Position;
                 int tileCount = romStream.ReadByte();
                 if (tileCount == 0xff || tileCount < 0) {
                     return;
@@ -86,6 +90,7 @@ namespace Necrofy
                     continue;
                 }
                 Sprite s = new Sprite {
+                    pointer = pointer,
                     tiles = new List<Tile>(new Tile[tileCount])
                 };
                 // Loop in reverse order so that the top most tile will be at the end of the array
@@ -94,6 +99,9 @@ namespace Necrofy
                     short yOffset = (short)romStream.ReadInt16();
                     ushort properties = romStream.ReadInt16();
                     ushort tileNum = romStream.ReadInt16();
+                    if (tileNum >= 0x1000) {
+                        return; // Probably hit invalid data
+                    }
                     s.tiles[i] = new Tile(xOffset, yOffset, properties, tileNum);
                 }
                 sprites.Add(s);
@@ -101,18 +109,19 @@ namespace Necrofy
         }
 
         // TODO: Overwrite data with extra tiles
-        public static int WriteToROM(Sprite[] sprites, int index, Stream romStream, int address, Freespace freespace) {
-            romStream.Seek(address);
-            int i;
-            for (i = index; i < sprites.Length; i++) {
-                Sprite s = sprites[i];
+        public static void WriteToROM(Sprite[] sprites, Stream romStream, Freespace freespace) {
+            foreach (Sprite s in sprites) {
+                if (s.pointer == null) {
+                    continue;
+                }
+                romStream.Seek((int)s.pointer);
 
                 int origTileCount = 0;
                 while (origTileCount == 0) {
                     origTileCount = romStream.ReadByte();
                 }
                 if (origTileCount == 0xff || origTileCount < 0) {
-                    break;
+                    continue;
                 }
 
                 romStream.Seek(-1, SeekOrigin.Current);
@@ -122,7 +131,6 @@ namespace Necrofy
                     romStream.WriteByte((byte)s.tiles.Count);
                 }
 
-                long nextSpriteLocation = -1;
                 for (int tileIndex = 0; tileIndex < s.tiles.Count; tileIndex++) {
                     Tile t = s.tiles[s.tiles.Count - 1 - tileIndex];
 
@@ -131,7 +139,6 @@ namespace Necrofy
                         int extraSpacePointer = freespace.Claim(extraTileCount * 8 + 1);
                         romStream.WritePointer(extraSpacePointer);
                         romStream.Write(new byte[] { 0, 0, 0, 0 }, 0, 4);
-                        nextSpriteLocation = romStream.Position;
                         romStream.Seek(extraSpacePointer);
                         romStream.WriteByte((byte)extraTileCount);
                     }
@@ -145,11 +152,7 @@ namespace Necrofy
                 for (int tileIndex = s.tiles.Count; tileIndex < origTileCount; tileIndex++) {
                     romStream.Write(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }, 0, 8);
                 }
-                if (nextSpriteLocation >= 0) {
-                    romStream.Seek(nextSpriteLocation);
-                }
             }
-            return i;
         }
     }
 }

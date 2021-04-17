@@ -34,9 +34,18 @@ namespace Necrofy
                 spritesByCategory[category] = new List<LoadedSprite>();
             }
 
+            Dictionary<int, Sprite> spritePointers = new Dictionary<int, Sprite>();
+            foreach (Sprite s in spritesAsset.sprites) {
+                if (s.pointer != null) {
+                    spritePointers[(int)s.pointer] = s;
+                }
+            }
+
             foreach (ImageSpriteDisplay spriteDisplay in spriteDisplayAsset.data.imageSprites) {
-                LoadedSprite s = new ImageLoadedSprite(spriteDisplay, spritesAsset.sprites[spriteDisplay.spriteIndex], loadedGraphics.linearGraphics, loadedPalette.colors);
-                AddLoadedSprite(spriteDisplay, s);
+                if (spritePointers.ContainsKey(spriteDisplay.spritePointer)) {
+                    LoadedSprite s = new ImageLoadedSprite(spriteDisplay, spritePointers[spriteDisplay.spritePointer], loadedGraphics.linearGraphics, loadedPalette.colors);
+                    AddLoadedSprite(spriteDisplay, s);
+                }
             }
             foreach (TextSpriteDisplay spriteDisplay in spriteDisplayAsset.data.textSprites) {
                 LoadedSprite s = new TextLoadedSprite(spriteDisplay);

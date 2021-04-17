@@ -68,7 +68,7 @@ namespace Necrofy
 
     public class ImageSpriteDisplay : SpriteDisplay
     {
-        public int spriteIndex;
+        public int spritePointer;
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public int? overridePalette;
     }
