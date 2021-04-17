@@ -72,6 +72,7 @@ namespace Necrofy
         }
 
         protected override UndoManager Setup() {
+            Zoom = 2.0f;
             undoManager = new UndoManager<SpriteEditor>(mainWindow.UndoButton, mainWindow.RedoButton, this);
             return undoManager;
         }

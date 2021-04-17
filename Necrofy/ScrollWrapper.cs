@@ -97,7 +97,7 @@ namespace Necrofy
 
             public void ScrollToPoint(int point) {
                 if (scrollBar.Enabled) {
-                    SetScrollBarValue(point - controlSize() / 2);
+                    SetScrollBarValue((int)(point * zoom) - controlSize() / 2);
                 }
             }
 
