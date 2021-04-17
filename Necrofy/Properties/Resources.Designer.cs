@@ -423,6 +423,16 @@ namespace Necrofy.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ghost {
+            get {
+                object obj = ResourceManager.GetObject("ghost", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap image {
             get {
                 object obj = ResourceManager.GetObject("image", resourceCulture);
@@ -506,16 +516,6 @@ namespace Necrofy.Properties {
         internal static System.Drawing.Bitmap layout_4 {
             get {
                 object obj = ResourceManager.GetObject("layout-4", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap leaf {
-            get {
-                object obj = ResourceManager.GetObject("leaf", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

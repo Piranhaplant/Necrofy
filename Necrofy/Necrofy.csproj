@@ -563,6 +563,7 @@
     <None Include="Icons\dice-1.png" />
     <None Include="Icons\dice-2.png" />
     <None Include="Icons\dice-3.png" />
+    <None Include="Icons\ghost.png" />
     <Content Include="ProjectFiles\Patches\PerfectPlayerFix.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -585,7 +586,6 @@
     <None Include="Icons\pencil-select.png" />
     <None Include="Icons\tile-select.png" />
     <None Include="Icons\map-resize.png" />
-    <None Include="Icons\leaf.png" />
     <None Include="Icons\zeke.png" />
     <None Include="Icons\document-binary.png" />
     <None Include="Icons\blue-document-rename.png" />

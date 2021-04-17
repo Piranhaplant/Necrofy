@@ -26,7 +26,7 @@ namespace Necrofy
             { AssetCategory.Level, Resources.map },
             { AssetCategory.Palette, Resources.color },
             { AssetCategory.Passwords, Resources.document_binary },
-            { AssetCategory.Sprites, Resources.leaf },
+            { AssetCategory.Sprites, Resources.ghost },
             { AssetCategory.Tilemap, Resources.layout_4 },
         };
         private readonly Dictionary<AssetCategory, int> displayImageIndexes = new Dictionary<AssetCategory, int>();
