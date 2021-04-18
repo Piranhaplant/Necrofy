@@ -66,8 +66,8 @@ namespace Necrofy
 
             public override List<DefaultParams> GetDefaults() {
                 return new List<DefaultParams>() {
-                    new DefaultParams(0x20000, new GraphicsNameInfo(SpritesFolder, DefaultName, 0x20000), 0x5d300),
-                    new DefaultParams(0x94f80, new GraphicsNameInfo(LevelTitleFolder, DefaultName, 0x94f80, compressed: true)),
+                    new DefaultParams(0x20000, new GraphicsNameInfo(SpritesFolder, DefaultName, 0x20000), 0x5d300, extractFromNecrofyROM: true),
+                    new DefaultParams(0x94f80, new GraphicsNameInfo(LevelTitleFolder, DefaultName, 0x94f80, compressed: true), extractFromNecrofyROM: true),
 
                     new DefaultParams(0xc8000, new GraphicsNameInfo(GetTilesetFolder(Castle), DefaultName), 0x4000),
                     new DefaultParams(0xc0000, new GraphicsNameInfo(GetTilesetFolder(Grass), DefaultName), 0x4000),
@@ -83,7 +83,7 @@ namespace Necrofy
                 if (graphicsNameInfo.compressed) {
                     return new GraphicsAsset(graphicsNameInfo, ZAMNCompress.Decompress(romStream));
                 } else {
-                    return new GraphicsAsset(graphicsNameInfo, romStream.ReadBytes((int)size));
+                    return new GraphicsAsset(graphicsNameInfo, romStream.ReadBytes(size ?? 0x4000));
                 }
             }
 

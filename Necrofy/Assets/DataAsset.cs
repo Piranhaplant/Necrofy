@@ -58,7 +58,7 @@ namespace Necrofy
 
             public override List<DefaultParams> GetDefaults() {
                 return new List<DefaultParams>() {
-                    new DefaultParams(0x12f37, new DataNameInfo(LevelTitleFolder, LevelTitleCharacterMapName, 0x12f37), 0xbc),
+                    new DefaultParams(0x12f37, new DataNameInfo(LevelTitleFolder, LevelTitleCharacterMapName, 0x12f37), 0xbc, extractFromNecrofyROM: true),
                 };
             }
 

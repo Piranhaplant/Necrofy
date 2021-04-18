@@ -77,38 +77,59 @@ namespace Necrofy
             return image;
         }
 
-        // TODO: Read sprites with extra tiles
-        public static void AddFromROM(List<Sprite> sprites, Stream romStream, int address) {
+        public static void AddFromROM(List<Sprite> sprites, NStream romStream, int address, ROMInfo romInfo) {
             romStream.Seek(address);
+            List<Tile> tiles = new List<Tile>();
             while (true) {
                 int pointer = (int)romStream.Position;
-                int tileCount = romStream.ReadByte();
-                if (tileCount == 0xff || tileCount < 0) {
+                if (ReadTiles(tiles, romStream, romInfo, false)) {
                     return;
                 }
-                if (tileCount == 0) {
-                    continue;
+                if (tiles.Count > 0) {
+                    sprites.Add(new Sprite {
+                        pointer = pointer,
+                        tiles = tiles
+                    });
+                    tiles = new List<Tile>();
                 }
-                Sprite s = new Sprite {
-                    pointer = pointer,
-                    tiles = new List<Tile>(new Tile[tileCount])
-                };
-                // Loop in reverse order so that the top most tile will be at the end of the array
-                for (int i = tileCount - 1; i >= 0; i--) {
-                    short xOffset = (short)romStream.ReadInt16();
-                    short yOffset = (short)romStream.ReadInt16();
-                    ushort properties = romStream.ReadInt16();
-                    ushort tileNum = romStream.ReadInt16();
-                    if (tileNum >= 0x1000) {
-                        return; // Probably hit invalid data
-                    }
-                    s.tiles[i] = new Tile(xOffset, yOffset, properties, tileNum);
-                }
-                sprites.Add(s);
             }
         }
 
-        // TODO: Overwrite data with extra tiles
+        private static bool ReadTiles(List<Tile> tiles, NStream romStream, ROMInfo romInfo, bool trackFreespace) {
+            int tileCount = romStream.ReadByte();
+            if (tileCount == 0xff || tileCount < 0) {
+                return true;
+            }
+            if (tileCount == 0) {
+                return false;
+            }
+            bool hasExtraTiles = (tileCount & 0x80) > 0;
+            tileCount &= 0x7f;
+
+            if (trackFreespace) {
+                romInfo.Freespace.AddSize((int)romStream.Position - 1, tileCount * 8 + (hasExtraTiles ? 8 : 0) + 1);
+            }
+
+            for (int i = 0; i < tileCount; i++) {
+                short xOffset = (short)romStream.ReadInt16();
+                short yOffset = (short)romStream.ReadInt16();
+                ushort properties = romStream.ReadInt16();
+                ushort tileNum = romStream.ReadInt16();
+                if (tileNum >= 0x1000) {
+                    return true; // Probably hit invalid data
+                }
+                tiles.Insert(0, new Tile(xOffset, yOffset, properties, tileNum)); // Insert at front so that the top most tile will be at the end of the array
+            }
+
+            if (hasExtraTiles) {
+                romStream.GoToPointerPush();
+                ReadTiles(tiles, romStream, romInfo, true);
+                romStream.PopPosition();
+                romStream.Seek(4, SeekOrigin.Current);
+            }
+            return false;
+        }
+
         public static void WriteToROM(Sprite[] sprites, Stream romStream, Freespace freespace) {
             foreach (Sprite s in sprites) {
                 if (s.pointer == null) {
@@ -116,12 +137,9 @@ namespace Necrofy
                 }
                 romStream.Seek((int)s.pointer);
 
-                int origTileCount = 0;
-                while (origTileCount == 0) {
-                    origTileCount = romStream.ReadByte();
-                }
-                if (origTileCount == 0xff || origTileCount < 0) {
-                    continue;
+                int origTileCount = romStream.ReadByte();
+                if ((origTileCount & 0x80) > 0) {
+                    origTileCount = (origTileCount & 0x7f) + 1;
                 }
 
                 romStream.Seek(-1, SeekOrigin.Current);

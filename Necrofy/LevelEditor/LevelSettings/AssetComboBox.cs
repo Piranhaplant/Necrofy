@@ -42,6 +42,10 @@ namespace Necrofy
             base.Items.AddRange(newItems);
         }
 
+        public bool Contains(string asset) {
+            return items.Any(i => i.asset.Name == asset);
+        }
+
         public void Clear() {
             items.Clear();
             base.Items.Clear();

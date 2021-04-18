@@ -61,7 +61,7 @@ namespace Necrofy
 
             public override List<DefaultParams> GetDefaults() {
                 return new List<DefaultParams>() {
-                    new DefaultParams(ROMPointers.PasswordData, new PasswordsNameInfo()),
+                    new DefaultParams(ROMPointers.PasswordData, new PasswordsNameInfo(), extractFromNecrofyROM: true),
                 };
             }
 

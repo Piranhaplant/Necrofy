@@ -42,17 +42,19 @@ namespace Necrofy
 
             graphicsSelector.Add(project.GetAssetsInCategory(AssetCategory.Graphics).Where(a => a.ParsedName.Tileset != null), GraphicsAsset.DefaultName);
             graphicsSelector.SelectedName = level.Level.tilesetGraphicsName;
-            SetupAutoCheckBox(graphicsAuto, graphicsSelector, level.Level.tilesetGraphicsName == GetDefaultName(level.Level.tilesetTilemapName, GraphicsAsset.DefaultName));
+            string defaultGraphicsName = GetDefaultName(level.Level.tilesetTilemapName, GraphicsAsset.DefaultName);
+            SetupAutoCheckBox(graphicsAuto, graphicsSelector, level.Level.tilesetGraphicsName == defaultGraphicsName, graphicsSelector.Contains(defaultGraphicsName));
 
             collisionSelector.Add(project.GetAssetsInCategory(AssetCategory.Collision).Where(a => a.ParsedName.Tileset != null), CollisionAsset.DefaultName);
             collisionSelector.SelectedName = level.Level.tilesetCollisionName;
-            SetupAutoCheckBox(collisionAuto, collisionSelector, level.Level.tilesetCollisionName == GetDefaultName(level.Level.tilesetTilemapName, CollisionAsset.DefaultName));
+            string defaultCollisionName = GetDefaultName(level.Level.tilesetTilemapName, CollisionAsset.DefaultName);
+            SetupAutoCheckBox(collisionAuto, collisionSelector, level.Level.tilesetCollisionName == defaultCollisionName, collisionSelector.Contains(defaultCollisionName));
 
             prioritySelector.Value = level.Level.priorityTileCount;
-            SetupAutoCheckBox(priorityAuto, prioritySelector, level.Level.priorityTileCount == level.TilesetSuggestions.PriorityTileCount);
+            SetupAutoCheckBox(priorityAuto, prioritySelector, level.Level.priorityTileCount == level.TilesetSuggestions.PriorityTileCount, level.TilesetSuggestions.PriorityTileCount > 0);
 
             visibleEndSelector.Value = level.Level.visibleTilesEnd;
-            SetupAutoCheckBox(visibleEndAuto, visibleEndSelector, level.Level.visibleTilesEnd == DefaultVisibleTilesEnd);
+            SetupAutoCheckBox(visibleEndAuto, visibleEndSelector, level.Level.visibleTilesEnd == DefaultVisibleTilesEnd, true);
 
             PopulateSpritePalettes(spritePaletteSelector);
             spritePaletteSelector.SelectedName = level.Level.spritePaletteName;
@@ -100,11 +102,12 @@ namespace Necrofy
             }
         }
         
-        private void SetupAutoCheckBox(CheckBox autoCheckBox, Control manualControl, bool enabled) {
+        private void SetupAutoCheckBox(CheckBox autoCheckBox, Control manualControl, bool check, bool enabled) {
             autoCheckBox.CheckedChanged += (sender, e) => {
                 manualControl.Visible = !autoCheckBox.Checked;
             };
-            autoCheckBox.Checked = enabled;
+            autoCheckBox.Checked = check && enabled;
+            autoCheckBox.Enabled = enabled;
         }
 
         private int prevTilesSelectorSelectedIndex = -1;

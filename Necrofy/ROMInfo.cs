@@ -26,37 +26,14 @@ namespace Necrofy
         /// <param name="s">A stream to a ROM file</param>
         public ROMInfo(NStream s) {
             Freespace = new Freespace((int)s.Length);
-
-            // First get a list of all the level pointers
+            
             s.Seek(ROMPointers.LevelPointers);
             int levelCount = s.ReadInt16();
-            s.Seek(ROMPointers.BonusLevelNums);
-            int maxBonusLevel = levelCount;
-            // Assume that there aren't any skipped level numbers
-            // TODO: Make this work with Necrofy built ROMs
+            necrofyROM = s.PeekPointer() > 0;
+            
+            Asset.AddAllDefaults(s, this);
+            
             for (int i = 0; i <= levelCount; i++) {
-                int bonusLevelNum = s.ReadInt16();
-                if (bonusLevelNum > maxBonusLevel && bonusLevelNum - maxBonusLevel <= 0x100) { // filter out likely invalid entries
-                    maxBonusLevel = bonusLevelNum;
-                }
-            }
-            s.Seek(ROMPointers.LevelPointers + 2); // Skip past the first 2 bytes which indicate how many levels there are
-
-            // If the fourth byte is zero, then the ROM is using 4-byte level pointers, so was built with Necrofy
-            s.Seek(3, SeekOrigin.Current);
-            necrofyROM = s.ReadByte() == 0;
-            s.Seek(-4, SeekOrigin.Current);
-
-            // Don't try to get default assets for ROMs built with Necrofy, since everything is moved around
-            // TODO: Some stuff doesn't move around and those still need to be extracted
-            if (!necrofyROM) {
-                Asset.AddAllDefaults(s, this);
-            }
-
-            Freespace.AddSize(ROMPointers.LevelPointers + 2, (maxBonusLevel + 1) * (necrofyROM ? 4 : 2));
-
-            // Load all levels. Even if they aren't going to be used, this is still necessary to track the space used by them.
-            for (int i = 0; i <= maxBonusLevel; i++) {
                 Level level;
                 if (necrofyROM) {
                     s.GoToPointerPush();
@@ -74,7 +51,13 @@ namespace Necrofy
                 }
                 assets.Add(new LevelAsset(i, level));
                 s.PopPosition();
+
+                if (level.bonusLevelNumber > levelCount && level.bonusLevelNumber - levelCount <= 0x100) { // filter out likely invalid entries
+                    levelCount = Math.Max(levelCount, level.bonusLevelNumber);
+                }
             }
+
+            Freespace.AddSize(ROMPointers.LevelPointers + 2, (levelCount + 1) * (necrofyROM ? 4 : 2));
         }
 
         public void AddAssetName(AssetCategory category, int pointer, string name) {

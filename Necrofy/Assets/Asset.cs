@@ -115,7 +115,9 @@ namespace Necrofy
         public static void AddAllDefaults(NStream romStream, ROMInfo romInfo) {
             foreach (Creator creator in creators) {
                 foreach (DefaultParams defaultParams in creator.GetDefaults()) {
-                    CreateAsset(romStream, romInfo, creator, defaultParams.nameInfo, defaultParams.pointer, defaultParams.size);
+                    if (defaultParams.extractFromNecrofyROM || !romInfo.necrofyROM) {
+                        CreateAsset(romStream, romInfo, creator, defaultParams.nameInfo, defaultParams.pointer, defaultParams.size);
+                    }
                 }
             }
         }
@@ -369,15 +371,13 @@ namespace Necrofy
             public readonly int pointer;
             public readonly NameInfo nameInfo;
             public readonly int? size;
+            public readonly bool extractFromNecrofyROM;
 
-            public DefaultParams(int pointer, NameInfo nameInfo, int? size) {
+            public DefaultParams(int pointer, NameInfo nameInfo, int? size = null, bool extractFromNecrofyROM = false) {
                 this.pointer = pointer;
                 this.nameInfo = nameInfo;
                 this.size = size;
-            }
-
-            public DefaultParams(int pointer, NameInfo nameInfo)
-                : this(pointer, nameInfo, null) {
+                this.extractFromNecrofyROM = extractFromNecrofyROM;
             }
         }
     }

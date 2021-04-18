@@ -56,15 +56,15 @@ namespace Necrofy
 
             public override List<DefaultParams> GetDefaults() {
                 return new List<DefaultParams>() {
-                    new DefaultParams(0, new SpritesNameInfo(SpritesFolder)),
+                    new DefaultParams(0, new SpritesNameInfo(SpritesFolder), extractFromNecrofyROM: true),
                 };
             }
 
             public override Asset FromRom(NameInfo nameInfo, NStream romStream, ROMInfo romInfo, int? size, out bool trackFreespace) {
                 trackFreespace = false;
                 List<Sprite> sprites = new List<Sprite>();
-                Sprite.AddFromROM(sprites, romStream, ROMPointers.SpriteData1);
-                Sprite.AddFromROM(sprites, romStream, ROMPointers.SpriteData2);
+                Sprite.AddFromROM(sprites, romStream, ROMPointers.SpriteData1, romInfo);
+                Sprite.AddFromROM(sprites, romStream, ROMPointers.SpriteData2, romInfo);
                 return new SpritesAsset((SpritesNameInfo)nameInfo, sprites.ToArray());
             }
         }
