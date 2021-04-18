@@ -501,50 +501,60 @@ warnpc $82D25E
 
 org $82B02D
 ; Code for checking an entered password
-LDX #$0000 ; password data index
-LDY #$0001 ; victim count
+PHD
+PEA $0000
+PLD
+LDA $82B14A
+STA $38
+LDA $82B14C
+STA $3A
+
+LDX #$0001 ; victim count
+LDY #$0000 ; password data index
 LDA #$0005
 STA $1E7C ; level
 BRA +
 
 -:
-	INX
-	INX
 	INY
-	CPY #$000B
+	INY
+	INX
+	CPX #$000B
 	BNE +
 	
-	LDY #$0001
+	LDX #$0001
 	LDA $1E7C
 	CLC
 	ADC #$0004
-	CMP.w #!PASSWORD_MAX_LEVEL
+	CMP $82B14E
 	BEQ no_password_found
 	STA $1E7C
 +:
-	LDA.l pctosnes(!PASSWORD_DATA),X
-	INX
-	INX
+	LDA [$38],Y
+	INY
+	INY
 	CMP $1EA0
 	BNE -
 
-	LDA.l pctosnes(!PASSWORD_DATA),X
+	LDA [$38],Y
 	CMP $1EA2
 BNE -
 
 ; password found
-CPY #$000A
+CPX #$000A
 BNE +
-	LDY #$0010
+	LDX #$0010
 +:
-STY $1D52
-STY $1D50
+STX $1D52
+STX $1D50
+PLD
 CLC
 RTL
 
 no_password_found:
 LDA #$0001
 STA $1E7C
+PLD
 SEC
 RTL
 
@@ -552,18 +562,25 @@ warnpc $82B0DE
 
 org $82B0DE
 ; Code for getting the password to show
+PHD
+PEA $0000
+PLD
+LDA $82B14A
+STA $38
+LDA $82B14C
+STA $3A
 
 ; Get level index * 10
 LDA $1E7C
 LSR A
 DEC A
 DEC A
-STA $0038
+STA $3C
 ASL A
 ASL A
 CLC
-ADC $0038
-STA $0038
+ADC $3C
+STA $3C
 
 ; Get total victims saved
 SED
@@ -576,18 +593,19 @@ CLD
 
 ; Add together to get the final index
 CLC
-ADC $0038
+ADC $3C
 ASL A
 ASL A
 
-TAX
-LDA.l pctosnes(!PASSWORD_DATA),X
+TAY
+LDA [$38],Y
 STA $1EA0
-INX
-INX
-LDA.l pctosnes(!PASSWORD_DATA),X
+INY
+INY
+LDA [$38],Y
 STA $1EA2
 STZ $1EA4
+PLD
 RTL
 
 warnpc $82B14A

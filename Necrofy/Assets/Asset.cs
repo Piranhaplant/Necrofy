@@ -143,7 +143,7 @@ namespace Necrofy
 
             romStream.Seek(pointer);
             long startPos = romStream.Position;
-            Asset asset = creator.FromRom(nameInfo, romStream, size, out bool trackFreespace);
+            Asset asset = creator.FromRom(nameInfo, romStream, romInfo, size, out bool trackFreespace);
             if (trackFreespace) {
                 romInfo.Freespace.AddSize(pointer, (int)(romStream.Position - startPos));
             }
@@ -353,7 +353,7 @@ namespace Necrofy
             /// <summary>Creates an asset from the given ROM</summary>
             /// <param name="nameInfo">The NameInfo for the asset. This will be the value from either GetDefaults or GetNameInfoForName</param>
             /// <param name="romStream">The rom stream, positioned at the start of the asset</param>
-            public virtual Asset FromRom(NameInfo nameInfo, NStream romStream, int? size, out bool trackFreespace) {
+            public virtual Asset FromRom(NameInfo nameInfo, NStream romStream, ROMInfo romInfo, int? size, out bool trackFreespace) {
                 trackFreespace = false;
                 return null;
             }

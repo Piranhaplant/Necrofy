@@ -25,6 +25,8 @@ namespace Necrofy
         public const int SpriteData1 = 0x7d300;
         /// <summary>Pointer to the second chunk of sprite data</summary>
         public const int SpriteData2 = 0x80000;
+        /// <summary>Pointer to the main password data tables</summary>
+        public const int PasswordData = 0x1314a;
         /// <summary>Pointer to the first two characters in the level 0 password</summary>
         public const int Level0Password1 = 0x1301c;
         /// <summary>Pointer to the last two characters in the level 0 password</summary>

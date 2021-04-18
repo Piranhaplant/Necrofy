@@ -16,10 +16,11 @@ namespace Necrofy
         public Dictionary<AssetCategory, Dictionary<string, int>> assetPointers = new Dictionary<AssetCategory, Dictionary<string, int>>();
 
         /// <summary>The freespace that was found in the ROM</summary>
-        public Freespace Freespace;
-
+        public readonly Freespace Freespace;
+        /// <summary>Indicates whether or not the ROM was built with Necrofy</summary>
+        public bool necrofyROM { get; private set; }
         /// <summary>Definitions that will be available to patches</summary>
-        public Dictionary<string, string> exportedDefines = new Dictionary<string, string>();
+        public readonly Dictionary<string, string> exportedDefines = new Dictionary<string, string>();
 
         /// <summary>Loads the ROMInfo data from an already opened stream.</summary>
         /// <param name="s">A stream to a ROM file</param>
@@ -41,23 +42,23 @@ namespace Necrofy
             }
             s.Seek(ROMPointers.LevelPointers + 2); // Skip past the first 2 bytes which indicate how many levels there are
 
-            // If the fourth byte is zero, then the ROM is using 4-byte level pointers
+            // If the fourth byte is zero, then the ROM is using 4-byte level pointers, so was built with Necrofy
             s.Seek(3, SeekOrigin.Current);
-            bool fullLevelPointers = s.ReadByte() == 0;
+            necrofyROM = s.ReadByte() == 0;
             s.Seek(-4, SeekOrigin.Current);
 
             // Don't try to get default assets for ROMs built with Necrofy, since everything is moved around
             // TODO: Some stuff doesn't move around and those still need to be extracted
-            if (!fullLevelPointers) {
+            if (!necrofyROM) {
                 Asset.AddAllDefaults(s, this);
             }
 
-            Freespace.AddSize(ROMPointers.LevelPointers + 2, (maxBonusLevel + 1) * (fullLevelPointers ? 4 : 2));
+            Freespace.AddSize(ROMPointers.LevelPointers + 2, (maxBonusLevel + 1) * (necrofyROM ? 4 : 2));
 
             // Load all levels. Even if they aren't going to be used, this is still necessary to track the space used by them.
             for (int i = 0; i <= maxBonusLevel; i++) {
                 Level level;
-                if (fullLevelPointers) {
+                if (necrofyROM) {
                     s.GoToPointerPush();
                     level = new Level(this, s);
                 } else {

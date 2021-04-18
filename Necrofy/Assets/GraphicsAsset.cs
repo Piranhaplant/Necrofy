@@ -77,7 +77,7 @@ namespace Necrofy
                 };
             }
 
-            public override Asset FromRom(NameInfo nameInfo, NStream romStream, int? size, out bool trackFreespace) {
+            public override Asset FromRom(NameInfo nameInfo, NStream romStream, ROMInfo romInfo, int? size, out bool trackFreespace) {
                 GraphicsNameInfo graphicsNameInfo = (GraphicsNameInfo)nameInfo;
                 trackFreespace = graphicsNameInfo.pointer == null;
                 if (graphicsNameInfo.compressed) {

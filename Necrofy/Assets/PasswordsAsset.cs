@@ -32,6 +32,10 @@ namespace Necrofy
             File.WriteAllText(nameInfo.GetFilename(project.path, createDirectories: true), JsonConvert.SerializeObject(data, Formatting.Indented));
         }
 
+        public override void ReserveSpace(Freespace freespace) {
+            data.ReserveSpace(freespace);
+        }
+
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
             data.WriteToROM(rom, romInfo);
         }
@@ -57,14 +61,14 @@ namespace Necrofy
 
             public override List<DefaultParams> GetDefaults() {
                 return new List<DefaultParams>() {
-                    new DefaultParams(0x1314a, new PasswordsNameInfo()),
+                    new DefaultParams(ROMPointers.PasswordData, new PasswordsNameInfo()),
                 };
             }
 
-            public override Asset FromRom(NameInfo nameInfo, NStream romStream, int? size, out bool trackFreespace) {
-                trackFreespace = true;
+            public override Asset FromRom(NameInfo nameInfo, NStream romStream, ROMInfo romInfo, int? size, out bool trackFreespace) {
+                trackFreespace = false;
                 PasswordsNameInfo passwordsNameInfo = (PasswordsNameInfo)nameInfo;
-                return new PasswordsAsset(passwordsNameInfo, new PasswordData(romStream));
+                return new PasswordsAsset(passwordsNameInfo, new PasswordData(romStream, romInfo));
             }
         }
 

@@ -60,7 +60,7 @@ namespace Necrofy
                 };
             }
 
-            public override Asset FromRom(NameInfo nameInfo, NStream romStream, int? size, out bool trackFreespace) {
+            public override Asset FromRom(NameInfo nameInfo, NStream romStream, ROMInfo romInfo, int? size, out bool trackFreespace) {
                 trackFreespace = false;
                 List<Sprite> sprites = new List<Sprite>();
                 Sprite.AddFromROM(sprites, romStream, ROMPointers.SpriteData1);
