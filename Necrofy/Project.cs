@@ -17,7 +17,7 @@ namespace Necrofy
         public const string runFromLevelFilename = "runFromLevel.sfc";
         public static readonly string internalProjectFilesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ProjectFiles");
         public static readonly string internalPatchesPath = Path.Combine(internalProjectFilesPath, "Patches");
-        private static readonly HashSet<string> ignoredFileExtensions = new HashSet<string>() { ".sfc", ".nfyz", ".nfyp" };
+        private static readonly HashSet<string> ignoredFileExtensions = new HashSet<string>() { ".sfc", ".nfyz", ".nfyp", ".asm" };
 
         public const string ROMExpandPatchName = "ROMExpand.asm";
         public const string OtherExpandPatchName = "OtherExpand.asm";
@@ -100,6 +100,12 @@ namespace Necrofy
                 string outputROM = Path.Combine(path, buildFilename);
                 File.Copy(Path.Combine(path, baseROMFilename), outputROM, true);
 
+                foreach (string filename in Directory.GetFiles(path, "*", SearchOption.AllDirectories)) {
+                    if (Path.GetExtension(filename) == ".asm") {
+                        ApplyPatch(outputROM, filename, results);
+                    }
+                }
+
                 ROMInfo info;
                 using (NStream s = new NStream(new FileStream(outputROM, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))) {
                     info = new ROMInfo(s);
@@ -141,7 +147,7 @@ namespace Necrofy
                 }
 
                 foreach (ProjectSettings.Patch patch in settings.EnabledPatches) {
-                    Patch(outputROM, patch.Name, results, info.exportedDefines);
+                    ApplyInternalPatch(outputROM, patch.Name, results, info.exportedDefines);
                 }
             } catch (Exception ex) {
                 results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, "", ex.Message, ex.StackTrace));
@@ -179,7 +185,7 @@ namespace Necrofy
                         defines["SPECIAL" + i.ToString()] = "$" + settings.specialAmounts[i].ToString();
                     }
 
-                    Patch(runROM, RunFromLevelPatchName, results, defines);
+                    ApplyInternalPatch(runROM, RunFromLevelPatchName, results, defines);
                 } catch (Exception ex) {
                     results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, "", ex.Message, ex.StackTrace));
                 }
@@ -205,7 +211,11 @@ namespace Necrofy
             }
         }
 
-        private static void Patch(string rom, string patch, BuildResults results, Dictionary<string, string> defines = null) {
+        private static void ApplyInternalPatch(string rom, string patch, BuildResults results, Dictionary<string, string> defines = null) {
+            ApplyPatch(rom, Path.Combine(internalPatchesPath, patch), results, defines);
+        }
+
+        private static void ApplyPatch(string rom, string patch, BuildResults results, Dictionary<string, string> defines = null) {
             // TODO: use asar dll
             string args = "";
             if (defines != null) {
@@ -213,7 +223,7 @@ namespace Necrofy
                     args += string.Format("\"-D{0}={1}\" ", define.Key, define.Value);
                 }
             }
-            args += string.Format("\"{0}\" \"{1}\"", Path.Combine(internalPatchesPath, patch), rom);
+            args += string.Format("\"{0}\" \"{1}\"", patch, rom);
 
             ProcessStartInfo processInfo = new ProcessStartInfo(Path.Combine("Tools", "asar.exe")) {
                 Arguments = args,
