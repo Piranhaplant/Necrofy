@@ -49,8 +49,8 @@ namespace Necrofy
 
             if (project != null) {
                 PopulateTree(tree.Nodes, project.Assets.Root);
-                if (project.settings.FolderStates != null) {
-                    LoadFolderStates(tree.Nodes, project.settings.FolderStates);
+                if (project.userSettings.FolderStates != null) {
+                    LoadFolderStates(tree.Nodes, project.userSettings.FolderStates);
                 } else {
                     tree.Nodes[LevelAsset.Folder]?.Expand();
                 }
@@ -126,8 +126,8 @@ namespace Necrofy
             });
         }
 
-        private void LoadFolderStates(TreeNodeCollection parent, List<ProjectSettings.FolderState> folderStates) {
-            foreach (ProjectSettings.FolderState folderState in folderStates) {
+        private void LoadFolderStates(TreeNodeCollection parent, List<ProjectUserSettings.FolderState> folderStates) {
+            foreach (ProjectUserSettings.FolderState folderState in folderStates) {
                 TreeNode node = parent[folderState.Name];
                 if (node != null) {
                     if (folderState.Expanded) {
@@ -141,17 +141,17 @@ namespace Necrofy
         }
 
         public void SaveFolderStates() {
-            project.settings.FolderStates = new List<ProjectSettings.FolderState>();
-            SaveFolderStates(tree.Nodes, project.settings.FolderStates);
+            project.userSettings.FolderStates = new List<ProjectUserSettings.FolderState>();
+            SaveFolderStates(tree.Nodes, project.userSettings.FolderStates);
         }
 
-        private void SaveFolderStates(TreeNodeCollection parent, List<ProjectSettings.FolderState> folderStates) {
+        private void SaveFolderStates(TreeNodeCollection parent, List<ProjectUserSettings.FolderState> folderStates) {
             foreach (TreeNode n in parent) {
                 if (n.Nodes.Count > 0) {
-                    ProjectSettings.FolderState folderState = new ProjectSettings.FolderState();
+                    ProjectUserSettings.FolderState folderState = new ProjectUserSettings.FolderState();
                     folderState.Name = n.Name;
                     folderState.Expanded = n.IsExpanded;
-                    folderState.Children = new List<ProjectSettings.FolderState>();
+                    folderState.Children = new List<ProjectUserSettings.FolderState>();
                     folderStates.Add(folderState);
                     SaveFolderStates(n.Nodes, folderState.Children);
                 }

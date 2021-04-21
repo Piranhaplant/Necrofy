@@ -218,6 +218,7 @@
     <Compile Include="ProjectSettingsDialog.Designer.cs">
       <DependentUpon>ProjectSettingsDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="ProjectUserSettings.cs" />
     <Compile Include="SpriteEditor\SpriteEditor.cs">
       <SubType>Form</SubType>
     </Compile>

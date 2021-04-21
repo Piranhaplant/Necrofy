@@ -19,10 +19,6 @@ namespace Necrofy
         public int EndGameLevel { get; set; }
         /// <summary>List of the built-in patches that will be applied on build</summary>
         public List<Patch> EnabledPatches { get; set; } = new List<Patch>();
-        /// <summary>State of the folders in the project browser</summary>
-        public List<FolderState> FolderStates { get; set; }
-        /// <summary>List of asset files that are currently opened for editing</summary>
-        public List<string> OpenFiles { get; set; }
 
         private ProjectSettings() { }
 
@@ -33,13 +29,6 @@ namespace Necrofy
             settings.EnabledPatches.Add(new Patch(Project.ROMExpandPatchName));
             settings.EnabledPatches.Add(new Patch(Project.OtherExpandPatchName));
             return settings;
-        }
-
-        public class FolderState
-        {
-            public string Name { get; set; }
-            public bool Expanded { get; set; }
-            public List<FolderState> Children { get; set; }
         }
 
         public class Patch

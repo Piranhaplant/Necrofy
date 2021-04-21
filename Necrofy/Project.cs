@@ -26,7 +26,9 @@ namespace Necrofy
         public readonly string path;
         public readonly string settingsFilename;
         public string SettingsPath => Path.Combine(path, settingsFilename);
+        public string UserSettingsPath => SettingsPath + ".user";
         public readonly ProjectSettings settings;
+        public readonly ProjectUserSettings userSettings;
 
         public AssetTree Assets { get; private set; }
 
@@ -59,6 +61,8 @@ namespace Necrofy
             settings = ProjectSettings.CreateNew();
             settings.WinLevel = info.WinLevel;
             settings.EndGameLevel = info.EndGameLevel;
+
+            userSettings = new ProjectUserSettings();
             WriteSettings();
 
             ReadAssets();
@@ -70,6 +74,7 @@ namespace Necrofy
             path = FixPath(Path.GetDirectoryName(settingsFile));
             settingsFilename = Path.GetFileName(settingsFile);
             settings = JsonConvert.DeserializeObject<ProjectSettings>(File.ReadAllText(settingsFile));
+            userSettings = JsonConvert.DeserializeObject<ProjectUserSettings>(File.ReadAllText(UserSettingsPath));
             ReadAssets();
         }
 
@@ -86,6 +91,7 @@ namespace Necrofy
         
         public void WriteSettings() {
             File.WriteAllText(SettingsPath, JsonConvert.SerializeObject(settings, Formatting.Indented));
+            File.WriteAllText(UserSettingsPath, JsonConvert.SerializeObject(userSettings, Formatting.Indented));
         }
 
         public string GetRelativePath(string filename) {

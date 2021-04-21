@@ -342,7 +342,7 @@ namespace Necrofy
                 }
                 try {
                     ProjectBrowser.SaveFolderStates();
-                    project.settings.OpenFiles = openEditors.Select(e => e.AssetInfo?.GetFilename("")).Where(e => e != null).ToList();
+                    project.userSettings.OpenFiles = openEditors.Select(e => e.AssetInfo?.GetFilename("").Replace(Path.DirectorySeparatorChar, '/')).Where(e => e != null).ToList();
                     project.WriteSettings();
                 } catch (Exception) { }
             }
@@ -401,9 +401,9 @@ namespace Necrofy
 
             ProjectBrowser.OpenProject(project);
 
-            if (project.settings.OpenFiles != null) {
-                foreach (string filename in project.settings.OpenFiles) {
-                    Asset.NameInfo info = Asset.GetInfo(project, filename);
+            if (project.userSettings.OpenFiles != null) {
+                foreach (string filename in project.userSettings.OpenFiles) {
+                    Asset.NameInfo info = Asset.GetInfo(project, filename.Replace('/', Path.DirectorySeparatorChar));
                     if (info != null) {
                         try {
                             OpenAsset(info);
