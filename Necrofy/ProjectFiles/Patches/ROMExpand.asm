@@ -473,6 +473,14 @@ RTS
 
 warnpc $82C2C6
 
+; Set win and end of game levels
+org $8084DE
+CMP.w #!end_game_level
+org $8084E3
+CMP.w #!win_level
+org $9F8000
+dw !end_game_level+1
+
 ; Modify secret bonus code to load from level data instead of a fixed table
 
 org $82D0E0

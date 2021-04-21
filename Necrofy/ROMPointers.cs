@@ -31,6 +31,8 @@ namespace Necrofy
         public const int Level0Password1 = 0x1301c;
         /// <summary>Pointer to the last two characters in the level 0 password</summary>
         public const int Level0Password2 = 0x13024;
+        /// <summary>Pointer to the level after which the winner screen will be shown</summary>
+        public const int WinLevel = 0x4e4;
 
         // NOTE: in these functions I am using "address" to refer to the lower 16 bits of the full 24 bit LoROM address.
 

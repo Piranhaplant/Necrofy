@@ -13,12 +13,16 @@ namespace Necrofy
         public int MajorVersion { get; set; }
         /// <summary>The minor version of the project. Different versions here are still compatible with older versions of the program</summary>
         public int MinorVersion { get; set; }
+        /// <summary>The level after which the winner screen will be shown</summary>
+        public int WinLevel { get; set; }
+        /// <summary>The level after which the game will end and the player will be sent back to the main menu loop</summary>
+        public int EndGameLevel { get; set; }
+        /// <summary>List of the built-in patches that will be applied on build</summary>
+        public List<Patch> EnabledPatches { get; set; } = new List<Patch>();
         /// <summary>State of the folders in the project browser</summary>
         public List<FolderState> FolderStates { get; set; }
         /// <summary>List of asset files that are currently opened for editing</summary>
         public List<string> OpenFiles { get; set; }
-        /// <summary>List of the built-in patches that will be applied on build</summary>
-        public List<Patch> EnabledPatches { get; set; } = new List<Patch>();
 
         private ProjectSettings() { }
 

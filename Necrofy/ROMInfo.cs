@@ -19,6 +19,10 @@ namespace Necrofy
         public readonly Freespace Freespace;
         /// <summary>Indicates whether or not the ROM was built with Necrofy</summary>
         public bool necrofyROM { get; private set; }
+        /// <summary>The level after which the winner screen will be shown</summary>
+        public int WinLevel { get; private set; }
+        /// <summary>The level after which the game will end and the player will be sent back to the main menu loop</summary>
+        public int EndGameLevel { get; private set; }
         /// <summary>Definitions that will be available to patches</summary>
         public readonly Dictionary<string, string> exportedDefines = new Dictionary<string, string>();
 
@@ -26,14 +30,18 @@ namespace Necrofy
         /// <param name="s">A stream to a ROM file</param>
         public ROMInfo(NStream s) {
             Freespace = new Freespace((int)s.Length);
+
+            s.Seek(ROMPointers.WinLevel);
+            WinLevel = s.ReadInt16();
             
             s.Seek(ROMPointers.LevelPointers);
             int levelCount = s.ReadInt16();
+            EndGameLevel = levelCount - 1;
             necrofyROM = s.PeekPointer() > 0;
             
             Asset.AddAllDefaults(s, this);
             
-            for (int i = 0; i <= levelCount; i++) {
+            for (int i = 0; i < levelCount; i++) {
                 Level level;
                 if (necrofyROM) {
                     s.GoToPointerPush();

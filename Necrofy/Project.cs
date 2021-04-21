@@ -54,9 +54,13 @@ namespace Necrofy
             }
 
             s.Close();
+
             settingsFilename = defaultProjectFilename;
             settings = ProjectSettings.CreateNew();
+            settings.WinLevel = info.WinLevel;
+            settings.EndGameLevel = info.EndGameLevel;
             WriteSettings();
+
             ReadAssets();
         }
 
@@ -81,7 +85,7 @@ namespace Necrofy
         }
         
         public void WriteSettings() {
-            File.WriteAllText(SettingsPath, JsonConvert.SerializeObject(settings));
+            File.WriteAllText(SettingsPath, JsonConvert.SerializeObject(settings, Formatting.Indented));
         }
 
         public string GetRelativePath(string filename) {
@@ -145,6 +149,9 @@ namespace Necrofy
 
                     info.Freespace.Fill(s, 0xFF);
                 }
+
+                info.exportedDefines["win_level"] = settings.WinLevel.ToString();
+                info.exportedDefines["end_game_level"] = settings.EndGameLevel.ToString();
 
                 foreach (ProjectSettings.Patch patch in settings.EnabledPatches) {
                     ApplyInternalPatch(outputROM, patch.Name, results, info.exportedDefines);

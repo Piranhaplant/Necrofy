@@ -27,18 +27,27 @@
         private void InitializeComponent() {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.patchesTab = new System.Windows.Forms.TabPage();
-            this.patchesList = new System.Windows.Forms.CheckedListBox();
             this.patchDescriptionText = new System.Windows.Forms.TextBox();
+            this.patchesList = new System.Windows.Forms.CheckedListBox();
             this.buttonPanel = new System.Windows.Forms.Panel();
-            this.cancelButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.Button();
+            this.generalTab = new System.Windows.Forms.TabPage();
+            this.winLevelLabel = new System.Windows.Forms.Label();
+            this.winLevel = new System.Windows.Forms.NumericUpDown();
+            this.endGameLevel = new System.Windows.Forms.NumericUpDown();
+            this.endGameLevelLabel = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.patchesTab.SuspendLayout();
             this.buttonPanel.SuspendLayout();
+            this.generalTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.winLevel)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.endGameLevel)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
             // 
+            this.tabControl1.Controls.Add(this.generalTab);
             this.tabControl1.Controls.Add(this.patchesTab);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
@@ -59,16 +68,6 @@
             this.patchesTab.Text = "Patches";
             this.patchesTab.UseVisualStyleBackColor = true;
             // 
-            // patchesList
-            // 
-            this.patchesList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.patchesList.FormattingEnabled = true;
-            this.patchesList.Location = new System.Drawing.Point(3, 3);
-            this.patchesList.Name = "patchesList";
-            this.patchesList.Size = new System.Drawing.Size(506, 226);
-            this.patchesList.TabIndex = 1;
-            this.patchesList.SelectedIndexChanged += new System.EventHandler(this.patchesList_SelectedIndexChanged);
-            // 
             // patchDescriptionText
             // 
             this.patchDescriptionText.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -79,6 +78,16 @@
             this.patchDescriptionText.Size = new System.Drawing.Size(506, 93);
             this.patchDescriptionText.TabIndex = 2;
             // 
+            // patchesList
+            // 
+            this.patchesList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.patchesList.FormattingEnabled = true;
+            this.patchesList.Location = new System.Drawing.Point(3, 3);
+            this.patchesList.Name = "patchesList";
+            this.patchesList.Size = new System.Drawing.Size(506, 226);
+            this.patchesList.TabIndex = 1;
+            this.patchesList.SelectedIndexChanged += new System.EventHandler(this.patchesList_SelectedIndexChanged);
+            // 
             // buttonPanel
             // 
             this.buttonPanel.Controls.Add(this.okButton);
@@ -88,6 +97,16 @@
             this.buttonPanel.Name = "buttonPanel";
             this.buttonPanel.Size = new System.Drawing.Size(520, 44);
             this.buttonPanel.TabIndex = 1;
+            // 
+            // okButton
+            // 
+            this.okButton.Location = new System.Drawing.Point(352, 9);
+            this.okButton.Name = "okButton";
+            this.okButton.Size = new System.Drawing.Size(75, 23);
+            this.okButton.TabIndex = 1;
+            this.okButton.Text = "OK";
+            this.okButton.UseVisualStyleBackColor = true;
+            this.okButton.Click += new System.EventHandler(this.okButton_Click);
             // 
             // cancelButton
             // 
@@ -101,15 +120,61 @@
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
-            // okButton
+            // generalTab
             // 
-            this.okButton.Location = new System.Drawing.Point(352, 9);
-            this.okButton.Name = "okButton";
-            this.okButton.Size = new System.Drawing.Size(75, 23);
-            this.okButton.TabIndex = 1;
-            this.okButton.Text = "OK";
-            this.okButton.UseVisualStyleBackColor = true;
-            this.okButton.Click += new System.EventHandler(this.okButton_Click);
+            this.generalTab.Controls.Add(this.endGameLevel);
+            this.generalTab.Controls.Add(this.endGameLevelLabel);
+            this.generalTab.Controls.Add(this.winLevel);
+            this.generalTab.Controls.Add(this.winLevelLabel);
+            this.generalTab.Location = new System.Drawing.Point(4, 22);
+            this.generalTab.Name = "generalTab";
+            this.generalTab.Padding = new System.Windows.Forms.Padding(3);
+            this.generalTab.Size = new System.Drawing.Size(512, 232);
+            this.generalTab.TabIndex = 1;
+            this.generalTab.Text = "General";
+            this.generalTab.UseVisualStyleBackColor = true;
+            // 
+            // winLevelLabel
+            // 
+            this.winLevelLabel.AutoSize = true;
+            this.winLevelLabel.Location = new System.Drawing.Point(19, 19);
+            this.winLevelLabel.Name = "winLevelLabel";
+            this.winLevelLabel.Size = new System.Drawing.Size(140, 13);
+            this.winLevelLabel.TabIndex = 0;
+            this.winLevelLabel.Text = "Show win screen after level:";
+            // 
+            // winLevel
+            // 
+            this.winLevel.Location = new System.Drawing.Point(165, 17);
+            this.winLevel.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.winLevel.Name = "winLevel";
+            this.winLevel.Size = new System.Drawing.Size(66, 20);
+            this.winLevel.TabIndex = 1;
+            // 
+            // endGameLevel
+            // 
+            this.endGameLevel.Location = new System.Drawing.Point(165, 43);
+            this.endGameLevel.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.endGameLevel.Name = "endGameLevel";
+            this.endGameLevel.Size = new System.Drawing.Size(66, 20);
+            this.endGameLevel.TabIndex = 3;
+            // 
+            // endGameLevelLabel
+            // 
+            this.endGameLevelLabel.AutoSize = true;
+            this.endGameLevelLabel.Location = new System.Drawing.Point(19, 45);
+            this.endGameLevelLabel.Name = "endGameLevelLabel";
+            this.endGameLevelLabel.Size = new System.Drawing.Size(107, 13);
+            this.endGameLevelLabel.TabIndex = 2;
+            this.endGameLevelLabel.Text = "End game after level:";
             // 
             // ProjectSettingsDialog
             // 
@@ -129,6 +194,10 @@
             this.patchesTab.ResumeLayout(false);
             this.patchesTab.PerformLayout();
             this.buttonPanel.ResumeLayout(false);
+            this.generalTab.ResumeLayout(false);
+            this.generalTab.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.winLevel)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.endGameLevel)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -142,5 +211,10 @@
         private System.Windows.Forms.Panel buttonPanel;
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.Button cancelButton;
+        private System.Windows.Forms.TabPage generalTab;
+        private System.Windows.Forms.NumericUpDown endGameLevel;
+        private System.Windows.Forms.Label endGameLevelLabel;
+        private System.Windows.Forms.NumericUpDown winLevel;
+        private System.Windows.Forms.Label winLevelLabel;
     }
 }

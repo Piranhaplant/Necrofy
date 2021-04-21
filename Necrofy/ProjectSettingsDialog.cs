@@ -26,6 +26,9 @@ namespace Necrofy
             InitializeComponent();
             this.settings = settings;
 
+            winLevel.Value = settings.WinLevel;
+            endGameLevel.Value = settings.EndGameLevel;
+
             foreach (string path in Directory.GetFiles(Project.internalPatchesPath)) {
                 string fileName = Path.GetFileName(path);
                 ProjectSettings.Patch existingPatch = settings.EnabledPatches.FirstOrDefault(p => p.Name == fileName);
@@ -68,6 +71,9 @@ namespace Necrofy
         }
 
         private void okButton_Click(object sender, EventArgs e) {
+            settings.WinLevel = (int)winLevel.Value;
+            settings.EndGameLevel = (int)endGameLevel.Value;
+
             settings.EnabledPatches = new List<ProjectSettings.Patch>(hiddenEnabledPatches);
             for (int i = 0; i < patchesList.Items.Count; i++) {
                 if (patchesList.GetItemChecked(i)) {
