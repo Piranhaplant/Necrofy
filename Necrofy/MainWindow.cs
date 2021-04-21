@@ -332,6 +332,12 @@ namespace Necrofy
 
         private bool CloseProject(bool closeEditors) {
             if (project != null) {
+                try {
+                    ProjectBrowser.SaveFolderStates();
+                    project.userSettings.OpenFiles = openEditors.Select(e => e.AssetInfo?.GetFilename("").Replace(Path.DirectorySeparatorChar, '/')).Where(e => e != null).ToList();
+                    project.WriteSettings();
+                } catch (Exception) { }
+
                 if (closeEditors) {
                     foreach (EditorWindow editor in new List<EditorWindow>(openEditors)) {
                         editor.Close();
@@ -340,11 +346,6 @@ namespace Necrofy
                         }
                     }
                 }
-                try {
-                    ProjectBrowser.SaveFolderStates();
-                    project.userSettings.OpenFiles = openEditors.Select(e => e.AssetInfo?.GetFilename("").Replace(Path.DirectorySeparatorChar, '/')).Where(e => e != null).ToList();
-                    project.WriteSettings();
-                } catch (Exception) { }
             }
             return false;
         }
