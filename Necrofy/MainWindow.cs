@@ -84,6 +84,10 @@ namespace Necrofy
             projectMenuItems = new List<ToolStripMenuItem>() { projectBuildProject, projectRunProject, projectSettings };
             HideAllEditorToolStripItems();
             UpdateStatusText();
+
+            if (Environment.GetCommandLineArgs().Length == 2) {
+                OpenProject(Environment.GetCommandLineArgs()[1]);
+            }
         }
         
         private void MainWindow_FormClosed(object sender, FormClosedEventArgs e) {
