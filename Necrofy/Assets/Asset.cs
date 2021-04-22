@@ -191,6 +191,9 @@ namespace Necrofy
             /// <summary>Gets the components of the name that will be used in the filename of the asset</summary>
             protected abstract PathParts GetPathParts();
 
+            /// <summary>Gets whether the asset has an editor for it</summary>
+            public virtual bool Editable => false;
+
             /// <summary>Gets the component that will be used to edit the asset</summary>
             /// <param name="project">The project</param>
             /// <returns>The editor, or null if there is none</returns>

@@ -41,7 +41,7 @@ namespace Necrofy
             
             Asset.AddAllDefaults(s, this);
             
-            for (int i = 0; i < levelCount; i++) {
+            for (int i = 0; i <= levelCount; i++) {
                 Level level;
                 if (necrofyROM) {
                     s.GoToPointerPush();

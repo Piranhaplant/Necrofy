@@ -87,6 +87,7 @@ namespace Necrofy
                 return new PathParts(folder, FileName, Extension, null, false);
             }
 
+            public override bool Editable => true;
             public override EditorWindow GetEditor(Project project) {
                 return new SpriteEditor(new LoadedSprites(project, folder));
             }

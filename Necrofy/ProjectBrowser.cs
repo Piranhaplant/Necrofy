@@ -168,12 +168,28 @@ namespace Necrofy
             e.Node.SelectedImageIndex = FolderImageIndex;
         }
 
+        private void tree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e) {
+            tree.SelectedNode = e.Node;
+            if (e.Button == MouseButtons.Right && e.Node.Tag is AssetTree.AssetEntry entry) {
+                contextOpen.Enabled = entry.Asset.Editable;
+                contextMenu.Show(Cursor.Position);
+            }
+        }
+
         private void tree_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e) {
             // Fix bug where double clicking a folder can cause this event to happen on a child node
             if (!e.Node.IsSelected) {
                 return;
             }
-            if (e.Node.Tag is AssetTree.AssetEntry entry) {
+            OpenNode(e.Node);
+        }
+
+        private void contextOpen_Click(object sender, EventArgs e) {
+            OpenNode(tree.SelectedNode);
+        }
+
+        private void OpenNode(TreeNode node) {
+            if (node.Tag is AssetTree.AssetEntry entry) {
                 try {
                     mainWindow.OpenAsset(entry.Asset);
                 } catch (Exception ex) {

@@ -120,6 +120,7 @@ namespace Necrofy
                 return new PathParts(Folder, levelNum.ToString(), Extension, null, false);
             }
 
+            public override bool Editable => true;
             public override EditorWindow GetEditor(Project project) {
                 return new LevelEditor(new LoadedLevel(project, levelNum));
             }

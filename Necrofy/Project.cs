@@ -17,7 +17,7 @@ namespace Necrofy
         public const string runFromLevelFilename = "runFromLevel.sfc";
         public static readonly string internalProjectFilesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ProjectFiles");
         public static readonly string internalPatchesPath = Path.Combine(internalProjectFilesPath, "Patches");
-        private static readonly HashSet<string> ignoredFileExtensions = new HashSet<string>() { ".sfc", ".nfyz", ".nfyp", ".asm" };
+        private static readonly HashSet<string> ignoredFileExtensions = new HashSet<string>() { ".sfc", ".nfyz", ".nfyp", ".asm", ".user" };
 
         public const string ROMExpandPatchName = "ROMExpand.asm";
         public const string OtherExpandPatchName = "OtherExpand.asm";
@@ -229,7 +229,6 @@ namespace Necrofy
         }
 
         private static void ApplyPatch(string rom, string patch, BuildResults results, Dictionary<string, string> defines = null) {
-            // TODO: use asar dll
             string args = "";
             if (defines != null) {
                 foreach (KeyValuePair<string, string> define in defines) {
@@ -252,7 +251,7 @@ namespace Necrofy
                     results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, patch, p.StandardError.ReadToEnd()));
                 }
             } catch (Exception ex) {
-                results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, "", ex.Message, ex.StackTrace));
+                results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, patch, ex.Message, ex.StackTrace));
             }
         }
     }
