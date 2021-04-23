@@ -77,7 +77,11 @@ namespace Necrofy
             path = FixPath(Path.GetDirectoryName(settingsFile));
             settingsFilename = Path.GetFileName(settingsFile);
             settings = JsonConvert.DeserializeObject<ProjectSettings>(File.ReadAllText(settingsFile));
-            userSettings = JsonConvert.DeserializeObject<ProjectUserSettings>(File.ReadAllText(UserSettingsPath));
+            if (File.Exists(UserSettingsPath)) {
+                userSettings = JsonConvert.DeserializeObject<ProjectUserSettings>(File.ReadAllText(UserSettingsPath));
+            } else {
+                userSettings = new ProjectUserSettings();
+            }
             ReadAssets();
         }
 
