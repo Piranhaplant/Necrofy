@@ -87,6 +87,7 @@ namespace Necrofy
                 return new PathParts(Folder, Filename, Extension, null, false);
             }
 
+            public override bool Editable => true;
             public override EditorWindow GetEditor(Project project) {
                 return new PasswordEditor(PasswordsAsset.FromProject(project));
             }

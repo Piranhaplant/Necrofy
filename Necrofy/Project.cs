@@ -12,6 +12,7 @@ namespace Necrofy
     class Project
     {
         public const string defaultProjectFilename = "project.nfyp";
+        public const string buildDirectoryName = "build";
         public const string baseROMFilename = "base.sfc";
         public const string buildFilename = "build.sfc";
         public const string runFromLevelFilename = "runFromLevel.sfc";
@@ -27,6 +28,8 @@ namespace Necrofy
         public readonly string settingsFilename;
         public string SettingsPath => Path.Combine(path, settingsFilename);
         public string UserSettingsPath => SettingsPath + ".user";
+        public string BuildDirectory => Path.Combine(path, buildDirectoryName);
+
         public readonly ProjectSettings settings;
         public readonly ProjectUserSettings userSettings;
 
@@ -107,7 +110,10 @@ namespace Necrofy
         public BuildResults Build() {
             BuildResults results = new BuildResults();
             try {
-                string outputROM = Path.Combine(path, buildFilename);
+                if (!Directory.Exists(BuildDirectory)) {
+                    Directory.CreateDirectory(BuildDirectory);
+                }
+                string outputROM = Path.Combine(BuildDirectory, buildFilename);
                 File.Copy(Path.Combine(path, baseROMFilename), outputROM, true);
 
                 foreach (string filename in Directory.GetFiles(path, "*", SearchOption.AllDirectories)) {
@@ -172,7 +178,7 @@ namespace Necrofy
             // TODO: Don't build if not necessary
             BuildResults results = Build();
             if (results.Success) {
-                Process.Start(Path.Combine(path, buildFilename));
+                Process.Start(Path.Combine(BuildDirectory, buildFilename));
             }
             return results;
         }
@@ -181,9 +187,9 @@ namespace Necrofy
             // TODO: Don't build if not necessary
             BuildResults results = Build();
             if (results.Success) {
-                string runROM = Path.Combine(path, runFromLevelFilename);
+                string runROM = Path.Combine(BuildDirectory, runFromLevelFilename);
                 try {
-                    File.Copy(Path.Combine(path, buildFilename), runROM, true);
+                    File.Copy(Path.Combine(BuildDirectory, buildFilename), runROM, true);
 
                     Dictionary<string, string> defines = new Dictionary<string, string> {
                         ["LEVEL"] = level.ToString(),

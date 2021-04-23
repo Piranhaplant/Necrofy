@@ -15,7 +15,7 @@ namespace Necrofy
 
         public PasswordData(NStream s, ROMInfo romInfo) {
             int dataStart;
-            if (romInfo.necrofyROM) {
+            if (romInfo.NecrofyROM) {
                 int pointer = s.ReadPointer();
                 int levelCount = (s.ReadInt16() - 5) / 4;
                 s.Seek(pointer);

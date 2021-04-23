@@ -60,8 +60,6 @@ namespace Necrofy
                 project.Assets.AssetChanged += AssetChanged;
                 project.Assets.AssetAdded += AssetAdded;
                 project.Assets.AssetRemoved += AssetRemoved;
-                project.Assets.FolderAdded += FolderAdded;
-                project.Assets.FolderRemoved += FolderRemoved;
             }
         }
 
@@ -83,6 +81,9 @@ namespace Necrofy
             child.Tag = subFolder;
 
             PopulateTree(child.Nodes, subFolder);
+            if (child.Nodes.Count == 0) {
+                child.Remove();
+            }
         }
 
         private void PopulateAsset(TreeNodeCollection parent, AssetTree.AssetEntry entry) {
@@ -99,31 +100,39 @@ namespace Necrofy
                 node.Name = node.Text;
             });
         }
-
+        
         private void AssetAdded(object sender, AssetEventArgs e) {
             Invoke((MethodInvoker)delegate {
-                TreeNode parent = tree.Nodes.FindNodeByTag(e.Asset.Parent);
-                PopulateAsset(parent.Nodes, e.Asset);
+                TreeNode parent = null;
+                AssetTree.Node node = e.Asset;
+                while (node.Parent.Parent != null) {
+                    parent = tree.Nodes.FindNodeByTag(node.Parent);
+                    if (parent != null) {
+                        break;
+                    }
+                    node = node.Parent;
+                }
+                TreeNodeCollection collection = parent == null ? tree.Nodes : parent.Nodes;
+                if (node is AssetTree.Folder folder) {
+                    PopulateFolder(collection, folder);
+                } else if (node is AssetTree.AssetEntry asset) {
+                    PopulateAsset(collection, asset);
+                }
             });
         }
 
         private void AssetRemoved(object sender, AssetEventArgs e) {
             Invoke((MethodInvoker)delegate {
-                tree.Nodes.FindNodeByTag(e.Asset).Remove();
+                RemoveNode(tree.Nodes.FindNodeByTag(e.Asset));
             });
         }
-
-        private void FolderAdded(object sender, FolderEventArgs e) {
-            Invoke((MethodInvoker)delegate {
-                TreeNode parent = tree.Nodes.FindNodeByTag(e.Folder.Parent);
-                PopulateFolder(parent.Nodes, e.Folder);
-            });
-        }
-
-        private void FolderRemoved(object sender, FolderEventArgs e) {
-            Invoke((MethodInvoker)delegate {
-                tree.Nodes.FindNodeByTag(e.Folder).Remove();
-            });
+        
+        private void RemoveNode(TreeNode node) {
+            TreeNode parent = node.Parent;
+            node.Remove();
+            if (parent != null && parent.Nodes.Count == 0) {
+                RemoveNode(parent);
+            }
         }
 
         private void LoadFolderStates(TreeNodeCollection parent, List<ProjectUserSettings.FolderState> folderStates) {

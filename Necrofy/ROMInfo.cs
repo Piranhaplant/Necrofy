@@ -18,7 +18,7 @@ namespace Necrofy
         /// <summary>The freespace that was found in the ROM</summary>
         public readonly Freespace Freespace;
         /// <summary>Indicates whether or not the ROM was built with Necrofy</summary>
-        public bool necrofyROM { get; private set; }
+        public bool NecrofyROM { get; private set; }
         /// <summary>The level after which the winner screen will be shown</summary>
         public int WinLevel { get; private set; }
         /// <summary>The level after which the game will end and the player will be sent back to the main menu loop</summary>
@@ -37,13 +37,13 @@ namespace Necrofy
             s.Seek(ROMPointers.LevelPointers);
             int levelCount = s.ReadInt16();
             EndGameLevel = levelCount - 1;
-            necrofyROM = s.PeekPointer() > 0;
+            NecrofyROM = s.PeekPointer() > 0;
             
             Asset.AddAllDefaults(s, this);
             
             for (int i = 0; i <= levelCount; i++) {
                 Level level;
-                if (necrofyROM) {
+                if (NecrofyROM) {
                     s.GoToPointerPush();
                     level = new Level(this, s);
                 } else {
@@ -65,7 +65,7 @@ namespace Necrofy
                 }
             }
 
-            Freespace.AddSize(ROMPointers.LevelPointers + 2, (levelCount + 1) * (necrofyROM ? 4 : 2));
+            Freespace.AddSize(ROMPointers.LevelPointers + 2, (levelCount + 1) * (NecrofyROM ? 4 : 2));
         }
 
         public void AddAssetName(AssetCategory category, int pointer, string name) {

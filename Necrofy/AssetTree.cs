@@ -19,8 +19,6 @@ namespace Necrofy
         public event EventHandler<AssetEventArgs> AssetChanged;
         public event EventHandler<AssetEventArgs> AssetAdded;
         public event EventHandler<AssetEventArgs> AssetRemoved;
-        public event EventHandler<FolderEventArgs> FolderAdded;
-        public event EventHandler<FolderEventArgs> FolderRemoved;
 
         public AssetTree(Project project) {
             this.project = project;
@@ -81,7 +79,7 @@ namespace Necrofy
                 if (Directory.Exists(e.FullPath)) {
                     Folder folder = ReadAssets(e.FullPath, parentFolder);
                     parentFolder.Folders.Add(folder);
-                    FolderAdded?.Invoke(this, new FolderEventArgs(folder));
+                    FolderAdded(folder);
                 } else {
                     AssetEntry asset = ReadAsset(e.FullPath, parentFolder);
                     if (asset != null) {
@@ -91,12 +89,30 @@ namespace Necrofy
             }
         }
 
+        private void FolderAdded(Folder folder) {
+            foreach (Folder subFolder in folder.Folders) {
+                FolderAdded(subFolder);
+            }
+            foreach (AssetEntry asset in folder.Assets) {
+                AssetAdded?.Invoke(this, new AssetEventArgs(asset));
+            }
+        }
+
         private void File_Deleted(object sender, FileSystemEventArgs e) {
             if (Root.FindFolder(e.Name, out Folder folder)) {
                 folder.Parent.Folders.Remove(folder);
-                FolderRemoved?.Invoke(this, new FolderEventArgs(folder));
+                FolderRemoved(folder);
             } else if (Root.FindAsset(e.Name, out AssetEntry asset)) {
                 asset.Parent.Assets.Remove(asset);
+                AssetRemoved?.Invoke(this, new AssetEventArgs(asset));
+            }
+        }
+
+        private void FolderRemoved(Folder folder) {
+            foreach (Folder subFolder in folder.Folders) {
+                FolderRemoved(subFolder);
+            }
+            foreach (AssetEntry asset in folder.Assets) {
                 AssetRemoved?.Invoke(this, new AssetEventArgs(asset));
             }
         }
@@ -106,24 +122,32 @@ namespace Necrofy
             File_Created(sender, e);
         }
 
-        public class Folder
+        public class Node
         {
             public string Name { get; private set; }
-            public List<Folder> Folders { get; private set; } = new List<Folder>();
-            public List<AssetEntry> Assets { get; private set; } = new List<AssetEntry>();
             public Folder Parent { get; private set; }
 
-            public Folder(string name, Folder parent) {
+            public Node(string name, Folder parent) {
                 Name = name;
                 Parent = parent;
             }
+        }
+
+        public class Folder : Node
+        {
+            public List<Folder> Folders { get; private set; } = new List<Folder>();
+            public List<AssetEntry> Assets { get; private set; } = new List<AssetEntry>();
+
+            public Folder(string name, Folder parent) : base(name, parent) { }
 
             public bool FindFolder(string path, out Folder folder) {
                 folder = this;
-                foreach (string part in path.Split(Path.DirectorySeparatorChar)) {
-                    folder = folder.Folders.Find(f => f.Name == part);
-                    if (folder == null) {
-                        return false;
+                if (path.Length > 0) {
+                    foreach (string part in path.Split(Path.DirectorySeparatorChar)) {
+                        folder = folder.Folders.Find(f => f.Name == part);
+                        if (folder == null) {
+                            return false;
+                        }
                     }
                 }
                 return true;
@@ -133,6 +157,8 @@ namespace Necrofy
                 asset = null;
                 if (FindFolder(Path.GetDirectoryName(path), out Folder folder)) {
                     asset = folder.Assets.Find(a => a.Name == Path.GetFileName(path));
+                } else {
+                    asset = Assets.Find(a => a.Name == path);
                 }
                 return asset != null;
             }
@@ -149,16 +175,12 @@ namespace Necrofy
             }
         }
 
-        public class AssetEntry
+        public class AssetEntry : Node
         {
             public Asset.NameInfo Asset { get; private set; }
-            public string Name { get; private set; }
-            public Folder Parent { get; private set; }
 
-            public AssetEntry(Asset.NameInfo asset, string name, Folder parent) {
+            public AssetEntry(Asset.NameInfo asset, string name, Folder parent) : base(name, parent) {
                 Asset = asset;
-                Name = name;
-                Parent = parent;
             }
         }
     }
@@ -169,15 +191,6 @@ namespace Necrofy
 
         public AssetEventArgs(AssetTree.AssetEntry asset) {
             Asset = asset;
-        }
-    }
-
-    class FolderEventArgs : EventArgs
-    {
-        public AssetTree.Folder Folder { get; private set; }
-
-        public FolderEventArgs(AssetTree.Folder folder) {
-            Folder = folder;
         }
     }
 }

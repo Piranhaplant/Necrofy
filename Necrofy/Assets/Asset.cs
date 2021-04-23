@@ -115,7 +115,7 @@ namespace Necrofy
         public static void AddAllDefaults(NStream romStream, ROMInfo romInfo) {
             foreach (Creator creator in creators) {
                 foreach (DefaultParams defaultParams in creator.GetDefaults()) {
-                    if (defaultParams.extractFromNecrofyROM || !romInfo.necrofyROM) {
+                    if (defaultParams.extractFromNecrofyROM || !romInfo.NecrofyROM) {
                         CreateAsset(romStream, romInfo, creator, defaultParams.nameInfo, defaultParams.pointer, defaultParams.size);
                     }
                 }

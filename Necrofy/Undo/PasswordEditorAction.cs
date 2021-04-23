@@ -23,6 +23,9 @@ namespace Necrofy
             this.columnIndex = columnIndex;
             this.oldValue = oldValue;
             this.newValue = newValue;
+            if (newValue == oldValue) {
+                cancel = true;
+            }
         }
 
         protected override void Redo() {
