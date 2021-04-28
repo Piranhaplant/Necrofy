@@ -81,6 +81,12 @@ namespace Necrofy
                 TilemapNameInfo tilemapNameInfo = (TilemapNameInfo)nameInfo;
                 trackFreespace = tilemapNameInfo.pointer == null;
                 if (tilemapNameInfo.compressed) {
+                    if (trackFreespace) {
+                        romStream.PushPosition();
+                        ZAMNCompress.AddToFreespace(romStream, romInfo.Freespace);
+                        romStream.PopPosition();
+                        trackFreespace = false;
+                    }
                     return new TilemapAsset(tilemapNameInfo, ZAMNCompress.Decompress(romStream));
                 } else {
                     return new TilemapAsset(tilemapNameInfo, romStream.ReadBytes((int)size));

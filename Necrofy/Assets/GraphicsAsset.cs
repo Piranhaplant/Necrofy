@@ -81,6 +81,12 @@ namespace Necrofy
                 GraphicsNameInfo graphicsNameInfo = (GraphicsNameInfo)nameInfo;
                 trackFreespace = graphicsNameInfo.pointer == null;
                 if (graphicsNameInfo.compressed) {
+                    if (trackFreespace) {
+                        romStream.PushPosition();
+                        ZAMNCompress.AddToFreespace(romStream, romInfo.Freespace);
+                        romStream.PopPosition();
+                        trackFreespace = false;
+                    }
                     return new GraphicsAsset(graphicsNameInfo, ZAMNCompress.Decompress(romStream));
                 } else {
                     return new GraphicsAsset(graphicsNameInfo, romStream.ReadBytes(size ?? 0x4000));

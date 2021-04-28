@@ -8,8 +8,6 @@ namespace Necrofy
 {
     class ZAMNCompress
     {
-        // TODO: read expanded compressed data
-
         /// <summary>Decompresses the data that the stream is positioned at</summary>
         /// <param name="s">The stream holding the compressed data</param>
         /// <returns>The decompressed data</returns>
@@ -20,7 +18,9 @@ namespace Necrofy
             for (int i = 0; i < dict.Length; i++) {
                 dict[i] = 0x20;
             }
-            int bytesLeft = s.ReadInt16();
+            int bytesLeft = 0;
+            bool moreData = false;
+            GetBytesRemaining(s, ref bytesLeft, ref moreData);
             int writeDictPos = 0xfee; // The dictionary starts at 0xfee for some reason
             int bitsLeft = 0;
             byte formatByte = 0; // The byte that will specify how to read from the file
@@ -29,17 +29,17 @@ namespace Necrofy
             while (true) {
                 if (bitsLeft == 0) { // When all the bits are used
                     bitsLeft = 8; // Reset to start from the beginning of the byte
-                    if (ReadNext(s, ref formatByte, ref bytesLeft)) break; // Get a new byte
+                    if (ReadNext(s, ref formatByte, ref bytesLeft, ref moreData)) break; // Get a new byte
                 }
                 bitsLeft--;
                 if ((formatByte & 1) == 1) { // If the current bit is a one
-                    if (ReadNext(s, ref temp, ref bytesLeft)) break; // Simply read a byte from the file
+                    if (ReadNext(s, ref temp, ref bytesLeft, ref moreData)) break; // Simply read a byte from the file
                     result.Add(temp); // Put it in the result
                     dict[writeDictPos] = temp; // And the dictionary
                     writeDictPos = (writeDictPos + 1) & 0xfff; // Increment the dictionary position, but not over 0xfff
                 } else { // If the current bit is zero
                     byte temp2 = 0;
-                    if (ReadNext(s, ref temp, ref bytesLeft) || ReadNext(s, ref temp2, ref bytesLeft)) break;
+                    if (ReadNext(s, ref temp, ref bytesLeft, ref moreData) || ReadNext(s, ref temp2, ref bytesLeft, ref moreData)) break;
                     int readDictPos = temp | ((temp2 & 0xf0) << 4); // These 3 nybbles specify the position to read from the dictionary
                     int byteCount = (temp2 & 0xf) + 3; // The last nybble is how many bytes to read, but we actually need 3 more bytes than that
                     // Transfer that many bytes from the dictionary to the result, also writing them in the dictionary
@@ -56,13 +56,30 @@ namespace Necrofy
             return result.ToArray();
         }
 
-        private static bool ReadNext(Stream s, ref byte result, ref int bytesLeft) {
-            if (bytesLeft == 0) return true;
+        private static bool ReadNext(Stream s, ref byte result, ref int bytesLeft, ref bool moreData) {
+            if (bytesLeft == 0) {
+                if (moreData) {
+                    s.GoToPointer();
+                    GetBytesRemaining(s, ref bytesLeft, ref moreData);
+                    return ReadNext(s, ref result, ref bytesLeft, ref moreData);
+                } else {
+                    return true;
+                }
+            }
             int b = s.ReadByte();
             if (b < 0) return true;
             bytesLeft--;
             result = (byte)b;
             return false;
+        }
+
+        private static void GetBytesRemaining(Stream s, ref int bytesleft, ref bool moreData) {
+            bytesleft = s.ReadInt16();
+            moreData = false;
+            if ((bytesleft & 0x8000) > 0) {
+                moreData = true;
+                bytesleft &= 0x7FFF;
+            }
         }
 
         /// <summary>Compresses the given data</summary>
@@ -155,9 +172,14 @@ namespace Necrofy
         /// <param name="s">The stream</param>
         /// <param name="freespace">The freespace</param>
         public static void AddToFreespace(Stream s, Freespace freespace) {
-            int size = s.ReadInt16() + 2; // 2 bytes for the size bytes themselves
-            s.Seek(-2, SeekOrigin.Current);
-            freespace.AddSize((int)s.Position, size);
+            int size = s.ReadInt16();
+            freespace.AddSize((int)(s.Position - 2), (size & 0x7FFF) + 2);
+            if ((size & 0x8000) > 0) {
+                s.Seek(size, SeekOrigin.Current);
+                freespace.AddSize((int)s.Position, 4);
+                s.GoToPointer();
+                AddToFreespace(s, freespace);
+            }
         }
 
         public static int Insert(Stream s, Freespace freespace, byte[] compressedData, int? pointer = null) {
@@ -169,7 +191,12 @@ namespace Necrofy
                 return newPointer;
             } else {
                 s.Seek((int)pointer);
+
                 int size = s.PeekInt16();
+                if ((size & 0x8000) > 0) {
+                    size = (size & 0x7FFF) + 4;
+                }
+
                 if (compressedData.Length <= size) {
                     s.WriteInt16((ushort)compressedData.Length);
                     s.Write(compressedData, 0, compressedData.Length);
