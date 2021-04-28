@@ -54,7 +54,7 @@ namespace Necrofy
         public int DrawChar(Graphics g, int x, int y, byte c, byte palette) {
             Bitmap image = GetImageForChar(c);
             if (image != null) {
-                SNESGraphics.DrawWithPlt(g, x, y, image, loadedPalette.colors, palette * 0x10, 0x20);
+                SNESGraphics.DrawWithPlt(g, x, y, image, loadedPalette.colors, palette * 0x10, loadedPalette.colors.Length);
                 return image.Width;
             }
             return 0;
