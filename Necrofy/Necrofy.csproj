@@ -158,16 +158,16 @@
     <Compile Include="LevelEditor\LevelSettings\TileAnimationRow.Designer.cs">
       <DependentUpon>TileAnimationRow.cs</DependentUpon>
     </Compile>
-    <Compile Include="LevelEditor\PaintbrushTool.cs" />
-    <Compile Include="LevelEditor\PencilSelectTool.cs" />
-    <Compile Include="LevelEditor\RectangleSelectTool.cs" />
-    <Compile Include="LevelEditor\ResizeLevelTool.cs" />
+    <Compile Include="LevelEditor\Tools\PaintbrushTool.cs" />
+    <Compile Include="LevelEditor\Tools\PencilSelectTool.cs" />
+    <Compile Include="LevelEditor\Tools\RectangleSelectTool.cs" />
+    <Compile Include="LevelEditor\Tools\ResizeLevelTool.cs" />
     <Compile Include="LevelEditor\SpriteClipboardContents.cs" />
-    <Compile Include="LevelEditor\SpriteTool.cs" />
+    <Compile Include="LevelEditor\Tools\SpriteTool.cs" />
     <Compile Include="LevelEditor\TileAnimator.cs" />
-    <Compile Include="LevelEditor\TileSelectTool.cs" />
-    <Compile Include="LevelEditor\TileSuggestionTool.cs" />
-    <Compile Include="LevelEditor\TileTool.cs" />
+    <Compile Include="LevelEditor\Tools\TileSelectTool.cs" />
+    <Compile Include="LevelEditor\Tools\TileSuggestionTool.cs" />
+    <Compile Include="LevelEditor\Tools\TileTool.cs" />
     <Compile Include="LevelEditor\TitleEditor\PageEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -183,28 +183,28 @@
     <Compile Include="LevelEditor\TitleEditor\TitleEditor.Designer.cs">
       <DependentUpon>TitleEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="LevelEditor\Tool.cs" />
+    <Compile Include="LevelEditor\Tools\Tool.cs" />
     <Compile Include="LevelEditor\LevelSettings\LevelSettingsDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="LevelEditor\LevelSettings\LevelSettingsDialog.Designer.cs">
       <DependentUpon>LevelSettingsDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="LoadedLevel\LoadedGraphics.cs" />
-    <Compile Include="LoadedLevel\LoadedLevelTitleCharacters.cs" />
-    <Compile Include="LoadedLevel\LoadedPalette.cs" />
-    <Compile Include="LoadedLevel\LoadedTilemap.cs" />
-    <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedItem.cs" />
-    <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedLevelObject.cs" />
-    <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedMonster.cs" />
-    <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedOneShotMonster.cs" />
-    <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedPlayerStartPosition.cs" />
-    <Compile Include="LoadedLevel\WrappedLevelObjects\WrappedPositionLevelMonster.cs" />
+    <Compile Include="LevelEditor\LoadedLevel\LoadedGraphics.cs" />
+    <Compile Include="LevelEditor\LoadedLevel\LoadedLevelTitleCharacters.cs" />
+    <Compile Include="LevelEditor\LoadedLevel\LoadedPalette.cs" />
+    <Compile Include="LevelEditor\LoadedLevel\LoadedTilemap.cs" />
+    <Compile Include="LevelEditor\WrappedLevelObjects\WrappedItem.cs" />
+    <Compile Include="LevelEditor\WrappedLevelObjects\WrappedLevelObject.cs" />
+    <Compile Include="LevelEditor\WrappedLevelObjects\WrappedMonster.cs" />
+    <Compile Include="LevelEditor\WrappedLevelObjects\WrappedOneShotMonster.cs" />
+    <Compile Include="LevelEditor\WrappedLevelObjects\WrappedPlayerStartPosition.cs" />
+    <Compile Include="LevelEditor\WrappedLevelObjects\WrappedPositionLevelMonster.cs" />
     <Compile Include="LevelEditor\TitleEditor\WrappedTitleWord.cs" />
-    <Compile Include="LoadedLevel\LoadedSprites.cs" />
-    <Compile Include="LoadedLevel\WrappedSpriteTile.cs" />
-    <Compile Include="ObjectBrowser\LevelTitleObjectBrowserContents.cs" />
-    <Compile Include="ObjectBrowser\SpriteEditorObjectBrowserContents.cs" />
+    <Compile Include="LevelEditor\LoadedLevel\LoadedSprites.cs" />
+    <Compile Include="SpriteEditor\WrappedSpriteTile.cs" />
+    <Compile Include="LevelEditor\TitleEditor\LevelTitleObjectBrowserContents.cs" />
+    <Compile Include="SpriteEditor\SpriteEditorObjectBrowserContents.cs" />
     <Compile Include="PasswordData.cs" />
     <Compile Include="PasswordEditor\PasswordEditor.cs">
       <SubType>Form</SubType>
@@ -270,8 +270,8 @@
       <DependentUpon>ObjectBrowserForm.cs</DependentUpon>
     </Compile>
     <Compile Include="ObjectBrowser\ObjectBrowserObject.cs" />
-    <Compile Include="ObjectBrowser\SpriteObjectBrowserContents.cs" />
-    <Compile Include="ObjectBrowser\TilesetObjectBrowserContents.cs" />
+    <Compile Include="LevelEditor\SpriteObjectBrowserContents.cs" />
+    <Compile Include="LevelEditor\TilesetObjectBrowserContents.cs" />
     <Compile Include="PropertyBrowser.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -298,10 +298,10 @@
     <Compile Include="LevelEditor\LevelEditor.Designer.cs">
       <DependentUpon>LevelEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="LoadedLevel\LoadedLevelSprites.cs" />
-    <Compile Include="LoadedLevel\LoadedCollision.cs" />
-    <Compile Include="LoadedLevel\LoadedLevel.cs" />
-    <Compile Include="LoadedLevel\LoadedTilesetTilemap.cs" />
+    <Compile Include="LevelEditor\LoadedLevel\LoadedLevelSprites.cs" />
+    <Compile Include="LevelEditor\LoadedLevel\LoadedCollision.cs" />
+    <Compile Include="LevelEditor\LoadedLevel\LoadedLevel.cs" />
+    <Compile Include="LevelEditor\LoadedLevel\LoadedTilesetTilemap.cs" />
     <Compile Include="Level\Item.cs" />
     <Compile Include="LevelJsonConverter.cs" />
     <Compile Include="Level\Level.cs" />
@@ -346,13 +346,13 @@
     <Compile Include="SpriteDisplayList.cs" />
     <Compile Include="TilesetSuggestions.cs" />
     <Compile Include="TupleList.cs" />
-    <Compile Include="Undo\LevelEditorAction.cs" />
-    <Compile Include="Undo\LevelTitleAction.cs" />
-    <Compile Include="Undo\PasswordEditorAction.cs" />
-    <Compile Include="Undo\SpriteAction.cs" />
-    <Compile Include="Undo\SpriteEditorAction.cs" />
-    <Compile Include="Undo\TileAction.cs" />
-    <Compile Include="Undo\UndoManager.cs" />
+    <Compile Include="LevelEditor\LevelEditorAction.cs" />
+    <Compile Include="LevelEditor\TitleEditor\LevelTitleAction.cs" />
+    <Compile Include="PasswordEditor\PasswordEditorAction.cs" />
+    <Compile Include="LevelEditor\SpriteAction.cs" />
+    <Compile Include="SpriteEditor\SpriteEditorAction.cs" />
+    <Compile Include="LevelEditor\TileAction.cs" />
+    <Compile Include="UndoManager.cs" />
     <Compile Include="ZAMNCompress.cs" />
     <EmbeddedResource Include="BuildResultsWindow.resx">
       <DependentUpon>BuildResultsWindow.cs</DependentUpon>
