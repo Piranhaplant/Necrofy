@@ -58,6 +58,15 @@ namespace Necrofy
                 editor.NonTileSelectionChanged();
                 editor.spriteObjectBrowserContents.SetHighlightedCategories(selectedObjects.Select(o => o.Category));
                 PropertyBrowserObjects = selectedObjects.ToArray();
+
+                if (selectedObjects.Count > 0) {
+                    WrappedLevelObject firstObject = selectedObjects.First();
+                    if (selectedObjects.All(o => o.Category == firstObject.Category && o.Type == firstObject.Type)) {
+                        editor.spriteObjectBrowserContents.SetSelectedSprite(firstObject.Category, firstObject.Type);
+                    } else {
+                        editor.spriteObjectBrowserContents.SelectedIndex = -1;
+                    }
+                }
             }
         }
 
@@ -298,7 +307,7 @@ namespace Necrofy
         }
 
         private IEnumerable<UIExtras> GetAllUIExtras() {
-            if (editor.showRespawnAreas) {
+            if (editor.showRespawnAreas && editor.MonstersEnabled) {
                 foreach (WrappedMonster m in editor.level.GetAllObjects(items: false, victims: false, oneShotMonsters: false, monsters: true, bossMonsters: false, players: false)) {
                     yield return new UIExtras(m);
                 }

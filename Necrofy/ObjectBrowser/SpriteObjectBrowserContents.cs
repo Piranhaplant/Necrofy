@@ -42,6 +42,15 @@ namespace Necrofy
             }
         }
 
+        public void SetSelectedSprite(SpriteDisplay.Category category, int type) {
+            for (int i = 0; i < sprites.Count; i++) {
+                if (categoryForSprites[i] == category && sprites[i].Key.value == type) {
+                    SelectedIndex = i;
+                    break;
+                }
+            }
+        }
+
         private void UpdateSpriteList(bool scrollToTop = true) {
             SpriteDisplay.Key oldSelectedSprite = SelectedSprite;
             sprites.Clear();

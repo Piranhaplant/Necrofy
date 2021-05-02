@@ -149,6 +149,9 @@ namespace Necrofy
             foreach (WrappedLevelObject obj in base.objs) {
                 prevType.Add(obj.Type);
             }
+            if (prevType.All(type => type == newType)) {
+                cancel = true;
+            }
         }
 
         public ChangeSpriteTypeAction(IEnumerable<WrappedLevelObject> objs, int newType) : base(objs) {
