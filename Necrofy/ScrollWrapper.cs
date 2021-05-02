@@ -18,6 +18,10 @@ namespace Necrofy
 
         private readonly Dimension xDimension;
         private readonly Dimension yDimension;
+
+        private Point? hiddenCursorOriginalPosition = null;
+        public int HiddenCursorTotalMoveX { get; private set; }
+        public int HiddenCursorTotalMoveY { get; private set; }
         
         public bool ExpandingDrag { get; set; }
 
@@ -181,7 +185,7 @@ namespace Necrofy
             /// <returns>Whether the wheel event was used</returns>
             public bool MouseWheel(int delta) {
                 if (scrollBar.Enabled) {
-                    SetScrollBarValue(scrollBar.Value - 64 * Math.Sign(delta));
+                    SetScrollBarValue(scrollBar.Value - 61 * Math.Sign(delta));
                     return true;
                 }
                 return false;
@@ -226,6 +230,24 @@ namespace Necrofy
             return new Point(xDimension.GetViewCenter(), yDimension.GetViewCenter());
         }
 
+        public void EnabledHiddenCursor() {
+            if (hiddenCursorOriginalPosition == null) {
+                hiddenCursorOriginalPosition = Cursor.Position;
+                HiddenCursorTotalMoveX = 0;
+                HiddenCursorTotalMoveY = 0;
+                Cursor.Hide();
+                Cursor.Position = Screen.PrimaryScreen.Bounds.GetCenter();
+            }
+        }
+
+        public void DisableHiddenCursor() {
+            if (hiddenCursorOriginalPosition != null) {
+                Cursor.Position = (Point)hiddenCursorOriginalPosition;
+                Cursor.Show();
+                hiddenCursorOriginalPosition = null;
+            }
+        }
+
         private void Control_SizeChanged(object sender, EventArgs e) {
             xDimension.UpdateSize();
             yDimension.UpdateSize();
@@ -240,11 +262,18 @@ namespace Necrofy
         private CancellationTokenSource dragCancel = new CancellationTokenSource();
 
         void Control_MouseMove(object sender, MouseEventArgs e) {
-            bool scrollingDrag = false;
-            scrollingDrag |= xDimension.MouseMove(e.X, e.Button);
-            scrollingDrag |= yDimension.MouseMove(e.Y, e.Button);
-            if (scrollingDrag) {
-                DoScrollingDrag(dragCancel.Token);
+            if (hiddenCursorOriginalPosition == null) {
+                bool scrollingDrag = false;
+                scrollingDrag |= xDimension.MouseMove(e.X, e.Button);
+                scrollingDrag |= yDimension.MouseMove(e.Y, e.Button);
+                if (scrollingDrag) {
+                    DoScrollingDrag(dragCancel.Token);
+                }
+            } else {
+                Point center = Screen.PrimaryScreen.Bounds.GetCenter();
+                HiddenCursorTotalMoveX += Cursor.Position.X - center.X;
+                HiddenCursorTotalMoveY += Cursor.Position.Y - center.Y;
+                Cursor.Position = center;
             }
         }
 

@@ -11,12 +11,6 @@ namespace Necrofy
     {
         public const string ExtraProperty = "Extra";
 
-        private static readonly Font victimNumberFont = SystemFonts.DefaultFont;
-
-        private static readonly StringFormat victimNumberFormat = new StringFormat() {
-            Alignment = StringAlignment.Center
-        };
-
         public WrappedOneShotMonster(OneShotMonster monster, LoadedLevelSprites spriteGraphics) : base(monster, spriteGraphics) { }
 
         public override SpriteDisplay.Category Category {
@@ -68,11 +62,7 @@ namespace Necrofy
 
         public override void RenderExtras(Graphics g, bool showRespawnAreas, float zoom) {
             if (wrappedObject.victimNumber > 0) {
-                Rectangle bounds = Bounds;
-                int x = bounds.X + bounds.Width / 2;
-                int y = bounds.Bottom + 4;
-                g.DrawString(wrappedObject.victimNumber.ToString(), victimNumberFont, Brushes.Black, x + 1, y + 1, victimNumberFormat);
-                g.DrawString(wrappedObject.victimNumber.ToString(), victimNumberFont, Brushes.White, x, y, victimNumberFormat);
+                LevelEditor.DrawTextUnder(g, Bounds, wrappedObject.victimNumber.ToString());
             }
         }
 

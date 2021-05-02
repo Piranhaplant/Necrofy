@@ -301,6 +301,7 @@ namespace Necrofy
             showScreenSizeGuide = mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewScreenSizeGuide).Checked;
 
             tilesetObjectBrowserContents.SolidOnly = solidTilesOnly;
+            GenerateMouseMove(); // Since sprite tool has UI elements that change based on this
         }
 
         private void SaveAsImage(string filename) {
@@ -387,6 +388,18 @@ namespace Necrofy
                     }
                 }
             }
+        }
+
+        private static readonly Font underTextFont = SystemFonts.DefaultFont;
+        private static readonly StringFormat underTextFormat = new StringFormat() {
+            Alignment = StringAlignment.Center
+        };
+
+        public static void DrawTextUnder(Graphics g, Rectangle r, string s) {
+            int x = r.X + r.Width / 2;
+            int y = r.Bottom + 4;
+            g.DrawString(s, underTextFont, Brushes.Black, x + 1, y + 1, underTextFormat);
+            g.DrawString(s, underTextFont, Brushes.White, x, y, underTextFormat);
         }
 
         public Pen CreateSelectionBorderPen() {

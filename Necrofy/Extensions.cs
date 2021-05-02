@@ -55,6 +55,10 @@ namespace Necrofy
             return xDist + yDist;
         }
 
+        public static Point GetCenter(this Rectangle rect) {
+            return new Point(rect.X + rect.Width / 2, rect.Y + rect.Height / 2);
+        }
+
         public static void DrawRectangleProper(this Graphics g, Pen pen, Rectangle rect) {
             g.DrawRectangle(pen, rect.X, rect.Y, rect.Width - 1, rect.Height - 1);
         }

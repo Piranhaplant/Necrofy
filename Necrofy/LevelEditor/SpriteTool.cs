@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -19,11 +20,17 @@ namespace Necrofy
 
         private static readonly SolidBrush selectionFillBrush = new SolidBrush(Color.FromArgb(96, 255, 255, 255));
         private const int respawnAreaSizeHandleSize = 6;
+        private const int delayDialSize = 10;
 
         private readonly ObjectSelector<WrappedLevelObject> objectSelector;
 
+        private bool mouseIsDown = false;
+
+        private WrappedMonster extraEditMonster = null;
         private bool isResizingMonsterArea = false;
-        private WrappedMonster resizeMonster = null;
+        private bool isChangingMonsterDelay = false;
+        private byte monsterDelayStartValue = 0;
+        private bool monsterDelayInitialMovePassed = false; // Used to ignore the mouse moving to the center of the screen when hidden
 
         public SpriteTool(LevelEditor editor) : base(editor) {
             objectSelector = new ObjectSelector<WrappedLevelObject>(this);
@@ -105,8 +112,12 @@ namespace Necrofy
         }
 
         public override void MouseDown(LevelMouseEventArgs e) {
-            if (isResizingMonsterArea) {
-                objectSelector.SelectObjects(new WrappedLevelObject[] { resizeMonster });
+            mouseIsDown = true;
+            if (isChangingMonsterDelay) {
+                editor.scrollWrapper.EnabledHiddenCursor();
+            }
+            if (extraEditMonster != null) {
+                objectSelector.SelectObjects(new WrappedLevelObject[] { extraEditMonster });
             } else {
                 objectSelector.MouseDown(e.X, e.Y);
             }
@@ -116,20 +127,29 @@ namespace Necrofy
         public override void MouseMove(LevelMouseEventArgs e) {
             if (!e.MouseIsDown) {
                 isResizingMonsterArea = false;
-                resizeMonster = null;
+                isChangingMonsterDelay = false;
+                extraEditMonster = null;
                 Cursor cursor = Cursors.Default;
 
-                ForEachResizeHandleArea((monster, rect) => {
-                    if (rect.Contains(e.Location)) {
+                foreach (UIExtras uiExtras in GetAllUIExtras().Reverse()) {
+                    if (uiExtras.resizeHandle.Contains(e.Location)) {
                         isResizingMonsterArea = true;
-                        resizeMonster = monster;
+                        extraEditMonster = uiExtras.monster;
                         cursor = Cursors.SizeNWSE;
+                        break;
+                    } else if (uiExtras.delayDial.Contains(e.Location)) {
+                        isChangingMonsterDelay = true;
+                        extraEditMonster = uiExtras.monster;
+                        monsterDelayStartValue = extraEditMonster.Delay;
+                        monsterDelayInitialMovePassed = false;
+                        cursor = Cursors.SizeNS;
+                        break;
                     }
-                });
+                }
                 editor.SetCursor(cursor);
             } else {
                 if (isResizingMonsterArea) {
-                    Rectangle bounds = resizeMonster.Bounds;
+                    Rectangle bounds = extraEditMonster.Bounds;
                     int size = Math.Min(byte.MaxValue, Math.Max(0, 2 * Math.Max(e.X - bounds.Right, e.Y - bounds.Bottom)));
                     for (int i = 0; i <= byte.MaxValue; i = (i << 1) + 1) {
                         if (size <= i + (i + 1) / 2) {
@@ -137,9 +157,22 @@ namespace Necrofy
                             break;
                         }
                     }
-                    if (size != resizeMonster.AreaSize) {
-                        editor.undoManager.Do(new ChangeMonsterAreaSizeAction(new WrappedLevelObject[] { resizeMonster }, (byte)size));
+                    if (size != extraEditMonster.AreaSize) {
+                        editor.undoManager.Do(new ChangeMonsterAreaSizeAction(new WrappedLevelObject[] { extraEditMonster }, (byte)size));
                         UpdateStatus();
+                    }
+
+                } else if (isChangingMonsterDelay) {
+                    byte delay = monsterDelayStartValue;
+                    if (monsterDelayInitialMovePassed) {
+                        double ratio = UIExtras.DelayToDangerRatio(monsterDelayStartValue);
+                        ratio = Math.Max(0, Math.Min(1, ratio - editor.scrollWrapper.HiddenCursorTotalMoveY / 400.0));
+                        delay = UIExtras.DangerRatioToDelay(ratio);
+                    } else {
+                        monsterDelayInitialMovePassed = true;
+                    }
+                    if (delay != extraEditMonster.Delay) {
+                        editor.undoManager.Do(new ChangeMonsterDelayAction(new WrappedLevelObject[] { extraEditMonster }, delay));
                     }
                 } else {
                     objectSelector.MouseMove(e.X, e.Y);
@@ -148,10 +181,15 @@ namespace Necrofy
         }
 
         public override void MouseUp(LevelMouseEventArgs e) {
-            if (!isResizingMonsterArea) {
+            mouseIsDown = false;
+            if (isChangingMonsterDelay) {
+                editor.scrollWrapper.DisableHiddenCursor();
+                editor.Repaint();
+            }
+            if (extraEditMonster == null) {
                 objectSelector.MouseUp();
             }
-            isResizingMonsterArea = false;
+            
             UpdateStatus();
             editor.GenerateMouseMove();
             editor.undoManager.ForceNoMerge();
@@ -243,20 +281,26 @@ namespace Necrofy
             }
 
             using (Pen p = new Pen(Color.LightSteelBlue, 1 / editor.Zoom)) {
-                ForEachResizeHandleArea((monster, rect) => {
-                    g.FillRectangle(Brushes.Black, rect);
-                    g.DrawRectangle(p, rect);
-                });
+                foreach (UIExtras uiExtras in GetAllUIExtras()) {
+                    g.FillRectangle(Brushes.Black, uiExtras.resizeHandle);
+                    g.DrawRectangle(p, uiExtras.resizeHandle);
+
+                    g.FillEllipse(Brushes.Red, uiExtras.delayDial);
+                    g.FillPie(Brushes.Green, uiExtras.delayDial, 90f, (float)UIExtras.DelayToDangerRatio(uiExtras.monster.Delay) * 360f);
+                    g.DrawEllipse(p, uiExtras.delayDial);
+                }
+            }
+
+            if (mouseIsDown && isChangingMonsterDelay) {
+                int effectiveDelay = (extraEditMonster.Delay + 1) * (editor.level.Level.monsters.Count + 1);
+                LevelEditor.DrawTextUnder(g, new UIExtras(extraEditMonster).delayDial, $"{effectiveDelay / 60.0:0.00} sec/spawn");
             }
         }
 
-        private void ForEachResizeHandleArea(Action<WrappedMonster, Rectangle> action) {
+        private IEnumerable<UIExtras> GetAllUIExtras() {
             if (editor.showRespawnAreas) {
                 foreach (WrappedMonster m in editor.level.GetAllObjects(items: false, victims: false, oneShotMonsters: false, monsters: true, bossMonsters: false, players: false)) {
-                    Rectangle bounds = m.Bounds;
-                    int offset = m.AreaSize - m.AreaSize / 2; // This is so it lines up with the respawn area rectangle perfectly
-                    Rectangle handleRect = new Rectangle(bounds.Right + offset - respawnAreaSizeHandleSize / 2, bounds.Bottom + offset - respawnAreaSizeHandleSize / 2, respawnAreaSizeHandleSize, respawnAreaSizeHandleSize);
-                    action(m, handleRect);
+                    yield return new UIExtras(m);
                 }
             }
         }
@@ -335,9 +379,57 @@ namespace Necrofy
             if (objectSelector.MovingObjects) {
                 Status = string.Format(DragStatus, objectSelector.TotalMoveX, objectSelector.TotalMoveY);
             } else if (isResizingMonsterArea) {
-                Status = string.Format(ResizeStatus, resizeMonster.AreaSize);
+                Status = string.Format(ResizeStatus, extraEditMonster.AreaSize);
             } else {
                 Status = DefaultStatus;
+            }
+        }
+
+        private class UIExtras
+        {
+            public readonly WrappedMonster monster;
+            public readonly Rectangle resizeHandle;
+            public readonly Rectangle delayDial;
+
+            public UIExtras(WrappedMonster m) {
+                monster = m;
+                Rectangle bounds = m.Bounds;
+
+                int handleOffset = m.AreaSize - m.AreaSize / 2; // This is so it lines up with the respawn area rectangle perfectly
+                resizeHandle = new Rectangle(
+                    bounds.Right + handleOffset - respawnAreaSizeHandleSize / 2,
+                    bounds.Bottom + handleOffset - respawnAreaSizeHandleSize / 2,
+                    respawnAreaSizeHandleSize,
+                    respawnAreaSizeHandleSize);
+
+                int dialOffset = m.AreaSize / 2;
+                delayDial = new Rectangle(
+                    bounds.Left - dialOffset - delayDialSize / 2,
+                    bounds.Bottom + handleOffset - delayDialSize / 2,
+                    delayDialSize,
+                    delayDialSize);
+            }
+
+            private static readonly byte[] delayScale = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 25,
+                27, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 110, 120, 130, 140, 150, 175, 200, 250, 255 };
+
+            public static double DelayToDangerRatio(byte delay) {
+                for (int i = 0; i < delayScale.Length; i++) {
+                    if (delay == delayScale[i]) {
+                        return (double)i / (delayScale.Length - 1);
+                    } else if (delay < delayScale[i + 1]) {
+                        return (i + ((double)delay - delayScale[i]) / (delayScale[i + 1] - delayScale[i])) / (delayScale.Length - 1);
+                    }
+                }
+                return 1.0;
+            }
+
+            public static byte DangerRatioToDelay(double ratio) {
+                ratio = Math.Max(0.0, Math.Min(1.0, ratio));
+                if (ratio == 1.0) {
+                    return delayScale[delayScale.Length - 1];
+                }
+                return delayScale[(int)Math.Floor(ratio * (delayScale.Length - 1))];
             }
         }
     }
