@@ -561,6 +561,9 @@
     <None Include="Icons\cross-script.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="readme.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Icons\dice-1.png" />
     <None Include="Icons\dice-2.png" />
     <None Include="Icons\dice-3.png" />

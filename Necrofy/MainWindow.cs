@@ -633,7 +633,18 @@ namespace Necrofy
         private void windowRestore_Click(object sender, EventArgs e) {
             UseDefaultDockLayout();
         }
-        
+
+        private void helpAbout_Click(object sender, EventArgs e) {
+            MessageBox.Show(DefaultStatusText + Environment.NewLine + Environment.NewLine +
+               "Credits:" + Environment.NewLine +
+               "Programming: Piranhaplant" + Environment.NewLine +
+               "Tileset suggest lists: Droter" + Environment.NewLine +
+               "Icons: Fugue Icons https://p.yusukekamiyamane.com/" + Environment.NewLine +
+               "asar https://github.com/RPGHacker/asar" + Environment.NewLine +
+               "Json.NET https://www.newtonsoft.com/json" + Environment.NewLine +
+               "DockPanel Suite http://dockpanelsuite.com/", "About");
+        }
+
         private void toolStripGrouper_ItemClick(object sender, ToolStripGrouper.ItemEventArgs e) {
             activeEditor?.ToolStripItemClicked(e.Type);
         }
