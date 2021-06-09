@@ -6,6 +6,6 @@ Necrofy is a project-based level editor and ROM hacking tool for the SNES releas
 TODO: Add screenshots here
 
 Libraries used:
-  asar https://github.com/RPGHacker/asar
-  Json.NET https://www.newtonsoft.com/json
-  DockPanel Suite http://dockpanelsuite.com/
+* asar https://github.com/RPGHacker/asar
+* Json.NET https://www.newtonsoft.com/json
+* DockPanel Suite http://dockpanelsuite.com/
