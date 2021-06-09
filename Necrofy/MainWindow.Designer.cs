@@ -115,7 +115,6 @@
             this.projectRunSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
             this.projectSettings = new System.Windows.Forms.ToolStripMenuItem();
-            this.debugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.viewGrid = new System.Windows.Forms.ToolStripMenuItem();
             this.viewSolidTilesOnly = new System.Windows.Forms.ToolStripMenuItem();
@@ -171,14 +170,14 @@
             this.windowProperties = new System.Windows.Forms.ToolStripMenuItem();
             this.windowSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.windowRestore = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.openProjectDialog = new System.Windows.Forms.OpenFileDialog();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.buildStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripGrouper = new Necrofy.ToolStripGrouper(this.components);
             this.toolBarMenuLinker = new Necrofy.ToolBarMenuLinker(this.components);
-            this.helpMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.helpAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -1006,8 +1005,7 @@
             this.projectRunFromLevel,
             this.projectRunSettings,
             this.toolStripSeparator14,
-            this.projectSettings,
-            this.debugToolStripMenuItem});
+            this.projectSettings});
             this.projectMenu.Name = "projectMenu";
             this.projectMenu.Size = new System.Drawing.Size(56, 20);
             this.projectMenu.Text = "&Project";
@@ -1062,13 +1060,6 @@
             this.projectSettings.Size = new System.Drawing.Size(210, 22);
             this.projectSettings.Text = "&Project Settings...";
             this.projectSettings.Click += new System.EventHandler(this.projectSettings_Click);
-            // 
-            // debugToolStripMenuItem
-            // 
-            this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
-            this.debugToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
-            this.debugToolStripMenuItem.Text = "Debug";
-            this.debugToolStripMenuItem.Click += new System.EventHandler(this.debugToolStripMenuItem_Click);
             // 
             // viewMenu
             // 
@@ -1255,38 +1246,38 @@
             // 
             this.toolStripGrouper.SetItemType(this.levelEditTitle, Necrofy.ToolStripGrouper.ItemType.LevelEditTitle);
             this.levelEditTitle.Name = "levelEditTitle";
-            this.levelEditTitle.Size = new System.Drawing.Size(180, 22);
+            this.levelEditTitle.Size = new System.Drawing.Size(159, 22);
             this.levelEditTitle.Text = "Edit Title...";
             // 
             // levelSettings
             // 
             this.toolStripGrouper.SetItemType(this.levelSettings, Necrofy.ToolStripGrouper.ItemType.LevelSettings);
             this.levelSettings.Name = "levelSettings";
-            this.levelSettings.Size = new System.Drawing.Size(180, 22);
+            this.levelSettings.Size = new System.Drawing.Size(159, 22);
             this.levelSettings.Text = "&Settings...";
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(156, 6);
             // 
             // levelClear
             // 
             this.toolStripGrouper.SetItemType(this.levelClear, Necrofy.ToolStripGrouper.ItemType.LevelClear);
             this.levelClear.Name = "levelClear";
-            this.levelClear.Size = new System.Drawing.Size(180, 22);
+            this.levelClear.Size = new System.Drawing.Size(159, 22);
             this.levelClear.Text = "Clear";
             // 
             // toolStripSeparator8
             // 
             this.toolStripSeparator8.Name = "toolStripSeparator8";
-            this.toolStripSeparator8.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator8.Size = new System.Drawing.Size(156, 6);
             // 
             // levelSaveAsImage
             // 
             this.toolStripGrouper.SetItemType(this.levelSaveAsImage, Necrofy.ToolStripGrouper.ItemType.LevelSaveAsImage);
             this.levelSaveAsImage.Name = "levelSaveAsImage";
-            this.levelSaveAsImage.Size = new System.Drawing.Size(180, 22);
+            this.levelSaveAsImage.Size = new System.Drawing.Size(159, 22);
             this.levelSaveAsImage.Text = "Save As Image...";
             // 
             // toolsMenu
@@ -1313,7 +1304,7 @@
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsPaintbrush, this.paintbrushButton);
             this.toolsPaintbrush.Name = "toolsPaintbrush";
             this.toolsPaintbrush.ShortcutKeyDisplayString = "P";
-            this.toolsPaintbrush.Size = new System.Drawing.Size(180, 22);
+            this.toolsPaintbrush.Size = new System.Drawing.Size(174, 22);
             this.toolsPaintbrush.Text = "&Paintbrush";
             // 
             // toolsTileSuggest
@@ -1323,7 +1314,7 @@
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsTileSuggest, this.tileSuggestButton);
             this.toolsTileSuggest.Name = "toolsTileSuggest";
             this.toolsTileSuggest.ShortcutKeyDisplayString = "S";
-            this.toolsTileSuggest.Size = new System.Drawing.Size(180, 22);
+            this.toolsTileSuggest.Size = new System.Drawing.Size(174, 22);
             this.toolsTileSuggest.Text = "Tile &Suggest";
             // 
             // toolsRectangleSelect
@@ -1333,7 +1324,7 @@
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsRectangleSelect, this.rectangleSelectButton);
             this.toolsRectangleSelect.Name = "toolsRectangleSelect";
             this.toolsRectangleSelect.ShortcutKeyDisplayString = "R";
-            this.toolsRectangleSelect.Size = new System.Drawing.Size(180, 22);
+            this.toolsRectangleSelect.Size = new System.Drawing.Size(174, 22);
             this.toolsRectangleSelect.Text = "&Rectangle Select";
             // 
             // toolsPencilSelect
@@ -1343,7 +1334,7 @@
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsPencilSelect, this.pencilSelectButton);
             this.toolsPencilSelect.Name = "toolsPencilSelect";
             this.toolsPencilSelect.ShortcutKeyDisplayString = "C";
-            this.toolsPencilSelect.Size = new System.Drawing.Size(180, 22);
+            this.toolsPencilSelect.Size = new System.Drawing.Size(174, 22);
             this.toolsPencilSelect.Text = "Pen&cil Select";
             // 
             // toolsTileSelect
@@ -1353,7 +1344,7 @@
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsTileSelect, this.tileSelectButton);
             this.toolsTileSelect.Name = "toolsTileSelect";
             this.toolsTileSelect.ShortcutKeyDisplayString = "T";
-            this.toolsTileSelect.Size = new System.Drawing.Size(180, 22);
+            this.toolsTileSelect.Size = new System.Drawing.Size(174, 22);
             this.toolsTileSelect.Text = "&Tile Select";
             // 
             // toolsResizeLevel
@@ -1363,7 +1354,7 @@
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsResizeLevel, this.resizeLevelButton);
             this.toolsResizeLevel.Name = "toolsResizeLevel";
             this.toolsResizeLevel.ShortcutKeyDisplayString = "L";
-            this.toolsResizeLevel.Size = new System.Drawing.Size(180, 22);
+            this.toolsResizeLevel.Size = new System.Drawing.Size(174, 22);
             this.toolsResizeLevel.Text = "Resize &Level";
             // 
             // toolsSprites
@@ -1373,7 +1364,7 @@
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsSprites, this.spritesButton);
             this.toolsSprites.Name = "toolsSprites";
             this.toolsSprites.ShortcutKeyDisplayString = "I";
-            this.toolsSprites.Size = new System.Drawing.Size(180, 22);
+            this.toolsSprites.Size = new System.Drawing.Size(174, 22);
             this.toolsSprites.Text = "Spr&ites";
             // 
             // arrangeMenu
@@ -1401,7 +1392,7 @@
             this.toolStripGrouper.SetItemType(this.arrangeFlipHorizontal, Necrofy.ToolStripGrouper.ItemType.FlipHorizontally);
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.arrangeFlipHorizontal, this.flipHorizontalButton);
             this.arrangeFlipHorizontal.Name = "arrangeFlipHorizontal";
-            this.arrangeFlipHorizontal.Size = new System.Drawing.Size(180, 22);
+            this.arrangeFlipHorizontal.Size = new System.Drawing.Size(176, 22);
             this.arrangeFlipHorizontal.Text = "Flip H&orizontally";
             // 
             // arrangeFlipVertical
@@ -1411,14 +1402,14 @@
             this.toolStripGrouper.SetItemType(this.arrangeFlipVertical, Necrofy.ToolStripGrouper.ItemType.FlipVertically);
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.arrangeFlipVertical, this.flipVerticalButton);
             this.arrangeFlipVertical.Name = "arrangeFlipVertical";
-            this.arrangeFlipVertical.Size = new System.Drawing.Size(180, 22);
+            this.arrangeFlipVertical.Size = new System.Drawing.Size(176, 22);
             this.arrangeFlipVertical.Text = "Flip V&ertically";
             // 
             // toolStripSeparator12
             // 
             this.toolStripGrouper.SetItemSet(this.toolStripSeparator12, Necrofy.ToolStripGrouper.ItemSet.SpriteEditor);
             this.toolStripSeparator12.Name = "toolStripSeparator12";
-            this.toolStripSeparator12.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator12.Size = new System.Drawing.Size(173, 6);
             // 
             // arrangeCenterHorizontally
             // 
@@ -1427,7 +1418,7 @@
             this.toolStripGrouper.SetItemType(this.arrangeCenterHorizontally, Necrofy.ToolStripGrouper.ItemType.CenterHorizontally);
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.arrangeCenterHorizontally, this.centerHorizontallyButton);
             this.arrangeCenterHorizontally.Name = "arrangeCenterHorizontally";
-            this.arrangeCenterHorizontally.Size = new System.Drawing.Size(180, 22);
+            this.arrangeCenterHorizontally.Size = new System.Drawing.Size(176, 22);
             this.arrangeCenterHorizontally.Text = "Center &Horizontally";
             // 
             // arrangeCenterVertically
@@ -1437,14 +1428,14 @@
             this.toolStripGrouper.SetItemType(this.arrangeCenterVertically, Necrofy.ToolStripGrouper.ItemType.CenterVertically);
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.arrangeCenterVertically, this.centerVerticallyButton);
             this.arrangeCenterVertically.Name = "arrangeCenterVertically";
-            this.arrangeCenterVertically.Size = new System.Drawing.Size(180, 22);
+            this.arrangeCenterVertically.Size = new System.Drawing.Size(176, 22);
             this.arrangeCenterVertically.Text = "Center &Vertically";
             // 
             // titleSeparator
             // 
             this.toolStripGrouper.SetItemSet(this.titleSeparator, ((Necrofy.ToolStripGrouper.ItemSet)((Necrofy.ToolStripGrouper.ItemSet.LevelTitle | Necrofy.ToolStripGrouper.ItemSet.SpriteEditor))));
             this.titleSeparator.Name = "titleSeparator";
-            this.titleSeparator.Size = new System.Drawing.Size(177, 6);
+            this.titleSeparator.Size = new System.Drawing.Size(173, 6);
             // 
             // arrangeMoveUp
             // 
@@ -1453,7 +1444,7 @@
             this.toolStripGrouper.SetItemType(this.arrangeMoveUp, Necrofy.ToolStripGrouper.ItemType.MoveUp);
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.arrangeMoveUp, this.moveUpButton);
             this.arrangeMoveUp.Name = "arrangeMoveUp";
-            this.arrangeMoveUp.Size = new System.Drawing.Size(180, 22);
+            this.arrangeMoveUp.Size = new System.Drawing.Size(176, 22);
             this.arrangeMoveUp.Text = "Move &Up";
             // 
             // arrangeMoveDown
@@ -1463,7 +1454,7 @@
             this.toolStripGrouper.SetItemType(this.arrangeMoveDown, Necrofy.ToolStripGrouper.ItemType.MoveDown);
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.arrangeMoveDown, this.moveDownButton);
             this.arrangeMoveDown.Name = "arrangeMoveDown";
-            this.arrangeMoveDown.Size = new System.Drawing.Size(180, 22);
+            this.arrangeMoveDown.Size = new System.Drawing.Size(176, 22);
             this.arrangeMoveDown.Text = "Move &Down";
             // 
             // arrangeMoveToFront
@@ -1473,7 +1464,7 @@
             this.toolStripGrouper.SetItemType(this.arrangeMoveToFront, Necrofy.ToolStripGrouper.ItemType.MoveToFront);
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.arrangeMoveToFront, this.moveToFrontButton);
             this.arrangeMoveToFront.Name = "arrangeMoveToFront";
-            this.arrangeMoveToFront.Size = new System.Drawing.Size(180, 22);
+            this.arrangeMoveToFront.Size = new System.Drawing.Size(176, 22);
             this.arrangeMoveToFront.Text = "Move to &Front";
             // 
             // arrangeMoveToBack
@@ -1483,7 +1474,7 @@
             this.toolStripGrouper.SetItemType(this.arrangeMoveToBack, Necrofy.ToolStripGrouper.ItemType.MoveToBack);
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.arrangeMoveToBack, this.moveToBackButton);
             this.arrangeMoveToBack.Name = "arrangeMoveToBack";
-            this.arrangeMoveToBack.Size = new System.Drawing.Size(180, 22);
+            this.arrangeMoveToBack.Size = new System.Drawing.Size(176, 22);
             this.arrangeMoveToBack.Text = "Move to &Back";
             // 
             // passwordsMenu
@@ -1585,6 +1576,21 @@
             this.windowRestore.Text = "&Restore Default Layout";
             this.windowRestore.Click += new System.EventHandler(this.windowRestore_Click);
             // 
+            // helpMenu
+            // 
+            this.helpMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.helpAbout});
+            this.helpMenu.Name = "helpMenu";
+            this.helpMenu.Size = new System.Drawing.Size(44, 20);
+            this.helpMenu.Text = "&Help";
+            // 
+            // helpAbout
+            // 
+            this.helpAbout.Name = "helpAbout";
+            this.helpAbout.Size = new System.Drawing.Size(116, 22);
+            this.helpAbout.Text = "&About...";
+            this.helpAbout.Click += new System.EventHandler(this.helpAbout_Click);
+            // 
             // openProjectDialog
             // 
             this.openProjectDialog.Filter = "Necrofy project files (*.nfyp)|*.nfyp|All Files (*.*)|*.*";
@@ -1621,21 +1627,6 @@
             // 
             this.toolStripGrouper.ItemClick += new System.EventHandler<Necrofy.ToolStripGrouper.ItemEventArgs>(this.toolStripGrouper_ItemClick);
             this.toolStripGrouper.ItemCheckedChanged += new System.EventHandler<Necrofy.ToolStripGrouper.ItemEventArgs>(this.toolStripGrouper_ItemCheckedChanged);
-            // 
-            // helpMenu
-            // 
-            this.helpMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.helpAbout});
-            this.helpMenu.Name = "helpMenu";
-            this.helpMenu.Size = new System.Drawing.Size(44, 20);
-            this.helpMenu.Text = "&Help";
-            // 
-            // helpAbout
-            // 
-            this.helpAbout.Name = "helpAbout";
-            this.helpAbout.Size = new System.Drawing.Size(180, 22);
-            this.helpAbout.Text = "&About...";
-            this.helpAbout.Click += new System.EventHandler(this.helpAbout_Click);
             // 
             // MainWindow
             // 
@@ -1713,7 +1704,6 @@
         private System.Windows.Forms.ToolStripSplitButton undoButton;
         private System.Windows.Forms.ToolStripSplitButton redoButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripMenuItem debugToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fileClose;
         private System.Windows.Forms.ToolStripMenuItem windowMenu;
         private System.Windows.Forms.ToolStripMenuItem windowProject;

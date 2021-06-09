@@ -439,7 +439,7 @@ namespace Necrofy
             if (paletteKeys.TryGetValue(e.KeyCode, out int palette)) {
                 paletteButtons[palette].Checked = true;
             } else if (e.KeyData == (Keys.Control | Keys.Alt | Keys.L)) {
-                CopySpriteASMText(); // TODO: Remove
+                //CopySpriteASMText(); // TODO: Remove
             }
         }
 

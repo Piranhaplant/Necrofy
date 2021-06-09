@@ -1,0 +1,1 @@
+Compress-Archive -Path $(Get-ChildItem -Path .\Necrofy\bin\Release -Exclude @('*.config', '*.pdb', '*.vshost.exe', '*.manifest', '*.xml')) -DestinationPath ".\Necrofy\bin\Release\Necrofy.zip" -Force
