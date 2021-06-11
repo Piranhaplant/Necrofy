@@ -478,6 +478,10 @@ namespace Necrofy
             activeEditor?.SelectNone();
         }
 
+        private void preferencesToolStripMenuItem_Click(object sender, EventArgs e) {
+            new PreferencesDialog().Show();
+        }
+
         private void BuildProject(object sender, EventArgs e) {
             DoBuild(() => project?.Build());
         }

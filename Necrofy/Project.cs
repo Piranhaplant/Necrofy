@@ -182,7 +182,7 @@ namespace Necrofy
             // TODO: Don't build if not necessary
             BuildResults results = Build();
             if (results.Success) {
-                Process.Start(Path.Combine(BuildDirectory, buildFilename));
+                RunEmulator(Path.Combine(BuildDirectory, buildFilename));
             }
             return results;
         }
@@ -213,10 +213,18 @@ namespace Necrofy
                     results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, "", ex.Message, ex.StackTrace));
                 }
                 if (results.Success) {
-                    Process.Start(runROM);
+                    RunEmulator(runROM);
                 }
             }
             return results;
+        }
+
+        private void RunEmulator(string romFile) {
+            if (Properties.Settings.Default.useSystemEmulator) {
+                Process.Start(romFile);
+            } else {
+                Process.Start(Properties.Settings.Default.emulator, $"\"{romFile}\"");
+            }
         }
 
         private static void AddEndOfBankFreespace(Stream s, Freespace freespace, byte searchByte) {

@@ -154,5 +154,29 @@ namespace Necrofy.Properties {
                 this["Maximized"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool useSystemEmulator {
+            get {
+                return ((bool)(this["useSystemEmulator"]));
+            }
+            set {
+                this["useSystemEmulator"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string emulator {
+            get {
+                return ((string)(this["emulator"]));
+            }
+            set {
+                this["emulator"] = value;
+            }
+        }
     }
 }

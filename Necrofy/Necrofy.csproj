@@ -202,6 +202,12 @@
     <Compile Include="LevelEditor\WrappedLevelObjects\WrappedPositionLevelMonster.cs" />
     <Compile Include="LevelEditor\TitleEditor\WrappedTitleWord.cs" />
     <Compile Include="LevelEditor\LoadedLevel\LoadedSprites.cs" />
+    <Compile Include="PreferencesDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PreferencesDialog.Designer.cs">
+      <DependentUpon>PreferencesDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpriteEditor\WrappedSpriteTile.cs" />
     <Compile Include="LevelEditor\TitleEditor\LevelTitleObjectBrowserContents.cs" />
     <Compile Include="SpriteEditor\SpriteEditorObjectBrowserContents.cs" />
@@ -389,6 +395,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="PasswordEditor\PasswordEditor.resx">
       <DependentUpon>PasswordEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PreferencesDialog.resx">
+      <DependentUpon>PreferencesDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ProjectSettingsDialog.resx">
       <DependentUpon>ProjectSettingsDialog.cs</DependentUpon>
