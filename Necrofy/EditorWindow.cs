@@ -143,11 +143,11 @@ namespace Necrofy
 
         protected virtual void DoSave(Project project) { }
 
-        public void Undo() {
+        public virtual void Undo() {
             undoManager?.UndoLast();
         }
 
-        public void Redo() {
+        public virtual void Redo() {
             undoManager?.RedoLast();
         }
 

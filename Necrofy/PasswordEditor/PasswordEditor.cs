@@ -20,7 +20,7 @@ namespace Necrofy
         private readonly PasswordsAsset asset;
         private readonly PasswordData data;
         private UndoManager<PasswordEditor> undoManager;
-
+        
         private string cellPreviousValue;
 
         public PasswordEditor(PasswordsAsset asset) {
@@ -83,6 +83,12 @@ namespace Necrofy
             }
         }
 
+        public void CancelCellEdit() {
+            cellPreviousValue = null;
+            dataGrid.CancelEdit();
+            dataGrid.EndEdit();
+        }
+
         protected override void DoSave(Project project) {
             data.normalPasswords = new string[dataGrid.ColumnCount, dataGrid.RowCount - 1];
             for (int levelIndex = 0; levelIndex < data.normalPasswords.GetLength(1); levelIndex++) {
@@ -92,6 +98,14 @@ namespace Necrofy
             }
             data.level0Password = (string)dataGrid.Rows[0].Cells[9].Value;
             asset.WriteFile(project);
+        }
+
+        public override void Undo() {
+            if (dataGrid.IsCurrentCellInEditMode) {
+                CancelCellEdit();
+            } else {
+                base.Undo();
+            }
         }
 
         public void SetCell(int rowIndex, int columnIndex, string value) {
@@ -186,7 +200,9 @@ namespace Necrofy
         private void dataGrid_CellValueChanged(object sender, DataGridViewCellEventArgs e) {
             if (e.RowIndex >= 0 && e.ColumnIndex >= 0 && cellPreviousValue != null) {
                 string newValue = (string)dataGrid.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
-                undoManager.Do(new ChangePasswordAction(e.RowIndex, e.ColumnIndex, cellPreviousValue, newValue));
+                if (newValue != cellPreviousValue) {
+                    undoManager.Do(new ChangePasswordAction(e.RowIndex, e.ColumnIndex, cellPreviousValue, newValue));
+                }
             }
             cellPreviousValue = null;
         }

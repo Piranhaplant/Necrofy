@@ -8,7 +8,9 @@ namespace Necrofy
 {
     abstract class PasswordEditorAction : UndoAction<PasswordEditor>
     {
-
+        protected override void BeforeAction() {
+            editor.CancelCellEdit();
+        }
     }
 
     class ChangePasswordAction : PasswordEditorAction

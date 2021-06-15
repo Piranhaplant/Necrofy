@@ -208,15 +208,18 @@ namespace Necrofy
         protected T editor;
 
         public void DoUndo() {
+            this.BeforeAction();
             this.Undo();
             this.AfterAction();
         }
         public void DoRedo() {
+            this.BeforeAction();
             this.Redo();
             this.AfterAction();
         }
         protected abstract void Undo();
         protected abstract void Redo();
+        protected virtual void BeforeAction() { }
         protected virtual void AfterAction() { }
         public virtual bool Merge(UndoAction<T> action) { return false; }
         public virtual bool Unmerge(UndoAction<T> action) { return false; }
