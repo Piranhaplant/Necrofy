@@ -142,7 +142,9 @@
             this.patchesList.Name = "patchesList";
             this.patchesList.Size = new System.Drawing.Size(506, 226);
             this.patchesList.TabIndex = 1;
+            this.patchesList.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.patchesList_ItemCheck);
             this.patchesList.SelectedIndexChanged += new System.EventHandler(this.patchesList_SelectedIndexChanged);
+            this.patchesList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.patchesList_MouseDown);
             // 
             // buttonPanel
             // 

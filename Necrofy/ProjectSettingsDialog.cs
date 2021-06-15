@@ -22,6 +22,9 @@ namespace Necrofy
         private readonly List<string> patchDescriptions = new List<string>();
         private readonly List<ProjectSettings.Patch> hiddenEnabledPatches = new List<ProjectSettings.Patch>();
 
+        // Do checking only from the checkbox area of each row
+        private bool acceptPatchItemCheck = false;
+
         public ProjectSettingsDialog(ProjectSettings settings) {
             InitializeComponent();
             this.settings = settings;
@@ -29,7 +32,11 @@ namespace Necrofy
             winLevel.Value = settings.WinLevel;
             endGameLevel.Value = settings.EndGameLevel;
 
-            foreach (string path in Directory.GetFiles(Project.internalPatchesPath)) {
+            acceptPatchItemCheck = true;
+
+            string[] files = Directory.GetFiles(Project.internalPatchesPath);
+            Array.Sort(files, NumericStringComparer.instance);
+            foreach (string path in files) {
                 string fileName = Path.GetFileName(path);
                 ProjectSettings.Patch existingPatch = settings.EnabledPatches.FirstOrDefault(p => p.Name == fileName);
 
@@ -44,6 +51,8 @@ namespace Necrofy
                     hiddenEnabledPatches.Add(existingPatch);
                 }
             }
+
+            acceptPatchItemCheck = false;
         }
 
         private string ReadDescription(string filename) {
@@ -67,6 +76,23 @@ namespace Necrofy
                 patchDescriptionText.Text = patchDescriptions[patchesList.SelectedIndex];
             } else {
                 patchDescriptionText.Text = "";
+            }
+        }
+        
+        private void patchesList_MouseDown(object sender, MouseEventArgs e) {
+            for (int i = 0; i < patchesList.Items.Count; i++) {
+                if (patchesList.GetItemRectangle(i).Contains(e.Location) && e.X < patchesList.GetItemHeight(i)) {
+                    acceptPatchItemCheck = true;
+                    patchesList.SetItemChecked(i, !patchesList.GetItemChecked(i));
+                    acceptPatchItemCheck = false;
+                    break;
+                }
+            }
+        }
+
+        private void patchesList_ItemCheck(object sender, ItemCheckEventArgs e) {
+            if (!acceptPatchItemCheck) {
+                e.NewValue = e.CurrentValue;
             }
         }
 
