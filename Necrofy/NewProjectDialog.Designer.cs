@@ -51,9 +51,9 @@
             this.lblLocation.AutoSize = true;
             this.lblLocation.Location = new System.Drawing.Point(12, 46);
             this.lblLocation.Name = "lblLocation";
-            this.lblLocation.Size = new System.Drawing.Size(51, 13);
+            this.lblLocation.Size = new System.Drawing.Size(87, 13);
             this.lblLocation.TabIndex = 1;
-            this.lblLocation.Text = "Location:";
+            this.lblLocation.Text = "Project Location:";
             // 
             // btnBaseROM
             // 
@@ -81,18 +81,18 @@
             // 
             this.txtBaseROM.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtBaseROM.Location = new System.Drawing.Point(80, 14);
+            this.txtBaseROM.Location = new System.Drawing.Point(105, 14);
             this.txtBaseROM.Name = "txtBaseROM";
-            this.txtBaseROM.Size = new System.Drawing.Size(302, 20);
+            this.txtBaseROM.Size = new System.Drawing.Size(277, 20);
             this.txtBaseROM.TabIndex = 4;
             // 
             // txtLocation
             // 
             this.txtLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLocation.Location = new System.Drawing.Point(80, 43);
+            this.txtLocation.Location = new System.Drawing.Point(105, 43);
             this.txtLocation.Name = "txtLocation";
-            this.txtLocation.Size = new System.Drawing.Size(302, 20);
+            this.txtLocation.Size = new System.Drawing.Size(277, 20);
             this.txtLocation.TabIndex = 5;
             // 
             // btnCreate
@@ -129,7 +129,7 @@
             this.sfdLocation.Filter = "Necrofy Project Folder|";
             this.sfdLocation.Title = "Location";
             // 
-            // NewProject
+            // NewProjectDialog
             // 
             this.AcceptButton = this.btnCreate;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -147,7 +147,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "NewProject";
+            this.Name = "NewProjectDialog";
             this.Text = "New Project";
             this.ResumeLayout(false);
             this.PerformLayout();
