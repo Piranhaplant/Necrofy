@@ -32,6 +32,7 @@ namespace Necrofy
         public const char FolderSeparator = '/';
 
         public const string LevelTitleFolder = "Level Title";
+        public const string TitleScreenFolder = "Title Screen";
         public const string SpritesFolder = "Sprites";
         public const string TilesetFolder = "Tilesets";
         public const string MiscFolder = "Misc";

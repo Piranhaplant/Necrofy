@@ -68,6 +68,7 @@ namespace Necrofy
             public override List<DefaultParams> GetDefaults() {
                 return new List<DefaultParams>() {
                     new DefaultParams(0xb5641, new TilemapNameInfo(LevelTitleFolder, DefaultName, 0xb5641), 0x1200, extractFromNecrofyROM: true),
+                    new DefaultParams(0xf5700, new TilemapNameInfo(TitleScreenFolder, DefaultName, 0xf5700), 0x800, extractFromNecrofyROM: true),
 
                     new DefaultParams(0xd4000, new TilemapNameInfo(GetTilesetFolder(Castle), DefaultName, compressed: true)),
                     new DefaultParams(0xd8000, new TilemapNameInfo(GetTilesetFolder(Grass), DefaultName, compressed: true)),
