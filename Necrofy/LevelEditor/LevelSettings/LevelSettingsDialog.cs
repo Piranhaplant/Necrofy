@@ -165,6 +165,10 @@ namespace Necrofy
             }
         }
 
+        private void secretBonusTypeSelector_SelectedIndexChanged(object sender, EventArgs e) {
+            bonusLevelSelector.Enabled = ((LevelSettingsPresets.Preset<ushort>)secretBonusTypeSelector.SelectedItem).name == "Bonus level";
+        }
+
         private void applyButton_Click(object sender, EventArgs e) {
             Save();
         }

@@ -440,6 +440,7 @@
             this.secretBonusTypeSelector.Name = "secretBonusTypeSelector";
             this.secretBonusTypeSelector.Size = new System.Drawing.Size(165, 21);
             this.secretBonusTypeSelector.TabIndex = 22;
+            this.secretBonusTypeSelector.SelectedIndexChanged += new System.EventHandler(this.secretBonusTypeSelector_SelectedIndexChanged);
             // 
             // bonusLevelLabel
             // 
