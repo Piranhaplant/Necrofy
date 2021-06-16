@@ -173,8 +173,11 @@ namespace Necrofy
         /// <param name="freespace">The freespace</param>
         public static void AddToFreespace(Stream s, Freespace freespace) {
             int size = s.ReadInt16();
-            freespace.AddSize((int)(s.Position - 2), (size & 0x7FFF) + 2);
-            if ((size & 0x8000) > 0) {
+            bool extended = (size & 0x8000) > 0;
+            size = size & 0x7FFF;
+
+            freespace.AddSize((int)(s.Position - 2), size + 2);
+            if (extended) {
                 s.Seek(size, SeekOrigin.Current);
                 freespace.AddSize((int)s.Position, 4);
                 s.GoToPointer();

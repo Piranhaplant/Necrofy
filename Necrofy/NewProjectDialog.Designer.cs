@@ -51,14 +51,14 @@
             this.lblLocation.AutoSize = true;
             this.lblLocation.Location = new System.Drawing.Point(12, 46);
             this.lblLocation.Name = "lblLocation";
-            this.lblLocation.Size = new System.Drawing.Size(87, 13);
+            this.lblLocation.Size = new System.Drawing.Size(103, 13);
             this.lblLocation.TabIndex = 1;
-            this.lblLocation.Text = "Project Location:";
+            this.lblLocation.Text = "Project Save Folder:";
             // 
             // btnBaseROM
             // 
             this.btnBaseROM.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBaseROM.Location = new System.Drawing.Point(388, 12);
+            this.btnBaseROM.Location = new System.Drawing.Point(434, 12);
             this.btnBaseROM.Name = "btnBaseROM";
             this.btnBaseROM.Size = new System.Drawing.Size(92, 23);
             this.btnBaseROM.TabIndex = 2;
@@ -69,7 +69,7 @@
             // btnLocation
             // 
             this.btnLocation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnLocation.Location = new System.Drawing.Point(388, 41);
+            this.btnLocation.Location = new System.Drawing.Point(434, 41);
             this.btnLocation.Name = "btnLocation";
             this.btnLocation.Size = new System.Drawing.Size(92, 23);
             this.btnLocation.TabIndex = 3;
@@ -81,24 +81,24 @@
             // 
             this.txtBaseROM.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtBaseROM.Location = new System.Drawing.Point(105, 14);
+            this.txtBaseROM.Location = new System.Drawing.Point(121, 14);
             this.txtBaseROM.Name = "txtBaseROM";
-            this.txtBaseROM.Size = new System.Drawing.Size(277, 20);
+            this.txtBaseROM.Size = new System.Drawing.Size(307, 20);
             this.txtBaseROM.TabIndex = 4;
             // 
             // txtLocation
             // 
             this.txtLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLocation.Location = new System.Drawing.Point(105, 43);
+            this.txtLocation.Location = new System.Drawing.Point(121, 43);
             this.txtLocation.Name = "txtLocation";
-            this.txtLocation.Size = new System.Drawing.Size(277, 20);
+            this.txtLocation.Size = new System.Drawing.Size(307, 20);
             this.txtLocation.TabIndex = 5;
             // 
             // btnCreate
             // 
             this.btnCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCreate.Location = new System.Drawing.Point(290, 86);
+            this.btnCreate.Location = new System.Drawing.Point(336, 86);
             this.btnCreate.Name = "btnCreate";
             this.btnCreate.Size = new System.Drawing.Size(92, 23);
             this.btnCreate.TabIndex = 6;
@@ -115,7 +115,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(388, 86);
+            this.btnCancel.Location = new System.Drawing.Point(434, 86);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(92, 23);
             this.btnCancel.TabIndex = 7;
@@ -135,7 +135,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(492, 120);
+            this.ClientSize = new System.Drawing.Size(538, 120);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnCreate);
             this.Controls.Add(this.txtLocation);

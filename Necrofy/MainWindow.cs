@@ -355,17 +355,22 @@ namespace Necrofy
         }
 
         private void CreateProject(object sender, EventArgs e) {
+            if (CloseProject(closeEditors: true)) {
+                return;
+            }
             NewProjectDialog newProjectDialog = new NewProjectDialog();
             if (newProjectDialog.ShowDialog() == DialogResult.OK) {
-                if (CloseProject(closeEditors: true)) {
-                    return;
-                }
+#if !DEBUG
                 try {
+#endif
                     project = new Project(newProjectDialog.BaseROM, newProjectDialog.ProjectLocation);
+#if !DEBUG
                 } catch (Exception ex) {
+                    Console.WriteLine(ex.StackTrace);
                     MessageBox.Show($"Error creating project: {Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
+#endif
                 ProjectReady();
             }
         }
@@ -413,6 +418,7 @@ namespace Necrofy
                         try {
                             OpenAsset(info);
                         } catch (Exception e) {
+                            Console.WriteLine(e.Message);
                             Console.WriteLine(e.StackTrace);
                         }
                     }
