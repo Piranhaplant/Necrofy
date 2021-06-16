@@ -39,6 +39,7 @@ namespace Necrofy
         int ISelectableObject.GetY() {
             return word.y * 8;
         }
+        [Browsable(false)]
         public bool Selectable => word.chars.Count > 0;
 
         private Rectangle selectableObjectBounds;
