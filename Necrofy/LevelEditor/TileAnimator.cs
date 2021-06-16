@@ -121,7 +121,7 @@ namespace Necrofy
                 }
 
                 curFrame++;
-                if (curFrame == entry.frames[curAnimationFrame].delay) {
+                if (curFrame >= entry.frames[curAnimationFrame].delay) {
                     RenderFrame();
                     curAnimationFrame++;
                     if (curAnimationFrame >= entry.frames.Count) {
@@ -143,7 +143,8 @@ namespace Necrofy
                 foreach (Location location in locations) {
                     Bitmap image = level.tiles[location.bgTile];
                     BitmapData data = image.LockBits(new Rectangle(location.x * 8, location.y * 8, 8, 8), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
-                    SNESGraphics.DrawTile(data, 0, 0, new LoadedTilemap.Tile(level.tilemap.tiles[location.bgTile][location.x, location.y], entry.frames[curAnimationFrame].tile), level.graphics.linearGraphics);
+                    ushort tile = curAnimationFrame == 0 && curFrame == 0 ? entry.initialTile : entry.frames[curAnimationFrame].tile;
+                    SNESGraphics.DrawTile(data, 0, 0, new LoadedTilemap.Tile(level.tilemap.tiles[location.bgTile][location.x, location.y], tile), level.graphics.linearGraphics);
                     image.UnlockBits(data);
                 }
             }
