@@ -635,7 +635,9 @@ namespace Necrofy
         }
 
         private void windowRestore_Click(object sender, EventArgs e) {
-            UseDefaultDockLayout();
+            if (MessageBox.Show("Are you sure you want to revert to the default window layout?", "Restore default layout", MessageBoxButtons.YesNo) == DialogResult.Yes) {
+                UseDefaultDockLayout();
+            }
         }
 
         private void helpAbout_Click(object sender, EventArgs e) {
