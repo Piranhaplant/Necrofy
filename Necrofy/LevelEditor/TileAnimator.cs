@@ -140,10 +140,10 @@ namespace Necrofy
             }
 
             private void RenderFrame() {
+                ushort tile = curAnimationFrame == 0 && curFrame == 0 ? entry.initialTile : entry.frames[curAnimationFrame].tile;
                 foreach (Location location in locations) {
                     Bitmap image = level.tiles[location.bgTile];
                     BitmapData data = image.LockBits(new Rectangle(location.x * 8, location.y * 8, 8, 8), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
-                    ushort tile = curAnimationFrame == 0 && curFrame == 0 ? entry.initialTile : entry.frames[curAnimationFrame].tile;
                     SNESGraphics.DrawTile(data, 0, 0, new LoadedTilemap.Tile(level.tilemap.tiles[location.bgTile][location.x, location.y], tile), level.graphics.linearGraphics);
                     image.UnlockBits(data);
                 }
