@@ -90,6 +90,7 @@ namespace Necrofy
             TreeNode child = parent.Add(entry.Asset.DisplayName);
             child.Name = child.Text;
             SetImage(child, entry.Asset.Category);
+            child.ForeColor = entry.Asset.Editable ? SystemColors.ControlText : SystemColors.GrayText;
             child.Tag = entry;
         }
 

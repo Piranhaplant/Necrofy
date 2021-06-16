@@ -289,6 +289,7 @@ namespace Necrofy
                 }
             }
 
+            using (Pen black = new Pen(Color.Black, 1 / editor.Zoom))
             using (Pen p = new Pen(Color.LightSteelBlue, 1 / editor.Zoom)) {
                 foreach (UIExtras uiExtras in GetAllUIExtras()) {
                     g.FillRectangle(Brushes.Black, uiExtras.resizeHandle);
@@ -296,7 +297,7 @@ namespace Necrofy
 
                     g.FillEllipse(Brushes.Red, uiExtras.delayDial);
                     g.FillPie(Brushes.Green, uiExtras.delayDial, 90f, (float)UIExtras.DelayToDangerRatio(uiExtras.monster.Delay) * 360f);
-                    g.DrawEllipse(p, uiExtras.delayDial);
+                    g.DrawEllipse(black, uiExtras.delayDial);
                 }
             }
 
