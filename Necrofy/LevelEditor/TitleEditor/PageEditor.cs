@@ -49,6 +49,7 @@ namespace Necrofy
             set {
                 _textSelectionStart = value;
                 Invalidate();
+                SelectedWordsChanged?.Invoke(this, EventArgs.Empty);
             }
         }
         private int _textSelectionEnd = -1;
@@ -278,11 +279,11 @@ namespace Necrofy
                     doubleClickTimer.Restart();
                 }
             } else {
-                TextSelectionStart = -1;
-                TextSelectionEnd = -1;
                 hoveredWord?.UseExtendedBounds(true);
                 objectSelector.MouseDown(e.X, e.Y);
                 hoveredWord?.UseExtendedBounds(false);
+                TextSelectionStart = -1;
+                TextSelectionEnd = -1;
             }
             prevClickLocation = e.Location;
         }
