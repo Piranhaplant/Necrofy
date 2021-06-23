@@ -34,9 +34,10 @@ namespace Necrofy
         private Sprite currentSprite = null;
         private bool showAxes;
         private bool showTileBorders;
+        private bool showGrid;
 
         public override ToolStripGrouper.ItemSet ToolStripItemSet => ToolStripGrouper.ItemSet.SpriteEditor;
-        private static readonly ToolStripGrouper.ItemType[] wordSelectedItems = new ToolStripGrouper.ItemType[] {
+        private static readonly ToolStripGrouper.ItemType[] tileSelectedItems = new ToolStripGrouper.ItemType[] {
             ToolStripGrouper.ItemType.FlipHorizontally, ToolStripGrouper.ItemType.FlipVertically,
             ToolStripGrouper.ItemType.CenterHorizontally, ToolStripGrouper.ItemType.CenterVertically,
             ToolStripGrouper.ItemType.MoveUp, ToolStripGrouper.ItemType.MoveDown,
@@ -86,10 +87,11 @@ namespace Necrofy
         private void UpdateViewOptions() {
             showAxes = mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewAxes).Checked;
             showTileBorders = mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewTileBorders).Checked;
+            showGrid = mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewSpriteGrid).Checked;
         }
 
         private void UpdateToolbar() {
-            foreach (ToolStripGrouper.ItemType item in wordSelectedItems) {
+            foreach (ToolStripGrouper.ItemType item in tileSelectedItems) {
                 mainWindow.GetToolStripItem(item).Enabled = selectedObjects.Count > 0;
             }
         }
@@ -175,7 +177,7 @@ namespace Necrofy
         }
 
         public override void ToolStripItemCheckedChanged(ToolStripGrouper.ItemType item) {
-            if (item == ToolStripGrouper.ItemType.ViewAxes || item == ToolStripGrouper.ItemType.ViewTileBorders) {
+            if (item == ToolStripGrouper.ItemType.ViewAxes || item == ToolStripGrouper.ItemType.ViewTileBorders || item == ToolStripGrouper.ItemType.ViewSpriteGrid) {
                 UpdateViewOptions();
                 if (DockVisible) {
                     Repaint();
@@ -256,6 +258,7 @@ namespace Necrofy
 
             scrollWrapper.TransformGraphics(e.Graphics);
             e.Graphics.FillRectangle(SystemBrushes.ControlDark, new Rectangle(-MaxDimension, -MaxDimension, AllowedSize, AllowedSize));
+
             if (showAxes) {
                 // Move by 0.5 to make it so the lines still line up when zoomed in with "Half" PixelOffsetMode
                 e.Graphics.DrawLine(Pens.BlueViolet, -MaxDimension, -0.5f, MaxDimension, -0.5f);
@@ -277,6 +280,21 @@ namespace Necrofy
                         foreach (Sprite.Tile tile in currentSprite.tiles) {
                             e.Graphics.DrawRectangle(borderPen, tile.xOffset, tile.yOffset, 16, 16);
                         }
+                    }
+                }
+
+                if (showGrid) {
+                    using (Pen gridPen = new Pen(Color.Gray, 1 / Zoom)) {
+                        for (int x = -MaxDimension + 16; x < MaxDimension; x += 16) {
+                            e.Graphics.DrawLine(gridPen, x, -MaxDimension, x, MaxDimension);
+                        }
+                        for (int y = -MaxDimension + 16; y < MaxDimension; y += 16) {
+                            e.Graphics.DrawLine(gridPen, -MaxDimension, y, MaxDimension, y);
+                        }
+                    }
+                    using (Pen axesPen = new Pen(Color.BlueViolet, 1 / Zoom)) {
+                        e.Graphics.DrawLine(axesPen, 0, -MaxDimension, 0, MaxDimension);
+                        e.Graphics.DrawLine(axesPen, -MaxDimension, 0, MaxDimension, 0);
                     }
                 }
 

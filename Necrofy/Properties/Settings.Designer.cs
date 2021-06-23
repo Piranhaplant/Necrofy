@@ -178,5 +178,17 @@ namespace Necrofy.Properties {
                 this["emulator"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ShowSpriteGrid {
+            get {
+                return ((bool)(this["ShowSpriteGrid"]));
+            }
+            set {
+                this["ShowSpriteGrid"] = value;
+            }
+        }
     }
 }

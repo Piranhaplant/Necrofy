@@ -73,6 +73,7 @@ namespace Necrofy
             viewRespawnAreas.Checked = Properties.Settings.Default.ShowRespawnAreas;
             viewAxes.Checked = Properties.Settings.Default.ShowAxes;
             viewTileBorders.Checked = Properties.Settings.Default.ShowTileBorders;
+            viewSpriteGrid.Checked = Properties.Settings.Default.ShowSpriteGrid;
 
             if (Properties.Settings.Default.WindowSize != Size.Empty) {
                 Size = Properties.Settings.Default.WindowSize;
@@ -82,7 +83,7 @@ namespace Necrofy
             }
 
             projectMenuItems = new List<ToolStripMenuItem>() { projectBuildProject, projectRunProject, projectSettings };
-            HideAllEditorToolStripItems();
+            toolStripGrouper.HideAllSetItems();
             UpdateStatusText();
 
             if (Environment.GetCommandLineArgs().Length == 2) {
@@ -100,6 +101,7 @@ namespace Necrofy
             Properties.Settings.Default.ShowRespawnAreas = viewRespawnAreas.Checked;
             Properties.Settings.Default.ShowTileBorders = viewTileBorders.Checked;
             Properties.Settings.Default.ShowAxes = viewAxes.Checked;
+            Properties.Settings.Default.ShowSpriteGrid = viewSpriteGrid.Checked;
             if (WindowState.HasFlag(FormWindowState.Maximized)) {
                 Properties.Settings.Default.WindowSize = RestoreBounds.Size;
                 Properties.Settings.Default.Maximized = true;
@@ -122,12 +124,6 @@ namespace Necrofy
             dockPanel.DockLeftPortion = 220;
             dockPanel.DockRightPortion = 200;
             dockPanel.DockTopPortion = 200;
-        }
-
-        private void HideAllEditorToolStripItems() {
-            foreach (ToolStripItem item in toolStripGrouper.GetAllSetItems()) {
-                item.Visible = false;
-            }
         }
         
         private void LoadRunSettings() {
@@ -282,15 +278,13 @@ namespace Necrofy
             EditorWindow editor = dockPanel.ActiveDocument as EditorWindow;
 
             if (activeEditor != null) {
-                HideAllEditorToolStripItems();
+                toolStripGrouper.HideAllSetItems();
                 activeEditor.Hidden();
             }
 
             activeEditor = editor;
             if (editor != null) {
-                foreach (ToolStripItem item in toolStripGrouper.GetItemsInSet(editor.ToolStripItemSet)) {
-                    item.Visible = true;
-                }
+                toolStripGrouper.ShowItemSet(editor.ToolStripItemSet);
                 editor.Displayed();
             }
             UpdateWindowText();

@@ -17,6 +17,7 @@ namespace Necrofy
         private readonly Dictionary<ItemType, HashSet<ToolStripItem>> itemsForType = new Dictionary<ItemType, HashSet<ToolStripItem>>();
         private readonly Dictionary<ToolStripItem, ItemType> typeOfItem = new Dictionary<ToolStripItem, ItemType>();
         private readonly Dictionary<ItemType, ItemProxy> itemProxies = new Dictionary<ItemType, ItemProxy>();
+        private readonly Dictionary<ToolStripMenuItem, Keys> shortcutKeys = new Dictionary<ToolStripMenuItem, Keys>();
 
         public event EventHandler<ItemEventArgs> ItemClick;
         public event EventHandler<ItemEventArgs> ItemCheckedChanged;
@@ -72,15 +73,36 @@ namespace Necrofy
             }
         }
 
-        public IEnumerable<ToolStripItem> GetItemsInSet(ItemSet set) {
+        private IEnumerable<ToolStripItem> GetItemsInSet(ItemSet set) {
             if (set != ItemSet.None && itemsForSet.TryGetValue(set, out HashSet<ToolStripItem> items)) {
                 return items;
             }
             return Enumerable.Empty<ToolStripItem>();
         }
+        
+        public void HideAllSetItems() {
+            if (shortcutKeys.Count == 0) {
+                foreach (ToolStripItem item in setOfItem.Keys) {
+                    if (item is ToolStripMenuItem toolStripItem) {
+                        shortcutKeys[toolStripItem] = toolStripItem.ShortcutKeys;
+                    }
+                }
+            }
+            foreach (ToolStripItem item in setOfItem.Keys) {
+                item.Visible = false;
+                if (item is ToolStripMenuItem toolStripItem) {
+                    toolStripItem.ShortcutKeys = Keys.None;
+                }
+            }
+        }
 
-        public IEnumerable<ToolStripItem> GetAllSetItems() {
-            return new HashSet<ToolStripItem>(setOfItem.Keys);
+        public void ShowItemSet(ItemSet set) {
+            foreach (ToolStripItem item in GetItemsInSet(set)) {
+                item.Visible = true;
+                if (item is ToolStripMenuItem toolStripItem && shortcutKeys.TryGetValue(toolStripItem, out Keys keys)) {
+                    toolStripItem.ShortcutKeys = keys;
+                }
+            }
         }
 
         public ItemProxy GetItem(ItemType type) {
@@ -209,6 +231,7 @@ namespace Necrofy
             ViewRestartAnimation,
             ViewAxes,
             ViewTileBorders,
+            ViewSpriteGrid,
             LevelEditTitle,
             LevelSettings,
             LevelClear,
