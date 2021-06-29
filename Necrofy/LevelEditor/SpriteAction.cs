@@ -24,12 +24,12 @@ namespace Necrofy
         private readonly List<ushort> newX = new List<ushort>();
         private readonly List<ushort> newY = new List<ushort>();
 
-        public MoveSpriteAction(IEnumerable<WrappedLevelObject> objs, int dx, int dy) : base(objs) {
+        public MoveSpriteAction(IEnumerable<WrappedLevelObject> objs, int dx, int dy, int snap) : base(objs) {
             foreach (WrappedLevelObject obj in objs) {
                 prevX.Add(obj.X);
                 prevY.Add(obj.Y);
-                newX.Add((ushort)(obj.X + dx));
-                newY.Add((ushort)(obj.Y + dy));
+                newX.Add((ushort)((obj.X + dx) / snap * snap));
+                newY.Add((ushort)((obj.Y + dy) / snap * snap));
             }
         }
 

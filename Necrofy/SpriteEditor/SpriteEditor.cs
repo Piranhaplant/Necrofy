@@ -17,7 +17,7 @@ namespace Necrofy
         private const int MaxDimension = AllowedSize / 2;
 
         private const string DefaultStatus = "Click to select or move. Hold shift to add to the selection. Hold alt to remove from the selection. Double click in the tile panel or hold ctrl and click on the sprite area to create a new tile.";
-        private const string DragStatus = "Move: {0}, {1}.";
+        private const string DragStatus = "Move: {0}, {1}. Hold Shift to snap to 8x8 pixel grid.";
 
         private static readonly SolidBrush selectionFillBrush = new SolidBrush(Color.FromArgb(96, 255, 255, 255));
 
@@ -355,8 +355,8 @@ namespace Necrofy
             updatingUI--;
         }
 
-        public void MoveSelectedObjects(int dx, int dy) {
-            undoManager.Do(new MoveSpriteTileAction(currentSprite, selectedObjects, dx, dy));
+        public void MoveSelectedObjects(int dx, int dy, int snap) {
+            undoManager.Do(new MoveSpriteTileAction(currentSprite, selectedObjects, dx, dy, snap));
             UpdateStatus();
         }
 

@@ -33,12 +33,15 @@ namespace Necrofy
         private Rectangle selectionRectangle;
 
         public bool MovingObjects { get; private set; } = false;
-        public int TotalMoveX { get; private set; }
-        public int TotalMoveY { get; private set; }
+        public int TotalMoveX => dragBaseObject == null ? 0 : (dragBaseObject.GetX() - dragStartX);
+        public int TotalMoveY => dragBaseObject == null ? 0 : (dragBaseObject.GetY() - dragStartY);
 
+        private T dragBaseObject;
+        private int dragOffsetX;
+        private int dragOffsetY;
         private int dragStartX;
         private int dragStartY;
-
+        
         public ObjectSelector(IHost host, int positionStep = 1, int maxX = ushort.MaxValue, int maxY = ushort.MaxValue, int minX = 0, int minY = 0) {
             this.host = host;
             this.positionStep = positionStep;
@@ -114,8 +117,6 @@ namespace Necrofy
             MovingObjects = false;
             dragStartX = x;
             dragStartY = y;
-            TotalMoveX = 0;
-            TotalMoveY = 0;
 
             if (!hitObjectFound) {
                 if (!addToSelection && !removeFromSelection || creating) {
@@ -125,6 +126,7 @@ namespace Necrofy
                     creating = false;
                     T newObject = host.CreateObject(x, y);
                     if (newObject != null) {
+                        hitObject = newObject;
                         MovingObjects = true;
                         selectedObjects.Add(newObject);
                     }
@@ -148,6 +150,15 @@ namespace Necrofy
                     MovingObjects = true;
                 }
             }
+
+            if (MovingObjects) {
+                dragBaseObject = hitObject;
+                dragStartX = hitObject.GetX();
+                dragStartY = hitObject.GetY();
+                dragOffsetX = x - hitObject.GetX();
+                dragOffsetY = y - hitObject.GetY();
+            }
+
             host.SelectionChanged();
         }
 
@@ -167,11 +178,9 @@ namespace Necrofy
                 }
                 host.SelectionChanged();
             } else if (MovingObjects) {
-                int newMoveX = x - dragStartX;
-                int newMoveY = y - dragStartY;
-
-                int dx = newMoveX - TotalMoveX;
-                int dy = newMoveY - TotalMoveY;
+                int snap = Control.ModifierKeys.HasFlag(Keys.Shift) ? 8 : 1;
+                int dx = x - (dragBaseObject.GetX() + dragOffsetX);
+                int dy = y - (dragBaseObject.GetY() + dragOffsetY);
                 ClampObjectMove(ref dx, ref dy);
 
                 if (dx != 0 || dy != 0) {
@@ -184,11 +193,8 @@ namespace Necrofy
                             return;
                         }
                     }
-
-                    TotalMoveX += dx;
-                    TotalMoveY += dy;
                     
-                    host.MoveSelectedObjects(dx, dy);
+                    host.MoveSelectedObjects(dx, dy, snap);
                 }
             }
         }
@@ -226,7 +232,7 @@ namespace Necrofy
             ClampObjectMove(ref dx, ref dy);
 
             if (dx != 0 || dy != 0) {
-                host.MoveSelectedObjects(dx, dy);
+                host.MoveSelectedObjects(dx, dy, 1);
             }
         }
 
@@ -249,7 +255,7 @@ namespace Necrofy
                     int dx = (isX ? intValue : 0) * positionStep;
                     int dy = (isX ? 0 : intValue) * positionStep;
                     ClampObjectMove(ref dx, ref dy);
-                    host.MoveSelectedObjects(dx, dy);
+                    host.MoveSelectedObjects(dx, dy, 1);
                 } else if (intValue >= minX && intValue <= maxX) {
                     if (isX) {
                         host.SetSelectedObjectsPosition(intValue, null);
@@ -269,7 +275,7 @@ namespace Necrofy
             int dx = areaCenter - selectionCenter;
             int dy = 0;
             ClampObjectMove(ref dx, ref dy);
-            host.MoveSelectedObjects(dx, dy);
+            host.MoveSelectedObjects(dx, dy, 1);
         }
 
         public void CenterVertically() {
@@ -281,7 +287,7 @@ namespace Necrofy
             int dx = 0;
             int dy = areaCenter - selectionCenter;
             ClampObjectMove(ref dx, ref dy);
-            host.MoveSelectedObjects(dx, dy);
+            host.MoveSelectedObjects(dx, dy, 1);
         }
 
         public List<int> SortAndGetZIndexes(List<T> objs) {
@@ -339,7 +345,7 @@ namespace Necrofy
         {
             IEnumerable<T> GetObjects();
             void SelectionChanged();
-            void MoveSelectedObjects(int dx, int dy);
+            void MoveSelectedObjects(int dx, int dy, int snap);
             void SetSelectedObjectsPosition(int? x, int? y);
             T CreateObject(int x, int y);
             IEnumerable<T> CloneSelection();

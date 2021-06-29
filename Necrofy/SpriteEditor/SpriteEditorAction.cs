@@ -34,12 +34,12 @@ namespace Necrofy
         private readonly List<short> newX = new List<short>();
         private readonly List<short> newY = new List<short>();
 
-        public MoveSpriteTileAction(Sprite sprite, IEnumerable<WrappedSpriteTile> objs, int dx, int dy) : base(sprite, objs) {
+        public MoveSpriteTileAction(Sprite sprite, IEnumerable<WrappedSpriteTile> objs, int dx, int dy, int snap) : base(sprite, objs) {
             foreach (WrappedSpriteTile obj in objs) {
                 prevX.Add(obj.tile.xOffset);
                 prevY.Add(obj.tile.yOffset);
-                newX.Add((short)(obj.tile.xOffset + dx));
-                newY.Add((short)(obj.tile.yOffset + dy));
+                newX.Add((short)((obj.tile.xOffset + dx) / snap * snap));
+                newY.Add((short)((obj.tile.yOffset + dy) / snap * snap));
             }
         }
 

@@ -16,7 +16,7 @@ namespace Necrofy
     {
         private const string DefaultStatus = "Click to select or move. Hold shift to add to the selection. Hold alt to remove from the selection. Double click in the objects panel or hold ctrl and click on the level to create a new sprite.";
         private const string ResizeStatus = "Monster respawn area size: {0}.";
-        private const string DragStatus = "Move: {0}, {1}.";
+        private const string DragStatus = "Move: {0}, {1}. Hold Shift to snap to 8x8 pixel grid.";
 
         private static readonly SolidBrush selectionFillBrush = new SolidBrush(Color.FromArgb(96, 255, 255, 255));
         private const int respawnAreaSizeHandleSize = 6;
@@ -70,8 +70,8 @@ namespace Necrofy
             }
         }
 
-        public void MoveSelectedObjects(int dx, int dy) {
-            editor.undoManager.Do(new MoveSpriteAction(selectedObjects, dx, dy));
+        public void MoveSelectedObjects(int dx, int dy, int snap) {
+            editor.undoManager.Do(new MoveSpriteAction(selectedObjects, dx, dy, snap));
             UpdateStatus();
         }
 
