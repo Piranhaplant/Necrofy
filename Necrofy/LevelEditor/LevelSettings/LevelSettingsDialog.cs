@@ -82,7 +82,7 @@ namespace Necrofy
 
             if (presets.secretBonuses != null) {
                 secretBonusTypeSelector.Items.AddRange(presets.secretBonuses.ToArray());
-                secretBonusTypeSelector.SelectedItem = presets.secretBonuses.Where(p => p.value == level.Level.secretBonusCodePointer).FirstOrDefault();
+                secretBonusTypeSelector.SelectedItem = presets.secretBonuses.Where(p => p.value.Contains(level.Level.secretBonusCodePointer)).FirstOrDefault();
             }
 
             bonusLevelSelector.Value = level.Level.bonusLevelNumber;
@@ -168,7 +168,7 @@ namespace Necrofy
         }
 
         private void secretBonusTypeSelector_SelectedIndexChanged(object sender, EventArgs e) {
-            bonusLevelSelector.Enabled = ((LevelSettingsPresets.Preset<ushort>)secretBonusTypeSelector.SelectedItem).name == "Bonus level";
+            bonusLevelSelector.Enabled = ((LevelSettingsPresets.Preset<HashSet<ushort>>)secretBonusTypeSelector.SelectedItem).name == "Bonus level";
         }
 
         private void applyButton_Click(object sender, EventArgs e) {
@@ -239,7 +239,7 @@ namespace Necrofy
             }
 
             if (secretBonusTypeSelector.SelectedIndex > -1) {
-                level.Level.secretBonusCodePointer = ((LevelSettingsPresets.Preset<ushort>)secretBonusTypeSelector.SelectedItem).value;
+                level.Level.secretBonusCodePointer = ((LevelSettingsPresets.Preset<HashSet<ushort>>)secretBonusTypeSelector.SelectedItem).value.FirstOrDefault();
             }
 
             level.Level.bonusLevelNumber = (ushort)bonusLevelSelector.Value;
