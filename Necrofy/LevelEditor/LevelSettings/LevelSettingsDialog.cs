@@ -137,6 +137,8 @@ namespace Necrofy
         }
         
         private void addLevelEffect_Click(object sender, EventArgs e) {
+            addPaletteFade.Enabled = !levelMonsters.Any(m => m is PaletteFadeLevelMonster);
+            addTileAnimation.Enabled = !levelMonsters.Any(m => m is TileAnimLevelMonster);
             addLevelEffectMenu.Show(addLevelEffect, 0, addLevelEffect.Height);
         }
 
