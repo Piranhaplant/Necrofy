@@ -17,6 +17,7 @@ namespace Necrofy
 
             systemDefaultEmulator.Checked = Properties.Settings.Default.useSystemEmulator;
             emulatorText.Text = Properties.Settings.Default.emulator;
+            showWelcomeScreen.Checked = Properties.Settings.Default.ShowStartupWindow;
         }
 
         private void systemDefaultEmulator_CheckedChanged(object sender, EventArgs e) {
@@ -37,6 +38,7 @@ namespace Necrofy
         private void okButton_Click(object sender, EventArgs e) {
             Properties.Settings.Default.useSystemEmulator = systemDefaultEmulator.Checked;
             Properties.Settings.Default.emulator = emulatorText.Text;
+            Properties.Settings.Default.ShowStartupWindow = showWelcomeScreen.Checked;
             Properties.Settings.Default.Save();
             Close();
         }

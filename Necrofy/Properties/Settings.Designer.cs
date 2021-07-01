@@ -190,5 +190,17 @@ namespace Necrofy.Properties {
                 this["ShowSpriteGrid"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowStartupWindow {
+            get {
+                return ((bool)(this["ShowStartupWindow"]));
+            }
+            set {
+                this["ShowStartupWindow"] = value;
+            }
+        }
     }
 }

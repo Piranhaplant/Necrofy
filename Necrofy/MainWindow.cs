@@ -19,6 +19,8 @@ namespace Necrofy
         private static readonly string DefaultStatusText = Application.ProductName + " " + Application.ProductVersion;
         private static readonly float[] zoomLevels = new float[] { 0.25f, 0.33f, 0.5f, 0.75f, 1.0f, 2.0f, 4.0f, 8.0f };
 
+        private StartupWindow startupWindow;
+
         private Project project;
 
         private Dictionary<string, RunSettings> savedRunSettings;
@@ -88,6 +90,9 @@ namespace Necrofy
 
             if (Environment.GetCommandLineArgs().Length == 2) {
                 OpenProject(Environment.GetCommandLineArgs()[1]);
+            } else if (Properties.Settings.Default.ShowStartupWindow) {
+                startupWindow = new StartupWindow();
+                startupWindow.Show(dockPanel, DockState.Document);
             }
         }
         
@@ -300,7 +305,7 @@ namespace Necrofy
 
         private void UpdateWindowText() {
             Text = Application.ProductName;
-            if (activeEditor != null) {
+            if (activeEditor != null && activeEditor.Title.Length > 0) {
                 Text += " - " + activeEditor.Title;
             }
         }
@@ -397,6 +402,11 @@ namespace Necrofy
                 MessageBox.Show($"Project was created with a newer version of {Application.ProductName} and cannot be opened.", "Error");
                 project = null;
                 return;
+            }
+
+            if (startupWindow != null) {
+                startupWindow.Close();
+                startupWindow = null;
             }
 
             recentProjects.Add(project.SettingsPath);
@@ -563,40 +573,7 @@ namespace Necrofy
                 project.WriteSettings();
             }
         }
-
-        private void debugToolStripMenuItem_Click(object sender, EventArgs e) {
-            // Convert demo data
-            //OpenFileDialog ofd = new OpenFileDialog();
-            //if (ofd.ShowDialog() == DialogResult.OK) {
-            //    FileStream fs = new FileStream(ofd.FileName, FileMode.Open);
-            //    int frameCount = fs.ReadInt16();
-
-            //    ushort prevInput = fs.ReadInt16();
-            //    ushort inputCount = 1;
-
-            //    List<byte> output = new List<byte>();
-            //    for (int i = 1; i < frameCount; i++) {
-            //        ushort nextInput = fs.ReadInt16();
-            //        if (nextInput == prevInput) {
-            //            inputCount++;
-            //        } else {
-            //            output.AddInt16(prevInput);
-            //            output.AddInt16(inputCount);
-            //            prevInput = nextInput;
-            //            inputCount = 1;
-            //        }
-            //    }
-
-            //    output.AddInt16(prevInput);
-            //    output.AddInt16(inputCount);
-
-            //    SaveFileDialog sfd = new SaveFileDialog();
-            //    if (sfd.ShowDialog() == DialogResult.OK) {
-            //        File.WriteAllBytes(sfd.FileName, output.ToArray());
-            //    }
-            //}
-        }
-
+        
         private void ZoomOut(object sender, EventArgs e) {
             doZoom(-1);
         }

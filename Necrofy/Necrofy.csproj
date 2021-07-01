@@ -208,6 +208,11 @@
     <Compile Include="PreferencesDialog.Designer.cs">
       <DependentUpon>PreferencesDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="SpriteEditor\WrappedSpriteTile.cs" />
     <Compile Include="LevelEditor\TitleEditor\LevelTitleObjectBrowserContents.cs" />
     <Compile Include="SpriteEditor\SpriteEditorObjectBrowserContents.cs" />
@@ -236,6 +241,12 @@
     </Compile>
     <Compile Include="SpriteEditor\SpriteTilePicker.Designer.cs">
       <DependentUpon>SpriteTilePicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StartupWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StartupWindow.Designer.cs">
+      <DependentUpon>StartupWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="TextDisplayForm.cs">
       <SubType>Form</SubType>
@@ -324,11 +335,6 @@
     <Compile Include="Project.cs" />
     <Compile Include="ProjectSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="RecentFilesMenu.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -427,6 +433,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SpriteEditor\SpriteTilePicker.resx">
       <DependentUpon>SpriteTilePicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StartupWindow.resx">
+      <DependentUpon>StartupWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TextDisplayForm.resx">
       <DependentUpon>TextDisplayForm.cs</DependentUpon>
@@ -570,6 +579,7 @@
     <None Include="Icons\cross-script.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\StartPage.html" />
     <None Include="readme.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -589,8 +599,8 @@
     <None Include="Tools\asar.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Images\circle.png" />
-    <None Include="Images\arrow.png" />
+    <None Include="Resources\circle.png" />
+    <None Include="Resources\arrow.png" />
     <None Include="Icons\plus.png" />
     <None Include="Icons\minus.png" />
     <None Include="Icons\paint-brush.png" />

@@ -661,6 +661,25 @@ namespace Necrofy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
+        ///&lt;html&gt;
+        ///	&lt;head&gt;
+        ///		&lt;title&gt;Welcome to Necrofy&lt;/title&gt;
+        ///	&lt;/head&gt;
+        ///	&lt;body&gt;
+        ///		&lt;h2&gt;Welcome to Necrofy!&lt;/title&gt;
+        ///		&lt;p&gt;This is a test&lt;/p&gt;
+        ///	&lt;/body&gt;
+        ///&lt;/html&gt;
+        ///.
+        /// </summary>
+        internal static string StartPage {
+            get {
+                return ResourceManager.GetString("StartPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap tick_button {

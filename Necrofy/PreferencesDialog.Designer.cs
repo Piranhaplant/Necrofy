@@ -32,13 +32,16 @@
             this.emulatorText = new System.Windows.Forms.TextBox();
             this.systemDefaultEmulator = new System.Windows.Forms.CheckBox();
             this.openEmulator = new System.Windows.Forms.OpenFileDialog();
+            this.showWelcomeScreen = new System.Windows.Forms.CheckBox();
+            this.miscGroup = new System.Windows.Forms.GroupBox();
             this.emulatorGroup.SuspendLayout();
+            this.miscGroup.SuspendLayout();
             this.SuspendLayout();
             // 
             // okButton
             // 
             this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.okButton.Location = new System.Drawing.Point(229, 96);
+            this.okButton.Location = new System.Drawing.Point(229, 147);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 23);
             this.okButton.TabIndex = 3;
@@ -50,7 +53,7 @@
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(310, 96);
+            this.cancelButton.Location = new System.Drawing.Point(310, 147);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 2;
@@ -105,13 +108,34 @@
             // 
             this.openEmulator.Filter = "Executable Files (*.exe)|*.exe|All Files (*.*)|*.*";
             // 
+            // showWelcomeScreen
+            // 
+            this.showWelcomeScreen.AutoSize = true;
+            this.showWelcomeScreen.Location = new System.Drawing.Point(6, 19);
+            this.showWelcomeScreen.Name = "showWelcomeScreen";
+            this.showWelcomeScreen.Size = new System.Drawing.Size(133, 17);
+            this.showWelcomeScreen.TabIndex = 5;
+            this.showWelcomeScreen.Text = "Show welcome screen";
+            this.showWelcomeScreen.UseVisualStyleBackColor = true;
+            // 
+            // miscGroup
+            // 
+            this.miscGroup.Controls.Add(this.showWelcomeScreen);
+            this.miscGroup.Location = new System.Drawing.Point(12, 92);
+            this.miscGroup.Name = "miscGroup";
+            this.miscGroup.Size = new System.Drawing.Size(373, 45);
+            this.miscGroup.TabIndex = 6;
+            this.miscGroup.TabStop = false;
+            this.miscGroup.Text = "Misc";
+            // 
             // PreferencesDialog
             // 
             this.AcceptButton = this.okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(397, 131);
+            this.ClientSize = new System.Drawing.Size(397, 182);
+            this.Controls.Add(this.miscGroup);
             this.Controls.Add(this.emulatorGroup);
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.cancelButton);
@@ -122,6 +146,8 @@
             this.Text = "Necrofy Preferences";
             this.emulatorGroup.ResumeLayout(false);
             this.emulatorGroup.PerformLayout();
+            this.miscGroup.ResumeLayout(false);
+            this.miscGroup.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -135,5 +161,7 @@
         private System.Windows.Forms.TextBox emulatorText;
         private System.Windows.Forms.CheckBox systemDefaultEmulator;
         private System.Windows.Forms.OpenFileDialog openEmulator;
+        private System.Windows.Forms.CheckBox showWelcomeScreen;
+        private System.Windows.Forms.GroupBox miscGroup;
     }
 }
