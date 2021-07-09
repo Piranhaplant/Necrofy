@@ -288,8 +288,7 @@ namespace Necrofy
                     g.DrawRectangle(p, bounds);
                 }
             }
-
-            using (Pen black = new Pen(Color.Black, 1 / editor.Zoom))
+            
             using (Pen p = new Pen(Color.LightSteelBlue, 1 / editor.Zoom)) {
                 foreach (UIExtras uiExtras in GetAllUIExtras()) {
                     g.FillRectangle(Brushes.Black, uiExtras.resizeHandle);
@@ -297,13 +296,13 @@ namespace Necrofy
 
                     g.FillEllipse(Brushes.Red, uiExtras.delayDial);
                     g.FillPie(Brushes.Green, uiExtras.delayDial, 90f, (float)UIExtras.DelayToDangerRatio(uiExtras.monster.Delay) * 360f);
-                    g.DrawEllipse(black, uiExtras.delayDial);
+                    g.DrawEllipse(p, uiExtras.delayDial);
                 }
             }
 
             if (mouseIsDown && isChangingMonsterDelay) {
                 int effectiveDelay = (extraEditMonster.Delay + 1) * (editor.level.Level.monsters.Count + 1);
-                LevelEditor.DrawTextUnder(g, new UIExtras(extraEditMonster).delayDial, $"{effectiveDelay / 60.0:0.00} sec/spawn");
+                LevelEditor.DrawTextUnder(g, new UIExtras(extraEditMonster).delayDial, $"{effectiveDelay / 60.0:0.00} sec/spawn", editor.Zoom);
             }
         }
 

@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using System.Diagnostics;
 using System.Windows.Forms.Layout;
+using System.Threading.Tasks;
 
 namespace Necrofy
 {
@@ -112,6 +113,7 @@ namespace Necrofy
         }
 
         protected override UndoManager Setup() {
+            repaintTimer();
             undoManager = new UndoManager<LevelEditor>(mainWindow.UndoButton, mainWindow.RedoButton, this);
             return undoManager;
         }
@@ -283,10 +285,22 @@ namespace Necrofy
             }
         }
 
+        private bool repaintQueued = false;
+
         public void Repaint() {
-            canvas.Invalidate();
+            repaintQueued = true;
         }
 
+        private async void repaintTimer() {
+            while (true) {
+                await Task.Delay(5);
+                if (repaintQueued) {
+                    canvas.Invalidate();
+                    repaintQueued = false;
+                }
+            }
+        }
+        
         private bool showGrid;
         private bool solidTilesOnly;
         private bool showTilePriority;
@@ -395,10 +409,14 @@ namespace Necrofy
             Alignment = StringAlignment.Center
         };
 
-        public static void DrawTextUnder(Graphics g, Rectangle r, string s) {
+        public static void DrawTextUnder(Graphics g, Rectangle r, string s, float zoom) {
             int x = r.X + r.Width / 2;
             int y = r.Bottom + 4;
-            g.DrawString(s, underTextFont, Brushes.Black, x + 1, y + 1, underTextFormat);
+            float pixelSize = 1 / zoom;
+            g.DrawString(s, underTextFont, Brushes.Black, x + pixelSize, y + pixelSize, underTextFormat);
+            g.DrawString(s, underTextFont, Brushes.Black, x + pixelSize, y - pixelSize, underTextFormat);
+            g.DrawString(s, underTextFont, Brushes.Black, x - pixelSize, y - pixelSize, underTextFormat);
+            g.DrawString(s, underTextFont, Brushes.Black, x - pixelSize, y + pixelSize, underTextFormat);
             g.DrawString(s, underTextFont, Brushes.White, x, y, underTextFormat);
         }
 

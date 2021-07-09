@@ -62,7 +62,7 @@ namespace Necrofy
 
         public override void RenderExtras(Graphics g, bool showRespawnAreas, float zoom) {
             if (wrappedObject.victimNumber > 0) {
-                LevelEditor.DrawTextUnder(g, Bounds, wrappedObject.victimNumber.ToString());
+                LevelEditor.DrawTextUnder(g, Bounds, wrappedObject.victimNumber.ToString(), zoom);
             }
         }
 
