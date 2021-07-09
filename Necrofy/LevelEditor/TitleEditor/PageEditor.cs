@@ -628,8 +628,8 @@ namespace Necrofy
 
         public void SelectionChanged() {
             bool textEditWordChanged = false;
-            if (!keepTextEditWord) {
-                textEditWordChanged = textEditWord != null;
+            if (textEditWord != null && !keepTextEditWord) {
+                textEditWordChanged = true;
                 textEditWord = null;
             }
             keepTextEditWord = false;
