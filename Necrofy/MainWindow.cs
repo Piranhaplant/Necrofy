@@ -77,13 +77,6 @@ namespace Necrofy
             viewTileBorders.Checked = Properties.Settings.Default.ShowTileBorders;
             viewSpriteGrid.Checked = Properties.Settings.Default.ShowSpriteGrid;
 
-            if (Properties.Settings.Default.WindowSize != Size.Empty) {
-                Size = Properties.Settings.Default.WindowSize;
-                if (Properties.Settings.Default.Maximized) {
-                    WindowState = FormWindowState.Maximized;
-                }
-            }
-
             projectMenuItems = new List<ToolStripMenuItem>() { projectBuildProject, projectRunProject, projectSettings };
             toolStripGrouper.HideAllSetItems();
             UpdateStatusText();
@@ -95,7 +88,17 @@ namespace Necrofy
                 startupWindow.Show(dockPanel, DockState.Document);
             }
         }
-        
+
+        private void MainWindow_Load(object sender, EventArgs e) {
+            // Setting window state to maximized in the constructor won't have any effect
+            if (Properties.Settings.Default.WindowSize != Size.Empty) {
+                Size = Properties.Settings.Default.WindowSize;
+                if (Properties.Settings.Default.Maximized) {
+                    WindowState = FormWindowState.Maximized;
+                }
+            }
+        }
+
         private void MainWindow_FormClosed(object sender, FormClosedEventArgs e) {
             using (MemoryStream s = new MemoryStream()) {
                 dockPanel.SaveAsXml(s, Encoding.UTF8);
