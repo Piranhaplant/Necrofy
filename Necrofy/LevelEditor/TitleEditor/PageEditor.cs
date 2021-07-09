@@ -279,11 +279,11 @@ namespace Necrofy
                     doubleClickTimer.Restart();
                 }
             } else {
+                TextSelectionStart = -1;
+                TextSelectionEnd = -1;
                 hoveredWord?.UseExtendedBounds(true);
                 objectSelector.MouseDown(e.X, e.Y);
                 hoveredWord?.UseExtendedBounds(false);
-                TextSelectionStart = -1;
-                TextSelectionEnd = -1;
             }
             prevClickLocation = e.Location;
         }
@@ -627,12 +627,15 @@ namespace Necrofy
         private HashSet<WrappedTitleWord> prevSelectedWords = new HashSet<WrappedTitleWord>();
 
         public void SelectionChanged() {
+            bool textEditWordChanged = false;
             if (!keepTextEditWord) {
+                textEditWordChanged = textEditWord != null;
                 textEditWord = null;
             }
             keepTextEditWord = false;
+
             Invalidate();
-            if (!prevSelectedWords.SetEquals(objectSelector.GetSelectedObjects())) {
+            if (textEditWordChanged || !prevSelectedWords.SetEquals(objectSelector.GetSelectedObjects())) {
                 SelectedWordsChanged?.Invoke(this, EventArgs.Empty);
                 prevSelectedWords = new HashSet<WrappedTitleWord>(SelectedWords);
             }
