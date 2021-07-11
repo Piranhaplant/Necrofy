@@ -84,7 +84,7 @@ namespace Necrofy
             if (Environment.GetCommandLineArgs().Length == 2) {
                 OpenProject(Environment.GetCommandLineArgs()[1]);
             } else if (Properties.Settings.Default.ShowStartupWindow) {
-                startupWindow = new StartupWindow();
+                startupWindow = new StartupWindow(DefaultStatusText);
                 startupWindow.Show(dockPanel, DockState.Document);
             }
         }

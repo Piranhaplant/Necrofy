@@ -12,10 +12,11 @@ namespace Necrofy
 {
     partial class StartupWindow : EditorWindow
     {
-        public StartupWindow() {
+        public StartupWindow(string statusText) {
             InitializeComponent();
 
             webBrowser.DocumentText = Properties.Resources.StartPage;
+            Status = statusText;
         }
     }
 }
