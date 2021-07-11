@@ -42,8 +42,8 @@ namespace Necrofy
         public ScrollWrapper(Control control, HScrollBar hscroll, VScrollBar vscroll, bool autoSize = true) {
             this.control = control;
 
-            xDimension = new Dimension(hscroll, () => control.Width);
-            yDimension = new Dimension(vscroll, () => control.Height);
+            xDimension = new Dimension(hscroll, () => Math.Max(0, control.Width));
+            yDimension = new Dimension(vscroll, () => Math.Max(0, control.Height));
             xDimension.Scrolled += Dimension_Scrolled;
             yDimension.Scrolled += Dimension_Scrolled;
 
