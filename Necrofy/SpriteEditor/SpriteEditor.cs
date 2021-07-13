@@ -275,14 +275,6 @@ namespace Necrofy
                     }
                 }
 
-                if (showTileBorders) {
-                    using (Pen borderPen = new Pen(Color.LawnGreen, 1 / Zoom)) {
-                        foreach (Sprite.Tile tile in currentSprite.tiles) {
-                            e.Graphics.DrawRectangle(borderPen, tile.xOffset, tile.yOffset, 16, 16);
-                        }
-                    }
-                }
-
                 if (showGrid) {
                     using (Pen gridPen = new Pen(Color.Gray, 1 / Zoom)) {
                         for (int x = -MaxDimension + 16; x < MaxDimension; x += 16) {
@@ -295,6 +287,14 @@ namespace Necrofy
                     using (Pen axesPen = new Pen(Color.BlueViolet, 1 / Zoom)) {
                         e.Graphics.DrawLine(axesPen, 0, -MaxDimension, 0, MaxDimension);
                         e.Graphics.DrawLine(axesPen, -MaxDimension, 0, MaxDimension, 0);
+                    }
+                }
+
+                if (showTileBorders) {
+                    using (Pen borderPen = new Pen(Color.LawnGreen, 1 / Zoom)) {
+                        foreach (Sprite.Tile tile in currentSprite.tiles) {
+                            e.Graphics.DrawRectangle(borderPen, tile.xOffset, tile.yOffset, 16, 16);
+                        }
                     }
                 }
 
