@@ -74,5 +74,4 @@ RTS
 values:
 dw $0082,$0482
 
-print pc
 warnpc $82D4E9
