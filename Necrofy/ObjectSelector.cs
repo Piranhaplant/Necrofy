@@ -191,6 +191,8 @@ namespace Necrofy
                         if (selectedObjects.Count == 0) {
                             MovingObjects = false;
                             return;
+                        } else {
+                            dragBaseObject = selectedObjects.Where(o => o.GetX() == dragBaseObject.GetX() && o.GetY() == dragBaseObject.GetY()).First();
                         }
                     }
                     
