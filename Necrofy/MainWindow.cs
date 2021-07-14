@@ -624,7 +624,7 @@ namespace Necrofy
             MessageBox.Show(DefaultStatusText + Environment.NewLine + Environment.NewLine +
                "Credits:" + Environment.NewLine +
                "Programming: Piranhaplant" + Environment.NewLine +
-               "Tileset suggest lists: Droter" + Environment.NewLine +
+               "Tileset suggest lists: Droter/Piranhaplant" + Environment.NewLine +
                "Icons: Fugue Icons https://p.yusukekamiyamane.com/" + Environment.NewLine +
                "asar https://github.com/RPGHacker/asar" + Environment.NewLine +
                "Json.NET https://www.newtonsoft.com/json" + Environment.NewLine +
