@@ -16,6 +16,7 @@ namespace Necrofy
     public enum AssetCategory
     {
         Editor,
+        ROM,
         Data,
         Passwords,
         Sprites,

@@ -26,6 +26,7 @@ namespace Necrofy
             { AssetCategory.Level, Resources.map },
             { AssetCategory.Palette, Resources.color },
             { AssetCategory.Passwords, Resources.document_binary },
+            { AssetCategory.ROM, Resources.document_binary },
             { AssetCategory.Sprites, Resources.ghost },
             { AssetCategory.Tilemap, Resources.layout_4 },
         };
@@ -95,6 +96,7 @@ namespace Necrofy
         }
 
         private void AssetChanged(object sender, AssetEventArgs e) {
+            if (IsDisposed) return;
             Invoke((MethodInvoker)delegate {
                 TreeNode node = tree.Nodes.FindNodeByTag(e.Asset);
                 node.Text = e.Asset.Asset.DisplayName;
@@ -103,6 +105,7 @@ namespace Necrofy
         }
         
         private void AssetAdded(object sender, AssetEventArgs e) {
+            if (IsDisposed) return;
             Invoke((MethodInvoker)delegate {
                 TreeNode parent = null;
                 AssetTree.Node node = e.Asset;
@@ -123,6 +126,7 @@ namespace Necrofy
         }
 
         private void AssetRemoved(object sender, AssetEventArgs e) {
+            if (IsDisposed) return;
             Invoke((MethodInvoker)delegate {
                 RemoveNode(tree.Nodes.FindNodeByTag(e.Asset));
             });

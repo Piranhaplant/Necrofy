@@ -124,6 +124,12 @@ namespace Necrofy
             }
         }
 
+        public IEnumerable<Block> GetBlocks() {
+            foreach (FreeBlock block in blocks) {
+                yield return new Block(block.Start, block.End);
+            }
+        }
+
         /// <summary>Sorts the free blocks by their start address. Used only for getting a human readable output.</summary>
         public void Sort() {
             blocks.Sort();
@@ -214,6 +220,22 @@ namespace Necrofy
                     return End.CompareTo(other.End);
                 }
                 return Start.CompareTo(other.Start);
+            }
+        }
+
+        // Version of FreeBlock that is publically accessible and immutable
+        public class Block
+        {
+            /// <summary>The inclusive start position of the block.</summary>
+            public readonly int Start;
+            /// <summary>The exclusive end position of the block.</summary>
+            public readonly int End;
+            /// <summary>Gets the number of bytes held in this block.</summary>
+            public int Size => End - Start;
+
+            public Block(int start, int end) {
+                Start = start;
+                End = end;
             }
         }
     }
