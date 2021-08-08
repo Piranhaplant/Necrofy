@@ -120,18 +120,11 @@ namespace Necrofy
                 string outputROM = Path.Combine(BuildDirectory, buildFilename);
                 File.Copy(Path.Combine(path, baseROMFilename), outputROM, true);
 
-                foreach (string filename in Directory.GetFiles(path, "*", SearchOption.AllDirectories)) {
-                    if (Path.GetExtension(filename) == ".asm") {
-                        ApplyPatch(outputROM, filename, results);
-                    }
-                }
-
                 ROMInfo info;
                 using (NStream s = new NStream(new FileStream(outputROM, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))) {
                     info = new ROMInfo(s);
                     info.assets.Clear();
-                    AddEndOfBankFreespace(s, info.Freespace, 0xff);
-                    AddEndOfBankFreespace(s, info.Freespace, 0x00);
+                    AddEndOfBankFreespace(s, info.Freespace);
 
                     foreach (string filename in Directory.GetFiles(path, "*", SearchOption.AllDirectories)) {
                         string relativeFilename = GetRelativePath(filename);
@@ -163,7 +156,7 @@ namespace Necrofy
                     s.Seek(ROMPointers.ROMSize);
                     s.WriteByte(sizeValue);
 
-                    info.Freespace.Fill(s, 0xFF);
+                    info.Freespace.Fill(s, 0x33);
                 }
 
                 info.exportedDefines["win_level"] = settings.WinLevel.ToString();
@@ -171,6 +164,10 @@ namespace Necrofy
 
                 foreach (ProjectSettings.Patch patch in settings.EnabledPatches) {
                     ApplyInternalPatch(outputROM, patch.Name, results, info.exportedDefines);
+                }
+
+                foreach (string filename in Directory.GetFiles(path, "*.asm", SearchOption.AllDirectories)) {
+                    ApplyPatch(outputROM, filename, results);
                 }
             } catch (Exception ex) {
                 results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, "", ex.Message, ex.StackTrace));
@@ -225,6 +222,11 @@ namespace Necrofy
             } else {
                 Process.Start(Properties.Settings.Default.emulator, $"\"{romFile}\"");
             }
+        }
+
+        public static void AddEndOfBankFreespace(Stream s, Freespace freespace) {
+            AddEndOfBankFreespace(s, freespace, 0xff);
+            AddEndOfBankFreespace(s, freespace, 0x00);
         }
 
         private static void AddEndOfBankFreespace(Stream s, Freespace freespace, byte searchByte) {
