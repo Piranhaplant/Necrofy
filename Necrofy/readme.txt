@@ -8,6 +8,11 @@ ______________________________________________________________________
 
 FAQ:
 
+The program won't open.
+
+	If you are using Windows 7, you will need to make sure you have
+	at least version 4.7.1 of the Microsoft .NET Framework installed.
+
 How do I open a ROM file?
 
     Necrofy does not open ROM files directly. You must first create a
@@ -18,7 +23,7 @@ ______________________________________________________________________
 
 Credits:
   Programming: Piranhaplant
-  Tileset suggest lists: Droter
+  Tileset suggest lists: Droter/Piranhaplant
   Icons: Fugue Icons https://p.yusukekamiyamane.com/
 
 Libraries used:
