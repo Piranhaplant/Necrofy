@@ -42,6 +42,12 @@ namespace Necrofy
         public MainWindow() {
             InitializeComponent();
 
+            if (Properties.Settings.Default.UpgradeRequired) {
+                Properties.Settings.Default.Upgrade();
+                Properties.Settings.Default.UpgradeRequired = false;
+                Properties.Settings.Default.Save();
+            }
+
             ObjectBrowser = new ObjectBrowserForm();
             ProjectBrowser = new ProjectBrowser(this);
             PropertyBrowser = new PropertyBrowser();
