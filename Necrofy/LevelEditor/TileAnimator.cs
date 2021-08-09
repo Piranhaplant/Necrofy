@@ -73,15 +73,14 @@ namespace Necrofy
         private async void RunAsync(CancellationToken cancellationToken) {
             Stopwatch timer = new Stopwatch();
             timer.Start();
-            double nextFrameMS = MillisecondsPerFrame;
-
-            await Task.Delay((int)Math.Ceiling(MillisecondsPerFrame));
+            double prevFrameMS = 0;
+            
             while (!cancellationToken.IsCancellationRequested) {
-                while (timer.Elapsed.TotalMilliseconds >= nextFrameMS) {
+                while (timer.Elapsed.TotalMilliseconds >= prevFrameMS + MillisecondsPerFrame) {
                     if (RunFrame()) {
                         Animated?.Invoke(this, EventArgs.Empty);
                     }
-                    nextFrameMS += MillisecondsPerFrame;
+                    prevFrameMS = Math.Max(timer.Elapsed.TotalMilliseconds - 1000, prevFrameMS + MillisecondsPerFrame);
                 }
                 await Task.Delay(1);
             }
