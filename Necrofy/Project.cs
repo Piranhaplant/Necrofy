@@ -167,7 +167,7 @@ namespace Necrofy
                 }
 
                 foreach (string filename in Directory.GetFiles(path, "*.asm", SearchOption.AllDirectories)) {
-                    ApplyPatch(outputROM, filename, results);
+                    ApplyPatch(outputROM, filename, results, info.exportedDefines);
                 }
             } catch (Exception ex) {
                 results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, "", ex.Message, ex.StackTrace));
