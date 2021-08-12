@@ -20,6 +20,8 @@ namespace Necrofy
         public static readonly string internalPatchesPath = Path.Combine(internalProjectFilesPath, "Patches");
         private static readonly HashSet<string> ignoredFileExtensions = new HashSet<string>() { ".sfc", ".nfyz", ".nfyp", ".asm", ".user" };
 
+        private const byte FreespaceFillByte = 0x33;
+
         public const string ROMExpandPatchName = "ROMExpand.asm";
         public const string OtherExpandPatchName = "OtherExpand.asm";
         public const string RunFromLevelPatchName = "RunFromLevel.asm";
@@ -156,7 +158,7 @@ namespace Necrofy
                     s.Seek(ROMPointers.ROMSize);
                     s.WriteByte(sizeValue);
 
-                    info.Freespace.Fill(s, 0x33);
+                    info.Freespace.Fill(s, FreespaceFillByte);
                 }
 
                 info.exportedDefines["win_level"] = settings.WinLevel.ToString();
@@ -227,6 +229,7 @@ namespace Necrofy
         public static void AddEndOfBankFreespace(Stream s, Freespace freespace) {
             AddEndOfBankFreespace(s, freespace, 0xff);
             AddEndOfBankFreespace(s, freespace, 0x00);
+            AddEndOfBankFreespace(s, freespace, FreespaceFillByte);
         }
 
         private static void AddEndOfBankFreespace(Stream s, Freespace freespace, byte searchByte) {
