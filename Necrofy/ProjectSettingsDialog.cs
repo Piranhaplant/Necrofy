@@ -14,7 +14,7 @@ namespace Necrofy
     public partial class ProjectSettingsDialog : Form
     {
         private static readonly HashSet<string> hiddenPatches = new HashSet<string>() {
-            Project.ROMExpandPatchName, Project.OtherExpandPatchName, Project.RunFromLevelPatchName
+            Project.ROMExpandPatchName, Project.OtherExpandPatchName, Project.RunFromLevelPatchName, Project.RecordDemoPatchName
         };
 
         private readonly ProjectSettings settings;
@@ -37,18 +37,20 @@ namespace Necrofy
             string[] files = Directory.GetFiles(Project.internalPatchesPath);
             Array.Sort(files, NumericStringComparer.instance);
             foreach (string path in files) {
-                string fileName = Path.GetFileName(path);
-                ProjectSettings.Patch existingPatch = settings.EnabledPatches.FirstOrDefault(p => p.Name == fileName);
+                if (Path.GetExtension(path) == ".asm") {
+                    string fileName = Path.GetFileName(path);
+                    ProjectSettings.Patch existingPatch = settings.EnabledPatches.FirstOrDefault(p => p.Name == fileName);
 
-                if (!hiddenPatches.Contains(fileName)) {
-                    if (existingPatch != null) {
-                        patchesList.Items.Add(existingPatch, true);
-                    } else {
-                        patchesList.Items.Add(new ProjectSettings.Patch(fileName));
+                    if (!hiddenPatches.Contains(fileName)) {
+                        if (existingPatch != null) {
+                            patchesList.Items.Add(existingPatch, true);
+                        } else {
+                            patchesList.Items.Add(new ProjectSettings.Patch(fileName));
+                        }
+                        patchDescriptions.Add(ReadDescription(path));
+                    } else if (existingPatch != null) {
+                        hiddenEnabledPatches.Add(existingPatch);
                     }
-                    patchDescriptions.Add(ReadDescription(path));
-                } else if (existingPatch != null) {
-                    hiddenEnabledPatches.Add(existingPatch);
                 }
             }
 

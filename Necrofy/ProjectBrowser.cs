@@ -21,6 +21,7 @@ namespace Necrofy
         private readonly Dictionary<AssetCategory, Bitmap> displayImages = new Dictionary<AssetCategory, Bitmap> {
             { AssetCategory.Collision, Resources.block },
             { AssetCategory.Data, Resources.document_binary },
+            { AssetCategory.Demo, Resources.film },
             { AssetCategory.Editor, Resources.gear },
             { AssetCategory.Graphics, Resources.image },
             { AssetCategory.Level, Resources.map },

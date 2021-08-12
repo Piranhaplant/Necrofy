@@ -372,16 +372,17 @@ warnpc $82AC87
 padbyte $EA ; NOP opcode
 pad $82AC87
 
-org $809B14
-
+org $809B0D
 load_demo:
+  AND #$7FFF	; Remove the high bit, which Necrofy uses to indicate this is a custom demo
+STA $1E7C		; Level number
+JSL $80885B		; Store level pointer to $10
 ;LDX $10
 ;LDA $9F0000,X   ; Tileset
-  LDY #$0000
-  LDA [$10],Y
+  LDA [$10]
 PHA
 ;LDA $9F0002,X   ; Tileset
-  INY #2
+  LDY #$0002
   LDA [$10],Y
 LDX #$007E
 LDY #$8000

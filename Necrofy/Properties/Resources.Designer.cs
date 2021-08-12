@@ -383,6 +383,16 @@ namespace Necrofy.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap film {
+            get {
+                object obj = ResourceManager.GetObject("film", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap folder {
             get {
                 object obj = ResourceManager.GetObject("folder", resourceCulture);
@@ -665,13 +675,29 @@ namespace Necrofy.Properties {
         ///&lt;html&gt;
         ///	&lt;head&gt;
         ///		&lt;title&gt;Welcome to Necrofy&lt;/title&gt;
+        ///		&lt;style type=&quot;text/css&quot;&gt;
+        ///			body {
+        ///				margin: 0;
+        ///				font-family: Segoe, sans-serif;
+        ///				color: #222;
+        ///			}
+        ///			h1 {
+        ///				background: #222;
+        ///				color: white;
+        ///				padding: 16px;
+        ///				margin: 0 0 25px 0;
+        ///			}
+        ///			h2 {
+        ///				margin-left: 20px;
+        ///			}
+        ///			p, li {
+        ///				margin-left: 30px;
+        ///				margin-right: 20px;
+        ///			}
+        ///		&lt;/style&gt;
         ///	&lt;/head&gt;
         ///	&lt;body&gt;
-        ///		&lt;h2&gt;Welcome to Necrofy!&lt;/title&gt;
-        ///		&lt;p&gt;This is a test&lt;/p&gt;
-        ///	&lt;/body&gt;
-        ///&lt;/html&gt;
-        ///.
+        ///		&lt;h1&gt;&lt;img src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAWMAAABdCAYAAABwxQeIAAAAG [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string StartPage {
             get {
