@@ -44,6 +44,11 @@ namespace Necrofy
         }
 
         public void OpenProject(Project project) {
+            if (this.project != null) {
+                this.project.Assets.AssetChanged -= AssetChanged;
+                this.project.Assets.AssetAdded -= AssetAdded;
+                this.project.Assets.AssetRemoved -= AssetRemoved;
+            }
             this.project = project;
             tree.Nodes.Clear();
 
