@@ -75,20 +75,35 @@ namespace Necrofy
         private UndoManager undoManager;
         private bool prevDirty = false;
 
+        private bool saveOnClose = true;
+
         public EditorWindow() {
             DockAreas = DockAreas.Document;
             HideOnClose = false;
             FormClosing += EditorWindow_FormClosing;
         }
 
+        public void CloseWithoutSaving() {
+            saveOnClose = false;
+            Close();
+        }
+
         private void EditorWindow_FormClosing(object sender, FormClosingEventArgs e) {
-            CloseChildren(e);
-            if (!e.Cancel && Dirty && project != null) {
+            if (saveOnClose) {
+                CloseChildren(e);
+                bool cancel = e.Cancel;
+                PromptForSave(ref cancel);
+                e.Cancel = cancel;
+            }
+        }
+
+        public void PromptForSave(ref bool cancel) {
+            if (!cancel && Dirty && project != null) {
                 // TODO: when closing the whole form, this Activate() works correctly, but not when closing an individual window
                 Activate();
                 DialogResult result = MessageBox.Show($"Save changes to \"{Title}\"?", "Save changes?", MessageBoxButtons.YesNoCancel);
                 if (result == DialogResult.Cancel) {
-                    e.Cancel = true;
+                    cancel = true;
                 } else if (result == DialogResult.Yes) {
                     Save();
                 }

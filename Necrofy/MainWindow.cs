@@ -342,7 +342,7 @@ namespace Necrofy
             activeEditor?.PropertyBrowserPropertyChanged(e);
         }
 
-        private bool CloseProject(bool closeEditors) {
+        private bool CloseProject(bool closeEditors, bool promptForSave = true) {
             if (project != null) {
                 try {
                     ProjectBrowser.SaveFolderStates();
@@ -352,7 +352,11 @@ namespace Necrofy
 
                 if (closeEditors) {
                     foreach (EditorWindow editor in new List<EditorWindow>(openEditors)) {
-                        editor.Close();
+                        if (promptForSave) {
+                            editor.Close();
+                        } else {
+                            editor.CloseWithoutSaving();
+                        }
                         if (editor.Visible) {
                             return true;
                         }
@@ -363,15 +367,23 @@ namespace Necrofy
         }
 
         private void CreateProject(object sender, EventArgs e) {
-            if (CloseProject(closeEditors: true)) {
+            bool cancel = false;
+            foreach (EditorWindow editor in openEditors) {
+                editor.PromptForSave(ref cancel);
+            }
+            if (cancel) {
                 return;
             }
+
             NewProjectDialog newProjectDialog = new NewProjectDialog();
             if (newProjectDialog.ShowDialog() == DialogResult.OK) {
+                if (CloseProject(closeEditors: true, promptForSave: false)) {
+                    return;
+                }
 #if !DEBUG
                 try {
 #endif
-                    project = new Project(newProjectDialog.BaseROM, newProjectDialog.ProjectLocation);
+                project = new Project(newProjectDialog.BaseROM, newProjectDialog.ProjectLocation);
 #if !DEBUG
                 } catch (Exception ex) {
                     Console.WriteLine(ex.StackTrace);
