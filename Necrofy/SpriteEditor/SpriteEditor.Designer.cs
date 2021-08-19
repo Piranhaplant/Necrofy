@@ -30,7 +30,7 @@
             this.canvas = new Necrofy.Canvas();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tilePicker = new Necrofy.SpriteTilePicker();
-            this.palettePanel = new System.Windows.Forms.Panel();
+            this.palettePanel = new NoAutoScalePanel();
             this.palette7Button = new System.Windows.Forms.RadioButton();
             this.palette6Button = new System.Windows.Forms.RadioButton();
             this.palette5Button = new System.Windows.Forms.RadioButton();
@@ -279,7 +279,7 @@
         private Canvas canvas;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private SpriteTilePicker tilePicker;
-        private System.Windows.Forms.Panel palettePanel;
+        private NoAutoScalePanel palettePanel;
         private System.Windows.Forms.RadioButton palette7Button;
         private System.Windows.Forms.RadioButton palette6Button;
         private System.Windows.Forms.RadioButton palette5Button;

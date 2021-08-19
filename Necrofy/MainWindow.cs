@@ -42,11 +42,18 @@ namespace Necrofy
         public MainWindow() {
             InitializeComponent();
 
+            AppDomain.CurrentDomain.UnhandledException += (sender, args) => {
+                MessageBox.Show("Necrofy has encountered an error and will now close. Please provide the following information when reporting this problem:" + Environment.NewLine + args.ExceptionObject);
+                Environment.Exit(1);
+            };
+
             if (Properties.Settings.Default.UpgradeRequired) {
                 Properties.Settings.Default.Upgrade();
                 Properties.Settings.Default.UpgradeRequired = false;
                 Properties.Settings.Default.Save();
             }
+
+            zoomLevelLabel.AutoSize = false;
 
             ObjectBrowser = new ObjectBrowserForm();
             ProjectBrowser = new ProjectBrowser(this);

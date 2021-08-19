@@ -131,6 +131,9 @@
     <Compile Include="CheckableToolStripSplitButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="NoAutoScalePanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="EditorWindow.cs">
       <SubType>Form</SubType>
     </Compile>

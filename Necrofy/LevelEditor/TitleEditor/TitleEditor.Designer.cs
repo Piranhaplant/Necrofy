@@ -25,7 +25,7 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.screenBounds = new System.Windows.Forms.Panel();
+            this.screenBounds = new Necrofy.NoAutoScalePanel();
             this.pageEditor2 = new Necrofy.PageEditor();
             this.pageEditor1 = new Necrofy.PageEditor();
             this.displayName = new System.Windows.Forms.TextBox();
@@ -34,8 +34,10 @@
             this.applyToAll = new System.Windows.Forms.CheckBox();
             this.mainPanel = new System.Windows.Forms.Panel();
             this.paletteLbl = new System.Windows.Forms.Label();
+            this.topPanel = new System.Windows.Forms.Panel();
             this.screenBounds.SuspendLayout();
             this.mainPanel.SuspendLayout();
+            this.topPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // screenBounds
@@ -65,18 +67,18 @@
             // 
             // displayName
             // 
-            this.displayName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.displayName.Location = new System.Drawing.Point(93, 18);
+            this.displayName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.displayName.Location = new System.Drawing.Point(92, 18);
             this.displayName.Name = "displayName";
-            this.displayName.Size = new System.Drawing.Size(404, 20);
+            this.displayName.Size = new System.Drawing.Size(414, 20);
             this.displayName.TabIndex = 1;
             this.displayName.TextChanged += new System.EventHandler(this.displayName_TextChanged);
             // 
             // displayNameLbl
             // 
+            this.displayNameLbl.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.displayNameLbl.AutoSize = true;
-            this.displayNameLbl.Location = new System.Drawing.Point(12, 21);
+            this.displayNameLbl.Location = new System.Drawing.Point(11, 21);
             this.displayNameLbl.Name = "displayNameLbl";
             this.displayNameLbl.Size = new System.Drawing.Size(75, 13);
             this.displayNameLbl.TabIndex = 2;
@@ -89,7 +91,7 @@
             this.palette.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.palette.FormattingEnabled = true;
             this.palette.ItemHeight = 48;
-            this.palette.Location = new System.Drawing.Point(552, 0);
+            this.palette.Location = new System.Drawing.Point(561, 0);
             this.palette.Name = "palette";
             this.palette.SelectedPalette = ((byte)(255));
             this.palette.Size = new System.Drawing.Size(71, 54);
@@ -98,11 +100,11 @@
             // 
             // applyToAll
             // 
-            this.applyToAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.applyToAll.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.applyToAll.AutoSize = true;
             this.applyToAll.Checked = true;
             this.applyToAll.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.applyToAll.Location = new System.Drawing.Point(629, 20);
+            this.applyToAll.Location = new System.Drawing.Point(638, 20);
             this.applyToAll.Name = "applyToAll";
             this.applyToAll.Size = new System.Drawing.Size(77, 17);
             this.applyToAll.TabIndex = 5;
@@ -112,12 +114,10 @@
             // 
             // mainPanel
             // 
-            this.mainPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.mainPanel.AutoScroll = true;
             this.mainPanel.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.mainPanel.Controls.Add(this.screenBounds);
+            this.mainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainPanel.Location = new System.Drawing.Point(0, 54);
             this.mainPanel.Name = "mainPanel";
             this.mainPanel.Size = new System.Drawing.Size(718, 370);
@@ -126,13 +126,26 @@
             // 
             // paletteLbl
             // 
-            this.paletteLbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.paletteLbl.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.paletteLbl.AutoSize = true;
-            this.paletteLbl.Location = new System.Drawing.Point(503, 21);
+            this.paletteLbl.Location = new System.Drawing.Point(512, 21);
             this.paletteLbl.Name = "paletteLbl";
             this.paletteLbl.Size = new System.Drawing.Size(43, 13);
             this.paletteLbl.TabIndex = 3;
             this.paletteLbl.Text = "Palette:";
+            // 
+            // topPanel
+            // 
+            this.topPanel.Controls.Add(this.palette);
+            this.topPanel.Controls.Add(this.applyToAll);
+            this.topPanel.Controls.Add(this.displayName);
+            this.topPanel.Controls.Add(this.displayNameLbl);
+            this.topPanel.Controls.Add(this.paletteLbl);
+            this.topPanel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.topPanel.Location = new System.Drawing.Point(0, 0);
+            this.topPanel.Name = "topPanel";
+            this.topPanel.Size = new System.Drawing.Size(718, 54);
+            this.topPanel.TabIndex = 6;
             // 
             // TitleEditor
             // 
@@ -141,24 +154,21 @@
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(718, 424);
             this.Controls.Add(this.mainPanel);
-            this.Controls.Add(this.applyToAll);
-            this.Controls.Add(this.palette);
-            this.Controls.Add(this.paletteLbl);
-            this.Controls.Add(this.displayNameLbl);
-            this.Controls.Add(this.displayName);
+            this.Controls.Add(this.topPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "TitleEditor";
             this.Text = "TitleEditor";
             this.screenBounds.ResumeLayout(false);
             this.mainPanel.ResumeLayout(false);
+            this.topPanel.ResumeLayout(false);
+            this.topPanel.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Panel screenBounds;
+        private NoAutoScalePanel screenBounds;
         private PageEditor pageEditor2;
         private PageEditor pageEditor1;
         private System.Windows.Forms.TextBox displayName;
@@ -167,5 +177,6 @@
         private PaletteComboBox palette;
         private System.Windows.Forms.CheckBox applyToAll;
         private System.Windows.Forms.Panel mainPanel;
+        private System.Windows.Forms.Panel topPanel;
     }
 }

@@ -78,7 +78,9 @@ namespace Necrofy
         private void LayoutObjects() {
             objects.Clear();
             if (contents == null) {
-                scrollWrapper.SetClientSize(1, 1);
+                if (scrollWrapper != null) {
+                    scrollWrapper.SetClientSize(1, 1);
+                }
                 return;
             }
             int x = 0;

@@ -39,6 +39,7 @@ namespace Necrofy
 
         protected override void OnDrawItem(DrawItemEventArgs e) {
             if (e.Index >= 0 && e.Index < Items.Count) {
+                e.Graphics.FillRectangle(Brushes.Black, e.Bounds);
                 if (Items[e.Index] is Item item) {
                     item.Draw(e);
                 }
