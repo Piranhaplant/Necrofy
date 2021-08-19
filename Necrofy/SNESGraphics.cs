@@ -14,17 +14,21 @@ namespace Necrofy
     {
         public const int ScreenWidth = 256;
         public const int ScreenHeight = 224;
-
-        public static byte RGBToSNESLo(Color color) {
-            return (byte)((color.B / 8 * 0x400 + color.G / 8 * 0x20 + color.R / 8) % 0x100);
+        
+        public static ushort RGBToSNES(Color color) {
+            //return (ushort)(color.B / 8 * 0x400 + color.G / 8 * 0x20 + color.R / 8);
+            return (ushort)(CompenentToSNES(color.B) * 0x400 + CompenentToSNES(color.G) * 0x20 + CompenentToSNES(color.R));
         }
 
-        public static byte RGBToSNESHi(Color color) {
-            return (byte)((color.B / 8 * 0x400 + color.G / 8 * 32 + color.R / 8) / 0x100);
+        private static int CompenentToSNES(byte component) {
+            return (int)Math.Min(31, Math.Round(component / 8.0 - 0.25));
         }
 
         public static Color SNESToRGB(byte low, byte high) {
-            int v = low + 0x100 * high;
+            return SNESToRGB((ushort)(low + 0x100 * high));
+        }
+
+        public static Color SNESToRGB(ushort v) {
             return Color.FromArgb((v % 0x20) * 8, ((v / 0x20) % 0x20) * 8, ((v / 0x400) % 0x20) * 8);
         }
 

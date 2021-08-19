@@ -15,6 +15,7 @@
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <LangVersion>7.3</LangVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -29,7 +30,6 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -208,6 +208,18 @@
     <Compile Include="LevelEditor\WrappedLevelObjects\WrappedPositionLevelMonster.cs" />
     <Compile Include="LevelEditor\TitleEditor\WrappedTitleWord.cs" />
     <Compile Include="LevelEditor\LoadedLevel\LoadedSprites.cs" />
+    <Compile Include="PaletteEditor\PaletteEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PaletteEditor\ColorEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PaletteEditor\ColorEditor.Designer.cs">
+      <DependentUpon>ColorEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PaletteEditor\PaletteEditor.Designer.cs">
+      <DependentUpon>PaletteEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="PreferencesDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -405,6 +417,12 @@
     <EmbeddedResource Include="ObjectBrowser\ObjectBrowserForm.resx">
       <DependentUpon>ObjectBrowserForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="PaletteEditor\ColorEditor.resx">
+      <DependentUpon>ColorEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PaletteEditor\PaletteEditor.resx">
+      <DependentUpon>PaletteEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PasswordEditor\PasswordEditor.resx">
       <DependentUpon>PasswordEditor.cs</DependentUpon>
     </EmbeddedResource>
@@ -585,6 +603,9 @@
     <None Include="Icons\cross-script.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\crosshairs.png" />
+    <None Include="Resources\colorArrow.png" />
+    <None Include="Resources\spectrum.png" />
     <None Include="Resources\StartPage.html" />
     <None Include="readme.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

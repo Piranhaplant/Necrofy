@@ -135,6 +135,11 @@ namespace Necrofy
                 return new PathParts(folder, name, Extension, pointer, false);
             }
 
+            public override bool Editable => true;
+            public override EditorWindow GetEditor(Project project) {
+                return new PaletteEditor();
+            }
+
             public static PaletteNameInfo FromPath(PathParts parts) {
                 if (parts.fileExtension != Extension) return null;
                 return new PaletteNameInfo(parts.folder, parts.name, parts.pointer);
