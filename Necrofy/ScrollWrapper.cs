@@ -230,7 +230,7 @@ namespace Necrofy
             return new Point(xDimension.GetViewCenter(), yDimension.GetViewCenter());
         }
 
-        public void EnabledHiddenCursor() {
+        public void EnableHiddenCursor() {
             if (hiddenCursorOriginalPosition == null) {
                 hiddenCursorOriginalPosition = Cursor.Position;
                 HiddenCursorTotalMoveX = 0;
@@ -271,9 +271,11 @@ namespace Necrofy
                 }
             } else {
                 Point center = Screen.PrimaryScreen.Bounds.GetCenter();
-                HiddenCursorTotalMoveX += Cursor.Position.X - center.X;
-                HiddenCursorTotalMoveY += Cursor.Position.Y - center.Y;
-                Cursor.Position = center;
+                if (Cursor.Position != center) {
+                    HiddenCursorTotalMoveX += Cursor.Position.X - center.X;
+                    HiddenCursorTotalMoveY += Cursor.Position.Y - center.Y;
+                    Cursor.Position = center;
+                }
             }
         }
 

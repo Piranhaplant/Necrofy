@@ -123,7 +123,7 @@ namespace Necrofy
         public override void MouseDown(LevelMouseEventArgs e) {
             mouseIsDown = true;
             if (isChangingMonsterDelay) {
-                editor.scrollWrapper.EnabledHiddenCursor();
+                editor.scrollWrapper.EnableHiddenCursor();
             }
             if (extraEditMonster != null) {
                 objectSelector.SelectObjects(new WrappedLevelObject[] { extraEditMonster });
