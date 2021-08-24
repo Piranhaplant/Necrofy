@@ -131,6 +131,13 @@
     <Compile Include="CheckableToolStripSplitButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="PaletteEditor\PaletteEditorAction.cs" />
+    <Compile Include="PaletteEditor\ColorSelector.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PaletteEditor\ColorSelector.Designer.cs">
+      <DependentUpon>ColorSelector.cs</DependentUpon>
+    </Compile>
     <Compile Include="NoAutoScalePanel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -419,6 +426,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="PaletteEditor\ColorEditor.resx">
       <DependentUpon>ColorEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PaletteEditor\ColorSelector.resx">
+      <DependentUpon>ColorSelector.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PaletteEditor\PaletteEditor.resx">
       <DependentUpon>PaletteEditor.cs</DependentUpon>

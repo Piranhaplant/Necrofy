@@ -27,7 +27,7 @@ namespace Necrofy
             this.sprites = sprites;
         }
 
-        public override void WriteFile(Project project) {
+        protected override void WriteFile(Project project) {
             File.WriteAllText(nameInfo.GetFilename(project.path, createDirectories: true), JsonConvert.SerializeObject(sprites, Formatting.Indented));
         }
 
@@ -42,8 +42,10 @@ namespace Necrofy
         {
             public SpritesAsset FromProject(Project project, string folder) {
                 NameInfo nameInfo = new SpritesNameInfo(folder);
-                string filename = nameInfo.FindFilename(project.path);
-                return (SpritesAsset)FromFile(nameInfo, filename);
+                return project.GetCachedAsset(nameInfo, () => {
+                    string filename = nameInfo.FindFilename(project.path);
+                    return (SpritesAsset)FromFile(nameInfo, filename);
+                });
             }
 
             public override NameInfo GetNameInfo(NameInfo.PathParts pathParts, Project project) {

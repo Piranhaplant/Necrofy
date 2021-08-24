@@ -97,7 +97,7 @@ namespace Necrofy
                 }
             }
             data.level0Password = (string)dataGrid.Rows[0].Cells[9].Value;
-            asset.WriteFile(project);
+            asset.Save(project);
         }
 
         public override void Undo() {

@@ -36,6 +36,7 @@ namespace Necrofy
         public readonly ProjectUserSettings userSettings;
 
         public AssetTree Assets { get; private set; }
+        private Dictionary<AssetCategory, Dictionary<string, WeakReference<Asset>>> assetCache = new Dictionary<AssetCategory, Dictionary<string, WeakReference<Asset>>>();
 
         /// <summary>Creates a new project from the given base ROM.</summary>
         /// <param name="baseROM">The path to a ROM that the files in the project will be extracted from.</param>
@@ -57,7 +58,7 @@ namespace Necrofy
             ROMInfo info = new ROMInfo(s);
 
             foreach (Asset asset in info.assets) {
-                asset.WriteFile(this);
+                asset.Save(this);
             }
 
             s.Close();
@@ -110,6 +111,19 @@ namespace Necrofy
 
         public IEnumerable<Asset.NameInfo> GetAssetsInCategory(AssetCategory category) {
             return Assets.Root.Enumerate().Where(a => a.Category == category);
+        }
+
+        public T GetCachedAsset<T>(Asset.NameInfo nameInfo, Func<T> getter) where T : Asset {
+            if (!assetCache.ContainsKey(nameInfo.Category)) {
+                assetCache[nameInfo.Category] = new Dictionary<string, WeakReference<Asset>>();
+            }
+            if (assetCache[nameInfo.Category].TryGetValue(nameInfo.Name, out WeakReference<Asset> assetRef) && assetRef.TryGetTarget(out Asset cachedAsset)) {
+                return (T)cachedAsset;
+            } else {
+                T asset = getter();
+                assetCache[nameInfo.Category][nameInfo.Name] = new WeakReference<Asset>(asset);
+                return asset;
+            }
         }
 
         /// <summary>Builds the project</summary>

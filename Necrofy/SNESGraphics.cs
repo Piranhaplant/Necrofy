@@ -16,20 +16,23 @@ namespace Necrofy
         public const int ScreenHeight = 224;
         
         public static ushort RGBToSNES(Color color) {
-            //return (ushort)(color.B / 8 * 0x400 + color.G / 8 * 0x20 + color.R / 8);
-            return (ushort)(CompenentToSNES(color.B) * 0x400 + CompenentToSNES(color.G) * 0x20 + CompenentToSNES(color.R));
+            return (ushort)((RGBComponentToSNES(color.B) << 10) | (RGBComponentToSNES(color.G) << 5) | RGBComponentToSNES(color.R));
         }
 
-        private static int CompenentToSNES(byte component) {
-            return (int)Math.Min(31, Math.Round(component / 8.0 - 0.25));
+        public static int RGBComponentToSNES(byte component) {
+            return component >> 3;
         }
 
         public static Color SNESToRGB(byte low, byte high) {
-            return SNESToRGB((ushort)(low + 0x100 * high));
+            return SNESToRGB((ushort)(low | (high << 8)));
         }
 
         public static Color SNESToRGB(ushort v) {
-            return Color.FromArgb((v % 0x20) * 8, ((v / 0x20) % 0x20) * 8, ((v / 0x400) % 0x20) * 8);
+            return Color.FromArgb(SNESComponentToRGB(v & 0x1F), SNESComponentToRGB((v >> 5) & 0x1F), SNESComponentToRGB((v >> 10) & 0x1F));
+        }
+
+        public static int SNESComponentToRGB(int component) {
+            return component << 3;
         }
 
         public static Color[] SNESToRGB(byte[] data, bool transparent = false) {

@@ -14,15 +14,32 @@ namespace Necrofy
         public const int height = 6;
         private const int tilemapRowWidth = 0x80;
 
-        public readonly LoadedPalette loadedPalette;
-        public readonly Bitmap[] images;
+        private readonly LoadedGraphics loadedGraphics;
+        private readonly LoadedPalette loadedPalette;
+        private readonly LoadedTilemap loadedTilemap;
+        private readonly DataAsset charData;
+        public Bitmap[] images;
+
+        public event EventHandler Updated;
 
         public LoadedLevelTitleCharacters(Project project) {
-            LoadedGraphics loadedGraphics = new LoadedGraphics(project, Asset.LevelTitleFolder + Asset.FolderSeparator + GraphicsAsset.DefaultName);
+            loadedGraphics = new LoadedGraphics(project, Asset.LevelTitleFolder + Asset.FolderSeparator + GraphicsAsset.DefaultName);
             loadedPalette = new LoadedPalette(project, Asset.LevelTitleFolder + Asset.FolderSeparator + PaletteAsset.DefaultName);
-            LoadedTilemap loadedTilemap = new LoadedTilemap(project, Asset.LevelTitleFolder + Asset.FolderSeparator + TilemapAsset.DefaultName);
-            DataAsset charData = DataAsset.FromProject(project, Asset.LevelTitleFolder, DataAsset.LevelTitleCharacterMapName);
+            loadedTilemap = new LoadedTilemap(project, Asset.LevelTitleFolder + Asset.FolderSeparator + TilemapAsset.DefaultName);
+            charData = DataAsset.FromProject(project, Asset.LevelTitleFolder, DataAsset.LevelTitleCharacterMapName);
 
+            loadedPalette.Updated += Asset_Updated;
+
+            Load();
+        }
+
+        private void Asset_Updated(object sender, EventArgs e) {
+            Dispose();
+            Load();
+            Updated?.Invoke(sender, e);
+        }
+
+        private void Load() {
             images = new Bitmap[charData.data.Length / 2];
             for (int i = 0; i < images.Length; i++) {
                 int tilemapX = charData.data[i * 2];

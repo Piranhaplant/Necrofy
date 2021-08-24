@@ -26,7 +26,7 @@ namespace Necrofy
             set {
                 if (value != palette) {
                     palette = value;
-                    canvas.Invalidate();
+                    Repaint();
                 }
             }
         }
@@ -45,7 +45,7 @@ namespace Necrofy
             set {
                 selectedTile = value;
                 SelectedTileChanged?.Invoke(this, EventArgs.Empty);
-                canvas.Invalidate();
+                Repaint();
             }
         }
 
@@ -54,6 +54,10 @@ namespace Necrofy
 
             scrollWrapper = new ScrollWrapper(canvas, hScrollBar, vScrollBar, autoSize: false);
             scrollWrapper.Scrolled += ScrollWrapper_Scrolled;
+        }
+
+        public void Repaint() {
+            canvas.Invalidate();
         }
 
         public void SetTiles(Bitmap[] tiles, Color[] colors) {
@@ -69,11 +73,11 @@ namespace Necrofy
             tilesPerRow = canvas.Width / 16;
             int height = (int)Math.Ceiling(tiles.Length / (double)tilesPerRow);
             scrollWrapper.SetClientSize(canvas.Width, Math.Max(canvas.Height, height * 16));
-            canvas.Invalidate();
+            Repaint();
         }
 
         private void ScrollWrapper_Scrolled(object sender, EventArgs e) {
-            canvas.Invalidate();
+            Repaint();
         }
 
         private void canvas_SizeChanged(object sender, EventArgs e) {
@@ -99,7 +103,7 @@ namespace Necrofy
             int tile = Math.Min(tilesPerRow - 1, transformed.X / 16) + (transformed.Y / 16) * tilesPerRow;
             if (tile < tiles.Length && e.Button == MouseButtons.Left) {
                 SelectedTile = tile;
-                canvas.Invalidate();
+                Repaint();
             }
         }
 

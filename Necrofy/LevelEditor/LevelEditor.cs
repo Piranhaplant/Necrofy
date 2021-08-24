@@ -190,7 +190,7 @@ namespace Necrofy
         }
 
         protected override void DoSave(Project project) {
-            level.levelAsset.WriteFile(project);
+            level.levelAsset.Save(project);
         }
 
         public override bool CanCopy => currentTool.CanCopy;

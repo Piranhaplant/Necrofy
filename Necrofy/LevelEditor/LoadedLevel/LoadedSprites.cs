@@ -14,14 +14,28 @@ namespace Necrofy
         public readonly LoadedGraphics loadedGraphics;
         public readonly LoadedPalette loadedPalette;
 
-        public readonly Bitmap[] images;
-        public readonly Bitmap[] tileImages;
+        public Bitmap[] images;
+        public Bitmap[] tileImages;
+
+        public event EventHandler Updated;
 
         public LoadedSprites(Project project, string folder) {
             spritesAsset = SpritesAsset.FromProject(project, folder);
             loadedGraphics = new LoadedGraphics(project, folder + Asset.FolderSeparator + GraphicsAsset.DefaultName);
             loadedPalette = new LoadedPalette(project, Asset.SpritesFolder + Asset.FolderSeparator + PaletteAsset.DefaultSpritePaletteName, transparent: true);
 
+            loadedPalette.Updated += Asset_Updated;
+
+            Load();
+        }
+
+        private void Asset_Updated(object sender, EventArgs e) {
+            Dispose();
+            Load();
+            Updated?.Invoke(sender, e);
+        }
+
+        private void Load() {
             images = new Bitmap[spritesAsset.sprites.Length];
             for (int i = 0; i < images.Length; i++) {
                 LoadSprite(i);

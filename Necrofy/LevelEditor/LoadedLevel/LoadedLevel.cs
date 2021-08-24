@@ -10,6 +10,7 @@ namespace Necrofy
     class LoadedLevel : IDisposable
     {
         public readonly LevelAsset levelAsset;
+        public LoadedPalette palette;
         public LoadedGraphics graphics;
         public LoadedTilesetTilemap tilemap;
         public LoadedLevelSprites spriteGraphics;
@@ -51,6 +52,7 @@ namespace Necrofy
 
         private void DisposeSprites() {
             if (spriteGraphics != null) {
+                spriteGraphics.Updated -= SpriteGraphics_Updated;
                 spriteGraphics.Dispose();
             }
         }
@@ -58,7 +60,12 @@ namespace Necrofy
         public void LoadSprites(Project project) {
             DisposeSprites();
             spriteGraphics = new LoadedLevelSprites(project, Level.spritePaletteName);
+            spriteGraphics.Updated += SpriteGraphics_Updated;
             SpritesChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void SpriteGraphics_Updated(object sender, EventArgs e) {
+            SpritesChanged?.Invoke(sender, e);
         }
 
         public void LoadTilesetSuggestions(Project project) {
@@ -71,13 +78,23 @@ namespace Necrofy
         }
 
         public void LoadTiles(Project project) {
-            bool animationRunning = tileAnimator.Running;
-            DisposeTiles();
-
             tilemap = new LoadedTilesetTilemap(project, Level.tilesetTilemapName);
             collision = new LoadedCollision(project, Level.tilesetCollisionName);
             graphics = new LoadedGraphics(project, Level.tilesetGraphicsName);
-            LoadedPalette palette = new LoadedPalette(project, Level.paletteName);
+            palette = new LoadedPalette(project, Level.paletteName);
+
+            palette.Updated += Asset_Updated;
+
+            LoadTilesFromData();
+        }
+
+        private void Asset_Updated(object sender, EventArgs e) {
+            LoadTilesFromData();
+        }
+
+        private void LoadTilesFromData() {
+            bool animationRunning = tileAnimator.Running;
+            DisposeTiles();
 
             tiles = new Bitmap[tilemap.tiles.Length];
             priorityTiles = new Bitmap[tilemap.tiles.Length];

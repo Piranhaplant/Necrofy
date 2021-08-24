@@ -179,6 +179,14 @@ namespace Necrofy
             list[index + 1] = (byte)(address / 0x100);
         }
 
+        /// <summary>Writes an unsigned little-endian 16-bit integer into the list at the given index.</summary>
+        /// <param name="list"></param>
+        /// <param name="value"></param>
+        public static void WriteInt16(this IList<byte> list, int index, ushort value) {
+            list[index + 0] = (byte)(value & 0xff);
+            list[index + 1] = (byte)(value >> 8);
+        }
+
         /// <summary>Adds an unsigned little-endian 16-bit integer to the list</summary>
         /// <param name="list">The list</param>
         /// <param name="value">The value to add</param>

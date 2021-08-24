@@ -45,7 +45,12 @@ namespace Necrofy
 
         /// <summary>Writes a file containing the asset into the given project directory</summary>
         /// <param name="project">The project</param>
-        public abstract void WriteFile(Project project);
+        public void Save(Project project) {
+            WriteFile(project);
+            Updated?.Invoke(this, EventArgs.Empty);
+        }
+        protected abstract void WriteFile(Project project);
+        public event EventHandler Updated;
         /// <summary>Gets the order that this asset should be inserted</summary>
         protected abstract AssetCategory Category { get; }
         /// <summary>Gets the name of this asset</summary>
@@ -268,18 +273,24 @@ namespace Necrofy
             public string FindFilename(string projectDir) {
                 PathParts pathParts = GetPathParts();
                 string directory = Path.Combine(projectDir, Path.Combine(pathParts.folder.Split(FolderSeparator)));
-                string regex = "^" + Regex.Escape(pathParts.name) + "(@[0-9A-Fa-f]{6})?#?";
+                string regex = "^(" + Regex.Escape(pathParts.name) + ")(@[0-9A-Fa-f]{6})?(#)?";
                 if (pathParts.fileExtension != null) {
                     regex += Regex.Escape("." + pathParts.fileExtension);
                 }
                 regex += "$";
                 foreach (string file in Directory.GetFiles(directory)) {
-                    if (Regex.IsMatch(Path.GetFileName(file), regex)) {
+                    Match m = Regex.Match(Path.GetFileName(file), regex);
+                    if (m.Success) {
+                        UpdateFromFoundFilename(m.Groups[2].Length == 0 ? null : (int?)Convert.ToInt32(m.Groups[2].Value.Substring(1), 16), m.Groups[3].Length > 0);
                         return file;
                     }
                 }
                 throw new IOException("Could not find asset " + pathParts.folder + FolderSeparator + pathParts.name);
             }
+
+            /// <summary>Updates the nameInfo with the pointer and compression indicator from the filename</summary>
+            /// <param name="pathPatrs"></param>
+            protected virtual void UpdateFromFoundFilename(int? pointer, bool compressed) { }
 
             /// <summary>Different parts of an asset path that are used to convert to and from filenames</summary>
             public class PathParts

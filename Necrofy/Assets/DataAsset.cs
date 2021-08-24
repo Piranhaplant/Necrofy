@@ -29,7 +29,7 @@ namespace Necrofy
             this.data = data;
         }
 
-        public override void WriteFile(Project project) {
+        protected override void WriteFile(Project project) {
             File.WriteAllBytes(nameInfo.GetFilename(project.path, createDirectories: true), data);
         }
 

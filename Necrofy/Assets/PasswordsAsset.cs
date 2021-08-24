@@ -28,7 +28,7 @@ namespace Necrofy
             this.data = data;
         }
 
-        public override void WriteFile(Project project) {
+        protected override void WriteFile(Project project) {
             File.WriteAllText(nameInfo.GetFilename(project.path, createDirectories: true), JsonConvert.SerializeObject(data, Formatting.Indented));
         }
 

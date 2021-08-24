@@ -50,6 +50,7 @@ namespace Necrofy
             paletteButtons = new RadioButton[] { palette0Button, palette1Button, palette2Button, palette3Button, palette4Button, palette5Button, palette6Button, palette7Button };
 
             this.loadedSprites = loadedSprites;
+            loadedSprites.Updated += LoadedSprites_Updated;
             Title = "Sprites";
 
             objectSelector = new ObjectSelector<WrappedSpriteTile>(this, maxX: MaxDimension, maxY: MaxDimension, minX: -MaxDimension, minY: -MaxDimension);
@@ -66,6 +67,13 @@ namespace Necrofy
             tilePicker.SetTiles(loadedSprites.tileImages, loadedSprites.loadedPalette.colors);
 
             UpdateStatus();
+        }
+
+        private void LoadedSprites_Updated(object sender, EventArgs e) {
+            Repaint();
+            browserContents.Repaint();
+            tilePicker.SetTiles(loadedSprites.tileImages, loadedSprites.loadedPalette.colors);
+            tilePicker.Repaint();
         }
 
         private void SpriteEditor_Disposed(object sender, EventArgs e) {
@@ -97,7 +105,7 @@ namespace Necrofy
         }
 
         protected override void DoSave(Project project) {
-            loadedSprites.spritesAsset.WriteFile(project);
+            loadedSprites.spritesAsset.Save(project);
             UpdateSpritePreviews();
         }
 

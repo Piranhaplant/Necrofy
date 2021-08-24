@@ -25,22 +25,33 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.colorEditor1 = new Necrofy.ColorEditor();
+            this.colorEditor = new Necrofy.ColorEditor();
+            this.colorSelector = new Necrofy.ColorSelector();
             this.SuspendLayout();
             // 
-            // colorEditor1
+            // colorEditor
             // 
-            this.colorEditor1.Location = new System.Drawing.Point(296, 12);
-            this.colorEditor1.Name = "colorEditor1";
-            this.colorEditor1.Size = new System.Drawing.Size(288, 345);
-            this.colorEditor1.TabIndex = 0;
+            this.colorEditor.Location = new System.Drawing.Point(306, 12);
+            this.colorEditor.Name = "colorEditor";
+            this.colorEditor.Size = new System.Drawing.Size(288, 345);
+            this.colorEditor.TabIndex = 0;
+            // 
+            // colorSelector
+            // 
+            this.colorSelector.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.colorSelector.Colors = null;
+            this.colorSelector.Location = new System.Drawing.Point(12, 12);
+            this.colorSelector.Name = "colorSelector";
+            this.colorSelector.Size = new System.Drawing.Size(288, 345);
+            this.colorSelector.TabIndex = 1;
             // 
             // PaletteEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.colorEditor1);
+            this.Controls.Add(this.colorSelector);
+            this.Controls.Add(this.colorEditor);
             this.Name = "PaletteEditor";
             this.Text = "PaletteEditor";
             this.ResumeLayout(false);
@@ -49,6 +60,7 @@
 
         #endregion
 
-        private ColorEditor colorEditor1;
+        private ColorEditor colorEditor;
+        private ColorSelector colorSelector;
     }
 }

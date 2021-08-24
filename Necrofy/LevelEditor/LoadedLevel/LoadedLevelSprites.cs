@@ -10,21 +10,35 @@ namespace Necrofy
 {
     class LoadedLevelSprites : IDisposable
     {
+        private LoadedPalette loadedPalette;
+        private LoadedGraphics loadedGraphics;
+        private SpritesAsset spritesAsset;
+        private EditorAsset<SpriteDisplayList> spriteDisplayAsset;
+
         private static readonly Font unknownSpriteFont = new Font(FontFamily.GenericMonospace, 8);
         private static readonly StringFormat unknownSpriteStringFormat = new StringFormat() {
             Alignment = StringAlignment.Center,
             LineAlignment = StringAlignment.Center
         };
 
-        public readonly Dictionary<SpriteDisplay.Key.Type, Dictionary<int, LoadedSprite>> sprites;
-        public readonly Dictionary<SpriteDisplay.Category, List<LoadedSprite>> spritesByCategory;
+        public Dictionary<SpriteDisplay.Key.Type, Dictionary<int, LoadedSprite>> sprites;
+        public Dictionary<SpriteDisplay.Category, List<LoadedSprite>> spritesByCategory;
+
+        public event EventHandler Updated;
 
         public LoadedLevelSprites(Project project, string spritePaletteName) {
-            LoadedPalette loadedPalette = new LoadedPalette(project, spritePaletteName, transparent: true);
-            LoadedGraphics loadedGraphics = new LoadedGraphics(project, Asset.SpritesFolder + Asset.FolderSeparator + GraphicsAsset.DefaultName);
-            SpritesAsset spritesAsset = SpritesAsset.FromProject(project, Asset.SpritesFolder);
-            EditorAsset<SpriteDisplayList> spriteDisplayAsset = EditorAsset<SpriteDisplayList>.FromProject(project, "SpriteDisplay");
+            loadedPalette = new LoadedPalette(project, spritePaletteName, transparent: true);
+            loadedGraphics = new LoadedGraphics(project, Asset.SpritesFolder + Asset.FolderSeparator + GraphicsAsset.DefaultName);
+            spritesAsset = SpritesAsset.FromProject(project, Asset.SpritesFolder);
+            spriteDisplayAsset = EditorAsset<SpriteDisplayList>.FromProject(project, "SpriteDisplay");
 
+            loadedPalette.Updated += Asset_Updated;
+            spritesAsset.Updated += Asset_Updated;
+
+            Load();
+        }
+
+        private void Load() {
             sprites = new Dictionary<SpriteDisplay.Key.Type, Dictionary<int, LoadedSprite>>();
             foreach (SpriteDisplay.Key.Type keyType in Enum.GetValues(typeof(SpriteDisplay.Key.Type))) {
                 sprites[keyType] = new Dictionary<int, LoadedSprite>();
@@ -57,6 +71,12 @@ namespace Necrofy
             foreach (LoadedSprite s in sprites.Values.SelectMany(d => d.Values)) {
                 s.Dispose();
             }
+        }
+
+        private void Asset_Updated(object sender, EventArgs e) {
+            Dispose();
+            Load();
+            Updated?.Invoke(sender, e);
         }
 
         private void AddLoadedSprite(SpriteDisplay spriteDisplay, LoadedSprite s) {

@@ -42,10 +42,12 @@ namespace Necrofy
         public MainWindow() {
             InitializeComponent();
 
+#if !DEBUG
             AppDomain.CurrentDomain.UnhandledException += (sender, args) => {
                 MessageBox.Show("Necrofy has encountered an error and will now close. Please provide the following information when reporting this problem:" + Environment.NewLine + args.ExceptionObject);
                 Environment.Exit(1);
             };
+#endif
 
             if (Properties.Settings.Default.UpgradeRequired) {
                 Properties.Settings.Default.Upgrade();

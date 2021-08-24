@@ -13,6 +13,9 @@ namespace Necrofy
 {
     public partial class ColorEditor : UserControl
     {
+        private const int HSLMax = 240;
+        private static readonly Bitmap ColorArrow = Properties.Resources.colorArrow;
+
         private Color selectedColor;
         public Color SelectedColor {
             get {
@@ -23,30 +26,29 @@ namespace Necrofy
                 hsCanvas.Invalidate();
                 lCanvas.Invalidate();
 
-                dataUpdate++;
-                rTrackBar.Value = selectedColor.R / 8;
-                gTrackBar.Value = selectedColor.G / 8;
-                bTrackBar.Value = selectedColor.B / 8;
-                dataUpdate--;
+                uiUpdate++;
+                rTrackBar.Value = SNESGraphics.RGBComponentToSNES(selectedColor.R);
+                gTrackBar.Value = SNESGraphics.RGBComponentToSNES(selectedColor.G);
+                bTrackBar.Value = SNESGraphics.RGBComponentToSNES(selectedColor.B);
+                uiUpdate--;
 
-                SelectedColorChanged?.Invoke(this, EventArgs.Empty);
+                ColorChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
-        public event EventHandler SelectedColorChanged;
+        public event EventHandler ColorChanged;
 
         [DllImport("shlwapi.dll")]
         public static extern int ColorHLSToRGB(int H, int L, int S);
         private static Color HLSToRGB(int H, int L, int S) {
             if (S == 0) {
-                int v = (int)Math.Round(L / 240.0 * 255);
+                int v = (int)Math.Round((double)L / HSLMax * 255);
                 return Color.FromArgb(v, v, v);
             }
             return ColorTranslator.FromWin32(ColorHLSToRGB(H, L, S));
         }
 
-        private bool mouseDown = false;
-        private int dataUpdate = 0;
+        private int uiUpdate = 0;
 
         private Bitmap lumImage;
 
@@ -60,10 +62,13 @@ namespace Necrofy
         }
 
         public void SelectRGB(int r, int g, int b) {
-            Color c = Color.FromArgb(r, g, b);
-            selectedH = (int)(c.GetHue() / 360 * 240);
-            selectedS = (int)(c.GetSaturation() * 240);
-            selectedL = (int)(c.GetBrightness() * 240);
+            SelectRGB(Color.FromArgb(r, g, b));
+        }
+
+        public void SelectRGB(Color c) {
+            selectedH = (int)(c.GetHue() / 360 * HSLMax);
+            selectedS = (int)(c.GetSaturation() * HSLMax);
+            selectedL = (int)(c.GetBrightness() * HSLMax);
             UpdateLum();
             SelectedColor = c;
         }
@@ -79,7 +84,7 @@ namespace Necrofy
             if (updateLum) {
                 UpdateLum();
             }
-            
+
             SelectedColor = c;
         }
 
@@ -88,11 +93,11 @@ namespace Necrofy
                 lumImage.Dispose();
             }
 
-            lumImage = new Bitmap(lCanvas.Width - 12, 241);
+            lumImage = new Bitmap(lCanvas.Width - ColorArrow.Width - 2, HSLMax + 1);
             using (Graphics g = Graphics.FromImage(lumImage)) {
-                for (int l = 0; l <= 240; l++) {
+                for (int l = 0; l <= HSLMax; l++) {
                     using (Pen p = new Pen(HLSToRGB(selectedH, l, selectedS))) {
-                        g.DrawLine(p, 0, 240 - l, lumImage.Width, 240 - l);
+                        g.DrawLine(p, 0, HSLMax - l, lumImage.Width, HSLMax - l);
                     }
                 }
             }
@@ -111,53 +116,43 @@ namespace Necrofy
         }
         
         private void numericUpDown_ValueChanged(object sender, EventArgs e) {
-            if (dataUpdate == 0) {
-                SelectRGB((int)rNumericUpDown.Value * 8, (int)gNumericUpDown.Value * 8, (int)bNumericUpDown.Value * 8);
+            if (uiUpdate == 0) {
+                SelectRGB(SNESGraphics.SNESComponentToRGB((int)rNumericUpDown.Value), SNESGraphics.SNESComponentToRGB((int)gNumericUpDown.Value), SNESGraphics.SNESComponentToRGB((int)bNumericUpDown.Value));
             }
         }
 
         private void hsCanvas_Paint(object sender, PaintEventArgs e) {
             int x = selectedH;
-            int y = 240 - selectedS;
+            int y = HSLMax - selectedS;
             Image image = Properties.Resources.crosshairs;
             e.Graphics.DrawImage(image, x - image.Width / 2, y - image.Height / 2, image.Width, image.Height);
         }
 
         private void lCanvas_Paint(object sender, PaintEventArgs e) {
             if (lumImage != null) {
-                e.Graphics.DrawImage(lumImage, 0, 10);
-                e.Graphics.DrawImage(Properties.Resources.colorArrow, lCanvas.Width - 10, 240 - selectedL, 10, 20);
+                e.Graphics.DrawImage(lumImage, 0, ColorArrow.Height / 2);
+                e.Graphics.DrawImage(ColorArrow, lCanvas.Width - ColorArrow.Width, HSLMax - selectedL, ColorArrow.Width, ColorArrow.Height);
             }
         }
 
         private void hsCanvas_MouseDown(object sender, MouseEventArgs e) {
-            mouseDown = true;
             hsCanvas_MouseMove(sender, e);
         }
 
         private void hsCanvas_MouseMove(object sender, MouseEventArgs e) {
-            if (mouseDown) {
-                SelectHSL(Math.Max(0, Math.Min(240, e.X)), 240 - Math.Max(0, Math.Min(240, e.Y)), selectedL);
+            if (hsCanvas.IsMouseDown) {
+                SelectHSL(Math.Max(0, Math.Min(HSLMax, e.X)), HSLMax - Math.Max(0, Math.Min(HSLMax, e.Y)), selectedL);
             }
         }
-
-        private void hsCanvas_MouseUp(object sender, MouseEventArgs e) {
-            mouseDown = false;
-        }
-
+        
         private void lCanvas_MouseDown(object sender, MouseEventArgs e) {
-            mouseDown = true;
             lCanvas_MouseMove(sender, e);
         }
 
         private void lCanvas_MouseMove(object sender, MouseEventArgs e) {
-            if (mouseDown) {
-                SelectHSL(selectedH, selectedS, Math.Max(0, Math.Min(240, 240 - (e.Y - 10))));
+            if (lCanvas.IsMouseDown) {
+                SelectHSL(selectedH, selectedS, Math.Max(0, Math.Min(HSLMax, HSLMax - (e.Y - ColorArrow.Height / 2))));
             }
-        }
-
-        private void lCanvas_MouseUp(object sender, MouseEventArgs e) {
-            mouseDown = false;
         }
     }
 }

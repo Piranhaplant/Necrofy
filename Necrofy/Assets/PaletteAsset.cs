@@ -28,13 +28,13 @@ namespace Necrofy
             ParsedName parsedName = new ParsedName(fullName);
             return new PaletteCreator().FromProject(project, parsedName.Folder, parsedName.FinalName);
         }
-
+        
         private PaletteAsset(PaletteNameInfo nameInfo, byte[] data) {
             this.nameInfo = nameInfo;
             this.data = data;
         }
 
-        public override void WriteFile(Project project) {
+        protected override void WriteFile(Project project) {
             File.WriteAllBytes(nameInfo.GetFilename(project.path, createDirectories: true), data);
         }
 
@@ -55,8 +55,10 @@ namespace Necrofy
         {
             public PaletteAsset FromProject(Project project, string folder, string paletteName) {
                 NameInfo nameInfo = new PaletteNameInfo(folder, paletteName, null);
-                string filename = nameInfo.FindFilename(project.path);
-                return (PaletteAsset)FromFile(nameInfo, filename);
+                return project.GetCachedAsset(nameInfo, () => {
+                    string filename = nameInfo.FindFilename(project.path);
+                    return (PaletteAsset)FromFile(nameInfo, filename);
+                });
             }
 
             public override NameInfo GetNameInfo(NameInfo.PathParts pathParts, Project project) {
@@ -120,7 +122,7 @@ namespace Necrofy
 
             public readonly string folder;
             public readonly string name;
-            public readonly int? pointer;
+            public int? pointer { get; private set; }
 
             public PaletteNameInfo(string folder, string name, int? pointer = null) : base(folder, name) {
                 this.folder = folder;
@@ -137,7 +139,11 @@ namespace Necrofy
 
             public override bool Editable => true;
             public override EditorWindow GetEditor(Project project) {
-                return new PaletteEditor();
+                return new PaletteEditor(new LoadedPalette(project, Name));
+            }
+
+            protected override void UpdateFromFoundFilename(int? pointer, bool compressed) {
+                this.pointer = pointer;
             }
 
             public static PaletteNameInfo FromPath(PathParts parts) {

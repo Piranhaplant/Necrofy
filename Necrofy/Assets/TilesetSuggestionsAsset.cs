@@ -28,7 +28,7 @@ namespace Necrofy
             this.data = data;
         }
 
-        public override void WriteFile(Project project) {
+        protected override void WriteFile(Project project) {
             // TODO: data would need to be converted back to JSON format first
             throw new NotImplementedException();
         }

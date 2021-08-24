@@ -168,7 +168,6 @@
             this.hsCanvas.TabIndex = 2;
             this.hsCanvas.MouseDown += new System.Windows.Forms.MouseEventHandler(this.hsCanvas_MouseDown);
             this.hsCanvas.MouseMove += new System.Windows.Forms.MouseEventHandler(this.hsCanvas_MouseMove);
-            this.hsCanvas.MouseUp += new System.Windows.Forms.MouseEventHandler(this.hsCanvas_MouseUp);
             this.hsCanvas.Paint += new System.Windows.Forms.PaintEventHandler(this.hsCanvas_Paint);
             // 
             // lCanvas
@@ -180,7 +179,6 @@
             this.lCanvas.TabIndex = 4;
             this.lCanvas.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lCanvas_MouseDown);
             this.lCanvas.MouseMove += new System.Windows.Forms.MouseEventHandler(this.lCanvas_MouseMove);
-            this.lCanvas.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lCanvas_MouseUp);
             this.lCanvas.Paint += new System.Windows.Forms.PaintEventHandler(this.lCanvas_Paint);
             // 
             // ColorEditor

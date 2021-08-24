@@ -38,7 +38,7 @@ namespace Necrofy
             return ROMPointers.LevelPointers + 2 + levelNum * 4;
         }
 
-        public override void WriteFile(Project project) {
+        protected override void WriteFile(Project project) {
             File.WriteAllText(nameInfo.GetFilename(project.path, createDirectories: true), JsonConvert.SerializeObject(level, Formatting.Indented));
         }
 

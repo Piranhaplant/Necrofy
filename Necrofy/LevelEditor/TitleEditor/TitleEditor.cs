@@ -63,6 +63,8 @@ namespace Necrofy
             updatingData--;
 
             characters = new LoadedLevelTitleCharacters(project);
+            characters.Updated += Characters_Updated;
+
             pageEditor1.LoadPage(this, level.title1, characters);
             pageEditor2.LoadPage(this, level.title2, characters);
 
@@ -84,6 +86,13 @@ namespace Necrofy
             pageEditor2.SelectedWordsChanged += SelectedWordsChanged;
 
             Status = "Click to edit or move text. Hold ctrl and click to create new text.";
+        }
+
+        private void Characters_Updated(object sender, EventArgs e) {
+            pageEditor1.Invalidate();
+            pageEditor2.Invalidate();
+            levelTitleContents.Repaint();
+            palette.Invalidate();
         }
 
         private void TitleEditor_Disposed(object sender, EventArgs e) {
