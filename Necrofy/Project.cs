@@ -127,7 +127,6 @@ namespace Necrofy
                     info = new ROMInfo(s);
                     info.assets.Clear();
                     AddEndOfBankFreespace(s, info.Freespace);
-                    info.Freespace.Fill(s, FreespaceFillByte);
 
                     foreach (string filename in Directory.GetFiles(path, "*", SearchOption.AllDirectories)) {
                         string relativeFilename = GetRelativePath(filename);
@@ -158,6 +157,8 @@ namespace Necrofy
                     byte sizeValue = (byte)(Math.Ceiling(Math.Log(s.Length, 2)) - 10);
                     s.Seek(ROMPointers.ROMSize);
                     s.WriteByte(sizeValue);
+
+                    info.Freespace.Fill(s, FreespaceFillByte);
                 }
 
                 info.exportedDefines["win_level"] = settings.WinLevel.ToString();
