@@ -34,6 +34,8 @@
             this.bLabel = new System.Windows.Forms.Label();
             this.bNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.bTrackBar = new System.Windows.Forms.TrackBar();
+            this.hexLabel = new System.Windows.Forms.Label();
+            this.hexTextBox = new System.Windows.Forms.TextBox();
             this.hsCanvas = new Necrofy.Canvas();
             this.lCanvas = new Necrofy.Canvas();
             ((System.ComponentModel.ISupportInitialize)(this.rTrackBar)).BeginInit();
@@ -158,6 +160,24 @@
             this.bTrackBar.TickStyle = System.Windows.Forms.TickStyle.None;
             this.bTrackBar.ValueChanged += new System.EventHandler(this.bTrackBar_ValueChanged);
             // 
+            // hexLabel
+            // 
+            this.hexLabel.AutoSize = true;
+            this.hexLabel.Location = new System.Drawing.Point(0, 352);
+            this.hexLabel.Name = "hexLabel";
+            this.hexLabel.Size = new System.Drawing.Size(14, 13);
+            this.hexLabel.TabIndex = 11;
+            this.hexLabel.Text = "#";
+            // 
+            // hexTextBox
+            // 
+            this.hexTextBox.Location = new System.Drawing.Point(21, 349);
+            this.hexTextBox.MaxLength = 6;
+            this.hexTextBox.Name = "hexTextBox";
+            this.hexTextBox.Size = new System.Drawing.Size(100, 20);
+            this.hexTextBox.TabIndex = 12;
+            this.hexTextBox.TextChanged += new System.EventHandler(this.hexTextBox_TextChanged);
+            // 
             // hsCanvas
             // 
             this.hsCanvas.BackgroundImage = global::Necrofy.Properties.Resources.spectrum1;
@@ -185,6 +205,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.hexTextBox);
+            this.Controls.Add(this.hexLabel);
             this.Controls.Add(this.bLabel);
             this.Controls.Add(this.bNumericUpDown);
             this.Controls.Add(this.bTrackBar);
@@ -197,7 +219,7 @@
             this.Controls.Add(this.rTrackBar);
             this.Controls.Add(this.lCanvas);
             this.Name = "ColorEditor";
-            this.Size = new System.Drawing.Size(288, 345);
+            this.Size = new System.Drawing.Size(288, 378);
             ((System.ComponentModel.ISupportInitialize)(this.rTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.rNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gNumericUpDown)).EndInit();
@@ -222,5 +244,7 @@
         private System.Windows.Forms.Label bLabel;
         private System.Windows.Forms.NumericUpDown bNumericUpDown;
         private System.Windows.Forms.TrackBar bTrackBar;
+        private System.Windows.Forms.Label hexLabel;
+        private System.Windows.Forms.TextBox hexTextBox;
     }
 }

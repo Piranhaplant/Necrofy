@@ -48,6 +48,18 @@ namespace Necrofy
             return ColorTranslator.FromWin32(ColorHLSToRGB(H, L, S));
         }
 
+        private static Color HexToColor(string hex) {
+            try {
+                return ColorTranslator.FromHtml("#" + hex);
+            } catch (Exception) {
+                return Color.Black;
+            }
+        }
+
+        private static string ColorToHex(Color c) {
+            return ColorTranslator.ToHtml(c).Substring(1); // Remove "#" from the start
+        }
+
         private int uiUpdate = 0;
 
         private Bitmap lumImage;
@@ -61,16 +73,19 @@ namespace Necrofy
             SelectRGB(128, 128, 128);
         }
 
-        public void SelectRGB(int r, int g, int b) {
-            SelectRGB(Color.FromArgb(r, g, b));
+        public void SelectRGB(int r, int g, int b, bool updateHex = true) {
+            SelectRGB(Color.FromArgb(r, g, b), updateHex);
         }
 
-        public void SelectRGB(Color c) {
+        public void SelectRGB(Color c, bool updateHex = true) {
             selectedH = (int)(c.GetHue() / 360 * HSLMax);
             selectedS = (int)(c.GetSaturation() * HSLMax);
             selectedL = (int)(c.GetBrightness() * HSLMax);
             UpdateLum();
             SelectedColor = c;
+            if (updateHex) {
+                UpdateHex();
+            }
         }
 
         public void SelectHSL(int h, int s, int l) {
@@ -86,6 +101,7 @@ namespace Necrofy
             }
 
             SelectedColor = c;
+            UpdateHex();
         }
 
         private void UpdateLum() {
@@ -103,6 +119,10 @@ namespace Necrofy
             }
         }
 
+        private void UpdateHex() {
+            hexTextBox.Text = ColorToHex(selectedColor);
+        }
+
         private void rTrackBar_ValueChanged(object sender, EventArgs e) {
             rNumericUpDown.Value = rTrackBar.Value;
         }
@@ -114,10 +134,16 @@ namespace Necrofy
         private void bTrackBar_ValueChanged(object sender, EventArgs e) {
             bNumericUpDown.Value = bTrackBar.Value;
         }
-        
+
         private void numericUpDown_ValueChanged(object sender, EventArgs e) {
             if (uiUpdate == 0) {
                 SelectRGB(SNESGraphics.SNESComponentToRGB((int)rNumericUpDown.Value), SNESGraphics.SNESComponentToRGB((int)gNumericUpDown.Value), SNESGraphics.SNESComponentToRGB((int)bNumericUpDown.Value));
+            }
+        }
+
+        private void hexTextBox_TextChanged(object sender, EventArgs e) {
+            if (uiUpdate == 0) {
+                SelectRGB(HexToColor(hexTextBox.Text), updateHex: false);
             }
         }
 

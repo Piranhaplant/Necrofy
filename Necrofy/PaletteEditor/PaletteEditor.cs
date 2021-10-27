@@ -17,6 +17,7 @@ namespace Necrofy
         private UndoManager<PaletteEditor> undoManager;
 
         private int uiUpdate;
+        private bool colorSelectorFocused = false;
 
         private Color SelectedColor => colorSelector.SelectionStart >= 0 ? colorSelector.Colors[colorSelector.SelectionStart] : Color.Black;
 
@@ -31,14 +32,20 @@ namespace Necrofy
             SelectNone();
         }
 
+        public void UpdateColorSelectorSize() {
+            colorSelector.Width = (int)(16 * 16 * Zoom);
+            colorSelector.Height = colorSelector.Width / 2;
+        }
+
         protected override UndoManager Setup() {
+            Zoom = 2.0f;
             undoManager = new UndoManager<PaletteEditor>(mainWindow.UndoButton, mainWindow.RedoButton, this);
             return undoManager;
         }
 
         public override bool HasSelection => true;
-        public override bool CanCopy => colorSelector.SelectionStart >= 0;
-        public override bool CanPaste => colorSelector.SelectionStart >= 0;
+        public override bool CanCopy => colorSelectorFocused && colorSelector.SelectionStart >= 0;
+        public override bool CanPaste => colorSelectorFocused && colorSelector.SelectionStart >= 0;
         public override bool CanDelete => false;
 
         public override void SelectAll() {
@@ -49,6 +56,11 @@ namespace Necrofy
         public override void SelectNone() {
             colorSelector.SelectionStart = 0;
             colorSelector.SelectionEnd = 0;
+        }
+
+        public override bool CanZoom => true;
+        protected override void ZoomChanged() {
+            UpdateColorSelectorSize();
         }
 
         protected override void DoSave(Project project) {
@@ -125,6 +137,16 @@ namespace Necrofy
             if (SelectedColor != NormalizeColor(colorEditor.SelectedColor)) {
                 UpdateSelectedColor();
             }
+        }
+
+        private void colorSelector_Enter(object sender, EventArgs e) {
+            colorSelectorFocused = true;
+            RaiseSelectionChanged();
+        }
+
+        private void colorSelector_Leave(object sender, EventArgs e) {
+            colorSelectorFocused = false;
+            RaiseSelectionChanged();
         }
     }
 }
