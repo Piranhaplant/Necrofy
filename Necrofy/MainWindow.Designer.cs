@@ -115,6 +115,7 @@
             this.projectRunProject = new System.Windows.Forms.ToolStripMenuItem();
             this.projectRunFromLevel = new System.Windows.Forms.ToolStripMenuItem();
             this.projectRunSettings = new System.Windows.Forms.ToolStripMenuItem();
+            this.projectRecordDemo = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
             this.projectSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.viewMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -1020,6 +1021,7 @@
             this.projectRunProject,
             this.projectRunFromLevel,
             this.projectRunSettings,
+            this.projectRecordDemo,
             this.toolStripSeparator14,
             this.projectSettings});
             this.projectMenu.Name = "projectMenu";
@@ -1064,6 +1066,15 @@
             this.projectRunSettings.Size = new System.Drawing.Size(210, 22);
             this.projectRunSettings.Text = "Run From Level &Settings...";
             this.projectRunSettings.Click += new System.EventHandler(this.RunFromLevelSettings);
+            // 
+            // projectRecordDemo
+            // 
+            this.projectRecordDemo.Enabled = false;
+            this.projectRecordDemo.Image = global::Necrofy.Properties.Resources.film;
+            this.projectRecordDemo.Name = "projectRecordDemo";
+            this.projectRecordDemo.Size = new System.Drawing.Size(210, 22);
+            this.projectRecordDemo.Text = "Record &Demo For Level";
+            this.projectRecordDemo.Click += new System.EventHandler(this.RecordDemo);
             // 
             // toolStripSeparator14
             // 
@@ -1838,6 +1849,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator18;
         private System.Windows.Forms.ToolStripMenuItem preferencesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem viewSpriteGrid;
+        private System.Windows.Forms.ToolStripMenuItem projectRecordDemo;
     }
 }
 

@@ -24,6 +24,7 @@ namespace Necrofy
         Palette,
         Tilemap,
         Level,
+        Demo,
     }
     
     /// <summary>An asset that is part of a project. For example, levels, tilesets, palettes...</summary>
@@ -152,12 +153,15 @@ namespace Necrofy
             romStream.Seek(pointer);
             long startPos = romStream.Position;
             Asset asset = creator.FromRom(nameInfo, romStream, romInfo, size, out bool trackFreespace);
-            if (trackFreespace) {
-                romInfo.Freespace.AddSize(pointer, (int)(romStream.Position - startPos));
-            }
 
-            romInfo.assets.Add(asset);
-            romInfo.AddAssetName(nameInfo.Category, pointer, nameInfo.Name);
+            if (asset != null) {
+                if (trackFreespace) {
+                    romInfo.Freespace.AddSize(pointer, (int)(romStream.Position - startPos));
+                }
+
+                romInfo.assets.Add(asset);
+                romInfo.AddAssetName(nameInfo.Category, pointer, nameInfo.Name);
+            }
 
             romStream.PopPosition();
         }

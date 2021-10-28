@@ -16,6 +16,7 @@ namespace Necrofy
         public const string baseROMFilename = "base.sfc";
         public const string buildFilename = "build.sfc";
         public const string runFromLevelFilename = "runFromLevel.sfc";
+        public const string recordDemoFilename = "recordDemo.sfc";
         public static readonly string internalProjectFilesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ProjectFiles");
         public static readonly string internalPatchesPath = Path.Combine(internalProjectFilesPath, "Patches");
         private static readonly HashSet<string> ignoredFileExtensions = new HashSet<string>() { ".sfc", ".nfyz", ".nfyp", ".asm", ".user" };
@@ -25,6 +26,7 @@ namespace Necrofy
         public const string ROMExpandPatchName = "ROMExpand.asm";
         public const string OtherExpandPatchName = "OtherExpand.asm";
         public const string RunFromLevelPatchName = "RunFromLevel.asm";
+        public const string RecordDemoPatchName = "RecordDemo.asm";
 
         public readonly string path;
         public readonly string settingsFilename;
@@ -205,42 +207,59 @@ namespace Necrofy
         }
 
         public BuildResults RunFromLevel(int level, RunSettings settings) {
+            Dictionary<string, string> defines = new Dictionary<string, string> {
+                ["LEVEL"] = level.ToString(),
+                ["VICTIMS"] = "$" + settings.victimCount.ToString(),
+                ["WEAPON_COUNT"] = settings.weaponAmounts.Length.ToString(),
+                ["SPECIAL_COUNT"] = settings.specialAmounts.Length.ToString(),
+            };
+            for (int i = 0; i < settings.weaponAmounts.Length; i++) {
+                defines["WEAPON" + i.ToString()] = "$" + settings.weaponAmounts[i].ToString();
+            }
+            for (int i = 0; i < settings.specialAmounts.Length; i++) {
+                defines["SPECIAL" + i.ToString()] = "$" + settings.specialAmounts[i].ToString();
+            }
+            return RunWithPatch(runFromLevelFilename, RunFromLevelPatchName, defines).BuildResults;
+        }
+
+        public BuildAndRunResults RecordDemo(int level) {
+            Dictionary<string, string> defines = new Dictionary<string, string> {
+                ["DEMO_LEVEL"] = level.ToString(),
+            };
+            return RunWithPatch(recordDemoFilename, RecordDemoPatchName, defines);
+        }
+
+        private BuildAndRunResults RunWithPatch(string newROMFilename, string internalPatch, Dictionary<string, string> defines) {
             // TODO: Don't build if not necessary
             BuildResults results = Build();
             if (results.Success) {
-                string runROM = Path.Combine(BuildDirectory, runFromLevelFilename);
+                string runROM = Path.Combine(BuildDirectory, newROMFilename);
                 try {
                     File.Copy(Path.Combine(BuildDirectory, buildFilename), runROM, true);
-
-                    Dictionary<string, string> defines = new Dictionary<string, string> {
-                        ["LEVEL"] = level.ToString(),
-                        ["VICTIMS"] = "$" + settings.victimCount.ToString(),
-                        ["WEAPON_COUNT"] = settings.weaponAmounts.Length.ToString(),
-                        ["SPECIAL_COUNT"] = settings.specialAmounts.Length.ToString(),
-                    };
-                    for (int i = 0; i < settings.weaponAmounts.Length; i++) {
-                        defines["WEAPON" + i.ToString()] = "$" + settings.weaponAmounts[i].ToString();
-                    }
-                    for (int i = 0; i < settings.specialAmounts.Length; i++) {
-                        defines["SPECIAL" + i.ToString()] = "$" + settings.specialAmounts[i].ToString();
-                    }
-
-                    ApplyInternalPatch(runROM, RunFromLevelPatchName, results, defines);
+                    ApplyInternalPatch(runROM, internalPatch, results, defines);
                 } catch (Exception ex) {
                     results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, "", ex.Message, ex.StackTrace));
                 }
                 if (results.Success) {
-                    RunEmulator(runROM);
+                    return new BuildAndRunResults(results, RunEmulator(runROM));
                 }
             }
-            return results;
+            return new BuildAndRunResults(results);
         }
 
-        private void RunEmulator(string romFile) {
+        private Process RunEmulator(string romFile) {
             if (Properties.Settings.Default.useSystemEmulator) {
-                Process.Start(romFile);
+                return Process.Start(romFile);
             } else {
-                Process.Start(Properties.Settings.Default.emulator, $"\"{romFile}\"");
+                return Process.Start(Properties.Settings.Default.emulator, $"\"{romFile}\"");
+            }
+        }
+
+        public static string GetEmulatorExecutable(string romFile) {
+            if (Properties.Settings.Default.useSystemEmulator) {
+                return Win32.FindExecutable(romFile);
+            } else {
+                return Properties.Settings.Default.emulator;
             }
         }
 

@@ -316,6 +316,7 @@ namespace Necrofy
             ObjectBrowser.Browser.Contents = activeEditor?.BrowserContents;
             PropertyBrowser.SetObjects(activeEditor?.PropertyBrowserObjects);
             projectRunFromLevel.Enabled = activeEditor?.LevelNumber != null;
+            projectRecordDemo.Enabled = activeEditor?.LevelNumber != null;
             fileClose.Enabled = activeEditor != null;
             UpdateStatusText();
             UpdateZoom();
@@ -523,20 +524,20 @@ namespace Necrofy
         }
 
         private void BuildProject(object sender, EventArgs e) {
-            DoBuild(() => project?.Build());
+            Task t = DoBuild(() => project?.Build()); // Don't await since this should run in the background
         }
 
         private void RunProject(object sender, EventArgs e) {
-            DoBuild(() => project?.Run());
+            Task t = DoBuild(() => project?.Run()); // Don't await since this should run in the background
         }
 
         private void RunFromLevel(object sender, EventArgs e) {
             if (activeEditor?.LevelNumber != null) {
-                DoBuild(() => project?.RunFromLevel((int)activeEditor?.LevelNumber, savedRunSettings[currentRunSettings]));
+                Task t = DoBuild(() => project?.RunFromLevel((int)activeEditor?.LevelNumber, savedRunSettings[currentRunSettings])); // Don't await since this should run in the background
             }
         }
-        
-        private async void DoBuild(Func<BuildResults> buildMethod) {
+
+        private async Task DoBuild(Func<BuildResults> buildMethod) {
             if (building) {
                 return;
             }
@@ -548,8 +549,17 @@ namespace Necrofy
 
             CancellationTokenSource buildAnimationCancel = new CancellationTokenSource();
             ShowBuildAnimation(buildAnimationCancel.Token);
-            
-            BuildResults results = await Task.Run(buildMethod);
+
+            BuildResults results = await Task.Run(delegate {
+                try {
+                    return buildMethod();
+                } catch (Exception ex) {
+                    results = new BuildResults();
+                    results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, "", "Could not run ROM. You may need to set an emulator from the Preferences on the Edit menu.", ex.Message));
+                    return results;
+                }
+            });
+
             buildAnimationCancel.Cancel();
             ShowBuildResults(results);
 
@@ -593,6 +603,19 @@ namespace Necrofy
                 SaveRunSettings();
             };
             dialog.Show();
+        }
+
+        private async void RecordDemo(object sender, EventArgs e) {
+            if (activeEditor?.LevelNumber != null) {
+                BuildAndRunResults results = null;
+                await DoBuild(delegate {
+                    results = project?.RecordDemo((int)activeEditor?.LevelNumber);
+                    return results.BuildResults;
+                });
+                if (results != null && results.EmulatorProcess != null) {
+                    new RecordDemoDialog(project, results.EmulatorProcess, (int)activeEditor?.LevelNumber).ShowDialog();
+                }
+            }
         }
 
         private void projectSettings_Click(object sender, EventArgs e) {

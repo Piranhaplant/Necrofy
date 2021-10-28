@@ -33,6 +33,12 @@ namespace Necrofy
         public const int Level0Password2 = 0x13024;
         /// <summary>Pointer to the level after which the winner screen will be shown</summary>
         public const int WinLevel = 0x4e4;
+        /// <summary>Pointer to the table storing demo level numbers</summary>
+        public const int DemoLevelNumbers = 0x1bcf;
+        /// <summary>Pointer to the table storing the characters used in demos</summary>
+        public const int DemoCharacters = 0x1bd7;
+        /// <summary>Pointer to the table storing demo replay data pointers</summary>
+        public const int DemoReplayPointers = 0x1bdf;
 
         // NOTE: in these functions I am using "address" to refer to the lower 16 bits of the full 24 bit LoROM address.
 

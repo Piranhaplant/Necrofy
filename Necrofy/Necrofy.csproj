@@ -106,6 +106,7 @@
     <Compile Include="Assets\Asset.cs" />
     <Compile Include="Assets\CollisionAsset.cs" />
     <Compile Include="Assets\DataAsset.cs" />
+    <Compile Include="Assets\DemoAsset.cs" />
     <Compile Include="Assets\EditorAsset.cs" />
     <Compile Include="Assets\GraphicsAsset.cs" />
     <Compile Include="Assets\LevelAsset.cs" />
@@ -131,6 +132,7 @@
     <Compile Include="CheckableToolStripSplitButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Demo.cs" />
     <Compile Include="PaletteEditor\PaletteEditorAction.cs" />
     <Compile Include="PaletteEditor\ColorSelector.cs">
       <SubType>UserControl</SubType>
@@ -237,6 +239,13 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="BuildAndRunResults.cs" />
+    <Compile Include="RecordDemoDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RecordDemoDialog.Designer.cs">
+      <DependentUpon>RecordDemoDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="SpriteEditor\WrappedSpriteTile.cs" />
     <Compile Include="LevelEditor\TitleEditor\LevelTitleObjectBrowserContents.cs" />
@@ -390,6 +399,7 @@
     <Compile Include="SpriteEditor\SpriteEditorAction.cs" />
     <Compile Include="LevelEditor\TileAction.cs" />
     <Compile Include="UndoManager.cs" />
+    <Compile Include="Win32.cs" />
     <Compile Include="ZAMNCompress.cs" />
     <EmbeddedResource Include="BuildResultsWindow.resx">
       <DependentUpon>BuildResultsWindow.cs</DependentUpon>
@@ -459,6 +469,9 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="RecordDemoDialog.resx">
+      <DependentUpon>RecordDemoDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="RunSettingsDialog.resx">
       <DependentUpon>RunSettingsDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -479,6 +492,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="ProjectFiles\Editor\SpriteDisplay.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectFiles\Patches\RecordingComplete.tlm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="ProjectFiles\Tilesets\Castle\Suggestions.json">
@@ -625,10 +641,14 @@
     <None Include="Icons\dice-3.png" />
     <None Include="Icons\ghost.png" />
     <Content Include="icon.ico" />
+    <None Include="Icons\film.png" />
     <Content Include="ProjectFiles\Patches\PerfectPlayerFix.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="ProjectFiles\Patches\PopupWallFix.asm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectFiles\Patches\RecordDemo.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="ProjectFiles\Patches\SkullKeyDoorWeedWhackerFix.asm">
