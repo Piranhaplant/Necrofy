@@ -178,6 +178,10 @@ namespace Necrofy
                 info.exportedDefines["win_level"] = settings.WinLevel.ToString();
                 info.exportedDefines["end_game_level"] = settings.EndGameLevel.ToString();
 
+                foreach (KeyValuePair<string, string> define in info.exportedDefines) {
+                    Console.WriteLine("!" + define.Key + "=" + define.Value);
+                }
+
                 foreach (ProjectSettings.Patch patch in settings.EnabledPatches) {
                     ApplyInternalPatch(outputROM, patch.Name, results, info.exportedDefines);
                 }
@@ -242,7 +246,6 @@ namespace Necrofy
 
         public static void AddEndOfBankFreespace(Stream s, Freespace freespace) {
             AddEndOfBankFreespace(s, freespace, 0xff);
-            AddEndOfBankFreespace(s, freespace, 0x00);
             AddEndOfBankFreespace(s, freespace, FreespaceFillByte);
         }
 

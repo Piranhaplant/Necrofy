@@ -80,6 +80,18 @@ namespace Necrofy
                 assetPointers.Add(category, new Dictionary<string, int>());
             }
             assetPointers[category].Add(name, pointer);
+            exportedDefines.Add("ASSET_" + category.ToString() + "_" + FixDefineName(name), "$" + ROMPointers.PointerToHexString(pointer));
+        }
+
+        private static string FixDefineName(string s) {
+            StringBuilder builder = new StringBuilder(s);
+            for (int i = 0; i < builder.Length; i++) {
+                char c = builder[i];
+                if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))) {
+                    builder[i] = '_';
+                }
+            }
+            return builder.ToString();
         }
 
         public string GetAssetName(AssetCategory category, int pointer) {
