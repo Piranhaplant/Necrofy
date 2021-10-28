@@ -30,6 +30,8 @@ namespace Necrofy
             colorSelector.SelectionChanged += ColorSelector_SelectionChanged;
             colorEditor.ColorChanged += ColorEditor_ColorChanged;
             SelectNone();
+
+            Status = "Tip: Colors can be copied into an image editor, then pasted back into Necrofy after making changes.";
         }
 
         public void UpdateColorSelectorSize() {
@@ -67,22 +69,48 @@ namespace Necrofy
             palette.Save(project);
         }
 
+        private const int ClipboardImageSquareSize = 32;
+
         public override void Copy() {
+            DataObject clipboardData = new DataObject();
+
             ushort[] colors = new ushort[colorSelector.SelectionMax - colorSelector.SelectionMin + 1];
             for (int i = 0; i < colors.Length; i++) {
                 colors[i] = SNESGraphics.RGBToSNES(colorSelector.Colors[colorSelector.SelectionMin + i]);
             }
-            Clipboard.SetText(JsonConvert.SerializeObject(colors));
+            clipboardData.SetText(JsonConvert.SerializeObject(colors));
+
+            using (Bitmap image = new Bitmap(colors.Length * ClipboardImageSquareSize, ClipboardImageSquareSize))
+            using (Graphics g = Graphics.FromImage(image)) {
+                for (int i = 0; i < colors.Length; i++) {
+                    using (Brush b = new SolidBrush(SNESGraphics.SNESToRGB(colors[i]))) {
+                        g.FillRectangle(b, ClipboardImageSquareSize * i, 0, ClipboardImageSquareSize, ClipboardImageSquareSize);
+                    }
+                }
+                clipboardData.SetImage(image);
+                Clipboard.SetDataObject(clipboardData, true);
+            }
         }
 
         public override void Paste() {
             try {
-                ushort[] snesColors = JsonConvert.DeserializeObject<ushort[]>(Clipboard.GetText());
-                Color[] colors = new Color[snesColors.Length];
-                for (int i = 0; i < colors.Length; i++) {
-                    colors[i] = SNESGraphics.SNESToRGB(snesColors[i]);
+                if (Clipboard.ContainsText()) {
+                    ushort[] snesColors = JsonConvert.DeserializeObject<ushort[]>(Clipboard.GetText());
+                    Color[] colors = new Color[snesColors.Length];
+                    for (int i = 0; i < colors.Length; i++) {
+                        colors[i] = SNESGraphics.SNESToRGB(snesColors[i]);
+                    }
+                    undoManager.Do(new PasteColorsAction(colors, colorSelector.SelectionMin));
+                } else if (Clipboard.ContainsImage()) {
+                    Image image = Clipboard.GetImage();
+                    Color[] colors = new Color[image.Width / ClipboardImageSquareSize];
+                    using (Bitmap bitmap = new Bitmap(image)) {
+                        for (int i = 0; i < colors.Length; i++) {
+                            colors[i] = bitmap.GetPixel(i * ClipboardImageSquareSize, 0);
+                        }
+                    }
+                    undoManager.Do(new PasteColorsAction(colors, colorSelector.SelectionMin));
                 }
-                undoManager.Do(new PasteColorsAction(colors, colorSelector.SelectionMin));
             } catch (Exception) { }
         }
 
