@@ -9,6 +9,7 @@ namespace Necrofy
     class GraphicsAsset : Asset
     {
         public const string DefaultName = "Graphics";
+        public const string Extension = "gfx";
 
         private const AssetCategory AssetCat = AssetCategory.Graphics;
 
@@ -101,8 +102,6 @@ namespace Necrofy
 
         class GraphicsNameInfo : NameInfo
         {
-            private const string Extension = "gfx";
-
             public readonly string folder;
             public readonly string name;
             public readonly int? pointer;
@@ -120,6 +119,11 @@ namespace Necrofy
 
             protected override PathParts GetPathParts() {
                 return new PathParts(folder, name, Extension, pointer, compressed);
+            }
+
+            public override bool Editable => true;
+            public override EditorWindow GetEditor(Project project) {
+                return new GraphicsEditor(new LoadedGraphics(project, Name));
             }
 
             public static GraphicsNameInfo FromPath(PathParts parts) {

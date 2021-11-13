@@ -194,9 +194,9 @@ namespace Necrofy
             public int TransformPosition(int pos) {
                 return (int)((pos - Position) / zoom) - Padding;
             }
-
+            
             public int GetViewCenter() {
-                return (int)((controlSize() / 2 - Position) / zoom) - Padding;
+                return TransformPosition(controlSize() / 2);
             }
         }
 
@@ -225,7 +225,7 @@ namespace Necrofy
         public Point TransformPoint(Point p) {
             return new Point(xDimension.TransformPosition(p.X), yDimension.TransformPosition(p.Y));
         }
-
+        
         public Point GetViewCenter() {
             return new Point(xDimension.GetViewCenter(), yDimension.GetViewCenter());
         }

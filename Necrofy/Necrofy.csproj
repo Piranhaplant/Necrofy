@@ -133,6 +133,16 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Demo.cs" />
+    <Compile Include="GraphicsEditor\GraphicsEditorAction.cs" />
+    <Compile Include="GraphicsEditor\GraphicsBrushTool.cs" />
+    <Compile Include="GraphicsEditor\GraphicsEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GraphicsEditor\GraphicsEditor.Designer.cs">
+      <DependentUpon>GraphicsEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GraphicsEditor\GraphicsTool.cs" />
+    <Compile Include="GraphicsEditor\GraphicsSelectTool.cs" />
     <Compile Include="PaletteEditor\PaletteEditorAction.cs" />
     <Compile Include="PaletteEditor\ColorSelector.cs">
       <SubType>UserControl</SubType>
@@ -294,6 +304,7 @@
     <Compile Include="ToolBarMenuLinker.Designer.cs">
       <DependentUpon>ToolBarMenuLinker.cs</DependentUpon>
     </Compile>
+    <Compile Include="ToolManager.cs" />
     <Compile Include="ToolStripGrouper.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -406,6 +417,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Canvas.resx">
       <DependentUpon>Canvas.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GraphicsEditor\GraphicsEditor.resx">
+      <DependentUpon>GraphicsEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LevelEditor\LevelSettings\LevelMonsterRow.resx">
       <DependentUpon>LevelMonsterRow.cs</DependentUpon>
@@ -642,6 +656,9 @@
     <None Include="Icons\ghost.png" />
     <Content Include="icon.ico" />
     <None Include="Icons\film.png" />
+    <None Include="Icons\border-outside.png" />
+    <None Include="Icons\arrow-skip-180.png" />
+    <None Include="Icons\arrow-skip.png" />
     <Content Include="ProjectFiles\Patches\PerfectPlayerFix.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

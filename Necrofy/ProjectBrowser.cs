@@ -206,12 +206,16 @@ namespace Necrofy
 
         private void OpenNode(TreeNode node) {
             if (node.Tag is AssetTree.AssetEntry entry) {
+#if !DEBUG
                 try {
+#endif
                     mainWindow.OpenAsset(entry.Asset);
+#if !DEBUG
                 } catch (Exception ex) {
                     Console.WriteLine(ex.StackTrace);
                     MessageBox.Show($"Could not open file {entry.Asset.GetFilename("")}:{Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
+#endif
             }
         }
 

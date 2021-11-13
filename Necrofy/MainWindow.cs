@@ -17,7 +17,7 @@ namespace Necrofy
     partial class MainWindow : Form
     {
         private static readonly string DefaultStatusText = Application.ProductName + " " + Application.ProductVersion;
-        private static readonly float[] zoomLevels = new float[] { 0.25f, 0.33f, 0.5f, 0.75f, 1.0f, 2.0f, 4.0f, 8.0f };
+        private static readonly float[] zoomLevels = new float[] { 0.25f, 0.33f, 0.5f, 0.75f, 1.0f, 2.0f, 4.0f, 8.0f, 16.0f };
 
         private StartupWindow startupWindow;
 
@@ -35,7 +35,7 @@ namespace Necrofy
 
         private readonly HashSet<EditorWindow> openEditors = new HashSet<EditorWindow>();
         private readonly HashSet<EditorWindow> dirtyEditors = new HashSet<EditorWindow>();
-        private EditorWindow activeEditor = null;
+        public EditorWindow activeEditor { get; private set; } = null;
 
         private bool building = false;
         

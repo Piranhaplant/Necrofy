@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -61,6 +62,12 @@ namespace Necrofy
         public bool DockVisible {
             get {
                 return mainWindow.EditorVisible(this);
+            }
+        }
+
+        public bool DockActive {
+            get {
+                return ReferenceEquals(mainWindow.activeEditor, this);
             }
         }
 
@@ -170,6 +177,20 @@ namespace Necrofy
 
         protected void RaiseSelectionChanged() {
             SelectionChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public Pen CreateSelectionBorderPen() {
+            return new Pen(Color.White, 1 / Zoom);
+        }
+
+        public Pen CreateSelectionBorderDashPen() {
+            Pen dashPen = new Pen(Color.Black, 1 / Zoom);
+            if (Zoom >= 1.0f) {
+                dashPen.DashPattern = new float[] { 4 / Zoom, 4 / Zoom };
+            } else {
+                dashPen.DashPattern = new float[] { 4, 4 };
+            }
+            return dashPen;
         }
 
         protected virtual void CloseChildren(FormClosingEventArgs e) { }

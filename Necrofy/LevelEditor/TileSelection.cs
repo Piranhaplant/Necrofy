@@ -21,20 +21,26 @@ namespace Necrofy
         private int curX;
         private int curY;
         private bool adding;
+        private int snap;
         
         public Rectangle CurrentRectangle {
             get {
-                if (useCurPoints) {
-                    int left = Math.Min(curX, startX);
-                    int right = Math.Max(curX, startX) + 1;
-                    int top = Math.Min(curY, startY);
-                    int bottom = Math.Max(curY, startY) + 1;
-                    Rectangle r = new Rectangle(left, top, right - left, bottom - top);
-                    r.Intersect(new Rectangle(0, 0, width, height));
-                    return r;
-                } else {
-                    return Rectangle.Empty;
+                Rectangle r = GetDrawRectangle(scale: 1);
+                r.Intersect(new Rectangle(0, 0, width, height));
+                return r;
+            }
+        }
+
+        public bool Empty {
+            get {
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        if (points[x, y]) {
+                            return false;
+                        }
+                    }
                 }
+                return true;
             }
         }
 
@@ -89,25 +95,28 @@ namespace Necrofy
             Changed?.Invoke(this, EventArgs.Empty);
         }
 
-        public void StartRect(int x, int y, bool selected) {
-            startX = x;
-            startY = y;
+        public void StartRect(int x, int y, bool selected, int snap = 1) {
+            startX = x / snap;
+            startY = y / snap;
             curX = int.MinValue;
             curY = int.MinValue;
             adding = selected;
+            this.snap = snap;
         }
 
         public void MoveRect(int newX, int newY) {
+            newX = newX / snap;
+            newY = newY / snap;
             if (newX != curX || newY != curY) {
                 useCurPoints = true;
                 curX = newX;
                 curY = newY;
 
                 Array.Copy(points, curPoints, points.Length);
-                int firstX = Math.Max(0, Math.Min(startX, newX));
-                int firstY = Math.Max(0, Math.Min(startY, newY));
-                int lastX = Math.Min(width - 1, Math.Max(startX, newX));
-                int lastY = Math.Min(height - 1, Math.Max(startY, newY));
+                int firstX = Math.Max(0, Math.Min(startX, newX)) * snap;
+                int firstY = Math.Max(0, Math.Min(startY, newY)) * snap;
+                int lastX = Math.Min(width - 1, Math.Max(startX, newX)) * snap + snap - 1;
+                int lastY = Math.Min(height - 1, Math.Max(startY, newY)) * snap + snap - 1;
                 for (int y = firstY; y <= lastY; y++) {
                     for (int x = firstX; x <= lastX; x++) {
                         curPoints[x, y] = adding;
@@ -126,26 +135,33 @@ namespace Necrofy
             Changed?.Invoke(this, EventArgs.Empty);
         }
 
-        public Rectangle GetEraserRectangle() {
-            if (useCurPoints && !adding) {
-                int firstX = Math.Max(0, Math.Min(startX, curX));
-                int firstY = Math.Max(0, Math.Min(startY, curY));
-                int lastX = Math.Min(width - 1, Math.Max(startX, curX));
-                int lastY = Math.Min(height - 1, Math.Max(startY, curY));
-                return new Rectangle(firstX * 64, firstY * 64, (lastX - firstX + 1) * 64, (lastY - firstY + 1) * 64);
+        public Rectangle GetDrawRectangle(int scale = 64) {
+            if (useCurPoints) {
+                int firstX = Math.Max(0, Math.Min(startX, curX)) * snap;
+                int firstY = Math.Max(0, Math.Min(startY, curY)) * snap;
+                int lastX = Math.Min(width - 1, Math.Max(startX, curX)) * snap + snap - 1;
+                int lastY = Math.Min(height - 1, Math.Max(startY, curY)) * snap + snap - 1;
+                return new Rectangle(firstX * scale, firstY * scale, (lastX - firstX + 1) * scale, (lastY - firstY + 1) * scale);
+            }
+            return Rectangle.Empty;
+        }
+        
+        public Rectangle GetEraserRectangle(int scale = 64) {
+            if (!adding) {
+                return GetDrawRectangle(scale);
             }
             return Rectangle.Empty;
         }
 
-        public GraphicsPath GetGraphicsPath() {
+        public GraphicsPath GetGraphicsPath(int scale = 64) {
             if (useCurPoints) {
-                return GetGraphicsPath(curPoints);
+                return GetGraphicsPath(curPoints, scale);
             } else {
-                return GetGraphicsPath(points);
+                return GetGraphicsPath(points, scale);
             }
         }
 
-        private GraphicsPath GetGraphicsPath(bool[,] p) {
+        private GraphicsPath GetGraphicsPath(bool[,] p, int scale) {
             List<Edge> edges = new List<Edge>();
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
@@ -189,7 +205,7 @@ namespace Necrofy
             }
 
             Matrix scaleMatrix = new Matrix();
-            scaleMatrix.Scale(64, 64);
+            scaleMatrix.Scale(scale, scale);
             gp.Transform(scaleMatrix);
 
             return gp;

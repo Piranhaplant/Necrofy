@@ -232,6 +232,10 @@ namespace Necrofy
             ViewAxes,
             ViewTileBorders,
             ViewSpriteGrid,
+            ViewDecreaseWidth,
+            ViewIncreaseWidth,
+            ViewLargeTileMode,
+            ViewGraphicsGrid,
             LevelEditTitle,
             LevelSettings,
             LevelClear,
@@ -264,6 +268,9 @@ namespace Necrofy
             GeneratePasswordsLetters,
             GeneratePasswordsAllChars,
             AddPasswordRow,
+
+            GraphicsPaintbrush,
+            GraphicsRectangleSelect,
         }
 
         [Flags]
@@ -274,6 +281,7 @@ namespace Necrofy
             LevelTitle = 2,
             SpriteEditor = 4,
             Passwords = 8,
+            Graphics = 16,
         }
     }
 }

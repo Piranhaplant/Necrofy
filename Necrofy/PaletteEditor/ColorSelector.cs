@@ -53,6 +53,8 @@ namespace Necrofy
             }
         }
 
+        public bool MultiSelect { get; set; } = true;
+
         public int SelectionMin => Math.Min(SelectionStart, SelectionEnd);
         public int SelectionMax => Math.Max(SelectionStart, SelectionEnd);
 
@@ -94,8 +96,10 @@ namespace Necrofy
 
         private void canvas_MouseDown(object sender, MouseEventArgs e) {
             int index = GetColorIndex(e.X, e.Y);
-            if (index < colors.Length) {
-                selecting = true;
+            if (colors != null && index < colors.Length) {
+                if (MultiSelect) {
+                    selecting = true;
+                }
                 SelectionStart = index;
                 SelectionEnd = index;
                 Repaint();

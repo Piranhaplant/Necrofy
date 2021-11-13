@@ -32,7 +32,7 @@ namespace Necrofy
         }
 
         public static int SNESComponentToRGB(int component) {
-            return component << 3;
+            return (component << 3) | (component >> 2);
         }
 
         public static Color[] SNESToRGB(byte[] data, bool transparent = false) {

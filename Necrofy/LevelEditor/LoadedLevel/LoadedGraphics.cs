@@ -8,10 +8,14 @@ namespace Necrofy
 {
     class LoadedGraphics
     {
+        public readonly GraphicsAsset asset;
+        public readonly string graphicsName;
         public readonly LinearGraphics linearGraphics;
 
         public LoadedGraphics(Project project, string graphicsName) {
-            linearGraphics = new LinearGraphics(GraphicsAsset.FromProject(project, graphicsName).data);
+            this.graphicsName = graphicsName;
+            asset = GraphicsAsset.FromProject(project, graphicsName);
+            linearGraphics = new LinearGraphics(asset.data);
         }
         
         public class LinearGraphics
@@ -33,6 +37,11 @@ namespace Necrofy
             public LinearGraphics(byte[] data) {
                 this.data = data;
                 linearData = new byte[data.Length / 0x20][,];
+            }
+
+            public LinearGraphics(byte[][,] linearData) {
+                data = null;
+                this.linearData = linearData;
             }
         }
     }

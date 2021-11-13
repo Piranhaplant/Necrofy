@@ -153,6 +153,26 @@ namespace Necrofy.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap arrow_skip {
+            get {
+                object obj = ResourceManager.GetObject("arrow-skip", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap arrow_skip_180 {
+            get {
+                object obj = ResourceManager.GetObject("arrow-skip-180", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap arrow_stop_090 {
             get {
                 object obj = ResourceManager.GetObject("arrow-stop-090", resourceCulture);
@@ -186,6 +206,16 @@ namespace Necrofy.Properties {
         internal static System.Drawing.Bitmap blue_document_rename {
             get {
                 object obj = ResourceManager.GetObject("blue-document-rename", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap border_outside {
+            get {
+                object obj = ResourceManager.GetObject("border-outside", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
