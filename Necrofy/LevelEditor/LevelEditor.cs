@@ -315,6 +315,15 @@ namespace Necrofy
 
             using (Pen selectionBorderDashPen = CreateSelectionBorderDashPen())
             using (Pen selectionBorderPen = CreateSelectionBorderPen()) {
+                if (showGrid) {
+                    for (int x = 1; x < level.Level.width; x++) {
+                        e.Graphics.DrawLine(selectionBorderPen, x * 64, 0, x * 64, level.Level.height * 64);
+                    }
+                    for (int y = 1; y < level.Level.height; y++) {
+                        e.Graphics.DrawLine(selectionBorderPen, 0, y * 64, level.Level.width * 64, y * 64);
+                    }
+                }
+
                 if (TileSelectionExists) {
                     e.Graphics.FillPath(selectionFillBrush, tileSelectionPath);
                     e.Graphics.DrawPath(selectionBorderPen, tileSelectionPath);
@@ -324,15 +333,6 @@ namespace Necrofy
                     e.Graphics.FillRectangle(eraserFillBrush, tileSelectionEraserRect);
                     e.Graphics.DrawRectangle(selectionBorderPen, tileSelectionEraserRect);
                     e.Graphics.DrawRectangle(selectionBorderDashPen, tileSelectionEraserRect);
-                }
-
-                if (showGrid) {
-                    for (int x = 1; x < level.Level.width; x++) {
-                        e.Graphics.DrawLine(selectionBorderPen, x * 64, 0, x * 64, level.Level.height * 64);
-                    }
-                    for (int y = 1; y < level.Level.height; y++) {
-                        e.Graphics.DrawLine(selectionBorderPen, 0, y * 64, level.Level.width * 64, y * 64);
-                    }
                 }
             }
 

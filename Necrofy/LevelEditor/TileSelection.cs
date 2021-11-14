@@ -155,41 +155,31 @@ namespace Necrofy
         }
 
         private GraphicsPath GetGraphicsPath(bool[,] p) {
-            Dictionary<Point, Edge> edges = new Dictionary<Point, Edge>();
-            void AddEdge(int x1, int y1, int x2, int y2) {
-                Edge e = new Edge(x1, y1, x2, y2);
-                edges[e.p1] = e;
-            }
-
+            EdgeList edges = new EdgeList();
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     if (p[x, y]) {
-                        if (x == 0 || !p[x - 1, y]) AddEdge(x, y + 1, x, y);
-                        if (y == 0 || !p[x, y - 1]) AddEdge(x, y, x + 1, y);
-                        if (x == width - 1 || !p[x + 1, y]) AddEdge(x + 1, y, x + 1, y + 1);
-                        if (y == height - 1 || !p[x, y + 1]) AddEdge(x + 1, y + 1, x, y + 1);
+                        if (x == 0 || !p[x - 1, y]) edges.Add(x, y + 1, x, y);
+                        if (y == 0 || !p[x, y - 1]) edges.Add(x, y, x + 1, y);
+                        if (x == width - 1 || !p[x + 1, y]) edges.Add(x + 1, y, x + 1, y + 1);
+                        if (y == height - 1 || !p[x, y + 1]) edges.Add(x + 1, y + 1, x, y + 1);
                     }
                 }
             }
 
-            if (edges.Count == 0) {
+            if (edges.Empty) {
                 return null;
             }
 
             GraphicsPath gp = new GraphicsPath();
-            while (edges.Count > 0) {
+            while (!edges.Empty) {
                 List<Point> polygon = new List<Point>();
-                KeyValuePair<Point, Edge> start = edges.First();
-                Point startPoint = start.Value.p1;
-                Point nextPoint = start.Value.p2;
-                edges.Remove(start.Key);
+                edges.PopFirst(out Point startPoint, out Point nextPoint);
 
                 polygon.Add(startPoint);
                 while (nextPoint != startPoint) {
                     polygon.Add(nextPoint);
-                    Edge nextEdge = edges[nextPoint];
-                    edges.Remove(nextPoint);
-                    nextPoint = nextEdge.p2;
+                    nextPoint = edges.Pop(nextPoint);
                 }
                 gp.AddPolygon(polygon.ToArray());
             }
@@ -201,14 +191,32 @@ namespace Necrofy
             return gp;
         }
 
-        private class Edge
+        private class EdgeList
         {
-            public readonly Point p1;
-            public readonly Point p2;
+            private readonly Dictionary<Point, Stack<Point>> edges = new Dictionary<Point, Stack<Point>>();
 
-            public Edge(int x1, int y1, int x2, int y2) {
-                p1 = new Point(x1, y1);
-                p2 = new Point(x2, y2);
+            public bool Empty => edges.Count == 0;
+
+            public void Add(int x1, int y1, int x2, int y2) {
+                Point p1 = new Point(x1, y1);
+                if (!edges.ContainsKey(p1)) {
+                    edges[p1] = new Stack<Point>();
+                }
+                edges[p1].Push(new Point(x2, y2));
+            }
+
+            public void PopFirst(out Point p1, out Point p2) {
+                p1 = edges.First().Key;
+                p2 = Pop(p1);
+            }
+
+            public Point Pop(Point p) {
+                Stack<Point> points = edges[p];
+                Point ret = points.Pop();
+                if (points.Count == 0) {
+                    edges.Remove(p);
+                }
+                return ret;
             }
         }
     }
