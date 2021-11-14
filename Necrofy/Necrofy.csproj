@@ -141,6 +141,7 @@
     <Compile Include="GraphicsEditor\GraphicsEditor.Designer.cs">
       <DependentUpon>GraphicsEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="GraphicsEditor\GraphicsTileList.cs" />
     <Compile Include="GraphicsEditor\GraphicsTool.cs" />
     <Compile Include="GraphicsEditor\GraphicsSelectTool.cs" />
     <Compile Include="PaletteEditor\PaletteEditorAction.cs" />

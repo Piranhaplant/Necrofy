@@ -15,6 +15,7 @@ namespace Necrofy
     {
         private const int HSLMax = 240;
         private static readonly Bitmap ColorArrow = Properties.Resources.colorArrow;
+        private static readonly Bitmap Crosshairs = Properties.Resources.crosshairs;
 
         private Color selectedColor;
         public Color SelectedColor {
@@ -37,15 +38,13 @@ namespace Necrofy
         }
 
         public event EventHandler ColorChanged;
-
-        [DllImport("shlwapi.dll")]
-        public static extern int ColorHLSToRGB(int H, int L, int S);
+        
         private static Color HLSToRGB(int H, int L, int S) {
             if (S == 0) {
                 int v = (int)Math.Round((double)L / HSLMax * 255);
                 return Color.FromArgb(v, v, v);
             }
-            return ColorTranslator.FromWin32(ColorHLSToRGB(H, L, S));
+            return ColorTranslator.FromWin32(Win32.ColorHLSToRGB(H, L, S));
         }
 
         private static Color HexToColor(string hex) {
@@ -150,8 +149,7 @@ namespace Necrofy
         private void hsCanvas_Paint(object sender, PaintEventArgs e) {
             int x = selectedH;
             int y = HSLMax - selectedS;
-            Image image = Properties.Resources.crosshairs;
-            e.Graphics.DrawImage(image, x - image.Width / 2, y - image.Height / 2, image.Width, image.Height);
+            e.Graphics.DrawImage(Crosshairs, x - Crosshairs.Width / 2, y - Crosshairs.Height / 2, Crosshairs.Width, Crosshairs.Height);
         }
 
         private void lCanvas_Paint(object sender, PaintEventArgs e) {

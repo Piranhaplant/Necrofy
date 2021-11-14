@@ -52,7 +52,7 @@ namespace Necrofy
             scrollWrapper.Scrolled += scrollWrapper_Scrolled;
             UpdateLevelSize();
 
-            tileSelection = new TileSelection(level.Level.width, level.Level.height);
+            tileSelection = new TileSelection(level.Level.width, level.Level.height, scale: 64);
             tileSelection.Changed += TileSelection_Changed;
 
             tilesetObjectBrowserContents = new TilesetObjectBrowserContents(level);

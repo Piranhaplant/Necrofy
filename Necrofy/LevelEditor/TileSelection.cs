@@ -9,8 +9,9 @@ namespace Necrofy
 {
     class TileSelection
     {
-        private int width;
-        private int height;
+        public int width { get; private set; }
+        public int height { get; private set; }
+        private readonly int scale;
         private bool[,] points;
         private bool[,] curPoints;
         private bool useCurPoints = false;
@@ -30,25 +31,13 @@ namespace Necrofy
                 return r;
             }
         }
-
-        public bool Empty {
-            get {
-                for (int y = 0; y < height; y++) {
-                    for (int x = 0; x < width; x++) {
-                        if (points[x, y]) {
-                            return false;
-                        }
-                    }
-                }
-                return true;
-            }
-        }
-
+        
         public event EventHandler Changed;
 
-        public TileSelection(int width, int height) {
+        public TileSelection(int width, int height, int scale) {
             this.width = width;
             this.height = height;
+            this.scale = scale;
             points = new bool[width, height];
             curPoints = new bool[width, height];
         }
@@ -113,10 +102,10 @@ namespace Necrofy
                 curY = newY;
 
                 Array.Copy(points, curPoints, points.Length);
-                int firstX = Math.Max(0, Math.Min(startX, newX)) * snap;
-                int firstY = Math.Max(0, Math.Min(startY, newY)) * snap;
-                int lastX = Math.Min(width - 1, Math.Max(startX, newX)) * snap + snap - 1;
-                int lastY = Math.Min(height - 1, Math.Max(startY, newY)) * snap + snap - 1;
+                int firstX = Math.Max(0, Math.Min(startX, newX) * snap);
+                int firstY = Math.Max(0, Math.Min(startY, newY) * snap);
+                int lastX = Math.Min(width - 1, Math.Max(startX, newX) * snap + snap - 1);
+                int lastY = Math.Min(height - 1, Math.Max(startY, newY) * snap + snap - 1);
                 for (int y = firstY; y <= lastY; y++) {
                     for (int x = firstX; x <= lastX; x++) {
                         curPoints[x, y] = adding;
@@ -135,41 +124,50 @@ namespace Necrofy
             Changed?.Invoke(this, EventArgs.Empty);
         }
 
-        public Rectangle GetDrawRectangle(int scale = 64) {
+        public Rectangle GetDrawRectangle() {
+            return GetDrawRectangle(scale);
+        }
+
+        private Rectangle GetDrawRectangle(int scale) {
             if (useCurPoints) {
-                int firstX = Math.Max(0, Math.Min(startX, curX)) * snap;
-                int firstY = Math.Max(0, Math.Min(startY, curY)) * snap;
-                int lastX = Math.Min(width - 1, Math.Max(startX, curX)) * snap + snap - 1;
-                int lastY = Math.Min(height - 1, Math.Max(startY, curY)) * snap + snap - 1;
+                int firstX = Math.Max(0, Math.Min(startX, curX) * snap);
+                int firstY = Math.Max(0, Math.Min(startY, curY) * snap);
+                int lastX = Math.Min(width - 1, Math.Max(startX, curX) * snap + snap - 1);
+                int lastY = Math.Min(height - 1, Math.Max(startY, curY) * snap + snap - 1);
                 return new Rectangle(firstX * scale, firstY * scale, (lastX - firstX + 1) * scale, (lastY - firstY + 1) * scale);
             }
             return Rectangle.Empty;
         }
         
-        public Rectangle GetEraserRectangle(int scale = 64) {
+        public Rectangle GetEraserRectangle() {
             if (!adding) {
-                return GetDrawRectangle(scale);
+                return GetDrawRectangle();
             }
             return Rectangle.Empty;
         }
 
-        public GraphicsPath GetGraphicsPath(int scale = 64) {
+        public GraphicsPath GetGraphicsPath() {
             if (useCurPoints) {
-                return GetGraphicsPath(curPoints, scale);
+                return GetGraphicsPath(curPoints);
             } else {
-                return GetGraphicsPath(points, scale);
+                return GetGraphicsPath(points);
             }
         }
 
-        private GraphicsPath GetGraphicsPath(bool[,] p, int scale) {
-            List<Edge> edges = new List<Edge>();
+        private GraphicsPath GetGraphicsPath(bool[,] p) {
+            Dictionary<Point, Edge> edges = new Dictionary<Point, Edge>();
+            void AddEdge(int x1, int y1, int x2, int y2) {
+                Edge e = new Edge(x1, y1, x2, y2);
+                edges[e.p1] = e;
+            }
+
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     if (p[x, y]) {
-                        if (x == 0 || !p[x - 1, y]) edges.Add(new Edge(x, y, x, y + 1));
-                        if (y == 0 || !p[x, y - 1]) edges.Add(new Edge(x, y, x + 1, y));
-                        if (x == width - 1 || !p[x + 1, y]) edges.Add(new Edge(x + 1, y, x + 1, y + 1));
-                        if (y == height - 1 || !p[x, y + 1]) edges.Add(new Edge(x, y + 1, x + 1, y + 1));
+                        if (x == 0 || !p[x - 1, y]) AddEdge(x, y + 1, x, y);
+                        if (y == 0 || !p[x, y - 1]) AddEdge(x, y, x + 1, y);
+                        if (x == width - 1 || !p[x + 1, y]) AddEdge(x + 1, y, x + 1, y + 1);
+                        if (y == height - 1 || !p[x, y + 1]) AddEdge(x + 1, y + 1, x, y + 1);
                     }
                 }
             }
@@ -181,25 +179,17 @@ namespace Necrofy
             GraphicsPath gp = new GraphicsPath();
             while (edges.Count > 0) {
                 List<Point> polygon = new List<Point>();
-                Point startPoint = edges[edges.Count - 1].p1;
-                Point nextPoint = edges[edges.Count - 1].p2;
-                edges.RemoveAt(edges.Count - 1);
+                KeyValuePair<Point, Edge> start = edges.First();
+                Point startPoint = start.Value.p1;
+                Point nextPoint = start.Value.p2;
+                edges.Remove(start.Key);
 
                 polygon.Add(startPoint);
                 while (nextPoint != startPoint) {
                     polygon.Add(nextPoint);
-                    for (int i = 0; i < edges.Count; i++) {
-                        Edge e = edges[i];
-                        if (e.p1 == nextPoint) {
-                            edges.RemoveAt(i);
-                            nextPoint = e.p2;
-                            break;
-                        } else if (e.p2 == nextPoint) {
-                            edges.RemoveAt(i);
-                            nextPoint = e.p1;
-                            break;
-                        }
-                    }
+                    Edge nextEdge = edges[nextPoint];
+                    edges.Remove(nextPoint);
+                    nextPoint = nextEdge.p2;
                 }
                 gp.AddPolygon(polygon.ToArray());
             }

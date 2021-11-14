@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -17,7 +18,7 @@ namespace Necrofy
     partial class GraphicsEditor : EditorWindow
     {
         private readonly LoadedGraphics graphics;
-        public readonly Bitmap[] tiles;
+        public readonly GraphicsTileList tiles = new GraphicsTileList();
 
         private readonly ScrollWrapper scrollWrapper;
         public UndoManager<GraphicsEditor> undoManager;
@@ -30,7 +31,7 @@ namespace Necrofy
         private LoadedPalette palette;
         private int selectedPalette = 0;
 
-        public readonly TileSelection selection = new TileSelection(1, 1);
+        public readonly TileSelection selection = new TileSelection(1, 1, scale: 1);
         private GraphicsPath selectionPath = null;
         private Rectangle selectionDrawRect = Rectangle.Empty;
         private Pen selectionBorderDashPen;
@@ -41,20 +42,20 @@ namespace Necrofy
 
         public GraphicsEditor(LoadedGraphics graphics) {
             InitializeComponent();
+            Disposed += GraphicsEditor_Disposed;
             Title = graphics.graphicsName;
             this.graphics = graphics;
 
             scrollWrapper = new ScrollWrapper(canvas, hScroll, vScroll);
             scrollWrapper.Scrolled += ScrollWrapper_Scrolled;
             selection.Changed += Selection_Changed;
-
-            tiles = new Bitmap[graphics.linearGraphics.Length];
-            for (int i = 0; i < tiles.Length; i++) {
+            
+            for (int i = 0; i < graphics.linearGraphics.Length; i++) {
                 Bitmap tile = new Bitmap(8, 8, PixelFormat.Format8bppIndexed);
                 BitmapData data = tile.LockBits(new Rectangle(Point.Empty, tile.Size), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
                 SNESGraphics.DrawTile(data, 0, 0, new LoadedTilemap.Tile(i, 0, false, false), graphics.linearGraphics);
                 tile.UnlockBits(data);
-                tiles[i] = tile;
+                tiles.Add(tile);
             }
         }
 
@@ -80,14 +81,21 @@ namespace Necrofy
                 }
             }
 
-            UpdateSelectionPen();
+            UpdateSelectionPen(selectionPenCancel.Token);
 
             undoManager = new UndoManager<GraphicsEditor>(mainWindow.UndoButton, mainWindow.RedoButton, this);
             return undoManager;
         }
 
-        private async void UpdateSelectionPen() {
-            while (true) {
+        private void GraphicsEditor_Disposed(object sender, EventArgs e) {
+            tiles.Dispose();
+            selectionPenCancel.Cancel();
+        }
+
+        private CancellationTokenSource selectionPenCancel = new CancellationTokenSource();
+
+        private async void UpdateSelectionPen(CancellationToken cancellation) {
+            while (!cancellation.IsCancellationRequested) {
                 if (selectionPath != null && selectionBorderDashPen != null) {
                     selectionBorderDashPen.DashOffset = (selectionBorderDashPen.DashOffset + 1) % 256;
                     Repaint();
@@ -115,7 +123,31 @@ namespace Necrofy
             Repaint();
         }
 
+        public override bool CanCopy => SelectionExists;
+        public override bool CanPaste => true;
+        public override bool CanDelete => SelectionExists;
+        public override bool HasSelection => true;
         public override bool CanZoom => true;
+
+        public override void Copy() {
+            
+        }
+
+        public override void Paste() {
+            
+        }
+
+        public override void Delete() {
+            undoManager.Do(new DeleteGraphicsAction());
+        }
+
+        public override void SelectAll() {
+            selection.SetAllPoints((x, y) => true);
+        }
+
+        public override void SelectNone() {
+            selection.Clear();
+        }
 
         protected override void ZoomChanged() {
             selectionBorderDashPen?.Dispose();
@@ -125,24 +157,27 @@ namespace Necrofy
 
         private void Selection_Changed(object sender, EventArgs e) {
             selectionPath?.Dispose();
-            selectionPath = selection.GetGraphicsPath(scale: 1);
-            selectionDrawRect = selection.GetDrawRectangle(scale: 1);
+            selectionPath = selection.GetGraphicsPath();
+            selectionDrawRect = selection.GetDrawRectangle();
             RaiseSelectionChanged();
             Repaint();
+            undoManager?.ForceNoMerge();
         }
+
+        public bool SelectionExists => selectionPath != null;
 
         public int SelectedColor => colorSelector.SelectionStart;
 
         private void UpdateSize(int newTileWidth) {
             int minWidth = 2;
-            int maxWidth = (tiles.Length / 4) * 2;
+            int maxWidth = (tiles.Count / 4) * 2;
             tileWidth = Math.Max(minWidth, Math.Min(maxWidth, newTileWidth));
             mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewDecreaseWidth).Enabled = tileWidth > minWidth;
             mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewIncreaseWidth).Enabled = tileWidth < maxWidth;
             
             int tilesPerRow = tileWidth * tileSize;
-            int tileHeight = tiles.Length / tilesPerRow * tileSize;
-            if (tiles.Length % tilesPerRow != 0) {
+            int tileHeight = tiles.Count / tilesPerRow * tileSize;
+            if (tiles.Count % tilesPerRow != 0) {
                 tileHeight += tileSize;
             }
             scrollWrapper.SetClientSize(tileWidth * 8, tileHeight * 8);
@@ -176,7 +211,7 @@ namespace Necrofy
             } else {
                 tileNum = tileY * tileWidth + tileX;
             }
-            if (x < 0 || tileX >= tileWidth || y < 0 || tileNum >= tiles.Length) {
+            if (x < 0 || tileX >= tileWidth || y < 0 || tileNum >= tiles.Count) {
                 tileNum = -1;
             }
             return tileNum;
@@ -201,14 +236,14 @@ namespace Necrofy
             Dictionary<int, int> maxHeightForColumn = new Dictionary<int, int>();
             Dictionary<int, int> maxWidthForRow = new Dictionary<int, int>();
 
-            for (int i = 0; i < tiles.Length; i++) {
+            for (int i = 0; i < tiles.Count; i++) {
                 GetTileLocation(i, out int x, out int y);
                 Rectangle tileRect = new Rectangle(x * 8, y * 8, 8, 8);
                 if (tileRect.IntersectsWith(clipRect)) {
                     if (palette != null) {
-                        SNESGraphics.DrawWithPlt(e.Graphics, tileRect.X, tileRect.Y, tiles[i], palette.colors, selectedPalette * 16, 16);
+                        SNESGraphics.DrawWithPlt(e.Graphics, tileRect.X, tileRect.Y, tiles.GetTemporarily(i), palette.colors, selectedPalette * 16, 16);
                     } else {
-                        e.Graphics.DrawImage(tiles[i], tileRect.X, tileRect.Y);
+                        e.Graphics.DrawImage(tiles.GetTemporarily(i), tileRect.X, tileRect.Y);
                     }
                 }
                 maxHeightForColumn[x] = y + 1;

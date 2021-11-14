@@ -22,14 +22,22 @@ namespace Necrofy
             redoActions = new ActionStack(this, redoButton, action => action.DoRedo());
         }
 
+        public override void Dispose() {
+            undoActions.Clear();
+            redoActions.Clear();
+        }
+
         public void Do(UndoAction<T> action) {
             action.SetEditor(editor);
             if (action.cancel) {
+                action.Dispose();
                 return;
             }
             action.DoRedo();
             if (!merge || undoActions.Count == 0 || !undoActions.Peek().Merge(action)) {
                 undoActions.Push(action);
+            } else {
+                action.Dispose();
             }
             if (undoActions.Count <= savePos) {
                 savePos = -1;
@@ -164,6 +172,9 @@ namespace Necrofy
             }
 
             public void Clear() {
+                foreach (UndoAction<T> action in actions) {
+                    action.Dispose();
+                }
                 actions.Clear();
                 button.DropDownItems.Clear();
                 UpdateEnabled();
@@ -194,6 +205,7 @@ namespace Necrofy
             DirtyChanged?.Invoke(this, EventArgs.Empty);
         }
 
+        public abstract void Dispose();
         public abstract bool Dirty { get; }
         public abstract void Clean();
         public abstract void ForceDirty();
@@ -226,6 +238,7 @@ namespace Necrofy
         public virtual void SetEditor(T editor) {
             this.editor = editor;
         }
-        public bool cancel;
+        public virtual void Dispose() { }
+        public bool cancel { get; protected set; }
     }
 }

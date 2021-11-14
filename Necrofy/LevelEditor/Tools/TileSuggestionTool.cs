@@ -9,6 +9,8 @@ namespace Necrofy
     class TileSuggestionTool : TileTool
     {
         private static readonly Pen linePen = new Pen(Color.White, 2);
+        private static readonly Bitmap circle = Properties.Resources.circle;
+        private static readonly Bitmap arrow = Properties.Resources.arrow;
 
         private int prevX = -1;
         private int prevY = -1;
@@ -27,13 +29,11 @@ namespace Necrofy
 
         protected override void Paint2(Graphics g) {
             if (startIsInBounds) {
-                Bitmap circle = Properties.Resources.circle;
-                g.DrawImage(Properties.Resources.circle, startX * 64 + 32 - circle.Width / 2, startY * 64 + 32 - circle.Height / 2, circle.Width, circle.Height);
+                g.DrawImage(circle, startX * 64 + 32 - circle.Width / 2, startY * 64 + 32 - circle.Height / 2, circle.Width, circle.Height);
 
                 if (direction != null) {
                     g.DrawLine(linePen, startX * 64 + 32, startY * 64 + 32, endX * 64 + 32, endY * 64 + 32);
 
-                    Bitmap arrow = Properties.Resources.arrow;
                     arrow.RotateFlip((RotateFlipType)direction);
                     g.DrawImage(arrow, endX * 64 + 32 - arrow.Width / 2, endY * 64 + 32 - arrow.Height / 2, arrow.Width, arrow.Height);
                 }

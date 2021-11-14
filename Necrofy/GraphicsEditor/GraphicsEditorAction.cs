@@ -11,8 +11,75 @@ namespace Necrofy
 {
     abstract class GraphicsEditorAction : UndoAction<GraphicsEditor>
     {
+        protected Dictionary<int, Bitmap> oldTiles = new Dictionary<int, Bitmap>();
+        protected Dictionary<int, Bitmap> newTiles = new Dictionary<int, Bitmap>();
+
+        public override void Dispose() {
+            foreach (Bitmap tile in oldTiles.Values) {
+                editor.tiles.DoneUsing(tile);
+            }
+            foreach (Bitmap tile in newTiles.Values) {
+                editor.tiles.DoneUsing(tile);
+            }
+        }
+
+        protected override void Redo() {
+            foreach (KeyValuePair<int, Bitmap> pair in newTiles) {
+                editor.tiles.Set(pair.Key, pair.Value);
+            }
+        }
+
+        protected override void Undo() {
+            foreach (KeyValuePair<int, Bitmap> pair in oldTiles) {
+                editor.tiles.Set(pair.Key, pair.Value);
+            }
+        }
+
         protected override void AfterAction() {
             editor.Repaint();
+        }
+
+        public override bool Merge(UndoAction<GraphicsEditor> action) {
+            if (action is GraphicsEditorAction graphicsEditorAction && action.GetType() == this.GetType()) {
+                foreach (int tileNum in graphicsEditorAction.newTiles.Keys) {
+                    if (!oldTiles.ContainsKey(tileNum)) {
+                        oldTiles[tileNum] = graphicsEditorAction.oldTiles[tileNum];
+                        editor.tiles.Use(oldTiles[tileNum]);
+                    } else {
+                        editor.tiles.DoneUsing(newTiles[tileNum]);
+                    }
+                    newTiles[tileNum] = graphicsEditorAction.newTiles[tileNum];
+                    editor.tiles.Use(newTiles[tileNum]);
+                }
+                return true;
+            }
+            return false;
+        }
+
+        protected delegate void SetPixelDelegate(int x, int y, byte color);
+
+        protected void ModifyTiles(Action<SetPixelDelegate> action) {
+            Dictionary<int, BitmapData> modifiedTiles = new Dictionary<int, BitmapData>();
+            bool selectionExists = editor.SelectionExists;
+            void SetPixel(int x, int y, byte color) {
+                int tileNum = editor.GetPixelTileNum(x, y);
+                if (tileNum < 0 || (selectionExists && !editor.selection.GetPoint(x, y))) {
+                    return;
+                }
+                if (!modifiedTiles.ContainsKey(tileNum)) {
+                    oldTiles[tileNum] = editor.tiles.Get(tileNum);
+                    newTiles[tileNum] = editor.tiles.Clone(tileNum);
+                    modifiedTiles[tileNum] = newTiles[tileNum].LockBits(new Rectangle(0, 0, 8, 8), ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed);
+                }
+                BitmapData data = modifiedTiles[tileNum];
+                Marshal.WriteByte(data.Scan0, (y % 8) * data.Stride + (x % 8), color);
+            }
+
+            action(SetPixel);
+
+            foreach (KeyValuePair<int, BitmapData> pair in modifiedTiles) {
+                newTiles[pair.Key].UnlockBits(pair.Value);
+            }
         }
     }
 
@@ -23,9 +90,6 @@ namespace Necrofy
         private readonly int x2;
         private readonly int y2;
         private readonly byte color;
-
-        private Dictionary<int, Bitmap> oldTiles = new Dictionary<int, Bitmap>();
-        private Dictionary<int, Bitmap> newTiles = new Dictionary<int, Bitmap>();
 
         public PaintGraphicsAction(int x1, int y1, int x2, int y2, byte color) {
             this.x1 = x1;
@@ -43,58 +107,14 @@ namespace Necrofy
             }
         }
 
-        protected override void Redo() {
-            foreach (KeyValuePair<int, Bitmap> pair in newTiles) {
-                editor.tiles[pair.Key] = pair.Value;
-            }
-        }
-
-        protected override void Undo() {
-            foreach (KeyValuePair<int, Bitmap> pair in oldTiles) {
-                editor.tiles[pair.Key] = pair.Value;
-            }
-        }
-
-        public override bool Merge(UndoAction<GraphicsEditor> action) {
-            if (action is PaintGraphicsAction paintGraphicsAction) {
-                foreach (int tileNum in paintGraphicsAction.newTiles.Keys) {
-                    if (!oldTiles.ContainsKey(tileNum)) {
-                        oldTiles[tileNum] = paintGraphicsAction.oldTiles[tileNum];
-                    }
-                    newTiles[tileNum] = paintGraphicsAction.newTiles[tileNum];
-                }
-                return true;
-            }
-            return false;
-        }
-
         private void DrawLine(int x1, int y1, int x2, int y2, byte color) {
-            Dictionary<int, BitmapData> modifiedTiles = new Dictionary<int, BitmapData>();
-            bool selectionEmpty = editor.selection.Empty;
-            void SetPixel(int x, int y) {
-                int tileNum = editor.GetPixelTileNum(x, y);
-                if (tileNum < 0 || (!selectionEmpty && !editor.selection.GetPoint(x, y))) {
-                    return;
+            ModifyTiles(setPixel => {
+                if (Math.Abs(x2 - x1) > Math.Abs(y2 - y1)) {
+                    DrawLine2(x1, y1, x2, y2, (a, b) => setPixel(a, b, color));
+                } else {
+                    DrawLine2(y1, x1, y2, x2, (a, b) => setPixel(b, a, color));
                 }
-                if (!modifiedTiles.ContainsKey(tileNum)) {
-                    oldTiles[tileNum] = editor.tiles[tileNum];
-                    editor.tiles[tileNum] = editor.tiles[tileNum].Clone(new Rectangle(0, 0, 8, 8), PixelFormat.Format8bppIndexed);
-                    modifiedTiles[tileNum] = editor.tiles[tileNum].LockBits(new Rectangle(0, 0, 8, 8), ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed);
-                }
-                BitmapData data = modifiedTiles[tileNum];
-                Marshal.WriteByte(data.Scan0, (y % 8) * data.Stride + (x % 8), color);
-            }
-
-            if (Math.Abs(x2 - x1) > Math.Abs(y2 - y1)) {
-                DrawLine2(x1, y1, x2, y2, (a, b) => SetPixel(a, b));
-            } else {
-                DrawLine2(y1, x1, y2, x2, (a, b) => SetPixel(b, a));
-            }
-
-            foreach (KeyValuePair<int, BitmapData> pair in modifiedTiles) {
-                editor.tiles[pair.Key].UnlockBits(pair.Value);
-                newTiles[pair.Key] = editor.tiles[pair.Key];
-            }
+            });
         }
 
         private void DrawLine2(int a1, int b1, int a2, int b2, Action<int, int> setPixel) {
@@ -111,6 +131,26 @@ namespace Necrofy
         
         public override string ToString() {
             return "Paintbrush";
+        }
+    }
+
+    class DeleteGraphicsAction : GraphicsEditorAction
+    {
+        public override void SetEditor(GraphicsEditor editor) {
+            base.SetEditor(editor);
+            ModifyTiles(setPixel => {
+                for (int y = 0; y < editor.selection.height; y++) {
+                    for (int x = 0; x < editor.selection.width; x++) {
+                        if (editor.selection.GetPoint(x, y)) {
+                            setPixel(x, y, 0);
+                        }
+                    }
+                }
+            });
+        }
+        
+        public override string ToString() {
+            return "Delete";
         }
     }
 }

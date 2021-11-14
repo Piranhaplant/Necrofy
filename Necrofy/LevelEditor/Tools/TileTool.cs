@@ -164,7 +164,7 @@ namespace Necrofy
             try {
                 pasteTiles = JsonConvert.DeserializeObject<ushort?[,]>(Clipboard.GetText());
 
-                TileSelection selection = new TileSelection(pasteTiles.GetWidth(), pasteTiles.GetHeight());
+                TileSelection selection = new TileSelection(pasteTiles.GetWidth(), pasteTiles.GetHeight(), scale: 64);
                 selection.SetAllPoints((x, y) => pasteTiles[x, y] != null);
                 pasteTilesPath = selection.GetGraphicsPath();
 

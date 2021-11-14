@@ -88,6 +88,7 @@ namespace Necrofy
             DockAreas = DockAreas.Document;
             HideOnClose = false;
             FormClosing += EditorWindow_FormClosing;
+            Disposed += EditorWindow_Disposed;
         }
 
         public void CloseWithoutSaving() {
@@ -115,6 +116,10 @@ namespace Necrofy
                     Save();
                 }
             }
+        }
+
+        private void EditorWindow_Disposed(object sender, EventArgs e) {
+            undoManager?.Dispose();
         }
 
         public void Setup(MainWindow mainWindow, Project project, Asset.NameInfo assetInfo) {
