@@ -10,7 +10,6 @@ namespace Necrofy
     {
         private static readonly Pen linePen = new Pen(Color.White, 2);
         private static readonly Bitmap circle = Properties.Resources.circle;
-        private static readonly Bitmap arrow = Properties.Resources.arrow;
 
         private int prevX = -1;
         private int prevY = -1;
@@ -34,8 +33,10 @@ namespace Necrofy
                 if (direction != null) {
                     g.DrawLine(linePen, startX * 64 + 32, startY * 64 + 32, endX * 64 + 32, endY * 64 + 32);
 
+                    Bitmap arrow = Properties.Resources.arrow;
                     arrow.RotateFlip((RotateFlipType)direction);
                     g.DrawImage(arrow, endX * 64 + 32 - arrow.Width / 2, endY * 64 + 32 - arrow.Height / 2, arrow.Width, arrow.Height);
+                    arrow.Dispose();
                 }
             }
         }
