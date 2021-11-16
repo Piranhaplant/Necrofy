@@ -84,6 +84,7 @@ namespace Necrofy
             palette = new LoadedPalette(project, Level.paletteName);
 
             palette.Updated += Asset_Updated;
+            graphics.Updated += Asset_Updated;
 
             LoadTilesFromData();
         }

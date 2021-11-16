@@ -25,6 +25,7 @@ namespace Necrofy
             loadedPalette = new LoadedPalette(project, Asset.SpritesFolder + Asset.FolderSeparator + PaletteAsset.DefaultSpritePaletteName, transparent: true);
 
             loadedPalette.Updated += Asset_Updated;
+            loadedGraphics.Updated += Asset_Updated;
 
             Load();
         }

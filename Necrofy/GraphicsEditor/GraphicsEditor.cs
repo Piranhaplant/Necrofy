@@ -123,6 +123,10 @@ namespace Necrofy
             Repaint();
         }
 
+        protected override void DoSave(Project project) {
+            graphics.Save(project, tiles);
+        }
+
         public override bool CanCopy => SelectionExists;
         public override bool CanPaste => true;
         public override bool CanDelete => SelectionExists;

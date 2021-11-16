@@ -50,13 +50,13 @@ namespace Necrofy
             byte[,] result = new byte[8, 8];
             int line = 0;
             int bit = 0;
-            for (int iy = index; iy <= index + 0x1f; iy += 2) {
-                for (int ix = 0; ix <= 7; ix++) {
+            for (int iy = index; iy < index + 0x20; iy += 2) {
+                for (int ix = 0; ix < 8; ix++) {
                     if ((bytes[iy] & (1 << ix)) != 0) {
-                        result[7 - ix, line] = (byte)(result[7 - ix, line] | (1 << bit));
+                        result[7 - ix, line] |= (byte)(1 << bit);
                     }
                     if ((bytes[iy + 1] & (1 << ix)) != 0) {
-                        result[7 - ix, line] = (byte)(result[7 - ix, line] | (1 << bit + 1));
+                        result[7 - ix, line] |= (byte)(1 << (bit + 1));
                     }
                 }
                 line += 1;
@@ -66,6 +66,21 @@ namespace Necrofy
                 }
             }
             return result;
+        }
+
+        public static void BitmapToPlanar(Bitmap bitmap, byte[] bytes, int index) {
+            BitmapData data = bitmap.LockBits(new Rectangle(0, 0, 8, 8), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
+            for (int i = 0; i < 0x20; i++) {
+                bytes[index + i] = 0;
+                for (int b = 0; b < 8; b++) {
+                    int x = 7 - b;
+                    int y = (i / 2) % 8;
+                    byte byteValue = Marshal.ReadByte(data.Scan0, y * data.Stride + x);
+                    int bit = (i % 2) + (i / 16) * 2;
+                    bytes[index + i] |= (byte)(((byteValue >> bit) & 1) << b);
+                }
+            }
+            bitmap.UnlockBits(data);
         }
 
         public static void DrawTile(Bitmap bmp, int x, int y, byte[,] linearGraphics, Color[] palette, int palIndex, bool xFlip, bool yFlip) {

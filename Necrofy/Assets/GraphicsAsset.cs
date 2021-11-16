@@ -53,8 +53,10 @@ namespace Necrofy
         {
             public GraphicsAsset FromProject(Project project, string folder, string graphicsName) {
                 NameInfo nameInfo = new GraphicsNameInfo(folder, graphicsName, null);
-                string filename = nameInfo.FindFilename(project.path);
-                return (GraphicsAsset)FromFile(nameInfo, filename);
+                return project.GetCachedAsset(nameInfo, () => {
+                    string filename = nameInfo.FindFilename(project.path);
+                    return (GraphicsAsset)FromFile(nameInfo, filename);
+                });
             }
 
             public override NameInfo GetNameInfo(NameInfo.PathParts pathParts, Project project) {
@@ -104,8 +106,8 @@ namespace Necrofy
         {
             public readonly string folder;
             public readonly string name;
-            public readonly int? pointer;
-            public readonly bool compressed;
+            public int? pointer { get; private set; }
+            public bool compressed { get; private set; }
 
             public GraphicsNameInfo(string folder, string name, int? pointer = null, bool compressed = false) : base(folder, name) {
                 this.folder = folder;
@@ -124,6 +126,11 @@ namespace Necrofy
             public override bool Editable => true;
             public override EditorWindow GetEditor(Project project) {
                 return new GraphicsEditor(new LoadedGraphics(project, Name));
+            }
+
+            protected override void UpdateFromFoundFilename(int? pointer, bool compressed) {
+                this.pointer = pointer;
+                this.compressed = compressed;
             }
 
             public static GraphicsNameInfo FromPath(PathParts parts) {

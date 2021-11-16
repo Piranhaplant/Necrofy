@@ -29,6 +29,7 @@ namespace Necrofy
             charData = DataAsset.FromProject(project, Asset.LevelTitleFolder, DataAsset.LevelTitleCharacterMapName);
 
             loadedPalette.Updated += Asset_Updated;
+            loadedGraphics.Updated += Asset_Updated;
 
             Load();
         }

@@ -33,6 +33,7 @@ namespace Necrofy
             spriteDisplayAsset = EditorAsset<SpriteDisplayList>.FromProject(project, "SpriteDisplay");
 
             loadedPalette.Updated += Asset_Updated;
+            loadedGraphics.Updated += Asset_Updated;
             spritesAsset.Updated += Asset_Updated;
 
             Load();
