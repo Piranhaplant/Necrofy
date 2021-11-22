@@ -56,7 +56,7 @@ namespace Necrofy
         }
 
         private static string ColorToHex(Color c) {
-            return ColorTranslator.ToHtml(c).Substring(1); // Remove "#" from the start
+            return $"{c.R:X2}{c.G:X2}{c.B:X2}";
         }
 
         private int uiUpdate = 0;
@@ -119,7 +119,9 @@ namespace Necrofy
         }
 
         private void UpdateHex() {
+            uiUpdate++;
             hexTextBox.Text = ColorToHex(selectedColor);
+            uiUpdate--;
         }
 
         private void rTrackBar_ValueChanged(object sender, EventArgs e) {

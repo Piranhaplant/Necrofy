@@ -144,6 +144,10 @@
     <Compile Include="GraphicsEditor\GraphicsTileList.cs" />
     <Compile Include="GraphicsEditor\GraphicsTool.cs" />
     <Compile Include="GraphicsEditor\GraphicsSelectTool.cs" />
+    <Compile Include="LevelEditor\LevelEditorTool.cs" />
+    <Compile Include="MapEditor\MapMouseEventArgs.cs" />
+    <Compile Include="MapEditor\MapEditor.cs" />
+    <Compile Include="MapEditor\MapTool.cs" />
     <Compile Include="PaletteEditor\PaletteEditorAction.cs" />
     <Compile Include="PaletteEditor\ColorSelector.cs">
       <SubType>UserControl</SubType>

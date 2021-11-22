@@ -200,6 +200,10 @@ namespace Necrofy
             Status = status;
         }
 
+        public void SetSelectedColor(byte color) {
+            colorSelector.SelectionStart = (colorSelector.SelectionStart / 16) * 16 + color;
+        }
+
         public void GenerateMouseMove() {
             if (toolManager?.currentTool != null) {
                 canvas.GenerateMouseMove();
@@ -347,11 +351,22 @@ namespace Necrofy
         }
 
         private void paletteSelector_SelectedIndexChanged(object sender, EventArgs e) {
+            if (palette != null) {
+                palette.Updated -= Palette_Updated;
+            }
             palette = new LoadedPalette(project, (string)paletteSelector.SelectedItem);
+            palette.Updated += Palette_Updated;
+            LoadPalette();
+        }
+
+        private void Palette_Updated(object sender, EventArgs e) {
+            LoadPalette();
+        }
+
+        private void LoadPalette() {
             colorSelector.Colors = palette.colors;
             if (colorSelector.SelectionStart < 0) {
                 colorSelector.SelectionStart = 0;
-                colorSelector.SelectionEnd = 0;
             } else {
                 Repaint();
             }

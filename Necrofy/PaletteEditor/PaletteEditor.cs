@@ -48,7 +48,7 @@ namespace Necrofy
         public override bool HasSelection => true;
         public override bool CanCopy => colorSelectorFocused && colorSelector.SelectionStart >= 0;
         public override bool CanPaste => colorSelectorFocused && colorSelector.SelectionStart >= 0;
-        public override bool CanDelete => false;
+        public override bool CanDelete => colorSelectorFocused && colorSelector.SelectionStart >= 0;
 
         public override void SelectAll() {
             colorSelector.SelectionStart = 0;
@@ -103,7 +103,7 @@ namespace Necrofy
                     undoManager.Do(new PasteColorsAction(colors, colorSelector.SelectionMin));
                 } else if (Clipboard.ContainsImage()) {
                     Image image = Clipboard.GetImage();
-                    Color[] colors = new Color[image.Width / ClipboardImageSquareSize];
+                    Color[] colors = new Color[(int)Math.Ceiling(image.Width / (double)ClipboardImageSquareSize)];
                     using (Bitmap bitmap = new Bitmap(image)) {
                         for (int i = 0; i < colors.Length; i++) {
                             colors[i] = bitmap.GetPixel(i * ClipboardImageSquareSize, 0);
@@ -111,7 +111,11 @@ namespace Necrofy
                     }
                     undoManager.Do(new PasteColorsAction(colors, colorSelector.SelectionMin));
                 }
-            } catch (Exception) { }
+            } catch (Exception e) { }
+        }
+
+        public override void Delete() {
+            undoManager.Do(new ChangeColorAction(Color.Black, colorSelector.SelectionMin, colorSelector.SelectionMax));
         }
 
         private void UpdateSelectedColor() {
@@ -140,8 +144,8 @@ namespace Necrofy
 
         public Color[] GetColors(int start, int end) {
             Color[] colors = new Color[end - start + 1];
-            for (int i = 0; i < colors.Length; i++) {
-                colors[i] = colorSelector.Colors[i + start];
+            for (int i = start; i < start + colors.Length && i < colorSelector.Colors.Length; i++) {
+                colors[i - start] = colorSelector.Colors[i];
             }
             return colors;
         }

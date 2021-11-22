@@ -36,6 +36,9 @@ namespace Necrofy
             }
             set {
                 selectionStart = value;
+                if (!MultiSelect) {
+                    selectionEnd = value;
+                }
                 Repaint();
                 SelectionChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -48,6 +51,9 @@ namespace Necrofy
             }
             set {
                 selectionEnd = value;
+                if (!MultiSelect) {
+                    selectionStart = value;
+                }
                 Repaint();
                 SelectionChanged?.Invoke(this, EventArgs.Empty);
             }
