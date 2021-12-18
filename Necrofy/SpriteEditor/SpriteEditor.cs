@@ -47,6 +47,7 @@ namespace Necrofy
         public SpriteEditor(LoadedSprites loadedSprites) {
             InitializeComponent();
             Disposed += SpriteEditor_Disposed;
+
             paletteButtons = new RadioButton[] { palette0Button, palette1Button, palette2Button, palette3Button, palette4Button, palette5Button, palette6Button, palette7Button };
 
             this.loadedSprites = loadedSprites;
@@ -68,7 +69,7 @@ namespace Necrofy
 
             UpdateStatus();
         }
-
+        
         private void LoadedSprites_Updated(object sender, EventArgs e) {
             Repaint();
             browserContents.Repaint();
@@ -142,10 +143,12 @@ namespace Necrofy
         }
 
         protected override void ZoomChanged() {
+            base.ZoomChanged();
             scrollWrapper.Zoom = Zoom;
         }
 
         public override void ToolStripItemClicked(ToolStripGrouper.ItemType item) {
+            base.ToolStripItemClicked(item);
             switch (item) {
                 case ToolStripGrouper.ItemType.CenterHorizontally:
                     objectSelector.CenterHorizontally();
@@ -185,6 +188,7 @@ namespace Necrofy
         }
 
         public override void ToolStripItemCheckedChanged(ToolStripGrouper.ItemType item) {
+            base.ToolStripItemCheckedChanged(item);
             if (item == ToolStripGrouper.ItemType.ViewAxes || item == ToolStripGrouper.ItemType.ViewTileBorders || item == ToolStripGrouper.ItemType.ViewSpriteGrid) {
                 UpdateViewOptions();
                 if (DockVisible) {

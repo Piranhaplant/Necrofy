@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace Necrofy
 {
-    class ToolManager<T>
+    class ToolManager<T> where T : ITool
     {
         private readonly MainWindow mainWindow;
 
@@ -17,7 +17,7 @@ namespace Necrofy
 
         public T currentTool { get; private set; }
 
-        public event EventHandler<ToolChangedEventArgs> ToolChanged;
+        public event EventHandler ToolChanged;
 
         public ToolManager(MainWindow mainWindow) {
             this.mainWindow = mainWindow;
@@ -29,19 +29,19 @@ namespace Necrofy
             itemTypeForTool[tool] = itemType;
         }
 
-        public bool ChangeToSelectedTool() {
+        public void ChangeToSelectedTool() {
             foreach (ToolStripGrouper.ItemType type in toolForItemType.Keys) {
                 if (mainWindow.GetToolStripItem(type).Checked) {
                     ChangeTool(toolForItemType[type]);
-                    return true;
+                    return;
                 }
             }
-            return false;
         }
 
         public void ChangeTool(T tool) {
             if (!ReferenceEquals(tool, currentTool)) {
                 T previousTool = currentTool;
+                previousTool?.DoneBeingUsed();
                 currentTool = tool;
 
                 foreach (ToolStripGrouper.ItemType type in toolForItemType.Keys) {
@@ -49,7 +49,7 @@ namespace Necrofy
                 }
                 mainWindow.GetToolStripItem(itemTypeForTool[tool]).Checked = true;
                 
-                ToolChanged?.Invoke(this, new ToolChangedEventArgs(previousTool));
+                ToolChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -68,14 +68,10 @@ namespace Necrofy
             }
             return false;
         }
+    }
 
-        public class ToolChangedEventArgs : EventArgs
-        {
-            public T PreviousTool { get; private set; }
-
-            public ToolChangedEventArgs(T previousTool) {
-                PreviousTool = previousTool;
-            }
-        }
+    interface ITool
+    {
+        void DoneBeingUsed();
     }
 }

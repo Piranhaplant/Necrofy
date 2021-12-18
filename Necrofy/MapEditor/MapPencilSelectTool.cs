@@ -2,35 +2,33 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Necrofy
 {
-    class PencilSelectTool : TileTool
+    class MapPencilSelectTool : MapTool
     {
         private int prevX;
         private int prevY;
         private bool addingToSelection;
 
-        public PencilSelectTool(LevelEditor editor) : base(editor) {
+        public MapPencilSelectTool(MapEditor mapEditor) : base(mapEditor) {
             Status = "Click to select tiles. Hold alt to unselect tiles.";
         }
-
-        protected override void MouseDown2(LevelMouseEventArgs e) {
+        
+        public override void MouseDown(MapMouseEventArgs e) {
             prevX = -1;
             prevY = -1;
             addingToSelection = Control.ModifierKeys != Keys.Alt;
             MouseMove(e);
         }
 
-        protected override void MouseMove2(LevelMouseEventArgs e) {
+        public override void MouseMove(MapMouseEventArgs e) {
+            // TODO: use lines for selecting
             if (e.MouseIsDown && (e.TileX != prevX || e.TileY != prevY)) {
-                editor.tileSelection.SetPoint(e.TileX, e.TileY, addingToSelection);
+                mapEditor.Selection.SetPoint(e.TileX, e.TileY, addingToSelection);
             }
-        }
-
-        public override void TileChanged() {
-            editor.FillSelection();
         }
     }
 }

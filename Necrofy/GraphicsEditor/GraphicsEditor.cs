@@ -15,40 +15,29 @@ using System.Windows.Forms;
 
 namespace Necrofy
 {
-    partial class GraphicsEditor : EditorWindow
+    partial class GraphicsEditor : MapEditor<GraphicsTool>
     {
         private readonly LoadedGraphics graphics;
         public readonly GraphicsTileList tiles = new GraphicsTileList();
 
-        private readonly ScrollWrapper scrollWrapper;
-        public UndoManager<GraphicsEditor> undoManager;
+        public UndoManager<GraphicsEditor> undoManager { get; private set; }
 
         private int tileWidth = 16;
         private bool largeTileMode = false;
         public int tileSize { get; private set; } = 1; // Set to one for normal mode, set to 2 for large tile (16x16 tile) mode
         private bool showGrid = false;
 
-        private LoadedPalette palette;
-        private int selectedPalette = 0;
-
-        public readonly TileSelection selection = new TileSelection(1, 1, scale: 1);
-        private GraphicsPath selectionPath = null;
-        private Rectangle selectionDrawRect = Rectangle.Empty;
-        private Pen selectionBorderDashPen;
+        public LoadedPalette palette { get; private set; }
+        public int selectedPalette { get; private set; } = 0;
 
         public override ToolStripGrouper.ItemSet ToolStripItemSet => ToolStripGrouper.ItemSet.Graphics;
 
-        private ToolManager<GraphicsTool> toolManager;
-
-        public GraphicsEditor(LoadedGraphics graphics) {
+        public GraphicsEditor(LoadedGraphics graphics) : base(1) {
             InitializeComponent();
             Disposed += GraphicsEditor_Disposed;
+            
             Title = graphics.graphicsName;
             this.graphics = graphics;
-
-            scrollWrapper = new ScrollWrapper(canvas, hScroll, vScroll);
-            scrollWrapper.Scrolled += ScrollWrapper_Scrolled;
-            selection.Changed += Selection_Changed;
             
             for (int i = 0; i < graphics.linearGraphics.Length; i++) {
                 Bitmap tile = new Bitmap(8, 8, PixelFormat.Format8bppIndexed);
@@ -60,14 +49,13 @@ namespace Necrofy
         }
 
         protected override UndoManager Setup() {
+            SetupMapEditor(canvas, hScroll, vScroll);
+            SetupTool(new GraphicsBrushTool(this), ToolStripGrouper.ItemType.GraphicsPaintbrush, Keys.P);
+            SetupTool(new GraphicsSelectTool(this), ToolStripGrouper.ItemType.GraphicsRectangleSelect, Keys.R);
+
             UpdateSize(tileWidth);
             Zoom = 4.0f;
-            scrollWrapper.ScrollToPoint(0, 0);
-
-            toolManager = new ToolManager<GraphicsTool>(mainWindow);
-            toolManager.ToolChanged += ToolManager_ToolChanged;
-            toolManager.SetupTool(new GraphicsBrushTool(this), ToolStripGrouper.ItemType.GraphicsPaintbrush, Keys.P);
-            toolManager.SetupTool(new GraphicsSelectTool(this), ToolStripGrouper.ItemType.GraphicsRectangleSelect, Keys.R);
+            ScrollWrapper.ScrollToPoint(0, 0);
 
             if (project.Assets.Root.FindFolder(Path.GetDirectoryName(graphics.graphicsName), out AssetTree.Folder folder)) {
                 foreach (AssetTree.AssetEntry sibling in folder.Assets) {
@@ -81,27 +69,12 @@ namespace Necrofy
                 }
             }
 
-            UpdateSelectionPen(selectionPenCancel.Token);
-
             undoManager = new UndoManager<GraphicsEditor>(mainWindow.UndoButton, mainWindow.RedoButton, this);
             return undoManager;
         }
 
         private void GraphicsEditor_Disposed(object sender, EventArgs e) {
             tiles.Dispose();
-            selectionPenCancel.Cancel();
-        }
-
-        private CancellationTokenSource selectionPenCancel = new CancellationTokenSource();
-
-        private async void UpdateSelectionPen(CancellationToken cancellation) {
-            while (!cancellation.IsCancellationRequested) {
-                if (selectionPath != null && selectionBorderDashPen != null) {
-                    selectionBorderDashPen.DashOffset = (selectionBorderDashPen.DashOffset + 1) % 256;
-                    Repaint();
-                }
-                await Task.Delay(100);
-            }
         }
 
         public override void Displayed() {
@@ -109,67 +82,12 @@ namespace Necrofy
             mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewLargeTileMode).Checked = largeTileMode;
             UpdateViewOptions();
             UpdateSize(tileWidth); // Update the enabled state of the menu items
-            toolManager.ChangeToSelectedTool();
         }
-
-        private void ToolManager_ToolChanged(object sender, ToolManager<GraphicsTool>.ToolChangedEventArgs e) {
-            canvas.IsMouseDown = false;
-            e.PreviousTool?.DoneBeingUsed();
-            Status = toolManager.currentTool.Status;
-        }
-
-        private void ScrollWrapper_Scrolled(object sender, EventArgs e) {
-            GenerateMouseMove();
-            Repaint();
-        }
-
+        
         protected override void DoSave(Project project) {
             graphics.Save(project, tiles);
         }
-
-        public override bool CanCopy => SelectionExists;
-        public override bool CanPaste => true;
-        public override bool CanDelete => SelectionExists;
-        public override bool HasSelection => true;
-        public override bool CanZoom => true;
-
-        public override void Copy() {
-            
-        }
-
-        public override void Paste() {
-            
-        }
-
-        public override void Delete() {
-            undoManager.Do(new DeleteGraphicsAction());
-        }
-
-        public override void SelectAll() {
-            selection.SetAllPoints((x, y) => true);
-        }
-
-        public override void SelectNone() {
-            selection.Clear();
-        }
-
-        protected override void ZoomChanged() {
-            selectionBorderDashPen?.Dispose();
-            selectionBorderDashPen = CreateSelectionBorderDashPen();
-            scrollWrapper.Zoom = Zoom;
-        }
-
-        private void Selection_Changed(object sender, EventArgs e) {
-            selectionPath?.Dispose();
-            selectionPath = selection.GetGraphicsPath();
-            selectionDrawRect = selection.GetDrawRectangle();
-            RaiseSelectionChanged();
-            Repaint();
-            undoManager?.ForceNoMerge();
-        }
-
-        public bool SelectionExists => selectionPath != null;
-
+        
         public int SelectedColor => colorSelector.SelectionStart;
 
         private void UpdateSize(int newTileWidth) {
@@ -184,32 +102,17 @@ namespace Necrofy
             if (tiles.Count % tilesPerRow != 0) {
                 tileHeight += tileSize;
             }
-            scrollWrapper.SetClientSize(tileWidth * 8, tileHeight * 8);
-            selection.Resize(0, 0, tileWidth * 8, tileHeight * 8);
+            ResizeMap(0, 0, tileWidth * 8, tileHeight * 8);
         }
 
         private void UpdateViewOptions() {
             showGrid = mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewGraphicsGrid).Checked;
         }
-
-        public void Repaint() {
-            canvas.Invalidate();
-        }
-
-        public void SetStatus(string status) {
-            Status = status;
-        }
-
+        
         public void SetSelectedColor(byte color) {
             colorSelector.SelectionStart = (colorSelector.SelectionStart / 16) * 16 + color;
         }
-
-        public void GenerateMouseMove() {
-            if (toolManager?.currentTool != null) {
-                canvas.GenerateMouseMove();
-            }
-        }
-
+        
         public int GetPixelTileNum(int x, int y) {
             int tileX = x / 8;
             int tileY = y / 8;
@@ -235,10 +138,9 @@ namespace Necrofy
             }
         }
 
-        private void canvas_Paint(object sender, PaintEventArgs e) {
-            scrollWrapper.TransformGraphics(e.Graphics);
-            Point topLeft = scrollWrapper.TransformPoint(Point.Empty);
-            Point bottomRight = scrollWrapper.TransformPoint(new Point(canvas.Size));
+        protected override void PaintMap(Graphics g) {
+            Point topLeft = ScrollWrapper.TransformPoint(Point.Empty);
+            Point bottomRight = ScrollWrapper.TransformPoint(new Point(canvas.Size));
             Rectangle clipRect = new Rectangle(topLeft, new Size(bottomRight.X - topLeft.X, bottomRight.Y - topLeft.Y));
 
             Dictionary<int, int> maxHeightForColumn = new Dictionary<int, int>();
@@ -249,9 +151,9 @@ namespace Necrofy
                 Rectangle tileRect = new Rectangle(x * 8, y * 8, 8, 8);
                 if (tileRect.IntersectsWith(clipRect)) {
                     if (palette != null) {
-                        SNESGraphics.DrawWithPlt(e.Graphics, tileRect.X, tileRect.Y, tiles.GetTemporarily(i), palette.colors, selectedPalette * 16, 16);
+                        SNESGraphics.DrawWithPlt(g, tileRect.X, tileRect.Y, tiles.GetTemporarily(i), palette.colors, selectedPalette * 16, 16);
                     } else {
-                        e.Graphics.DrawImage(tiles.GetTemporarily(i), tileRect.X, tileRect.Y);
+                        g.DrawImage(tiles.GetTemporarily(i), tileRect.X, tileRect.Y);
                     }
                 }
                 maxHeightForColumn[x] = y + 1;
@@ -262,71 +164,45 @@ namespace Necrofy
                 int maxY = maxWidthForRow.Keys.Max();
                 using (Pen pen = new Pen(Color.White, 1 / Zoom)) {
                     for (int x = tileSize; x < tileWidth; x += tileSize) {
-                        e.Graphics.DrawLine(pen, x * 8, 0, x * 8, maxHeightForColumn[x] * 8);
+                        g.DrawLine(pen, x * 8, 0, x * 8, maxHeightForColumn[x] * 8);
                     }
                     for (int y = tileSize; y <= maxY; y += tileSize) {
-                        e.Graphics.DrawLine(pen, 0, y * 8, maxWidthForRow[y] * 8, y * 8);
+                        g.DrawLine(pen, 0, y * 8, maxWidthForRow[y] * 8, y * 8);
                     }
                 }
                 if (Zoom >= 8.0f) {
                     using (Pen pen = new Pen(Color.FromArgb(80, Color.White), 1 / Zoom)) {
                         for (int x = 1; x < tileWidth * 8; x++) {
-                            e.Graphics.DrawLine(pen, x, 0, x, maxHeightForColumn[x / 8] * 8);
+                            g.DrawLine(pen, x, 0, x, maxHeightForColumn[x / 8] * 8);
                         }
                         for (int y = 1; y < (maxY + 1) * 8; y++) {
-                            e.Graphics.DrawLine(pen, 0, y, maxWidthForRow[y / 8] * 8, y);
+                            g.DrawLine(pen, 0, y, maxWidthForRow[y / 8] * 8, y);
                         }
                     }
                 }
             }
-            
-            using (Pen selectionBorderPen = CreateSelectionBorderPen()) {
-                if (selectionDrawRect != Rectangle.Empty) {
-                    e.Graphics.DrawRectangle(selectionBorderPen, selectionDrawRect);
-                }
-                if (selectionPath != null) {
-                    e.Graphics.DrawPath(selectionBorderPen, selectionPath);
-                    e.Graphics.DrawPath(selectionBorderDashPen, selectionPath);
-                }
-            }
         }
 
-        private void canvas_MouseDown(object sender, MouseEventArgs e) {
-            if (TransformMouseArgs(e, out MouseEventArgs args)) {
-                toolManager.currentTool.MouseDown(args);
-            }
+        protected override void PaintSelectionDrawRectangle(Graphics g, Rectangle r) {
+            g.DrawRectangle(WhitePen, r);
         }
 
-        private void canvas_MouseUp(object sender, MouseEventArgs e) {
-            if (TransformMouseArgs(e, out MouseEventArgs args)) {
-                toolManager.currentTool.MouseUp(args);
-            }
+        protected override void PaintSelection(Graphics g, GraphicsPath path) {
+            g.DrawPath(WhitePen, path);
+            g.DrawPath(SelectionDashPen, path);
         }
 
-        private void canvas_MouseMove(object sender, MouseEventArgs e) {
-            if (TransformMouseArgs(e, out MouseEventArgs args)) {
-                toolManager.currentTool.MouseMove(args);
-            }
+        protected override void PaintSelectionEraser(Graphics g, Rectangle r) {
+            // Nothing to do
         }
 
-        private bool TransformMouseArgs(MouseEventArgs e, out MouseEventArgs ret) {
-            if (e.Button == MouseButtons.Left || !canvas.IsMouseDown) {
-                Point transformed = scrollWrapper.TransformPoint(e.Location);
-                ret = new MouseEventArgs(e.Button, e.Clicks, transformed.X, transformed.Y, e.Delta);
-                return true;
-            }
-            ret = null;
-            return false;
-        }
-
-        private void canvas_KeyDown(object sender, KeyEventArgs e) {
-            toolManager.KeyDown(e.KeyData);
+        protected override void PaintExtras(Graphics g) {
+            // Nothing to do
         }
 
         public override void ToolStripItemClicked(ToolStripGrouper.ItemType item) {
-            if (toolManager.ToolStripItemClicked(item)) {
-                return;
-            } else if (item == ToolStripGrouper.ItemType.ViewDecreaseWidth) {
+            base.ToolStripItemClicked(item);
+            if (item == ToolStripGrouper.ItemType.ViewDecreaseWidth) {
                 UpdateSize(tileWidth - 2);
             } else if (item == ToolStripGrouper.ItemType.ViewIncreaseWidth) {
                 UpdateSize(tileWidth + 2);
@@ -338,6 +214,7 @@ namespace Necrofy
         };
 
         public override void ToolStripItemCheckedChanged(ToolStripGrouper.ItemType item) {
+            base.ToolStripItemCheckedChanged(item);
             if (item == ToolStripGrouper.ItemType.ViewLargeTileMode && DockActive) {
                 largeTileMode = mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewLargeTileMode).Checked;
                 tileSize = largeTileMode ? 2 : 1;
@@ -377,6 +254,10 @@ namespace Necrofy
                 selectedPalette = colorSelector.SelectionStart / 16;
                 Repaint();
             }
+        }
+        
+        protected override void ToolChanged(GraphicsTool currentTool) {
+            // Nothing to do
         }
     }
 }

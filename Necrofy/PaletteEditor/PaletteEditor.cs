@@ -23,6 +23,7 @@ namespace Necrofy
 
         public PaletteEditor(LoadedPalette palette) {
             InitializeComponent();
+
             Title = palette.paletteName;
             this.palette = palette;
             colorSelector.Colors = palette.colors;
@@ -33,7 +34,7 @@ namespace Necrofy
 
             Status = "Tip: Colors can be copied into an image editor, then pasted back into Necrofy after making changes.";
         }
-
+        
         public void UpdateColorSelectorSize() {
             colorSelector.Width = (int)(16 * 16 * Zoom);
             colorSelector.Height = colorSelector.Width / 2;
@@ -61,7 +62,9 @@ namespace Necrofy
         }
 
         public override bool CanZoom => true;
+
         protected override void ZoomChanged() {
+            base.ZoomChanged();
             UpdateColorSelectorSize();
         }
 

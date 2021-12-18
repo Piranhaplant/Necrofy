@@ -144,9 +144,15 @@
     <Compile Include="GraphicsEditor\GraphicsTileList.cs" />
     <Compile Include="GraphicsEditor\GraphicsTool.cs" />
     <Compile Include="GraphicsEditor\GraphicsSelectTool.cs" />
-    <Compile Include="LevelEditor\LevelEditorTool.cs" />
+    <Compile Include="MapEditor\MapBrushTool.cs" />
+    <Compile Include="MapEditor\MapTileSelectTool.cs" />
     <Compile Include="MapEditor\MapMouseEventArgs.cs" />
-    <Compile Include="MapEditor\MapEditor.cs" />
+    <Compile Include="MapEditor\MapEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MapEditor\MapPasteTool.cs" />
+    <Compile Include="MapEditor\MapPencilSelectTool.cs" />
+    <Compile Include="MapEditor\MapRectangleSelectTool.cs" />
     <Compile Include="MapEditor\MapTool.cs" />
     <Compile Include="PaletteEditor\PaletteEditorAction.cs" />
     <Compile Include="PaletteEditor\ColorSelector.cs">
@@ -162,7 +168,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Extensions.cs" />
-    <Compile Include="LevelEditor\LevelMouseEventArgs.cs" />
     <Compile Include="LevelEditor\LevelSettings\AssetComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -188,16 +193,16 @@
     <Compile Include="LevelEditor\LevelSettings\TileAnimationRow.Designer.cs">
       <DependentUpon>TileAnimationRow.cs</DependentUpon>
     </Compile>
-    <Compile Include="LevelEditor\Tools\PaintbrushTool.cs" />
-    <Compile Include="LevelEditor\Tools\PencilSelectTool.cs" />
-    <Compile Include="LevelEditor\Tools\RectangleSelectTool.cs" />
+    <Compile Include="LevelEditor\Tools\LevelEditorBrushTool.cs" />
+    <Compile Include="LevelEditor\Tools\LevelEditorPencilSelectTool.cs" />
+    <Compile Include="LevelEditor\Tools\LevelEditorRectangleSelectTool.cs" />
     <Compile Include="LevelEditor\Tools\ResizeLevelTool.cs" />
     <Compile Include="LevelEditor\SpriteClipboardContents.cs" />
     <Compile Include="LevelEditor\Tools\SpriteTool.cs" />
     <Compile Include="LevelEditor\TileAnimator.cs" />
-    <Compile Include="LevelEditor\Tools\TileSelectTool.cs" />
+    <Compile Include="LevelEditor\Tools\LevelEditorTileSelectTool.cs" />
     <Compile Include="LevelEditor\Tools\TileSuggestionTool.cs" />
-    <Compile Include="LevelEditor\Tools\TileTool.cs" />
+    <Compile Include="LevelEditor\Tools\LevelEditorTileTool.cs" />
     <Compile Include="LevelEditor\TitleEditor\PageEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -213,7 +218,7 @@
     <Compile Include="LevelEditor\TitleEditor\TitleEditor.Designer.cs">
       <DependentUpon>TitleEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="LevelEditor\Tools\Tool.cs" />
+    <Compile Include="LevelEditor\Tools\LevelEditorTool.cs" />
     <Compile Include="LevelEditor\LevelSettings\LevelSettingsDialog.cs">
       <SubType>Form</SubType>
     </Compile>

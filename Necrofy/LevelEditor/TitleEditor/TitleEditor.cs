@@ -87,7 +87,7 @@ namespace Necrofy
 
             Status = "Click to edit or move text. Hold ctrl and click to create new text.";
         }
-
+        
         private void Characters_Updated(object sender, EventArgs e) {
             pageEditor1.Invalidate();
             pageEditor2.Invalidate();
@@ -271,8 +271,9 @@ namespace Necrofy
                 }
             }
         }
-        
+
         public override void ToolStripItemClicked(ToolStripGrouper.ItemType item) {
+            base.ToolStripItemClicked(item);
             switch (item) {
                 case ToolStripGrouper.ItemType.CenterHorizontally:
                     activeEditor.CenterHorizontally();

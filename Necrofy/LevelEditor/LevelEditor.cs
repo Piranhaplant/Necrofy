@@ -15,46 +15,30 @@ using System.Threading.Tasks;
 
 namespace Necrofy
 {
-    partial class LevelEditor : EditorWindow {
-        private const int LevelPadding = 64;
-
+    partial class LevelEditor : MapEditor<LevelEditorTool> {
         public readonly LoadedLevel level;
-        public TitleEditor titleEditor = null;
+        private TitleEditor titleEditor = null;
 
         public readonly TilesetObjectBrowserContents tilesetObjectBrowserContents;
         public readonly SpriteObjectBrowserContents spriteObjectBrowserContents;
-
-        public readonly ScrollWrapper scrollWrapper;
-        public UndoManager<LevelEditor> undoManager;
-
-        public readonly TileSelection tileSelection;
-        private GraphicsPath tileSelectionPath = null;
-        private Rectangle tileSelectionEraserRect = Rectangle.Empty;
+        
+        public UndoManager<LevelEditor> undoManager { get; private set; }
 
         public static readonly SolidBrush selectionFillBrush = new SolidBrush(Color.FromArgb(96, 0, 0, 0));
         public static readonly SolidBrush eraserFillBrush = new SolidBrush(Color.FromArgb(128, 255, 255, 255));
         
         private SpriteTool spriteTool;
-        private readonly Dictionary<Tool.ObjectType, ObjectBrowserContents> toolTypeToObjectContents;
-        private ToolManager<Tool> toolManager;
+        private readonly Dictionary<LevelEditorTool.ObjectType, ObjectBrowserContents> toolTypeToObjectContents;
 
         public override ToolStripGrouper.ItemSet ToolStripItemSet => ToolStripGrouper.ItemSet.LevelEditor;
 
-        public LevelEditor(LoadedLevel level) {
+        public LevelEditor(LoadedLevel level) : base(64) {
             InitializeComponent();
             Disposed += LevelEditor_Disposed;
 
             this.level = level;
             UpdateTitle();
-
-            scrollWrapper = new ScrollWrapper(canvas, hscroll, vscroll);
-            scrollWrapper.SetPadding(LevelPadding, LevelPadding);
-            scrollWrapper.Scrolled += scrollWrapper_Scrolled;
-            UpdateLevelSize();
-
-            tileSelection = new TileSelection(level.Level.width, level.Level.height, scale: 64);
-            tileSelection.Changed += TileSelection_Changed;
-
+            
             tilesetObjectBrowserContents = new TilesetObjectBrowserContents(level);
             tilesetObjectBrowserContents.SelectedIndexChanged += TilesetObjectBrowserContents_SelectedIndexChanged;
             spriteObjectBrowserContents = new SpriteObjectBrowserContents(level);
@@ -66,15 +50,13 @@ namespace Necrofy
             spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.OneShotMonster);
             spriteObjectBrowserContents.AddCategory(SpriteDisplay.Category.Victim);
 
-            toolTypeToObjectContents = new Dictionary<Tool.ObjectType, ObjectBrowserContents> {
-                { Tool.ObjectType.Sprites, spriteObjectBrowserContents },
-                { Tool.ObjectType.Tiles, tilesetObjectBrowserContents },
+            toolTypeToObjectContents = new Dictionary<LevelEditorTool.ObjectType, ObjectBrowserContents> {
+                { LevelEditorTool.ObjectType.Sprites, spriteObjectBrowserContents },
+                { LevelEditorTool.ObjectType.Tiles, tilesetObjectBrowserContents },
             };
             
             level.TilesChanged += Level_GraphicsChanged;
             level.SpritesChanged += Level_GraphicsChanged;
-
-            Repaint();
         }
 
         protected override void CloseChildren(FormClosingEventArgs e) {
@@ -88,22 +70,22 @@ namespace Necrofy
         
         private void LevelEditor_Disposed(object sender, EventArgs e) {
             level.Dispose();
-            tileSelectionPath?.Dispose();
         }
 
         protected override UndoManager Setup() {
-            toolManager = new ToolManager<Tool>(mainWindow);
-            toolManager.ToolChanged += ToolManager_ToolChanged;
-            toolManager.SetupTool(new PaintbrushTool(this), ToolStripGrouper.ItemType.PaintbrushTool, Keys.P);
-            toolManager.SetupTool(new TileSuggestionTool(this), ToolStripGrouper.ItemType.TileSuggestTool, Keys.S);
-            toolManager.SetupTool(new RectangleSelectTool(this), ToolStripGrouper.ItemType.RectangleSelectTool, Keys.R);
-            toolManager.SetupTool(new PencilSelectTool(this), ToolStripGrouper.ItemType.PencilSelectTool, Keys.C);
-            toolManager.SetupTool(new TileSelectTool(this), ToolStripGrouper.ItemType.TileSelectTool, Keys.T);
-            toolManager.SetupTool(new ResizeLevelTool(this), ToolStripGrouper.ItemType.ResizeLevelTool, Keys.L);
-            spriteTool = new SpriteTool(this);
-            toolManager.SetupTool(spriteTool, ToolStripGrouper.ItemType.SpriteTool, Keys.I);
+            SetupMapEditor(canvas, hscroll, vscroll);
+            MapPadding = 64;
+            ResizeMap(level.Level.width, level.Level.height);
 
-            repaintTimer();
+            SetupTool(new LevelEditorBrushTool(this), ToolStripGrouper.ItemType.PaintbrushTool, Keys.P);
+            SetupTool(new TileSuggestionTool(this), ToolStripGrouper.ItemType.TileSuggestTool, Keys.S);
+            SetupTool(new LevelEditorRectangleSelectTool(this), ToolStripGrouper.ItemType.RectangleSelectTool, Keys.R);
+            SetupTool(new LevelEditorPencilSelectTool(this), ToolStripGrouper.ItemType.PencilSelectTool, Keys.C);
+            SetupTool(new LevelEditorTileSelectTool(this), ToolStripGrouper.ItemType.TileSelectTool, Keys.T);
+            SetupTool(new ResizeLevelTool(this), ToolStripGrouper.ItemType.ResizeLevelTool, Keys.L);
+            spriteTool = new SpriteTool(this);
+            SetupTool(spriteTool, ToolStripGrouper.ItemType.SpriteTool, Keys.I);
+
             undoManager = new UndoManager<LevelEditor>(mainWindow.UndoButton, mainWindow.RedoButton, this);
             return undoManager;
         }
@@ -113,37 +95,15 @@ namespace Necrofy
         }
 
         public void FillSelection() {
-            if (tilesetObjectBrowserContents.SelectedIndex >= 0 && TileSelectionExists) {
+            if (tilesetObjectBrowserContents.SelectedIndex >= 0 && SelectionExists) {
                 undoManager.Do(new FillSelectionAction((ushort)tilesetObjectBrowserContents.SelectedIndex));
             }
-        }
-
-        public Point GetViewCenter() {
-            return scrollWrapper.GetViewCenter();
-        }
-
-        public void SetCursor(Cursor cursor) {
-            canvas.Cursor = cursor;
         }
 
         public void SetPropertyBrowserObjects(object[] objects) {
             PropertyBrowserObjects = objects;
         }
-
-        public void SetStatus(string status) {
-            Status = status;
-        }
-
-        public void GenerateMouseMove() {
-            if (toolManager?.currentTool != null) {
-                canvas.GenerateMouseMove();
-            }
-        }
-
-        public void UpdateLevelSize() {
-            scrollWrapper.SetClientSize(level.Level.width * 64 + LevelPadding * 2, level.Level.height * 64 + LevelPadding * 2);
-        }
-
+        
         public void UpdateSpriteSelection() {
             spriteTool.UpdateSelection();
         }
@@ -154,9 +114,6 @@ namespace Necrofy
             UpdateViewOptions();
             foreach (ToolStripGrouper.ItemType type in spriteCategoryForMenuItem.Keys) {
                 mainWindow.GetToolStripItem(type).Checked = spriteCategoryEnabled[spriteCategoryForMenuItem[type]];
-            }
-            if (!toolManager.ChangeToSelectedTool()) {
-                toolManager.ChangeTool(spriteTool);
             }
         }
 
@@ -179,108 +136,34 @@ namespace Necrofy
             level.levelAsset.Save(project);
         }
 
-        public override bool CanCopy => toolManager.currentTool.CanCopy;
-        public override bool CanPaste => toolManager.currentTool.CanPaste;
-        public override bool CanDelete => toolManager.currentTool.CanDelete;
-        public override bool HasSelection => toolManager.currentTool.HasSelection;
-        public override bool CanZoom => true;
-
-        public override void Copy() {
-            toolManager.currentTool.Copy();
-        }
-
-        public override void Paste() {
-            toolManager.currentTool.Paste();
-        }
-
-        public override void Delete() {
-            toolManager.currentTool.Delete();
-        }
-
-        public override void SelectAll() {
-            toolManager.currentTool.SelectAll();
-        }
-
-        public override void SelectNone() {
-            toolManager.currentTool.SelectNone();
-        }
-
-        protected override void ZoomChanged() {
-            scrollWrapper.Zoom = Zoom;
-        }
-
         public override int? LevelNumber => level.levelAsset.LevelNumber;
-
-        private void TileSelection_Changed(object sender, EventArgs e) {
-            tileSelectionPath?.Dispose();
-            tileSelectionPath = tileSelection.GetGraphicsPath();
-            tileSelectionEraserRect = tileSelection.GetEraserRectangle();
-            RaiseSelectionChanged();
-            Repaint();
-        }
-
-        public bool TileSelectionExists => tileSelectionPath != null;
-
+        
         public void NonTileSelectionChanged() {
             RaiseSelectionChanged();
         }
-
-        private void ToolManager_ToolChanged(object sender, ToolManager<Tool>.ToolChangedEventArgs e) {
-            canvas.IsMouseDown = false;
-            e.PreviousTool?.DoneBeingUsed();
-
-            BrowserContents = toolTypeToObjectContents[toolManager.currentTool.objectType];
-            PropertyBrowserObjects = toolManager.currentTool.PropertyBrowserObjects;
-            Status = toolManager.currentTool.Status;
-
-            SetCursor(Cursors.Default);
-            RaiseSelectionChanged();
-            Repaint();
-        }
         
         private void TilesetObjectBrowserContents_SelectedIndexChanged(object sender, EventArgs e) {
-            toolManager.currentTool.TileChanged();
+            CurrentTool.TileChanged();
         }
 
         private void SpriteObjectBrowserContents_SelectedIndexChanged(object sender, EventArgs e) {
-            toolManager.currentTool.SpriteChanged();
+            CurrentTool.SpriteChanged();
         }
 
         private void SpriteObjectBrowserContents_DoubleClicked(object sender, EventArgs e) {
-            toolManager.currentTool.SpriteDoubleClicked();
+            CurrentTool.SpriteDoubleClicked();
         }
 
         public override void PropertyBrowserPropertyChanged(PropertyValueChangedEventArgs e) {
-            toolManager.currentTool.PropertyBrowserPropertyChanged(e);
+            CurrentTool.PropertyBrowserPropertyChanged(e);
         }
-
-        void scrollWrapper_Scrolled(object sender, EventArgs e) {
-            GenerateMouseMove();
-            Repaint();
-        }
-
+        
         private void Level_GraphicsChanged(object sender, EventArgs e) {
             if (DockVisible) {
                 Repaint();
             }
         }
 
-        private bool repaintQueued = false;
-
-        public void Repaint() {
-            repaintQueued = true;
-        }
-
-        private async void repaintTimer() {
-            while (true) {
-                await Task.Delay(5);
-                if (repaintQueued) {
-                    canvas.Invalidate();
-                    repaintQueued = false;
-                }
-            }
-        }
-        
         private bool showGrid;
         private bool solidTilesOnly;
         private bool showTilePriority;
@@ -306,50 +189,50 @@ namespace Necrofy
             }
         }
 
-        private void canvas_Paint(object sender, PaintEventArgs e) {
+        protected override void PaintMap(Graphics g) {
             if (level == null) {
                 return;
             }
-            scrollWrapper.TransformGraphics(e.Graphics);
-            RenderLevel(e.Graphics);
-
-            using (Pen selectionBorderDashPen = CreateSelectionBorderDashPen())
-            using (Pen selectionBorderPen = CreateSelectionBorderPen()) {
-                if (showGrid) {
-                    for (int x = 1; x < level.Level.width; x++) {
-                        e.Graphics.DrawLine(selectionBorderPen, x * 64, 0, x * 64, level.Level.height * 64);
-                    }
-                    for (int y = 1; y < level.Level.height; y++) {
-                        e.Graphics.DrawLine(selectionBorderPen, 0, y * 64, level.Level.width * 64, y * 64);
-                    }
+            RenderLevel(g);
+            if (showGrid) {
+                for (int x = 1; x < level.Level.width; x++) {
+                    g.DrawLine(WhitePen, x * 64, 0, x * 64, level.Level.height * 64);
                 }
-
-                if (TileSelectionExists) {
-                    e.Graphics.FillPath(selectionFillBrush, tileSelectionPath);
-                    e.Graphics.DrawPath(selectionBorderPen, tileSelectionPath);
-                    e.Graphics.DrawPath(selectionBorderDashPen, tileSelectionPath);
-                }
-                if (tileSelectionEraserRect != Rectangle.Empty) {
-                    e.Graphics.FillRectangle(eraserFillBrush, tileSelectionEraserRect);
-                    e.Graphics.DrawRectangle(selectionBorderPen, tileSelectionEraserRect);
-                    e.Graphics.DrawRectangle(selectionBorderDashPen, tileSelectionEraserRect);
+                for (int y = 1; y < level.Level.height; y++) {
+                    g.DrawLine(WhitePen, 0, y * 64, level.Level.width * 64, y * 64);
                 }
             }
+        }
 
-            toolManager.currentTool.Paint(e.Graphics);
+        protected override void PaintSelection(Graphics g, GraphicsPath path) {
+            g.FillPath(selectionFillBrush, path);
+            g.DrawPath(WhitePen, path);
+            g.DrawPath(SelectionDashPen, path);
+        }
 
+        protected override void PaintSelectionEraser(Graphics g, Rectangle r) {
+            g.FillRectangle(eraserFillBrush, r);
+            g.DrawRectangle(WhitePen, r);
+            g.DrawRectangle(SelectionDashPen, r);
+        }
+
+        protected override void PaintSelectionDrawRectangle(Graphics g, Rectangle r) {
+            // Nothing to do
+        }
+
+        protected override void PaintExtras(Graphics g) {
             if (showScreenSizeGuide && screenSizeGuidePosition != Point.Empty) {
                 int left = screenSizeGuidePosition.X - SNESGraphics.ScreenWidth / 2;
                 int top = screenSizeGuidePosition.Y - SNESGraphics.ScreenHeight / 2;
 
                 using (Pen pen = new Pen(Color.Snow, 1 / Zoom)) {
-                    e.Graphics.DrawRectangle(pen, left, top, SNESGraphics.ScreenWidth, SNESGraphics.ScreenHeight);
-                    e.Graphics.DrawLine(pen, left, screenSizeGuidePosition.Y, left + SNESGraphics.ScreenWidth, screenSizeGuidePosition.Y);
-                    e.Graphics.DrawLine(pen, screenSizeGuidePosition.X, top, screenSizeGuidePosition.X, top + SNESGraphics.ScreenHeight);
+                    g.DrawRectangle(pen, left, top, SNESGraphics.ScreenWidth, SNESGraphics.ScreenHeight);
+                    g.DrawLine(pen, left, screenSizeGuidePosition.Y, left + SNESGraphics.ScreenWidth, screenSizeGuidePosition.Y);
+                    g.DrawLine(pen, screenSizeGuidePosition.X, top, screenSizeGuidePosition.X, top + SNESGraphics.ScreenHeight);
                 }
             }
         }
-
+        
         private void RenderLevel(Graphics g) {
             if (solidTilesOnly) {
                 RenderBackground(g, level.solidOnlyTiles);
@@ -403,7 +286,7 @@ namespace Necrofy
         private Point screenSizeGuidePosition = Point.Empty;
 
         private void UpdateScreenSizeGuide(MouseEventArgs e) {
-            Point transformed = scrollWrapper.TransformPoint(e.Location);
+            Point transformed = ScrollWrapper.TransformPoint(e.Location);
             int screenSizeGuideX = transformed.X;
             int screenSizeGuideY = transformed.Y;
             int maxX = level.Level.width * 64;
@@ -424,25 +307,10 @@ namespace Necrofy
             }
         }
 
-        private void canvas_MouseDown(object sender, MouseEventArgs e) {
-            if (TransformMouseArgs(e, out LevelMouseEventArgs args)) {
-                toolManager.currentTool.MouseDown(args);
-            }
-        }
-
-        private void canvas_MouseUp(object sender, MouseEventArgs e) {
-            if (TransformMouseArgs(e, out LevelMouseEventArgs args)) {
-                toolManager.currentTool.MouseUp(args);
-            }
-        }
-
         private void canvas_MouseMove(object sender, MouseEventArgs e) {
             UpdateScreenSizeGuide(e);
-            if (TransformMouseArgs(e, out LevelMouseEventArgs args)) {
-                toolManager.currentTool.MouseMove(args);
-            }
         }
-        
+
         private void canvas_MouseLeave(object sender, EventArgs e) {
             screenSizeGuidePosition = Point.Empty;
             if (showScreenSizeGuide) {
@@ -450,40 +318,13 @@ namespace Necrofy
             }
         }
 
-        private bool TransformMouseArgs(MouseEventArgs e, out LevelMouseEventArgs ret) {
-            if (e.Button == MouseButtons.Left || !canvas.IsMouseDown) {
-                Point transformed = scrollWrapper.TransformPoint(e.Location);
-                ret = new LevelMouseEventArgs(e.Button, e.Clicks, transformed.X, transformed.Y, e.Delta, level.Level.width, level.Level.height, canvas.IsMouseDown);
-                return true;
-            }
-            ret = null;
-            return false;
-        }
-
-        private void canvas_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e) {
-            if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Left || e.KeyCode == Keys.Down || e.KeyCode == Keys.Right) {
-                e.IsInputKey = true;
-            }
-        }
-
-        private void canvas_KeyDown(object sender, KeyEventArgs e) {
-            if (!toolManager.KeyDown(e.KeyData)) {
-                toolManager.currentTool.KeyDown(e);
-            }
-        }
-
-        private void canvas_KeyUp(object sender, KeyEventArgs e) {
-            toolManager.currentTool.KeyUp(e);
-        }
-        
         public override void ToolStripItemClicked(ToolStripGrouper.ItemType item) {
-            if (toolManager.ToolStripItemClicked(item)) {
-                return;
-            } else if (item == ToolStripGrouper.ItemType.SpritesAll) {
+            base.ToolStripItemClicked(item);
+            if (item == ToolStripGrouper.ItemType.SpritesAll) {
                 foreach (ToolStripGrouper.ItemType type in spriteCategoryForMenuItem.Keys) {
                     mainWindow.GetToolStripItem(type).Checked = true;
                 }
-                toolManager.ChangeTool(spriteTool);
+                ChangeTool(spriteTool);
             } else if (item == ToolStripGrouper.ItemType.LevelEditTitle) {
                 if (titleEditor == null) {
                     titleEditor = new TitleEditor(this, project);
@@ -542,6 +383,7 @@ namespace Necrofy
         };
 
         public override void ToolStripItemCheckedChanged(ToolStripGrouper.ItemType item) {
+            base.ToolStripItemCheckedChanged(item);
             if (DockPanel.ActiveDocument == this && spriteCategoryForMenuItem.TryGetValue(item, out SpriteDisplay.Category category)) {
                 UpdateSpriteCategory(category, mainWindow.GetToolStripItem(item).Checked);
             } else if (item == ToolStripGrouper.ItemType.ViewAnimate) {
@@ -569,9 +411,14 @@ namespace Necrofy
                 } else {
                     spriteObjectBrowserContents.RemoveCategory(category);
                 }
-                toolManager.ChangeTool(spriteTool);
+                ChangeTool(spriteTool);
                 UpdateSpriteSelection();
             }
+        }
+
+        protected override void ToolChanged(LevelEditorTool currentTool) {
+            BrowserContents = toolTypeToObjectContents[currentTool.objectType];
+            PropertyBrowserObjects = currentTool.PropertyBrowserObjects;
         }
     }
 }

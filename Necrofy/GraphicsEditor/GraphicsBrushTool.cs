@@ -12,47 +12,37 @@ namespace Necrofy
 {
     class GraphicsBrushTool : GraphicsTool
     {
-        private bool mouseDown = false;
-        private bool mouseDownFirstPoint = false;
-        private bool selecting = false;
-        private Point prevLocation = Point.Empty;
-
         public GraphicsBrushTool(GraphicsEditor editor) : base(editor) {
-            Status = "Click to paint. Hold Ctrl to select a color.";
+            AddSubTool(new BrushTool(editor));
         }
 
-        public override void MouseDown(MouseEventArgs e) {
-            mouseDown = true;
-            mouseDownFirstPoint = true;
-            prevLocation = e.Location;
-            selecting = Control.ModifierKeys == Keys.Control;
-            MouseMove(e);
-        }
+        private class BrushTool : MapBrushTool
+        {
+            private readonly GraphicsEditor editor;
 
-        public override void MouseMove(MouseEventArgs e) {
-            if (mouseDown && (e.Location != prevLocation || mouseDownFirstPoint)) {
-                mouseDownFirstPoint = false;
-                if (selecting) {
-                    int tileNum = editor.GetPixelTileNum(e.X, e.Y);
+            public BrushTool(GraphicsEditor editor) : base(editor) {
+                this.editor = editor;
+                Status = "Click to paint. Hold Ctrl to select a color.";
+            }
+
+            protected override void DrawLine(int x1, int y1, int x2, int y2) {
+                editor.undoManager.Do(new PaintGraphicsAction(x1, y1, x2, y2, (byte)(editor.SelectedColor % 16)));
+            }
+
+            protected override void SelectTile(int x, int y) {
+                int tileNum = editor.GetPixelTileNum(x, y);
+                if (tileNum >= 0) {
                     Bitmap bitmap = editor.tiles.GetTemporarily(tileNum);
-                    BitmapData data = bitmap.LockBits(new Rectangle(e.X % 8, e.Y % 8, 1, 1), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+                    BitmapData data = bitmap.LockBits(new Rectangle(x % 8, y % 8, 1, 1), ImageLockMode.ReadOnly, bitmap.PixelFormat);
                     byte color = Marshal.ReadByte(data.Scan0);
                     bitmap.UnlockBits(data);
                     editor.SetSelectedColor(color);
-                } else {
-                    editor.undoManager.Do(new PaintGraphicsAction(prevLocation.X, prevLocation.Y, e.Location.X, e.Location.Y, (byte)(editor.SelectedColor % 16)));
-                    prevLocation = e.Location;
                 }
             }
-        }
 
-        public override void MouseUp(MouseEventArgs e) {
-            mouseDown = false;
-            editor.undoManager.ForceNoMerge();
-        }
-
-        public override void DoneBeingUsed() {
-            mouseDown = false;
+            public override void MouseUp(MapMouseEventArgs e) {
+                editor.undoManager.ForceNoMerge();
+            }
         }
     }
 }

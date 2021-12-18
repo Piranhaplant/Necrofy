@@ -183,21 +183,7 @@ namespace Necrofy
         protected void RaiseSelectionChanged() {
             SelectionChanged?.Invoke(this, EventArgs.Empty);
         }
-
-        public Pen CreateSelectionBorderPen() {
-            return new Pen(Color.White, 1 / Zoom);
-        }
-
-        public Pen CreateSelectionBorderDashPen() {
-            Pen dashPen = new Pen(Color.Black, 1 / Zoom);
-            if (Zoom >= 1.0f) {
-                dashPen.DashPattern = new float[] { 4 / Zoom, 4 / Zoom };
-            } else {
-                dashPen.DashPattern = new float[] { 4, 4 };
-            }
-            return dashPen;
-        }
-
+        
         protected virtual void CloseChildren(FormClosingEventArgs e) { }
 
         public virtual ToolStripGrouper.ItemSet ToolStripItemSet => ToolStripGrouper.ItemSet.None;

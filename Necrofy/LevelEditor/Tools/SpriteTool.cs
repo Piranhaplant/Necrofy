@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace Necrofy
 {
-    class SpriteTool : Tool, ObjectSelector<WrappedLevelObject>.IHost
+    class SpriteTool : LevelEditorTool, ObjectSelector<WrappedLevelObject>.IHost
     {
         private const string DefaultStatus = "Click to select or move. Hold shift to add to the selection. Hold alt to remove from the selection. Double click in the objects panel or hold ctrl and click on the level to create a new sprite.";
         private const string ResizeStatus = "Monster respawn area size: {0}.";
@@ -120,10 +120,10 @@ namespace Necrofy
             objectSelector.UpdateSelection();
         }
 
-        public override void MouseDown(LevelMouseEventArgs e) {
+        public override void MouseDown(MapMouseEventArgs e) {
             mouseIsDown = true;
             if (isChangingMonsterDelay) {
-                editor.scrollWrapper.EnableHiddenCursor();
+                editor.ScrollWrapper.EnableHiddenCursor();
             }
             if (extraEditMonster != null) {
                 objectSelector.SelectObjects(new WrappedLevelObject[] { extraEditMonster });
@@ -133,7 +133,7 @@ namespace Necrofy
             UpdateStatus();
         }
 
-        public override void MouseMove(LevelMouseEventArgs e) {
+        public override void MouseMove(MapMouseEventArgs e) {
             if (!e.MouseIsDown) {
                 isResizingMonsterArea = false;
                 isChangingMonsterDelay = false;
@@ -175,7 +175,7 @@ namespace Necrofy
                     byte delay = monsterDelayStartValue;
                     if (monsterDelayInitialMovePassed) {
                         double ratio = UIExtras.DelayToDangerRatio(monsterDelayStartValue);
-                        ratio = Math.Max(0, Math.Min(1, ratio - editor.scrollWrapper.HiddenCursorTotalMoveY / 400.0));
+                        ratio = Math.Max(0, Math.Min(1, ratio - editor.ScrollWrapper.HiddenCursorTotalMoveY / 400.0));
                         delay = UIExtras.DangerRatioToDelay(ratio);
                     } else {
                         monsterDelayInitialMovePassed = true;
@@ -189,10 +189,10 @@ namespace Necrofy
             }
         }
 
-        public override void MouseUp(LevelMouseEventArgs e) {
+        public override void MouseUp(MapMouseEventArgs e) {
             mouseIsDown = false;
             if (isChangingMonsterDelay) {
-                editor.scrollWrapper.DisableHiddenCursor();
+                editor.ScrollWrapper.DisableHiddenCursor();
                 editor.Repaint();
             }
             if (extraEditMonster == null) {
@@ -222,7 +222,7 @@ namespace Necrofy
         }
         
         public override void SpriteDoubleClicked() {
-            Point center = editor.GetViewCenter();
+            Point center = editor.ScrollWrapper.GetViewCenter();
             WrappedLevelObject newObject = GetCreationObject(Math.Max(0, center.X), Math.Max(0, center.Y));
             if (newObject != null) {
                 editor.undoManager.Revert(prevChangeSpriteAction1);
@@ -334,7 +334,7 @@ namespace Necrofy
                 int maxx = objs.Max(o => o.X);
                 int maxy = objs.Max(o => o.Y);
 
-                Point center = editor.GetViewCenter();
+                Point center = editor.ScrollWrapper.GetViewCenter();
                 int dx = Math.Max(-minx, center.X - (maxx + minx) / 2);
                 int dy = Math.Max(-miny, center.Y - (maxy + miny) / 2);
                 foreach (WrappedLevelObject obj in objs) {

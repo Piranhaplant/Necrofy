@@ -146,6 +146,7 @@ namespace Necrofy
             }
             bmp.Palette = pal;
         }
+
         public static void DrawWithPlt(Graphics g, int x, int y, Bitmap bmp, Color[] plt, int colorIdx, int colorCount) {
             DrawWithPlt(g, x, y, bmp, plt, colorIdx, colorCount, false, false);
         }

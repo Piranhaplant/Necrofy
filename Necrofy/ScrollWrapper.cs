@@ -22,8 +22,22 @@ namespace Necrofy
         private Point? hiddenCursorOriginalPosition = null;
         public int HiddenCursorTotalMoveX { get; private set; }
         public int HiddenCursorTotalMoveY { get; private set; }
-        
-        public bool ExpandingDrag { get; set; }
+
+        private bool expandingDrag = false;
+        public bool ExpandingDrag {
+            get {
+                return expandingDrag;
+            }
+            set {
+                if (value != expandingDrag) {
+                    expandingDrag = value;
+                    if (!expandingDrag) {
+                        xDimension.UpdateSize();
+                        yDimension.UpdateSize();
+                    }
+                }
+            }
+        }
 
         private float zoom = 1.0f;
         public float Zoom {

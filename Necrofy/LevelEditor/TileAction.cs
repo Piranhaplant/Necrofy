@@ -8,18 +8,35 @@ namespace Necrofy
 {
     class PaintTileAction : LevelEditorAction
     {
+        private readonly int x1;
+        private readonly int y1;
+        private readonly int x2;
+        private readonly int y2;
+
         private readonly List<Point> points = new List<Point>();
         private readonly List<ushort> prevTileType = new List<ushort>();
         private readonly ushort tileType;
 
-        public PaintTileAction(int x, int y, ushort tileType) {
-            points.Add(new Point(x, y));
+        public PaintTileAction(int x1, int y1, int x2, int y2, ushort tileType) {
+            this.x1 = x1;
+            this.y1 = y1;
+            this.x2 = x2;
+            this.y2 = y2;
             this.tileType = tileType;
         }
         
         public override void SetEditor(LevelEditor editor) {
             base.SetEditor(editor);
-            prevTileType.Add(level.background[points[0].X, points[0].Y]);
+            MapEditor.DrawLine(x1, y1, x2, y2, (x, y) => {
+                if (x >= 0 && y >= 0 && x < level.width && y < level.height) {
+                    points.Add(new Point(x, y));
+                    prevTileType.Add(level.background[x, y]);
+                }
+            });
+
+            if (points.Count == 0) {
+                cancel = true;
+            }
         }
 
         protected override void Undo() {
@@ -37,9 +54,11 @@ namespace Necrofy
         public override bool Merge(UndoAction<LevelEditor> action) {
             if (action is PaintTileAction paintTileAction) {
                 if (paintTileAction.tileType == tileType) {
-                    if (!points.Contains(paintTileAction.points[0])) {
-                        points.Add(paintTileAction.points[0]);
-                        prevTileType.Add(paintTileAction.prevTileType[0]);
+                    for (int i = 0; i < paintTileAction.points.Count; i++) {
+                        if (!points.Contains(paintTileAction.points[i])) {
+                            points.Add(paintTileAction.points[i]);
+                            prevTileType.Add(paintTileAction.prevTileType[i]);
+                        }
                     }
                     return true;
                 }
@@ -107,7 +126,7 @@ namespace Necrofy
             base.SetEditor(editor);
             for (int y = 0; y < editor.level.Level.height; y++) {
                 for (int x = 0; x < editor.level.Level.width; x++) {
-                    if (editor.tileSelection.GetPoint(x, y)) {
+                    if (editor.Selection.GetPoint(x, y)) {
                         points.Add(new Point(x, y));
                         prevTileType.Add(editor.level.Level.background[x, y]);
                     }
@@ -230,7 +249,7 @@ namespace Necrofy
                 pair.Key.X = (ushort)pair.Value.X;
                 pair.Key.Y = (ushort)pair.Value.Y;
             }
-            editor.tileSelection.Resize(-startX, -startY, oldTiles.GetWidth() - startX, oldTiles.GetHeight() - startY);
+            editor.ResizeMap(-startX, -startY, oldTiles.GetWidth() - startX, oldTiles.GetHeight() - startY);
         }
 
         protected override void Redo() {
@@ -249,14 +268,9 @@ namespace Necrofy
                 o.X = (ushort)Math.Max(0, Math.Min(level.width * 64, o.X - startX * 64));
                 o.Y = (ushort)Math.Max(0, Math.Min(level.height * 64, o.Y - startY * 64));
             }
-            editor.tileSelection.Resize(startX, startY, endX, endY);
+            editor.ResizeMap(startX, startY, endX, endY);
         }
-
-        protected override void AfterAction() {
-            base.AfterAction();
-            editor.UpdateLevelSize();
-        }
-
+        
         public override string ToString() {
             return "Resize Level";
         }

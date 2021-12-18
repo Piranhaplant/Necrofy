@@ -69,6 +69,9 @@ namespace Necrofy
         }
 
         public void Resize(int startX, int startY, int endX, int endY) {
+            if (startX == 0 && startY == 0 && endX == width && endY == height) {
+                return;
+            }
             bool[,] oldPoints = points;
 
             width = endX - startX;
@@ -122,6 +125,26 @@ namespace Necrofy
             }
             useCurPoints = false;
             Changed?.Invoke(this, EventArgs.Empty);
+        }
+
+        public Rectangle GetSelectedAreaBounds() {
+            int minX = int.MaxValue;
+            int maxX = -1;
+            int minY = int.MaxValue;
+            int maxY = -1;
+
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    if (points[x, y]) {
+                        minX = Math.Min(minX, x);
+                        maxX = Math.Max(maxX, x);
+                        minY = Math.Min(minY, y);
+                        maxY = Math.Max(maxY, y);
+                    }
+                }
+            }
+
+            return new Rectangle(minX, minY, maxX - minX + 1, maxY - minY + 1);
         }
 
         public Rectangle GetDrawRectangle() {

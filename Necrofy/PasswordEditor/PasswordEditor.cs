@@ -25,6 +25,7 @@ namespace Necrofy
 
         public PasswordEditor(PasswordsAsset asset) {
             InitializeComponent();
+
             this.asset = asset;
             data = asset.data;
             Title = "Passwords";
@@ -58,13 +59,14 @@ namespace Necrofy
 
             GenerateRowHeaders();
         }
-
+        
         protected override UndoManager Setup() {
             undoManager = new UndoManager<PasswordEditor>(mainWindow.UndoButton, mainWindow.RedoButton, this);
             return undoManager;
         }
 
         public override void ToolStripItemClicked(ToolStripGrouper.ItemType item) {
+            base.ToolStripItemClicked(item);
             switch (item) {
                 case ToolStripGrouper.ItemType.GeneratePasswordsDefault:
                     undoManager.Do(new GeneratePasswordsDefaultStyleAction(AllowedLetters));

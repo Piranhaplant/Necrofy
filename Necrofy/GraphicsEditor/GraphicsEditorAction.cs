@@ -63,7 +63,7 @@ namespace Necrofy
             bool selectionExists = editor.SelectionExists;
             void SetPixel(int x, int y, byte color) {
                 int tileNum = editor.GetPixelTileNum(x, y);
-                if (tileNum < 0 || (selectionExists && !editor.selection.GetPoint(x, y))) {
+                if (tileNum < 0 || (selectionExists && !editor.Selection.GetPoint(x, y))) {
                     return;
                 }
                 if (!modifiedTiles.ContainsKey(tileNum)) {
@@ -79,6 +79,10 @@ namespace Necrofy
 
             foreach (KeyValuePair<int, BitmapData> pair in modifiedTiles) {
                 newTiles[pair.Key].UnlockBits(pair.Value);
+            }
+
+            if (oldTiles.Count == 0) {
+                cancel = true;
             }
         }
     }
@@ -101,32 +105,9 @@ namespace Necrofy
 
         public override void SetEditor(GraphicsEditor editor) {
             base.SetEditor(editor);
-            DrawLine(x1, y1, x2, y2, color);
-            if (oldTiles.Count == 0) {
-                cancel = true;
-            }
-        }
-
-        private void DrawLine(int x1, int y1, int x2, int y2, byte color) {
             ModifyTiles(setPixel => {
-                if (Math.Abs(x2 - x1) > Math.Abs(y2 - y1)) {
-                    DrawLine2(x1, y1, x2, y2, (a, b) => setPixel(a, b, color));
-                } else {
-                    DrawLine2(y1, x1, y2, x2, (a, b) => setPixel(b, a, color));
-                }
+                MapEditor.DrawLine(x1, y1, x2, y2, (x, y) => setPixel(x, y, color));
             });
-        }
-
-        private void DrawLine2(int a1, int b1, int a2, int b2, Action<int, int> setPixel) {
-            if (a1 > a2) {
-                DrawLine2(a2, b2, a1, b1, setPixel);
-            } else {
-                double slope = a1 == a2 ? 0 : (double)(b2 - b1) / (a2 - a1);
-                for (int a = a1; a <= a2; a++) {
-                    int b = (int)Math.Round(slope * (a - a1) + b1);
-                    setPixel(a, b);
-                }
-            }
         }
         
         public override string ToString() {
@@ -139,18 +120,57 @@ namespace Necrofy
         public override void SetEditor(GraphicsEditor editor) {
             base.SetEditor(editor);
             ModifyTiles(setPixel => {
-                for (int y = 0; y < editor.selection.height; y++) {
-                    for (int x = 0; x < editor.selection.width; x++) {
-                        if (editor.selection.GetPoint(x, y)) {
+                for (int y = 0; y < editor.Selection.height; y++) {
+                    for (int x = 0; x < editor.Selection.width; x++) {
+                        if (editor.Selection.GetPoint(x, y)) {
                             setPixel(x, y, 0);
                         }
                     }
                 }
             });
         }
-        
+
+        public override bool Merge(UndoAction<GraphicsEditor> action) {
+            return false;
+        }
+
         public override string ToString() {
             return "Delete";
+        }
+    }
+
+    class PasteGraphicsAction : GraphicsEditorAction
+    {
+        private sbyte[,] pasteData;
+        private readonly int x;
+        private readonly int y;
+
+        public PasteGraphicsAction(sbyte[,] pasteData, int x, int y) {
+            this.pasteData = pasteData;
+            this.x = x;
+            this.y = y;
+        }
+
+        public override void SetEditor(GraphicsEditor editor) {
+            base.SetEditor(editor);
+            ModifyTiles(setPixel => {
+                for (int y = 0; y < pasteData.GetHeight(); y++) {
+                    for (int x = 0; x < pasteData.GetWidth(); x++) {
+                        if (pasteData[x, y] >= 0) {
+                            setPixel(x + this.x, y + this.y, (byte)pasteData[x, y]);
+                        }
+                    }
+                }
+            });
+            pasteData = null; // Allow data to be garbage collected
+        }
+
+        public override bool Merge(UndoAction<GraphicsEditor> action) {
+            return false;
+        }
+
+        public override string ToString() {
+            return "Paste";
         }
     }
 }
