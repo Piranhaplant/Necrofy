@@ -133,6 +133,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Demo.cs" />
+    <Compile Include="GraphicsEditor\BucketFillTool.cs" />
     <Compile Include="GraphicsEditor\GraphicsEditorAction.cs" />
     <Compile Include="GraphicsEditor\GraphicsBrushTool.cs" />
     <Compile Include="GraphicsEditor\GraphicsEditor.cs">
@@ -669,6 +670,7 @@
     <None Include="Icons\border-outside.png" />
     <None Include="Icons\arrow-skip-180.png" />
     <None Include="Icons\arrow-skip.png" />
+    <None Include="Icons\paint-can.png" />
     <Content Include="ProjectFiles\Patches\PerfectPlayerFix.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

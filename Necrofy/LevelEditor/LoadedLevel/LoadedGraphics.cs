@@ -39,6 +39,7 @@ namespace Necrofy
             for (int i = 0; i < tiles.Count; i++) {
                 SNESGraphics.BitmapToPlanar(tiles.GetTemporarily(i), asset.data, i * 0x20);
             }
+            ReadGraphics();
             updating++;
             asset.Save(project);
             updating--;

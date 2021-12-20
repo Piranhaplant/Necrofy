@@ -55,6 +55,7 @@ namespace Necrofy
             }
 
             zoomLevelLabel.AutoSize = false;
+            zoomLevelLabel.Text = "100 %";
 
             ObjectBrowser = new ObjectBrowserForm();
             ProjectBrowser = new ProjectBrowser(this);

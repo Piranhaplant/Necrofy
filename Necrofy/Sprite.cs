@@ -44,6 +44,9 @@ namespace Necrofy
         }
 
         public Rectangle GetBounds() {
+            if (tiles.Count == 0) {
+                return new Rectangle(0, 0, 16, 16);
+            }
             int minX = tiles.Min(t => t.xOffset);
             int maxX = tiles.Max(t => t.xOffset + 16);
             int minY = tiles.Min(t => t.yOffset + 1);

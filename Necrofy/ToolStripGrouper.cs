@@ -271,6 +271,7 @@ namespace Necrofy
 
             GraphicsPaintbrush,
             GraphicsRectangleSelect,
+            GraphicsBucketFill,
         }
 
         [Flags]

@@ -52,6 +52,7 @@ namespace Necrofy
             SetupMapEditor(canvas, hScroll, vScroll);
             SetupTool(new GraphicsBrushTool(this), ToolStripGrouper.ItemType.GraphicsPaintbrush, Keys.P);
             SetupTool(new GraphicsSelectTool(this), ToolStripGrouper.ItemType.GraphicsRectangleSelect, Keys.R);
+            SetupTool(new BucketFillTool(this), ToolStripGrouper.ItemType.GraphicsBucketFill, Keys.B);
 
             UpdateSize(tileWidth);
             Zoom = 4.0f;
@@ -110,7 +111,7 @@ namespace Necrofy
         }
         
         public void SetSelectedColor(byte color) {
-            colorSelector.SelectionStart = (colorSelector.SelectionStart / 16) * 16 + color;
+            colorSelector.SelectionStart = selectedPalette * 16 + color;
         }
         
         public int GetPixelTileNum(int x, int y) {
@@ -135,6 +136,17 @@ namespace Necrofy
             } else {
                 x = tileNum % tileWidth;
                 y = tileNum / tileWidth;
+            }
+        }
+
+        public void SelectColorAtPoint(int x, int y) {
+            int tileNum = GetPixelTileNum(x, y);
+            if (tileNum >= 0) {
+                Bitmap bitmap = tiles.GetTemporarily(tileNum);
+                BitmapData data = bitmap.LockBits(new Rectangle(x % 8, y % 8, 1, 1), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+                byte color = Marshal.ReadByte(data.Scan0);
+                bitmap.UnlockBits(data);
+                SetSelectedColor(color);
             }
         }
 

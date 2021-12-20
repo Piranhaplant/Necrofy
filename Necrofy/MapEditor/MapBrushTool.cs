@@ -12,17 +12,23 @@ namespace Necrofy
     {
         private bool mouseDownFirstPoint = false;
         private bool selecting = false;
-        private int prevX;
-        private int prevY;
+        private int prevX = int.MinValue;
+        private int prevY = int.MinValue;
 
         public MapBrushTool(MapEditor mapEditor) : base(mapEditor) { }
 
         public override void MouseDown(MapMouseEventArgs e) {
-            mouseDownFirstPoint = true;
-            prevX = e.TileX;
-            prevY = e.TileY;
-            selecting = Control.ModifierKeys == Keys.Control;
-            MouseMove(e);
+            if (Control.ModifierKeys == Keys.Shift && prevX != int.MinValue) {
+                DrawLine(prevX, prevY, e.TileX, e.TileY);
+                prevX = e.TileX;
+                prevY = e.TileY;
+            } else {
+                mouseDownFirstPoint = true;
+                prevX = e.TileX;
+                prevY = e.TileY;
+                selecting = Control.ModifierKeys == Keys.Control;
+                MouseMove(e);
+            }
         }
 
         public override void MouseMove(MapMouseEventArgs e) {

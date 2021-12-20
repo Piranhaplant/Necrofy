@@ -22,7 +22,7 @@ namespace Necrofy
 
             public BrushTool(GraphicsEditor editor) : base(editor) {
                 this.editor = editor;
-                Status = "Click to paint. Hold Ctrl to select a color.";
+                Status = "Click to paint. Hold Ctrl to select a color. Shift + click to draw a line from the previous point.";
             }
 
             protected override void DrawLine(int x1, int y1, int x2, int y2) {
@@ -30,14 +30,7 @@ namespace Necrofy
             }
 
             protected override void SelectTile(int x, int y) {
-                int tileNum = editor.GetPixelTileNum(x, y);
-                if (tileNum >= 0) {
-                    Bitmap bitmap = editor.tiles.GetTemporarily(tileNum);
-                    BitmapData data = bitmap.LockBits(new Rectangle(x % 8, y % 8, 1, 1), ImageLockMode.ReadOnly, bitmap.PixelFormat);
-                    byte color = Marshal.ReadByte(data.Scan0);
-                    bitmap.UnlockBits(data);
-                    editor.SetSelectedColor(color);
-                }
+                editor.SelectColorAtPoint(x, y);
             }
 
             public override void MouseUp(MapMouseEventArgs e) {
