@@ -25,9 +25,13 @@ namespace Necrofy
         private int tileWidth = 16;
         private bool largeTileMode = false;
         public int tileSize { get; private set; } = 1; // Set to one for normal mode, set to 2 for large tile (16x16 tile) mode
-        private bool showGrid = false;
+        private Region tileRegion;
 
-        public LoadedPalette palette { get; private set; }
+        private bool showGrid = false;
+        public bool transparency { get; private set; } = false;
+
+        private LoadedPalette palette;
+        public Color[] Colors { get; private set; }
         public int selectedPalette { get; private set; } = 0;
 
         public override ToolStripGrouper.ItemSet ToolStripItemSet => ToolStripGrouper.ItemSet.Graphics;
@@ -81,6 +85,7 @@ namespace Necrofy
         public override void Displayed() {
             base.Displayed();
             mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewLargeTileMode).Checked = largeTileMode;
+            mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewTransparency).Checked = transparency;
             UpdateViewOptions();
             UpdateSize(tileWidth); // Update the enabled state of the menu items
         }
@@ -104,6 +109,14 @@ namespace Necrofy
                 tileHeight += tileSize;
             }
             ResizeMap(0, 0, tileWidth * 8, tileHeight * 8);
+
+            TileSelection s = new TileSelection(tileWidth, tileHeight, scale: 8);
+            for (int i = 0; i < tiles.Count; i++) {
+                GetTileLocation(i, out int x, out int y);
+                s.SetPoint(x, y, true);
+            }
+            tileRegion?.Dispose();
+            tileRegion = new Region(s.GetGraphicsPath());
         }
 
         private void UpdateViewOptions() {
@@ -151,48 +164,49 @@ namespace Necrofy
         }
 
         protected override void PaintMap(Graphics g) {
-            Point topLeft = ScrollWrapper.TransformPoint(Point.Empty);
-            Point bottomRight = ScrollWrapper.TransformPoint(new Point(canvas.Size));
-            Rectangle clipRect = new Rectangle(topLeft, new Size(bottomRight.X - topLeft.X, bottomRight.Y - topLeft.Y));
+            PointF topLeft = ScrollWrapper.TransformPoint(PointF.Empty);
+            PointF bottomRight = ScrollWrapper.TransformPoint(new PointF(canvas.Width, canvas.Height));
+            RectangleF clipRect = new RectangleF(topLeft, new SizeF(bottomRight.X - topLeft.X, bottomRight.Y - topLeft.Y));
+            clipRect.Intersect(new RectangleF(0, 0, MapWidth, MapHeight));
 
-            Dictionary<int, int> maxHeightForColumn = new Dictionary<int, int>();
-            Dictionary<int, int> maxWidthForRow = new Dictionary<int, int>();
+            g.SetClip(tileRegion, CombineMode.Replace);
+
+            if (transparency) {
+                SNESGraphics.DrawTransparencyGrid(g, clipRect, Zoom);
+            }
 
             for (int i = 0; i < tiles.Count; i++) {
                 GetTileLocation(i, out int x, out int y);
-                Rectangle tileRect = new Rectangle(x * 8, y * 8, 8, 8);
-                if (tileRect.IntersectsWith(clipRect)) {
-                    if (palette != null) {
-                        SNESGraphics.DrawWithPlt(g, tileRect.X, tileRect.Y, tiles.GetTemporarily(i), palette.colors, selectedPalette * 16, 16);
+                if (clipRect.IntersectsWith(new RectangleF(x * 8, y * 8, 8, 8))) {
+                    if (Colors != null) {
+                        SNESGraphics.DrawWithPlt(g, x * 8, y * 8, tiles.GetTemporarily(i), Colors, selectedPalette * 16, 16);
                     } else {
-                        g.DrawImage(tiles.GetTemporarily(i), tileRect.X, tileRect.Y);
+                        g.DrawImage(tiles.GetTemporarily(i), x * 8, y * 8);
                     }
                 }
-                maxHeightForColumn[x] = y + 1;
-                maxWidthForRow[y] = x + 1;
             }
 
             if (showGrid) {
-                int maxY = maxWidthForRow.Keys.Max();
-                using (Pen pen = new Pen(Color.White, 1 / Zoom)) {
-                    for (int x = tileSize; x < tileWidth; x += tileSize) {
-                        g.DrawLine(pen, x * 8, 0, x * 8, maxHeightForColumn[x] * 8);
-                    }
-                    for (int y = tileSize; y <= maxY; y += tileSize) {
-                        g.DrawLine(pen, 0, y * 8, maxWidthForRow[y] * 8, y * 8);
-                    }
+                int fullTileSize = tileSize * 8;
+                for (float x = (float)Math.Floor(clipRect.Left / fullTileSize + 1) * fullTileSize; x < clipRect.Right; x += fullTileSize) {
+                    g.DrawLine(WhitePen, x, clipRect.Top, x, clipRect.Bottom);
+                }
+                for (float y = (float)Math.Floor(clipRect.Top / fullTileSize + 1) * fullTileSize; y < clipRect.Bottom; y += fullTileSize) {
+                    g.DrawLine(WhitePen, clipRect.Left, y, clipRect.Right, y);
                 }
                 if (Zoom >= 8.0f) {
                     using (Pen pen = new Pen(Color.FromArgb(80, Color.White), 1 / Zoom)) {
-                        for (int x = 1; x < tileWidth * 8; x++) {
-                            g.DrawLine(pen, x, 0, x, maxHeightForColumn[x / 8] * 8);
+                        for (float x = (float)Math.Floor(clipRect.Left) + 1; x < clipRect.Right; x++) {
+                            g.DrawLine(pen, x, clipRect.Top, x, clipRect.Bottom);
                         }
-                        for (int y = 1; y < (maxY + 1) * 8; y++) {
-                            g.DrawLine(pen, 0, y, maxWidthForRow[y / 8] * 8, y);
+                        for (float y = (float)Math.Floor(clipRect.Top) + 1; y < clipRect.Bottom; y++) {
+                            g.DrawLine(pen, clipRect.Left, y, clipRect.Right, y);
                         }
                     }
                 }
             }
+
+            g.ResetClip();
         }
 
         protected override void PaintSelectionDrawRectangle(Graphics g, Rectangle r) {
@@ -231,6 +245,9 @@ namespace Necrofy
                 largeTileMode = mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewLargeTileMode).Checked;
                 tileSize = largeTileMode ? 2 : 1;
                 UpdateSize(tileWidth);
+            } else if (item == ToolStripGrouper.ItemType.ViewTransparency && DockActive) {
+                transparency = mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewTransparency).Checked;
+                LoadPalette();
             } else if (viewOptionsItems.Contains(item)) {
                 UpdateViewOptions();
                 if (DockVisible) {
@@ -253,7 +270,13 @@ namespace Necrofy
         }
 
         private void LoadPalette() {
-            colorSelector.Colors = palette.colors;
+            Colors = (Color[])palette.colors.Clone();
+            if (transparency) {
+                for (int i = 0; i < Colors.Length; i += 16) {
+                    Colors[i] = Color.Transparent;
+                }
+            }
+            colorSelector.Colors = Colors;
             if (colorSelector.SelectionStart < 0) {
                 colorSelector.SelectionStart = 0;
             } else {

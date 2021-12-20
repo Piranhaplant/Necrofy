@@ -235,6 +235,7 @@ namespace Necrofy
             ViewDecreaseWidth,
             ViewIncreaseWidth,
             ViewLargeTileMode,
+            ViewTransparency,
             ViewGraphicsGrid,
             LevelEditTitle,
             LevelSettings,

@@ -205,12 +205,12 @@ namespace Necrofy
                 return false;
             }
 
-            public int TransformPosition(int pos) {
-                return (int)((pos - Position) / zoom) - Padding;
+            public float TransformPosition(float pos) {
+                return ((pos - Position) / zoom) - Padding;
             }
             
             public int GetViewCenter() {
-                return TransformPosition(controlSize() / 2);
+                return (int)TransformPosition(controlSize() / 2);
             }
         }
 
@@ -237,7 +237,11 @@ namespace Necrofy
         }
 
         public Point TransformPoint(Point p) {
-            return new Point(xDimension.TransformPosition(p.X), yDimension.TransformPosition(p.Y));
+            return new Point((int)xDimension.TransformPosition(p.X), (int)yDimension.TransformPosition(p.Y));
+        }
+
+        public PointF TransformPoint(PointF p) {
+            return new PointF(xDimension.TransformPosition(p.X), yDimension.TransformPosition(p.Y));
         }
         
         public Point GetViewCenter() {

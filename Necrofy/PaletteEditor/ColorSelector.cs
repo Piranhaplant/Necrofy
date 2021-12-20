@@ -85,6 +85,11 @@ namespace Necrofy
                 int selectionMax = SelectionMax;
                 for (int i = 0; i < colors.Length; i++) {
                     RectangleF rect = new RectangleF(squareSize * (i % SquaresPerRow), squareSize * (i / SquaresPerRow), squareSize, squareSize);
+                    if (colors[i].A < 255) {
+                        e.Graphics.FillRectangle(SNESGraphics.TransparencyGridBrush1, rect);
+                        e.Graphics.FillRectangle(SNESGraphics.TransparencyGridBrush2, new RectangleF(rect.X, rect.Y, rect.Width / 2, rect.Height / 2));
+                        e.Graphics.FillRectangle(SNESGraphics.TransparencyGridBrush2, new RectangleF(rect.X + rect.Width / 2, rect.Y + rect.Height / 2, rect.Width / 2, rect.Height / 2));
+                    }
                     using (Brush b = new SolidBrush(colors[i])) {
                         e.Graphics.FillRectangle(b, rect);
                     }

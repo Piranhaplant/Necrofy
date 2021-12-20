@@ -33,6 +33,7 @@ namespace Necrofy
 
             protected readonly GraphicsEditor editor;
 
+            private bool transparent;
             private sbyte[,] pasteData;
             private Bitmap pasteImage;
 
@@ -68,7 +69,7 @@ namespace Necrofy
                 for (int y = 0; y < image.Height; y++) {
                     for (int x = 0; x < image.Width; x++) {
                         if (editor.Selection.GetPoint(x + bounds.X, y + bounds.Y) && GetPixel(x + bounds.X, y + bounds.Y, out byte pixel)) {
-                            Marshal.WriteInt32(bitmapData.Scan0, y * bitmapData.Stride + x * 4, editor.palette.colors[editor.selectedPalette * 16 + pixel].ToArgb());
+                            Marshal.WriteInt32(bitmapData.Scan0, y * bitmapData.Stride + x * 4, editor.Colors[editor.selectedPalette * 16 + pixel].ToArgb());
                             rawData[x, y] = (sbyte)pixel;
                         } else {
                             rawData[x, y] = -1;
@@ -95,6 +96,7 @@ namespace Necrofy
             }
 
             protected override Size ReadPaste() {
+                transparent = editor.transparency;
                 if (Clipboard.ContainsText()) {
                     pasteData = JsonConvert.DeserializeObject<sbyte[,]>(Clipboard.GetText());
                 } else if (Clipboard.ContainsData(PNGClipboardFormat)) {
@@ -121,7 +123,7 @@ namespace Necrofy
 
                 ColorPalette palette = pasteImage.Palette;
                 for (int i = 0; i < 16; i++) {
-                    palette.Entries[i] = editor.palette.colors[editor.selectedPalette * 16 + i];
+                    palette.Entries[i] = editor.Colors[editor.selectedPalette * 16 + i];
                 }
                 palette.Entries[255] = Color.Transparent;
                 pasteImage.Palette = palette;
@@ -156,13 +158,15 @@ namespace Necrofy
                 sbyte bestPaletteEntry = 0;
                 float bestDistance = 100000f;
                 for (sbyte i = 0; i < 16; i++) {
-                    Color paletteEntry = editor.palette.colors[editor.selectedPalette * 16 + i];
-                    float distance = Square(c.R - paletteEntry.R) + Square(c.B - paletteEntry.B) + Square(c.G - paletteEntry.G);
-                    if (distance == 0f) {
-                        return i;
-                    } else if (distance < bestDistance) {
-                        bestPaletteEntry = i;
-                        bestDistance = distance;
+                    Color paletteEntry = editor.Colors[editor.selectedPalette * 16 + i];
+                    if (paletteEntry.A > 0) {
+                        float distance = Square(c.R - paletteEntry.R) + Square(c.B - paletteEntry.B) + Square(c.G - paletteEntry.G);
+                        if (distance == 0f) {
+                            return i;
+                        } else if (distance < bestDistance) {
+                            bestPaletteEntry = i;
+                            bestDistance = distance;
+                        }
                     }
                 }
                 return bestPaletteEntry;
@@ -177,7 +181,7 @@ namespace Necrofy
             }
 
             protected override void DoPasteAction(int pasteX, int pasteY) {
-                editor.undoManager.Do(new PasteGraphicsAction(pasteData, pasteX, pasteY));
+                editor.undoManager.Do(new PasteGraphicsAction(pasteData, pasteX, pasteY, transparent));
             }
 
             protected override void RenderPaste(Graphics g, int pixelX, int pixelY, GraphicsPath path) {

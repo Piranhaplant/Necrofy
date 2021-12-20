@@ -158,19 +158,22 @@ namespace Necrofy
         private sbyte[,] pasteData;
         private readonly int x;
         private readonly int y;
+        private readonly bool transparent;
 
-        public PasteGraphicsAction(sbyte[,] pasteData, int x, int y) {
+        public PasteGraphicsAction(sbyte[,] pasteData, int x, int y, bool transparent) {
             this.pasteData = pasteData;
             this.x = x;
             this.y = y;
+            this.transparent = transparent;
         }
 
         public override void SetEditor(GraphicsEditor editor) {
             base.SetEditor(editor);
+            int cutoff = transparent ? 1 : 0;
             ModifyTiles((setPixel, getPixel) => {
                 for (int y = 0; y < pasteData.GetHeight(); y++) {
                     for (int x = 0; x < pasteData.GetWidth(); x++) {
-                        if (pasteData[x, y] >= 0) {
+                        if (pasteData[x, y] >= cutoff) {
                             setPixel(x + this.x, y + this.y, (byte)pasteData[x, y]);
                         }
                     }

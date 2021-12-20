@@ -14,6 +14,9 @@ namespace Necrofy
     {
         public const int ScreenWidth = 256;
         public const int ScreenHeight = 224;
+
+        public static readonly Brush TransparencyGridBrush1 = new SolidBrush(Color.FromArgb(0x99, 0x99, 0x99));
+        public static readonly Brush TransparencyGridBrush2 = new SolidBrush(Color.FromArgb(0x70, 0x70, 0x70));
         
         public static ushort RGBToSNES(Color color) {
             return (ushort)((RGBComponentToSNES(color.B) << 10) | (RGBComponentToSNES(color.G) << 5) | RGBComponentToSNES(color.R));
@@ -158,6 +161,20 @@ namespace Necrofy
             }
             bmp.Palette = pal;
             g.DrawImage(bmp, x + (flipX ? bmp.Width : 0), y + (flipY ? bmp.Height : 0), bmp.Width * (flipX ? -1 : 1), bmp.Height * (flipY ? -1 : 1));
+        }
+
+        public static void DrawTransparencyGrid(Graphics g, RectangleF r, float zoom) {
+            g.FillRectangle(TransparencyGridBrush1, r);
+            float squareSize = 8 / zoom;
+            int topSquare = (int)Math.Floor(r.Top / squareSize);
+            int leftSquare = (int)Math.Floor(r.Left / squareSize);
+            int bottomSquare = (int)Math.Floor(r.Bottom / squareSize);
+            int rightSquare = (int)Math.Floor(r.Right / squareSize);
+            for (int y = topSquare; y <= bottomSquare; y++) {
+                for (int x = leftSquare + ((leftSquare + y) % 2); x <= rightSquare; x += 2) {
+                    g.FillRectangle(SNESGraphics.TransparencyGridBrush2, new RectangleF(x * squareSize, y * squareSize, squareSize, squareSize));
+                }
+            }
         }
     }
 }

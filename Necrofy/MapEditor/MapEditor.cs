@@ -37,6 +37,8 @@ namespace Necrofy
         // Width/height are in tiles
         private int width = 1;
         private int height = 1;
+        public int MapWidth { get { return width; } }
+        public int MapHeight { get { return height; } }
 
         private GraphicsPath selectionPath = null;
         private Rectangle selectionEraserRect = Rectangle.Empty;
