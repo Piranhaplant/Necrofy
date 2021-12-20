@@ -246,6 +246,7 @@ namespace Necrofy
             objectSelector.SelectNone();
             UpdateSpritePreviews();
             browserContents.SelectedIndex = Array.IndexOf(loadedSprites.spritesAsset.sprites, currentSprite);
+            PropertyBrowserObjects = new object[] { new WrappedSprite(s) };
             Repaint();
         }
         
