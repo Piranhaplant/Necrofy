@@ -594,6 +594,12 @@
     <None Include="Icons\dice-3.png" />
     <None Include="Icons\ghost.png" />
     <Content Include="icon.ico" />
+    <Content Include="ProjectFiles\Patches\FootballPlayerWaterFix.asm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectFiles\Patches\InvincibleTrampolineGirl.asm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="ProjectFiles\Patches\PerfectPlayerFix.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
