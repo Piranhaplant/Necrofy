@@ -19,7 +19,10 @@ namespace Necrofy
         private int uiUpdate;
         private bool colorSelectorFocused = false;
 
-        private Color SelectedColor => colorSelector.SelectionStart >= 0 ? colorSelector.Colors[colorSelector.SelectionStart] : Color.Black;
+        private ColorSelector currentColorSelector;
+        private bool useScratchPadForActions = false;
+
+        private Color SelectedColor => currentColorSelector.SelectionStart >= 0 ? currentColorSelector.Colors[currentColorSelector.SelectionStart] : Color.Black;
 
         public PaletteEditor(LoadedPalette palette) {
             InitializeComponent();
@@ -27,10 +30,15 @@ namespace Necrofy
             Title = palette.paletteName;
             this.palette = palette;
             colorSelector.Colors = palette.colors;
+            currentColorSelector = colorSelector;
 
-            colorSelector.SelectionChanged += ColorSelector_SelectionChanged;
-            colorEditor.ColorChanged += ColorEditor_ColorChanged;
+            scratchPad.Colors = new Color[128];
+            for (int i = 0; i < scratchPad.Colors.Length; i++) {
+                scratchPad.Colors[i] = Color.Black;
+            }
+
             SelectNone();
+            colorSelector.Select();
 
             Status = "Tip: Colors can be copied into an image editor, then pasted back into Necrofy after making changes.";
         }
@@ -38,6 +46,7 @@ namespace Necrofy
         public void UpdateColorSelectorSize() {
             colorSelector.Width = (int)(16 * 16 * Zoom);
             colorSelector.Height = colorSelector.Width / 2;
+            scratchPad.Size = colorSelector.Size;
         }
 
         protected override UndoManager Setup() {
@@ -47,18 +56,18 @@ namespace Necrofy
         }
 
         public override bool HasSelection => true;
-        public override bool CanCopy => colorSelectorFocused && colorSelector.SelectionStart >= 0;
-        public override bool CanPaste => colorSelectorFocused && colorSelector.SelectionStart >= 0;
-        public override bool CanDelete => colorSelectorFocused && colorSelector.SelectionStart >= 0;
+        public override bool CanCopy => colorSelectorFocused && currentColorSelector.SelectionStart >= 0;
+        public override bool CanPaste => colorSelectorFocused && currentColorSelector.SelectionStart >= 0;
+        public override bool CanDelete => colorSelectorFocused && currentColorSelector.SelectionStart >= 0;
 
         public override void SelectAll() {
-            colorSelector.SelectionStart = 0;
-            colorSelector.SelectionEnd = colorSelector.Colors.Length - 1;
+            currentColorSelector.SelectionStart = 0;
+            currentColorSelector.SelectionEnd = currentColorSelector.Colors.Length - 1;
         }
 
         public override void SelectNone() {
-            colorSelector.SelectionStart = 0;
-            colorSelector.SelectionEnd = 0;
+            currentColorSelector.SelectionStart = 0;
+            currentColorSelector.SelectionEnd = 0;
         }
 
         public override bool CanZoom => true;
@@ -77,9 +86,9 @@ namespace Necrofy
         public override void Copy() {
             DataObject clipboardData = new DataObject();
 
-            ushort[] colors = new ushort[colorSelector.SelectionMax - colorSelector.SelectionMin + 1];
+            ushort[] colors = new ushort[currentColorSelector.SelectionMax - currentColorSelector.SelectionMin + 1];
             for (int i = 0; i < colors.Length; i++) {
-                colors[i] = SNESGraphics.RGBToSNES(colorSelector.Colors[colorSelector.SelectionMin + i]);
+                colors[i] = SNESGraphics.RGBToSNES(currentColorSelector.Colors[currentColorSelector.SelectionMin + i]);
             }
             clipboardData.SetText(JsonConvert.SerializeObject(colors));
 
@@ -103,7 +112,7 @@ namespace Necrofy
                     for (int i = 0; i < colors.Length; i++) {
                         colors[i] = SNESGraphics.SNESToRGB(snesColors[i]);
                     }
-                    undoManager.Do(new PasteColorsAction(colors, colorSelector.SelectionMin));
+                    DoAction(new PasteColorsAction(colors, currentColorSelector.SelectionMin));
                 } else if (Clipboard.ContainsImage()) {
                     Image image = Clipboard.GetImage();
                     Color[] colors = new Color[(int)Math.Ceiling(image.Width / (double)ClipboardImageSquareSize)];
@@ -112,17 +121,27 @@ namespace Necrofy
                             colors[i] = bitmap.GetPixel(i * ClipboardImageSquareSize, 0);
                         }
                     }
-                    undoManager.Do(new PasteColorsAction(colors, colorSelector.SelectionMin));
+                    DoAction(new PasteColorsAction(colors, currentColorSelector.SelectionMin));
                 }
             } catch (Exception e) { }
         }
 
         public override void Delete() {
-            undoManager.Do(new ChangeColorAction(Color.Black, colorSelector.SelectionMin, colorSelector.SelectionMax));
+            DoAction(new ChangeColorAction(Color.Black, currentColorSelector.SelectionMin, currentColorSelector.SelectionMax));
+        }
+
+        private void DoAction(UndoAction<PaletteEditor> action) {
+            if (currentColorSelector == colorSelector) {
+                undoManager.Do(action);
+            } else {
+                useScratchPadForActions = true;
+                undoManager.Perform(action);
+                useScratchPadForActions = false;
+            }
         }
 
         private void UpdateSelectedColor() {
-            if (colorSelector.SelectionStart >= 0) {
+            if (currentColorSelector.SelectionStart >= 0) {
                 uiUpdate++;
                 colorEditor.SelectRGB(SelectedColor);
                 uiUpdate--;
@@ -134,41 +153,54 @@ namespace Necrofy
         }
 
         private void ColorSelector_SelectionChanged(object sender, EventArgs e) {
+            if (sender != currentColorSelector) {
+                currentColorSelector.SelectionStart = -1;
+                currentColorSelector.SelectionEnd = -1;
+                currentColorSelector = (ColorSelector)sender;
+            }
             UpdateSelectedColor();
             undoManager?.ForceNoMerge();
         }
 
         private void ColorEditor_ColorChanged(object sender, EventArgs e) {
-            if (colorSelector.SelectionStart >= 0 && uiUpdate == 0) {
+            if (currentColorSelector.SelectionStart >= 0 && uiUpdate == 0) {
                 Color c = NormalizeColor(colorEditor.SelectedColor);
-                undoManager.Do(new ChangeColorAction(c, colorSelector.SelectionMin, colorSelector.SelectionMax));
+                DoAction(new ChangeColorAction(c, currentColorSelector.SelectionMin, currentColorSelector.SelectionMax));
             }
         }
 
+        private ColorSelector GetActionColorSelector() {
+            return useScratchPadForActions ? scratchPad : colorSelector;
+        }
+
         public Color[] GetColors(int start, int end) {
+            ColorSelector cs = GetActionColorSelector();
             Color[] colors = new Color[end - start + 1];
-            for (int i = start; i < start + colors.Length && i < colorSelector.Colors.Length; i++) {
-                colors[i - start] = colorSelector.Colors[i];
+            for (int i = start; i < start + colors.Length && i < cs.Colors.Length; i++) {
+                colors[i - start] = cs.Colors[i];
             }
             return colors;
         }
 
         public void SetColor(Color color, int start, int end) {
+            ColorSelector cs = GetActionColorSelector();
             for (int i = start; i <= end; i++) {
-                colorSelector.Colors[i] = color;
+                cs.Colors[i] = color;
             }
             UpdateColors();
         }
 
         public void SetColors(Color[] colors, int start) {
-            for (int i = start; i < start + colors.Length && i < colorSelector.Colors.Length; i++) {
-                colorSelector.Colors[i] = colors[i - start];
+            ColorSelector cs = GetActionColorSelector();
+            for (int i = start; i < start + colors.Length && i < cs.Colors.Length; i++) {
+                cs.Colors[i] = colors[i - start];
             }
             UpdateColors();
         }
 
         private void UpdateColors() {
             colorSelector.Repaint();
+            scratchPad.Repaint();
             if (SelectedColor != NormalizeColor(colorEditor.SelectedColor)) {
                 UpdateSelectedColor();
             }
@@ -180,8 +212,18 @@ namespace Necrofy
         }
 
         private void colorSelector_Leave(object sender, EventArgs e) {
-            colorSelectorFocused = false;
+            colorSelectorFocused = ActiveControl is ColorSelector;
             RaiseSelectionChanged();
+        }
+
+        private void lblScratchPad_Click(object sender, EventArgs e) {
+            if (scratchPad.Visible) {
+                scratchPad.Visible = false;
+                lblScratchPad.Text = "▼ Scratch Pad";
+            } else {
+                scratchPad.Visible = true;
+                lblScratchPad.Text = "▲ Scratch Pad";
+            }
         }
     }
 }
