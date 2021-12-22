@@ -63,8 +63,6 @@
             this.colorSelector.Location = new System.Drawing.Point(0, 21);
             this.colorSelector.MultiSelect = false;
             this.colorSelector.Name = "colorSelector";
-            this.colorSelector.SelectionEnd = -1;
-            this.colorSelector.SelectionStart = -1;
             this.colorSelector.Size = new System.Drawing.Size(256, 429);
             this.colorSelector.TabIndex = 3;
             this.colorSelector.SelectionChanged += new System.EventHandler(this.colorSelector_SelectionChanged);

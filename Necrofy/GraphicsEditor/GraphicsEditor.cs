@@ -94,7 +94,7 @@ namespace Necrofy
             graphics.Save(project, tiles);
         }
         
-        public int SelectedColor => colorSelector.SelectionStart;
+        public int SelectedColor => colorSelector.SelectionStart.X;
 
         private void UpdateSize(int newTileWidth) {
             int minWidth = 2;
@@ -124,7 +124,7 @@ namespace Necrofy
         }
         
         public void SetSelectedColor(byte color) {
-            colorSelector.SelectionStart = selectedPalette * 16 + color;
+            colorSelector.SelectionStart = new Point(color, selectedPalette);
         }
         
         public int GetPixelTileNum(int x, int y) {
@@ -277,16 +277,16 @@ namespace Necrofy
                 }
             }
             colorSelector.Colors = Colors;
-            if (colorSelector.SelectionStart < 0) {
-                colorSelector.SelectionStart = 0;
+            if (!colorSelector.SelectionExists) {
+                colorSelector.SelectionStart = Point.Empty;
             } else {
                 Repaint();
             }
         }
 
         private void colorSelector_SelectionChanged(object sender, EventArgs e) {
-            if (colorSelector.SelectionStart >= 0) {
-                selectedPalette = colorSelector.SelectionStart / 16;
+            if (colorSelector.SelectionExists) {
+                selectedPalette = colorSelector.SelectionStart.Y;
                 Repaint();
             }
         }

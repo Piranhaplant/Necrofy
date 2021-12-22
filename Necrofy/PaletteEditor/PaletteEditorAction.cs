@@ -13,12 +13,12 @@ namespace Necrofy
 
     class ChangeColorAction : PaletteEditorAction
     {
-        private readonly int start;
-        private readonly int end;
-        private Color[] oldColors;
+        private readonly Point start;
+        private readonly Point end;
+        private Color[,] oldColors;
         private Color newColor;
 
-        public ChangeColorAction(Color newColor, int start, int end) {
+        public ChangeColorAction(Color newColor, Point start, Point end) {
             this.newColor = newColor;
             this.start = start;
             this.end = end;
@@ -54,18 +54,18 @@ namespace Necrofy
 
     class PasteColorsAction : PaletteEditorAction
     {
-        private readonly int start;
-        private Color[] oldColors;
-        private Color[] newColors;
+        private readonly Point start;
+        private Color[,] oldColors;
+        private Color[,] newColors;
 
-        public PasteColorsAction(Color[] newColors, int start) {
+        public PasteColorsAction(Color[,] newColors, Point start) {
             this.newColors = newColors;
             this.start = start;
         }
 
         public override void SetEditor(PaletteEditor editor) {
             base.SetEditor(editor);
-            oldColors = editor.GetColors(start, start + newColors.Length - 1);
+            oldColors = editor.GetColors(start, new Point(start.X + newColors.GetWidth() - 1, start.Y + newColors.GetHeight() - 1));
         }
 
         protected override void Undo() {

@@ -28,7 +28,7 @@ namespace Necrofy
                     selecting = true;
                     MouseMove(e);
                 } else {
-                    editor.undoManager.Do(new BucketFillGraphicsAction(e.X, e.Y, (byte)(editor.SelectedColor % 16)));
+                    editor.undoManager.Do(new BucketFillGraphicsAction(e.X, e.Y, (byte)editor.SelectedColor));
                 }
             }
 

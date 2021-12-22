@@ -50,8 +50,6 @@
             this.colorSelector.Location = new System.Drawing.Point(3, 3);
             this.colorSelector.MultiSelect = true;
             this.colorSelector.Name = "colorSelector";
-            this.colorSelector.SelectionEnd = -1;
-            this.colorSelector.SelectionStart = -1;
             this.colorSelector.Size = new System.Drawing.Size(329, 175);
             this.colorSelector.TabIndex = 1;
             this.colorSelector.SelectionChanged += new System.EventHandler(this.ColorSelector_SelectionChanged);
@@ -101,8 +99,6 @@
             this.scratchPad.Location = new System.Drawing.Point(3, 197);
             this.scratchPad.MultiSelect = true;
             this.scratchPad.Name = "scratchPad";
-            this.scratchPad.SelectionEnd = -1;
-            this.scratchPad.SelectionStart = -1;
             this.scratchPad.Size = new System.Drawing.Size(329, 175);
             this.scratchPad.TabIndex = 3;
             this.scratchPad.Visible = false;

@@ -29,8 +29,8 @@ namespace Necrofy
 
         private bool selecting = false;
 
-        private int selectionStart = -1;
-        public int SelectionStart {
+        private Point selectionStart = new Point(-1, -1);
+        public Point SelectionStart {
             get {
                 return selectionStart;
             }
@@ -44,8 +44,8 @@ namespace Necrofy
             }
         }
 
-        private int selectionEnd = -1;
-        public int SelectionEnd {
+        private Point selectionEnd = new Point(-1, -1);
+        public Point SelectionEnd {
             get {
                 return selectionEnd;
             }
@@ -61,8 +61,10 @@ namespace Necrofy
 
         public bool MultiSelect { get; set; } = true;
 
-        public int SelectionMin => Math.Min(SelectionStart, SelectionEnd);
-        public int SelectionMax => Math.Max(SelectionStart, SelectionEnd);
+        public bool SelectionExists => SelectionStart.X >= 0;
+        public int SelectionStartIndex => PointToIndex(SelectionStart);
+        public Point SelectionMin => new Point(Math.Min(SelectionStart.X, SelectionEnd.X), Math.Min(SelectionStart.Y, SelectionEnd.Y));
+        public Point SelectionMax => new Point(Math.Max(SelectionStart.X, SelectionEnd.X), Math.Max(SelectionStart.Y, SelectionEnd.Y));
 
         public event EventHandler SelectionChanged;
 
@@ -73,6 +75,16 @@ namespace Necrofy
         public void Repaint() {
             canvas.Invalidate();
         }
+
+        public void SelectAll() {
+            SelectionStart = IndexToPoint(0);
+            SelectionEnd = IndexToPoint(colors.Length - 1);
+        }
+
+        public void SelectNone() {
+            SelectionStart = new Point(-1, -1);
+            SelectionEnd = new Point(-1, -1);
+        }
         
         private void canvas_SizeChanged(object sender, EventArgs e) {
             squareSize = Width / (float)SquaresPerRow;
@@ -81,8 +93,6 @@ namespace Necrofy
 
         private void canvas_Paint(object sender, PaintEventArgs e) {
             if (colors != null) {
-                int selectionMin = SelectionMin;
-                int selectionMax = SelectionMax;
                 for (int i = 0; i < colors.Length; i++) {
                     RectangleF rect = new RectangleF(squareSize * (i % SquaresPerRow), squareSize * (i / SquaresPerRow), squareSize, squareSize);
                     if (colors[i].A < 255) {
@@ -93,35 +103,53 @@ namespace Necrofy
                     using (Brush b = new SolidBrush(colors[i])) {
                         e.Graphics.FillRectangle(b, rect);
                     }
-                    if (i >= selectionMin && i <= selectionMax) {
-                        e.Graphics.DrawRectangle(Pens.Black, rect.X, rect.Y, rect.Width - 1, rect.Height - 1);
-                        e.Graphics.DrawRectangle(Pens.White, rect.X + 1, rect.Y + 1, rect.Width - 3, rect.Height - 3);
-                    }
+                }
+                if (SelectionExists) {
+                    Point selectionMin = SelectionMin;
+                    Point selectionMax = SelectionMax;
+                    RectangleF selectionRect = new RectangleF(selectionMin.X * squareSize, selectionMin.Y * squareSize,
+                        (selectionMax.X - selectionMin.X + 1) * squareSize, (selectionMax.Y - selectionMin.Y + 1) * squareSize);
+                    e.Graphics.DrawRectangle(Pens.Black, selectionRect.X, selectionRect.Y, selectionRect.Width - 1, selectionRect.Height - 1);
+                    e.Graphics.DrawRectangle(Pens.White, selectionRect.X + 1, selectionRect.Y + 1, selectionRect.Width - 3, selectionRect.Height - 3);
                 }
             }
         }
 
-        private int GetColorIndex(int x, int y) {
-            return (int)(Math.Max(-1, Math.Min(SquaresPerRow - 1, Math.Floor(x / squareSize))) + SquaresPerRow * Math.Floor(y / squareSize));
+        public Point IndexToPoint(int i) {
+            return new Point(i % SquaresPerRow, i / SquaresPerRow);
+        }
+
+        public int PointToIndex(Point p) {
+            return p.Y * SquaresPerRow + p.X;
+        }
+
+        private Point MouseToPoint(int x, int y) {
+            return new Point((int)Math.Floor(x / squareSize), (int)Math.Floor(y / squareSize));
+        }
+
+        private Point ClampPoint(Point p) {
+            return new Point(Math.Max(0, Math.Min(SquaresPerRow - 1, p.X)),
+                Math.Max(0, Math.Min(colors.Length / SquaresPerRow - 1, p.Y)));
         }
 
         private void canvas_MouseDown(object sender, MouseEventArgs e) {
-            int index = GetColorIndex(e.X, e.Y);
-            if (colors != null && index < colors.Length) {
+            Point p = MouseToPoint(e.X, e.Y);
+            Point clamped = ClampPoint(p);
+            if (colors != null && clamped == p) {
                 if (MultiSelect) {
                     selecting = true;
                 }
-                SelectionStart = index;
-                SelectionEnd = index;
+                SelectionStart = clamped;
+                SelectionEnd = clamped;
                 Repaint();
             }
         }
 
         private void canvas_MouseMove(object sender, MouseEventArgs e) {
             if (selecting) {
-                int index = Math.Max(0, Math.Min(colors.Length - 1, GetColorIndex(e.X, e.Y)));
-                if (index != SelectionEnd) {
-                    SelectionEnd = index;
+                Point p = ClampPoint(MouseToPoint(e.X, e.Y));
+                if (p != SelectionEnd) {
+                    SelectionEnd = p;
                     Repaint();
                 }
             }

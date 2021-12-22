@@ -26,7 +26,7 @@ namespace Necrofy
             }
 
             protected override void DrawLine(int x1, int y1, int x2, int y2) {
-                editor.undoManager.Do(new PaintGraphicsAction(x1, y1, x2, y2, (byte)(editor.SelectedColor % 16)));
+                editor.undoManager.Do(new PaintGraphicsAction(x1, y1, x2, y2, (byte)editor.SelectedColor));
             }
 
             protected override void SelectTile(int x, int y) {

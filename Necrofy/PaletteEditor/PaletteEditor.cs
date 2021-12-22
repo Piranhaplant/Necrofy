@@ -22,7 +22,7 @@ namespace Necrofy
         private ColorSelector currentColorSelector;
         private bool useScratchPadForActions = false;
 
-        private Color SelectedColor => currentColorSelector.SelectionStart >= 0 ? currentColorSelector.Colors[currentColorSelector.SelectionStart] : Color.Black;
+        private Color SelectedColor => currentColorSelector.SelectionExists ? currentColorSelector.Colors[currentColorSelector.SelectionStartIndex] : Color.Black;
 
         public PaletteEditor(LoadedPalette palette) {
             InitializeComponent();
@@ -56,18 +56,17 @@ namespace Necrofy
         }
 
         public override bool HasSelection => true;
-        public override bool CanCopy => colorSelectorFocused && currentColorSelector.SelectionStart >= 0;
-        public override bool CanPaste => colorSelectorFocused && currentColorSelector.SelectionStart >= 0;
-        public override bool CanDelete => colorSelectorFocused && currentColorSelector.SelectionStart >= 0;
+        public override bool CanCopy => colorSelectorFocused && currentColorSelector.SelectionExists;
+        public override bool CanPaste => colorSelectorFocused && currentColorSelector.SelectionExists;
+        public override bool CanDelete => colorSelectorFocused && currentColorSelector.SelectionExists;
 
         public override void SelectAll() {
-            currentColorSelector.SelectionStart = 0;
-            currentColorSelector.SelectionEnd = currentColorSelector.Colors.Length - 1;
+            currentColorSelector.SelectAll();
         }
 
         public override void SelectNone() {
-            currentColorSelector.SelectionStart = 0;
-            currentColorSelector.SelectionEnd = 0;
+            currentColorSelector.SelectionStart = Point.Empty;
+            currentColorSelector.SelectionEnd = Point.Empty;
         }
 
         public override bool CanZoom => true;
@@ -86,17 +85,23 @@ namespace Necrofy
         public override void Copy() {
             DataObject clipboardData = new DataObject();
 
-            ushort[] colors = new ushort[currentColorSelector.SelectionMax - currentColorSelector.SelectionMin + 1];
-            for (int i = 0; i < colors.Length; i++) {
-                colors[i] = SNESGraphics.RGBToSNES(currentColorSelector.Colors[currentColorSelector.SelectionMin + i]);
+            Point selectionMin = currentColorSelector.SelectionMin;
+            Point selectionMax = currentColorSelector.SelectionMax;
+            ushort[,] colors = new ushort[selectionMax.X - selectionMin.X + 1, selectionMax.Y - selectionMin.Y + 1];
+            for (int y = selectionMin.Y; y <= selectionMax.Y; y++) {
+                for (int x = selectionMin.X; x <= selectionMax.X; x++) {
+                    colors[x - selectionMin.X, y - selectionMin.Y] = SNESGraphics.RGBToSNES(currentColorSelector.Colors[currentColorSelector.PointToIndex(new Point(x, y))]);
+                }
             }
             clipboardData.SetText(JsonConvert.SerializeObject(colors));
 
-            using (Bitmap image = new Bitmap(colors.Length * ClipboardImageSquareSize, ClipboardImageSquareSize))
+            using (Bitmap image = new Bitmap(colors.GetWidth() * ClipboardImageSquareSize, colors.GetHeight() * ClipboardImageSquareSize))
             using (Graphics g = Graphics.FromImage(image)) {
-                for (int i = 0; i < colors.Length; i++) {
-                    using (Brush b = new SolidBrush(SNESGraphics.SNESToRGB(colors[i]))) {
-                        g.FillRectangle(b, ClipboardImageSquareSize * i, 0, ClipboardImageSquareSize, ClipboardImageSquareSize);
+                for (int y = 0; y < colors.GetHeight(); y++) {
+                    for (int x = 0; x < colors.GetWidth(); x++) {
+                        using (Brush b = new SolidBrush(SNESGraphics.SNESToRGB(colors[x, y]))) {
+                            g.FillRectangle(b, x * ClipboardImageSquareSize, y * ClipboardImageSquareSize, ClipboardImageSquareSize, ClipboardImageSquareSize);
+                        }
                     }
                 }
                 clipboardData.SetImage(image);
@@ -107,23 +112,30 @@ namespace Necrofy
         public override void Paste() {
             try {
                 if (Clipboard.ContainsText()) {
-                    ushort[] snesColors = JsonConvert.DeserializeObject<ushort[]>(Clipboard.GetText());
-                    Color[] colors = new Color[snesColors.Length];
-                    for (int i = 0; i < colors.Length; i++) {
-                        colors[i] = SNESGraphics.SNESToRGB(snesColors[i]);
+                    ushort[,] snesColors = JsonConvert.DeserializeObject<ushort[,]>(Clipboard.GetText());
+                    Color[,] colors = new Color[snesColors.GetWidth(), snesColors.GetHeight()];
+                    for (int y = 0; y < colors.GetHeight(); y++) {
+                        for (int x = 0; x < colors.GetWidth(); x++) {
+                            colors[x, y] = SNESGraphics.SNESToRGB(snesColors[x, y]);
+                        }
                     }
                     DoAction(new PasteColorsAction(colors, currentColorSelector.SelectionMin));
                 } else if (Clipboard.ContainsImage()) {
                     Image image = Clipboard.GetImage();
-                    Color[] colors = new Color[(int)Math.Ceiling(image.Width / (double)ClipboardImageSquareSize)];
+                    Color[,] colors = new Color[(int)Math.Ceiling(image.Width / (double)ClipboardImageSquareSize),
+                        (int)Math.Ceiling(image.Height / (double)ClipboardImageSquareSize)];
                     using (Bitmap bitmap = new Bitmap(image)) {
-                        for (int i = 0; i < colors.Length; i++) {
-                            colors[i] = bitmap.GetPixel(i * ClipboardImageSquareSize, 0);
+                        for (int y = 0; y < colors.GetHeight(); y++) {
+                            for (int x = 0; x < colors.GetWidth(); x++) {
+                                colors[x, y] = NormalizeColor(bitmap.GetPixel(x * ClipboardImageSquareSize, y * ClipboardImageSquareSize));
+                            }
                         }
                     }
                     DoAction(new PasteColorsAction(colors, currentColorSelector.SelectionMin));
                 }
-            } catch (Exception e) { }
+            } catch (Exception e) {
+                Console.WriteLine(e.StackTrace);
+            }
         }
 
         public override void Delete() {
@@ -141,7 +153,7 @@ namespace Necrofy
         }
 
         private void UpdateSelectedColor() {
-            if (currentColorSelector.SelectionStart >= 0) {
+            if (currentColorSelector.SelectionExists) {
                 uiUpdate++;
                 colorEditor.SelectRGB(SelectedColor);
                 uiUpdate--;
@@ -154,16 +166,16 @@ namespace Necrofy
 
         private void ColorSelector_SelectionChanged(object sender, EventArgs e) {
             if (sender != currentColorSelector) {
-                currentColorSelector.SelectionStart = -1;
-                currentColorSelector.SelectionEnd = -1;
+                currentColorSelector.SelectNone();
                 currentColorSelector = (ColorSelector)sender;
             }
             UpdateSelectedColor();
             undoManager?.ForceNoMerge();
+            RaiseSelectionChanged();
         }
 
         private void ColorEditor_ColorChanged(object sender, EventArgs e) {
-            if (currentColorSelector.SelectionStart >= 0 && uiUpdate == 0) {
+            if (currentColorSelector.SelectionExists && uiUpdate == 0) {
                 Color c = NormalizeColor(colorEditor.SelectedColor);
                 DoAction(new ChangeColorAction(c, currentColorSelector.SelectionMin, currentColorSelector.SelectionMax));
             }
@@ -173,27 +185,39 @@ namespace Necrofy
             return useScratchPadForActions ? scratchPad : colorSelector;
         }
 
-        public Color[] GetColors(int start, int end) {
+        public Color[,] GetColors(Point start, Point end) {
             ColorSelector cs = GetActionColorSelector();
-            Color[] colors = new Color[end - start + 1];
-            for (int i = start; i < start + colors.Length && i < cs.Colors.Length; i++) {
-                colors[i - start] = cs.Colors[i];
+            Color[,] colors = new Color[end.X - start.X + 1, end.Y - start.Y + 1];
+            for (int y = start.Y; y <= end.Y;  y++) {
+                for (int x = start.X; x <= end.X; x++) {
+                    int index = cs.PointToIndex(new Point(x, y));
+                    if (index < cs.Colors.Length) {
+                        colors[x - start.X, y - start.Y] = cs.Colors[index];
+                    }
+                }
             }
             return colors;
         }
 
-        public void SetColor(Color color, int start, int end) {
+        public void SetColor(Color color, Point start, Point end) {
             ColorSelector cs = GetActionColorSelector();
-            for (int i = start; i <= end; i++) {
-                cs.Colors[i] = color;
+            for (int y = start.Y; y <= end.Y; y++) {
+                for (int x = start.X; x <= end.X; x++) {
+                    cs.Colors[cs.PointToIndex(new Point(x, y))] = color;
+                }
             }
             UpdateColors();
         }
 
-        public void SetColors(Color[] colors, int start) {
+        public void SetColors(Color[,] colors, Point start) {
             ColorSelector cs = GetActionColorSelector();
-            for (int i = start; i < start + colors.Length && i < cs.Colors.Length; i++) {
-                cs.Colors[i] = colors[i - start];
+            for (int y = 0; y < colors.GetHeight(); y++) {
+                for (int x = 0; x < colors.GetWidth(); x++) {
+                    int index = cs.PointToIndex(new Point(x + start.X, y + start.Y));
+                    if (index < cs.Colors.Length) {
+                        cs.Colors[index] = colors[x, y];
+                    }
+                }
             }
             UpdateColors();
         }
