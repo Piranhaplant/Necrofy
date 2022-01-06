@@ -27,14 +27,6 @@ namespace Necrofy
             redoActions.Clear();
         }
 
-        public void Perform(UndoAction<T> action) {
-            action.SetEditor(editor);
-            if (!action.cancel) {
-                action.DoRedo();
-            }
-            action.Dispose();
-        }
-
         public void Do(UndoAction<T> action) {
             action.SetEditor(editor);
             if (action.cancel) {

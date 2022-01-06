@@ -18,11 +18,8 @@ namespace Necrofy
 
         private int uiUpdate;
         private bool colorSelectorFocused = false;
-
-        private ColorSelector currentColorSelector;
-        private bool useScratchPadForActions = false;
-
-        private Color SelectedColor => currentColorSelector.SelectionExists ? currentColorSelector.Colors[currentColorSelector.SelectionStartIndex] : Color.Black;
+        
+        private Color SelectedColor => colorSelector.SelectionExists ? colorSelector.Colors[colorSelector.SelectionStartIndex] : Color.Black;
 
         public PaletteEditor(LoadedPalette palette) {
             InitializeComponent();
@@ -30,15 +27,10 @@ namespace Necrofy
             Title = palette.paletteName;
             this.palette = palette;
             colorSelector.Colors = palette.colors;
-            currentColorSelector = colorSelector;
 
-            scratchPad.Colors = new Color[128];
-            for (int i = 0; i < scratchPad.Colors.Length; i++) {
-                scratchPad.Colors[i] = Color.Black;
-            }
-
+            colorSelector.SelectionChanged += ColorSelector_SelectionChanged;
+            colorEditor.ColorChanged += ColorEditor_ColorChanged;
             SelectNone();
-            colorSelector.Select();
 
             Status = "Tip: Colors can be copied into an image editor, then pasted back into Necrofy after making changes.";
         }
@@ -46,7 +38,6 @@ namespace Necrofy
         public void UpdateColorSelectorSize() {
             colorSelector.Width = (int)(16 * 16 * Zoom);
             colorSelector.Height = colorSelector.Width / 2;
-            scratchPad.Size = colorSelector.Size;
         }
 
         protected override UndoManager Setup() {
@@ -56,17 +47,17 @@ namespace Necrofy
         }
 
         public override bool HasSelection => true;
-        public override bool CanCopy => colorSelectorFocused && currentColorSelector.SelectionExists;
-        public override bool CanPaste => colorSelectorFocused && currentColorSelector.SelectionExists;
-        public override bool CanDelete => colorSelectorFocused && currentColorSelector.SelectionExists;
+        public override bool CanCopy => colorSelectorFocused && colorSelector.SelectionExists;
+        public override bool CanPaste => colorSelectorFocused && colorSelector.SelectionExists;
+        public override bool CanDelete => colorSelectorFocused && colorSelector.SelectionExists;
 
         public override void SelectAll() {
-            currentColorSelector.SelectAll();
+            colorSelector.SelectAll();
         }
 
         public override void SelectNone() {
-            currentColorSelector.SelectionStart = Point.Empty;
-            currentColorSelector.SelectionEnd = Point.Empty;
+            colorSelector.SelectionStart = Point.Empty;
+            colorSelector.SelectionEnd = Point.Empty;
         }
 
         public override bool CanZoom => true;
@@ -84,13 +75,13 @@ namespace Necrofy
 
         public override void Copy() {
             DataObject clipboardData = new DataObject();
-
-            Point selectionMin = currentColorSelector.SelectionMin;
-            Point selectionMax = currentColorSelector.SelectionMax;
+            
+            Point selectionMin = colorSelector.SelectionMin;
+            Point selectionMax = colorSelector.SelectionMax;
             ushort[,] colors = new ushort[selectionMax.X - selectionMin.X + 1, selectionMax.Y - selectionMin.Y + 1];
             for (int y = selectionMin.Y; y <= selectionMax.Y; y++) {
                 for (int x = selectionMin.X; x <= selectionMax.X; x++) {
-                    colors[x - selectionMin.X, y - selectionMin.Y] = SNESGraphics.RGBToSNES(currentColorSelector.Colors[currentColorSelector.PointToIndex(new Point(x, y))]);
+                    colors[x - selectionMin.X, y - selectionMin.Y] = SNESGraphics.RGBToSNES(colorSelector.Colors[colorSelector.PointToIndex(new Point(x, y))]);
                 }
             }
             clipboardData.SetText(JsonConvert.SerializeObject(colors));
@@ -119,7 +110,7 @@ namespace Necrofy
                             colors[x, y] = SNESGraphics.SNESToRGB(snesColors[x, y]);
                         }
                     }
-                    DoAction(new PasteColorsAction(colors, currentColorSelector.SelectionMin));
+                    undoManager.Do(new PasteColorsAction(colors, colorSelector.SelectionMin));
                 } else if (Clipboard.ContainsImage()) {
                     Image image = Clipboard.GetImage();
                     Color[,] colors = new Color[(int)Math.Ceiling(image.Width / (double)ClipboardImageSquareSize),
@@ -131,7 +122,7 @@ namespace Necrofy
                             }
                         }
                     }
-                    DoAction(new PasteColorsAction(colors, currentColorSelector.SelectionMin));
+                    undoManager.Do(new PasteColorsAction(colors, colorSelector.SelectionMin));
                 }
             } catch (Exception e) {
                 Console.WriteLine(e.StackTrace);
@@ -139,21 +130,11 @@ namespace Necrofy
         }
 
         public override void Delete() {
-            DoAction(new ChangeColorAction(Color.Black, currentColorSelector.SelectionMin, currentColorSelector.SelectionMax));
-        }
-
-        private void DoAction(UndoAction<PaletteEditor> action) {
-            if (currentColorSelector == colorSelector) {
-                undoManager.Do(action);
-            } else {
-                useScratchPadForActions = true;
-                undoManager.Perform(action);
-                useScratchPadForActions = false;
-            }
+            undoManager.Do(new ChangeColorAction(Color.Black, colorSelector.SelectionMin, colorSelector.SelectionMax));
         }
 
         private void UpdateSelectedColor() {
-            if (currentColorSelector.SelectionExists) {
+            if (colorSelector.SelectionExists) {
                 uiUpdate++;
                 colorEditor.SelectRGB(SelectedColor);
                 uiUpdate--;
@@ -165,57 +146,46 @@ namespace Necrofy
         }
 
         private void ColorSelector_SelectionChanged(object sender, EventArgs e) {
-            if (sender != currentColorSelector) {
-                currentColorSelector.SelectNone();
-                currentColorSelector = (ColorSelector)sender;
-            }
             UpdateSelectedColor();
             undoManager?.ForceNoMerge();
             RaiseSelectionChanged();
         }
 
         private void ColorEditor_ColorChanged(object sender, EventArgs e) {
-            if (currentColorSelector.SelectionExists && uiUpdate == 0) {
+            if (colorSelector.SelectionExists && uiUpdate == 0) {
                 Color c = NormalizeColor(colorEditor.SelectedColor);
-                DoAction(new ChangeColorAction(c, currentColorSelector.SelectionMin, currentColorSelector.SelectionMax));
+                undoManager.Do(new ChangeColorAction(c, colorSelector.SelectionMin, colorSelector.SelectionMax));
             }
         }
-
-        private ColorSelector GetActionColorSelector() {
-            return useScratchPadForActions ? scratchPad : colorSelector;
-        }
-
+        
         public Color[,] GetColors(Point start, Point end) {
-            ColorSelector cs = GetActionColorSelector();
             Color[,] colors = new Color[end.X - start.X + 1, end.Y - start.Y + 1];
             for (int y = start.Y; y <= end.Y;  y++) {
                 for (int x = start.X; x <= end.X; x++) {
-                    int index = cs.PointToIndex(new Point(x, y));
-                    if (index < cs.Colors.Length) {
-                        colors[x - start.X, y - start.Y] = cs.Colors[index];
+                    int index = colorSelector.PointToIndex(new Point(x, y));
+                    if (index < colorSelector.Colors.Length) {
+                        colors[x - start.X, y - start.Y] = colorSelector.Colors[index];
                     }
                 }
             }
             return colors;
         }
-
+        
         public void SetColor(Color color, Point start, Point end) {
-            ColorSelector cs = GetActionColorSelector();
             for (int y = start.Y; y <= end.Y; y++) {
                 for (int x = start.X; x <= end.X; x++) {
-                    cs.Colors[cs.PointToIndex(new Point(x, y))] = color;
+                    colorSelector.Colors[colorSelector.PointToIndex(new Point(x, y))] = color;
                 }
             }
             UpdateColors();
         }
-
+        
         public void SetColors(Color[,] colors, Point start) {
-            ColorSelector cs = GetActionColorSelector();
             for (int y = 0; y < colors.GetHeight(); y++) {
                 for (int x = 0; x < colors.GetWidth(); x++) {
-                    int index = cs.PointToIndex(new Point(x + start.X, y + start.Y));
-                    if (index < cs.Colors.Length) {
-                        cs.Colors[index] = colors[x, y];
+                    int index = colorSelector.PointToIndex(new Point(x + start.X, y + start.Y));
+                    if (index < colorSelector.Colors.Length) {
+                        colorSelector.Colors[index] = colors[x, y];
                     }
                 }
             }
@@ -224,7 +194,6 @@ namespace Necrofy
 
         private void UpdateColors() {
             colorSelector.Repaint();
-            scratchPad.Repaint();
             if (SelectedColor != NormalizeColor(colorEditor.SelectedColor)) {
                 UpdateSelectedColor();
             }
@@ -236,18 +205,8 @@ namespace Necrofy
         }
 
         private void colorSelector_Leave(object sender, EventArgs e) {
-            colorSelectorFocused = ActiveControl is ColorSelector;
+            colorSelectorFocused = false;
             RaiseSelectionChanged();
-        }
-
-        private void lblScratchPad_Click(object sender, EventArgs e) {
-            if (scratchPad.Visible) {
-                scratchPad.Visible = false;
-                lblScratchPad.Text = "▼ Scratch Pad";
-            } else {
-                scratchPad.Visible = true;
-                lblScratchPad.Text = "▲ Scratch Pad";
-            }
         }
     }
 }
