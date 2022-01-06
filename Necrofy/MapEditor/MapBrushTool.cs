@@ -19,6 +19,7 @@ namespace Necrofy
 
         public override void MouseDown(MapMouseEventArgs e) {
             if (Control.ModifierKeys == Keys.Shift && prevX != int.MinValue) {
+                selecting = false;
                 DrawLine(prevX, prevY, e.TileX, e.TileY);
                 prevX = e.TileX;
                 prevY = e.TileY;
@@ -43,7 +44,7 @@ namespace Necrofy
                 prevY = e.TileY;
             }
         }
-
+        
         protected abstract void SelectTile(int x, int y);
         protected abstract void DrawLine(int x1, int y1, int x2, int y2);
     }
