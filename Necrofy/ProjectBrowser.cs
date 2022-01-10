@@ -96,7 +96,11 @@ namespace Necrofy
             TreeNode child = parent.Add(entry.Asset.DisplayName);
             child.Name = child.Text;
             SetImage(child, entry.Asset.Category);
-            child.ForeColor = entry.Asset.Editable ? SystemColors.ControlText : SystemColors.GrayText;
+            if (!entry.Asset.Editable) {
+                child.ForeColor = SystemColors.GrayText;
+            } else if (entry.Asset.Parts.skipped) {
+                child.ForeColor = SystemColors.Highlight;
+            }
             child.Tag = entry;
         }
 

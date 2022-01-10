@@ -11,15 +11,13 @@ namespace Necrofy
     {
         private const AssetCategory AssetCat = AssetCategory.Editor;
         
-        private readonly EditorNameInfo nameInfo;
         public readonly T data;
         
         public static EditorAsset<T> FromProject(Project project, string name) {
             return new EditorCreator().FromProject(project, name);
         }
 
-        private EditorAsset(EditorNameInfo nameInfo, T data) {
-            this.nameInfo = nameInfo;
+        private EditorAsset(EditorNameInfo nameInfo, T data) : base(nameInfo) {
             this.data = data;
         }
 
@@ -56,19 +54,10 @@ namespace Necrofy
         {
             private const string Folder = "Editor";
             private const string Extension = "json";
-
-            public readonly string name;
-
-            public EditorNameInfo(string name) : base(name) {
-                this.name = name;
-            }
-
-            public override string DisplayName => name;
+            
+            public EditorNameInfo(string name) : base(new PathParts(Folder, name, Extension, null, false)) { }
+            
             public override AssetCategory Category => AssetCat;
-
-            protected override PathParts GetPathParts() {
-                return new PathParts(Folder, name, Extension, null, false);
-            }
         }
     }
 }

@@ -15,15 +15,13 @@ namespace Necrofy
             AddCreator(new SpritesCreator());
         }
 
-        private readonly SpritesNameInfo nameInfo;
         public readonly Sprite[] sprites;
 
         public static SpritesAsset FromProject(Project project, string folder) {
             return new SpritesCreator().FromProject(project, folder);
         }
 
-        private SpritesAsset(SpritesNameInfo nameInfo, Sprite[] sprites) {
-            this.nameInfo = nameInfo;
+        private SpritesAsset(SpritesNameInfo nameInfo, Sprite[] sprites) : base(nameInfo) {
             this.sprites = sprites;
         }
 
@@ -75,30 +73,23 @@ namespace Necrofy
         {
             private const string FileName = "Sprites";
             private const string Extension = "spr";
-
-            public readonly string folder;
-
-            public SpritesNameInfo(string folder) : base(folder, FileName) {
-                this.folder = folder;
-            }
-
-            public override string DisplayName => FileName;
+            
+            private SpritesNameInfo(PathParts parts) : base(parts) { }
+            public SpritesNameInfo(string folder) : this(new PathParts(folder, FileName, Extension, null, false)) { }
+            
             public override AssetCategory Category => AssetCat;
-
-            protected override PathParts GetPathParts() {
-                return new PathParts(folder, FileName, Extension, null, false);
-            }
-
+            
             public override bool Editable => true;
             public override EditorWindow GetEditor(Project project) {
-                return new SpriteEditor(new LoadedSprites(project, folder));
+                return new SpriteEditor(new LoadedSprites(project, Parts.folder));
             }
 
             public static SpritesNameInfo FromPath(PathParts parts) {
                 if (parts.name != FileName) return null;
                 if (parts.fileExtension != Extension) return null;
                 if (parts.pointer != null) return null;
-                return new SpritesNameInfo(parts.folder);
+                if (parts.compressed) return null;
+                return new SpritesNameInfo(parts);
             }
         }
     }

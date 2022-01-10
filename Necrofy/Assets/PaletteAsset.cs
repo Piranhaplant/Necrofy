@@ -21,7 +21,6 @@ namespace Necrofy
             return GetAssetName(romStream, romInfo, new PaletteCreator(), AssetCat, pointer, tileset);
         }
 
-        private readonly PaletteNameInfo nameInfo;
         public readonly byte[] data;
 
         public static PaletteAsset FromProject(Project project, string fullName) {
@@ -29,8 +28,7 @@ namespace Necrofy
             return new PaletteCreator().FromProject(project, parsedName.Folder, parsedName.FinalName);
         }
         
-        private PaletteAsset(PaletteNameInfo nameInfo, byte[] data) {
-            this.nameInfo = nameInfo;
+        private PaletteAsset(PaletteNameInfo nameInfo, byte[] data) : base(nameInfo) {
             this.data = data;
         }
 
@@ -39,13 +37,13 @@ namespace Necrofy
         }
 
         public override void ReserveSpace(Freespace freespace) {
-            if (nameInfo.pointer != null) {
-                freespace.Reserve((int)nameInfo.pointer, data.Length);
+            if (nameInfo.Parts.pointer != null) {
+                freespace.Reserve((int)nameInfo.Parts.pointer, data.Length);
             }
         }
 
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
-            InsertByteArray(rom, romInfo, data, nameInfo.pointer);
+            InsertByteArray(rom, romInfo, data, nameInfo.Parts.pointer);
         }
 
         protected override AssetCategory Category => nameInfo.Category;
@@ -98,13 +96,21 @@ namespace Necrofy
                     new DefaultParams(0xf2076, new PaletteNameInfo(GetTilesetFolder(Office), "Light")),
                     new DefaultParams(0xf2176, new PaletteNameInfo(GetTilesetFolder(Office), "Dark")),
                     new DefaultParams(0xf2276, new PaletteNameInfo(GetTilesetFolder(Office), "Fire Cave")),
+
+                    new DefaultParams(0, new PaletteNameInfo(ScratchPadFolder, DefaultName, skipped: true), extractFromNecrofyROM: true, versionAdded: new Version(2, 0)),
                 };
             }
 
             public override Asset FromRom(NameInfo nameInfo, NStream romStream, ROMInfo romInfo, int? size, out bool trackFreespace) {
                 PaletteNameInfo paletteNameInfo = (PaletteNameInfo)nameInfo;
-                trackFreespace = paletteNameInfo.pointer == null;
-                return new PaletteAsset(paletteNameInfo, romStream.ReadBytes(0x100));
+                if (romStream.Position == 0) {
+                    // Special pointer used for scratch pad asset
+                    trackFreespace = false;
+                    return new PaletteAsset(paletteNameInfo, new byte[0x100]);
+                } else {
+                    trackFreespace = paletteNameInfo.Parts.pointer == null;
+                    return new PaletteAsset(paletteNameInfo, romStream.ReadBytes(0x100));
+                }
             }
 
             public override NameInfo GetNameInfoForName(string name, string group) {
@@ -119,36 +125,21 @@ namespace Necrofy
         class PaletteNameInfo : NameInfo
         {
             private const string Extension = "plt";
-
-            public readonly string folder;
-            public readonly string name;
-            public int? pointer { get; private set; }
-
-            public PaletteNameInfo(string folder, string name, int? pointer = null) : base(folder, name) {
-                this.folder = folder;
-                this.name = name;
-                this.pointer = pointer;
-            }
-
-            public override string DisplayName => name;
+            
+            private PaletteNameInfo(PathParts parts) : base(parts) { }
+            public PaletteNameInfo(string folder, string name, int? pointer = null, bool skipped = false) : this(new PathParts(folder, name, Extension, pointer, false, skipped)) { }
+            
             public override AssetCategory Category => AssetCat;
-
-            protected override PathParts GetPathParts() {
-                return new PathParts(folder, name, Extension, pointer, false);
-            }
-
+            
             public override bool Editable => true;
             public override EditorWindow GetEditor(Project project) {
                 return new PaletteEditor(new LoadedPalette(project, Name));
             }
-
-            protected override void UpdateFromFoundFilename(int? pointer, bool compressed) {
-                this.pointer = pointer;
-            }
-
+            
             public static PaletteNameInfo FromPath(PathParts parts) {
                 if (parts.fileExtension != Extension) return null;
-                return new PaletteNameInfo(parts.folder, parts.name, parts.pointer);
+                if (parts.compressed) return null;
+                return new PaletteNameInfo(parts);
             }
         }
     }

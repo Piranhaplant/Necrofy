@@ -419,12 +419,16 @@ namespace Necrofy
             if (CloseProject(closeEditors: true)) {
                 return;
             }
+#if !DEBUG
             try {
-                project = new Project(settingsFilename);
+#endif
+            project = new Project(settingsFilename);
+#if !DEBUG
             } catch (Exception ex) {
                 MessageBox.Show($"Error opening project: {Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+#endif
             ProjectReady();
         }
 

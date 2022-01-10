@@ -54,21 +54,21 @@ namespace Necrofy
             if (extraBytes != 0x200) {
                 extraBytes = 0;
             }
-            NStream s = new NStream(new FileStream(newBaseROM, FileMode.Create, FileAccess.ReadWrite, FileShare.Read));
-            s.Write(romData, extraBytes, romData.Length - extraBytes);
+            
+            using (NStream s = new NStream(new FileStream(newBaseROM, FileMode.Create, FileAccess.ReadWrite, FileShare.Read))) {
+                s.Write(romData, extraBytes, romData.Length - extraBytes);
 
-            ROMInfo info = new ROMInfo(s);
+                ROMInfo info = new ROMInfo(s);
 
-            foreach (Asset asset in info.assets) {
-                asset.Save(this);
+                foreach (Asset asset in info.assets) {
+                    asset.Save(this);
+                }
+
+                settingsFilename = defaultProjectFilename;
+                settings = ProjectSettings.CreateNew();
+                settings.WinLevel = info.WinLevel;
+                settings.EndGameLevel = info.EndGameLevel;
             }
-
-            s.Close();
-
-            settingsFilename = defaultProjectFilename;
-            settings = ProjectSettings.CreateNew();
-            settings.WinLevel = info.WinLevel;
-            settings.EndGameLevel = info.EndGameLevel;
 
             userSettings = new ProjectUserSettings();
             WriteSettings();
@@ -87,6 +87,11 @@ namespace Necrofy
             } else {
                 userSettings = new ProjectUserSettings();
             }
+
+            if (settings.MajorVersion < ProjectSettings.CurMajorVersion || settings.MinorVersion < ProjectSettings.CurMinorVersion) {
+                Upgrade();
+            }
+
             ReadAssets();
         }
 
@@ -128,6 +133,18 @@ namespace Necrofy
             }
         }
 
+        private void Upgrade() {
+            using (NStream s = new NStream(new FileStream(Path.Combine(path, baseROMFilename), FileMode.Open, FileAccess.ReadWrite, FileShare.Read))) {
+                ROMInfo info = new ROMInfo(s, new Version(settings.MajorVersion, settings.MinorVersion));
+                foreach (Asset asset in info.assets) {
+                    asset.Save(this);
+                }
+            }
+            settings.MajorVersion = ProjectSettings.CurMajorVersion;
+            settings.MinorVersion = ProjectSettings.CurMinorVersion;
+            WriteSettings();
+        }
+
         /// <summary>Builds the project</summary>
         public BuildResults Build() {
             BuildResults results = new BuildResults();
@@ -152,9 +169,11 @@ namespace Necrofy
                                 if (!ignoredFileExtensions.Contains(Path.GetExtension(filename))) {
                                     results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.WARNING, relativeFilename, "Unknown asset"));
                                 }
-                                continue;
+                            } else if (asset.IsSkipped) {
+                                Debug.WriteLine("Skipping asset " + relativeFilename);
+                            } else {
+                                info.assets.Add(asset);
                             }
-                            info.assets.Add(asset);
                         } catch (Exception ex) {
                             results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, relativeFilename, ex.Message, ex.StackTrace));
                         }

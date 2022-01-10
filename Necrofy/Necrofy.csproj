@@ -422,6 +422,7 @@
     <Compile Include="SpriteEditor\SpriteEditorAction.cs" />
     <Compile Include="LevelEditor\TileAction.cs" />
     <Compile Include="UndoManager.cs" />
+    <Compile Include="Version.cs" />
     <Compile Include="Win32.cs" />
     <Compile Include="ZAMNCompress.cs" />
     <EmbeddedResource Include="BuildResultsWindow.resx">

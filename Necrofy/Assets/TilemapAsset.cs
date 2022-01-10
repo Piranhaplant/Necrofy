@@ -21,7 +21,6 @@ namespace Necrofy
             return GetAssetName(romStream, romInfo, new TilemapCreator(), AssetCat, pointer);
         }
 
-        private readonly TilemapNameInfo nameInfo;
         public readonly byte[] data;
 
         public static TilemapAsset FromProject(Project project, string fullName) {
@@ -29,8 +28,7 @@ namespace Necrofy
             return new TilemapCreator().FromProject(project, parsedName.Folder, parsedName.FinalName);
         }
 
-        private TilemapAsset(TilemapNameInfo nameInfo, byte[] data) {
-            this.nameInfo = nameInfo;
+        private TilemapAsset(TilemapNameInfo nameInfo, byte[] data) : base(nameInfo) {
             this.data = data;
         }
 
@@ -39,10 +37,10 @@ namespace Necrofy
         }
         
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
-            if (nameInfo.compressed) {
-                InsertCompressedByteArray(rom, romInfo, data, nameInfo.GetFilename(project.path), nameInfo.pointer);
+            if (nameInfo.Parts.compressed) {
+                InsertCompressedByteArray(rom, romInfo, data, nameInfo.GetFilename(project.path), nameInfo.Parts.pointer);
             } else {
-                InsertByteArray(rom, romInfo, data, nameInfo.pointer);
+                InsertByteArray(rom, romInfo, data, nameInfo.Parts.pointer);
             }
         }
 
@@ -75,13 +73,19 @@ namespace Necrofy
                     new DefaultParams(0xdbcb5, new TilemapNameInfo(GetTilesetFolder(Sand), DefaultName, compressed: true)),
                     new DefaultParams(0xe0000, new TilemapNameInfo(GetTilesetFolder(Office), DefaultName, compressed: true)),
                     new DefaultParams(0xe36ef, new TilemapNameInfo(GetTilesetFolder(Mall), DefaultName, compressed: true)),
+
+                    new DefaultParams(0, new TilemapNameInfo(ScratchPadFolder, DefaultName, skipped: true), extractFromNecrofyROM: true, versionAdded: new Version(2, 0)),
                 };
             }
 
             public override Asset FromRom(NameInfo nameInfo, NStream romStream, ROMInfo romInfo, int? size, out bool trackFreespace) {
                 TilemapNameInfo tilemapNameInfo = (TilemapNameInfo)nameInfo;
-                trackFreespace = tilemapNameInfo.pointer == null;
-                if (tilemapNameInfo.compressed) {
+                trackFreespace = tilemapNameInfo.Parts.pointer == null;
+                if (romStream.Position == 0) {
+                    // Special pointer used for scratch pad asset
+                    trackFreespace = false;
+                    return new TilemapAsset(tilemapNameInfo, new byte[0x800]);
+                } else if (tilemapNameInfo.Parts.compressed) {
                     if (trackFreespace) {
                         romStream.PushPosition();
                         ZAMNCompress.AddToFreespace(romStream, romInfo.Freespace);
@@ -102,29 +106,15 @@ namespace Necrofy
         class TilemapNameInfo : NameInfo
         {
             private const string Extension = "tlm";
-
-            public readonly string folder;
-            public readonly string name;
-            public readonly int? pointer;
-            public readonly bool compressed;
-
-            public TilemapNameInfo(string folder, string name, int? pointer = null, bool compressed = false) : base(folder, name) {
-                this.folder = folder;
-                this.name = name;
-                this.pointer = pointer;
-                this.compressed = compressed;
-            }
-
-            public override string DisplayName => name;
+            
+            private TilemapNameInfo(PathParts parts) : base(parts) { }
+            public TilemapNameInfo(string folder, string name, int? pointer = null, bool compressed = false, bool skipped = false) : this(new PathParts(folder, name, Extension, pointer, compressed, skipped)) { }
+            
             public override AssetCategory Category => AssetCat;
-
-            protected override PathParts GetPathParts() {
-                return new PathParts(folder, name, Extension, pointer, compressed);
-            }
-
+            
             public static TilemapNameInfo FromPath(PathParts parts) {
                 if (parts.fileExtension != Extension) return null;
-                return new TilemapNameInfo(parts.folder, parts.name, parts.pointer, parts.compressed);
+                return new TilemapNameInfo(parts);
             }
         }
     }

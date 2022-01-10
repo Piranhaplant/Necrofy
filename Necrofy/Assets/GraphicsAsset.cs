@@ -21,7 +21,6 @@ namespace Necrofy
             return GetAssetName(romStream, romInfo, new GraphicsCreator(), AssetCat, pointer, tileset);
         }
 
-        private readonly GraphicsNameInfo nameInfo;
         public readonly byte[] data;
 
         public static GraphicsAsset FromProject(Project project, string fullName) {
@@ -29,8 +28,7 @@ namespace Necrofy
             return new GraphicsCreator().FromProject(project, parsedName.Folder, parsedName.FinalName);
         }
 
-        private GraphicsAsset(GraphicsNameInfo nameInfo, byte[] data) {
-            this.nameInfo = nameInfo;
+        private GraphicsAsset(GraphicsNameInfo nameInfo, byte[] data) : base(nameInfo) {
             this.data = data;
         }
 
@@ -39,10 +37,10 @@ namespace Necrofy
         }
         
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
-            if (nameInfo.compressed) {
-                InsertCompressedByteArray(rom, romInfo, data, nameInfo.GetFilename(project.path), nameInfo.pointer);
+            if (nameInfo.Parts.compressed) {
+                InsertCompressedByteArray(rom, romInfo, data, nameInfo.GetFilename(project.path), nameInfo.Parts.pointer);
             } else {
-                InsertByteArray(rom, romInfo, data, nameInfo.pointer);
+                InsertByteArray(rom, romInfo, data, nameInfo.Parts.pointer);
             }
         }
 
@@ -78,13 +76,19 @@ namespace Necrofy
                     new DefaultParams(0xc4000, new GraphicsNameInfo(GetTilesetFolder(Sand), DefaultName), 0x4000),
                     new DefaultParams(0xd0000, new GraphicsNameInfo(GetTilesetFolder(Office), DefaultName), 0x4000),
                     new DefaultParams(0xcc000, new GraphicsNameInfo(GetTilesetFolder(Mall), DefaultName), 0x4000),
+
+                    new DefaultParams(0, new GraphicsNameInfo(ScratchPadFolder, DefaultName, skipped: true), extractFromNecrofyROM: true, versionAdded: new Version(2, 0)),
                 };
             }
 
             public override Asset FromRom(NameInfo nameInfo, NStream romStream, ROMInfo romInfo, int? size, out bool trackFreespace) {
                 GraphicsNameInfo graphicsNameInfo = (GraphicsNameInfo)nameInfo;
-                trackFreespace = graphicsNameInfo.pointer == null;
-                if (graphicsNameInfo.compressed) {
+                trackFreespace = graphicsNameInfo.Parts.pointer == null;
+                if (romStream.Position == 0) {
+                    // Special pointer used for scratch pad asset
+                    trackFreespace = false;
+                    return new GraphicsAsset(graphicsNameInfo, new byte[0x8000]);
+                } else if (graphicsNameInfo.Parts.compressed) {
                     if (trackFreespace) {
                         romStream.PushPosition();
                         ZAMNCompress.AddToFreespace(romStream, romInfo.Freespace);
@@ -104,38 +108,19 @@ namespace Necrofy
 
         class GraphicsNameInfo : NameInfo
         {
-            public readonly string folder;
-            public readonly string name;
-            public int? pointer { get; private set; }
-            public bool compressed { get; private set; }
-
-            public GraphicsNameInfo(string folder, string name, int? pointer = null, bool compressed = false) : base(folder, name) {
-                this.folder = folder;
-                this.name = name;
-                this.pointer = pointer;
-                this.compressed = compressed;
-            }
+            private GraphicsNameInfo(PathParts parts) : base(parts) { }
+            public GraphicsNameInfo(string folder, string name, int? pointer = null, bool compressed = false, bool skipped = false) : this(new PathParts(folder, name, Extension, pointer, compressed, skipped)) { }
             
-            public override string DisplayName => name;
             public override AssetCategory Category => AssetCat;
-
-            protected override PathParts GetPathParts() {
-                return new PathParts(folder, name, Extension, pointer, compressed);
-            }
-
+            
             public override bool Editable => true;
             public override EditorWindow GetEditor(Project project) {
                 return new GraphicsEditor(new LoadedGraphics(project, Name));
             }
-
-            protected override void UpdateFromFoundFilename(int? pointer, bool compressed) {
-                this.pointer = pointer;
-                this.compressed = compressed;
-            }
-
+            
             public static GraphicsNameInfo FromPath(PathParts parts) {
                 if (parts.fileExtension != Extension) return null;
-                return new GraphicsNameInfo(parts.folder, parts.name, parts.pointer, parts.compressed);
+                return new GraphicsNameInfo(parts);
             }
         }
     }

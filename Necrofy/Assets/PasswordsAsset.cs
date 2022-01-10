@@ -16,15 +16,13 @@ namespace Necrofy
             AddCreator(new PasswordsCreator());
         }
 
-        private readonly PasswordsNameInfo nameInfo;
         public readonly PasswordData data;
 
         public static PasswordsAsset FromProject(Project project) {
             return new PasswordsCreator().FromProject(project);
         }
 
-        private PasswordsAsset(PasswordsNameInfo nameInfo, PasswordData data) {
-            this.nameInfo = nameInfo;
+        private PasswordsAsset(PasswordsNameInfo nameInfo, PasswordData data) : base(nameInfo) {
             this.data = data;
         }
 
@@ -77,16 +75,12 @@ namespace Necrofy
             private const string Folder = MiscFolder;
             private const string Filename = "Passwords";
             private const string Extension = "json";
+
+            private PasswordsNameInfo(PathParts parts) : base(parts) { }
+            public PasswordsNameInfo() : this(new PathParts(Folder, Filename, Extension, null, false)) { }
             
-            public PasswordsNameInfo() : base(Folder, Filename) { }
-
-            public override string DisplayName => Filename;
             public override AssetCategory Category => AssetCat;
-
-            protected override PathParts GetPathParts() {
-                return new PathParts(Folder, Filename, Extension, null, false);
-            }
-
+            
             public override bool Editable => true;
             public override EditorWindow GetEditor(Project project) {
                 return new PasswordEditor(PasswordsAsset.FromProject(project));
@@ -96,7 +90,8 @@ namespace Necrofy
                 if (parts.folder != Folder) return null;
                 if (parts.name != Filename) return null;
                 if (parts.fileExtension != Extension) return null;
-                return new PasswordsNameInfo();
+                if (parts.compressed) return null;
+                return new PasswordsNameInfo(parts);
             }
         }
     }

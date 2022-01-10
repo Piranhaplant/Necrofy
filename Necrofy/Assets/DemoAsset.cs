@@ -16,9 +16,9 @@ namespace Necrofy
             AddCreator(new DemoCreator());
         }
 
-        private readonly DemoNameInfo nameInfo;
+        private readonly DemoNameInfo demoNameInfo;
         public readonly Demo demo;
-        public int slot => nameInfo.slot;
+        public int slot => demoNameInfo.slot;
         
         public static DemoAsset FromNameInfo(NameInfo nameInfo, Project project) {
             if (nameInfo is DemoNameInfo) {
@@ -30,8 +30,8 @@ namespace Necrofy
 
         public DemoAsset(int slot, Demo demo) : this(new DemoNameInfo(slot), demo) { }
 
-        private DemoAsset(DemoNameInfo nameInfo, Demo demo) {
-            this.nameInfo = nameInfo;
+        private DemoAsset(DemoNameInfo nameInfo, Demo demo) : base(nameInfo) {
+            this.demoNameInfo = nameInfo;
             this.demo = demo;
         }
         
@@ -40,14 +40,14 @@ namespace Necrofy
         }
 
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
-            rom.Seek(ROMPointers.DemoLevelNumbers + nameInfo.slot * 2);
+            rom.Seek(ROMPointers.DemoLevelNumbers + demoNameInfo.slot * 2);
             rom.WriteInt16((ushort)(demo.level | 0x8000)); // Set high bit to indicate that the two bytes before the data contain the length
-            rom.Seek(ROMPointers.DemoCharacters + nameInfo.slot * 2);
+            rom.Seek(ROMPointers.DemoCharacters + demoNameInfo.slot * 2);
             rom.WriteInt16(demo.character);
 
             byte[] inputData = demo.InputsToData();
             int pointer = romInfo.Freespace.Claim(inputData.Length + 2);
-            rom.Seek(ROMPointers.DemoReplayPointers + nameInfo.slot * 4);
+            rom.Seek(ROMPointers.DemoReplayPointers + demoNameInfo.slot * 4);
             rom.WritePointer(pointer + 2);
             rom.Seek(pointer);
             rom.WriteInt16((ushort)inputData.Length);
@@ -69,10 +69,10 @@ namespace Necrofy
 
             public override List<DefaultParams> GetDefaults() {
                 return new List<DefaultParams>() {
-                    new DefaultParams(0, new DemoNameInfo(0), extractFromNecrofyROM: true),
-                    new DefaultParams(1, new DemoNameInfo(1), extractFromNecrofyROM: true),
-                    new DefaultParams(2, new DemoNameInfo(2), extractFromNecrofyROM: true),
-                    new DefaultParams(3, new DemoNameInfo(3), extractFromNecrofyROM: true),
+                    new DefaultParams(0, new DemoNameInfo(0), extractFromNecrofyROM: true, versionAdded: new Version(2, 0)),
+                    new DefaultParams(1, new DemoNameInfo(1), extractFromNecrofyROM: true, versionAdded: new Version(2, 0)),
+                    new DefaultParams(2, new DemoNameInfo(2), extractFromNecrofyROM: true, versionAdded: new Version(2, 0)),
+                    new DefaultParams(3, new DemoNameInfo(3), extractFromNecrofyROM: true, versionAdded: new Version(2, 0)),
                 };
             }
 
@@ -108,24 +108,22 @@ namespace Necrofy
 
             public readonly int slot;
 
-            public DemoNameInfo(int slot) : base(slot.ToString()) {
+            private DemoNameInfo(PathParts parts, int slot) : base(parts) {
                 this.slot = slot;
             }
+            public DemoNameInfo(int slot) : this(new PathParts(Folder, FilenamePrefix + slot.ToString(), Extension, null, false), slot) { }
 
             public override string DisplayName => "Demo " + slot.ToString();
             public override AssetCategory Category => AssetCat;
-
-            protected override PathParts GetPathParts() {
-                return new PathParts(Folder, FilenamePrefix + slot.ToString(), Extension, null, false);
-            }
             
             public static DemoNameInfo FromPath(PathParts parts) {
                 if (parts.folder != Folder) return null;
                 if (parts.fileExtension != Extension) return null;
                 if (parts.pointer != null) return null;
+                if (parts.compressed) return null;
                 if (!parts.name.StartsWith(FilenamePrefix)) return null;
                 if (!int.TryParse(parts.name.Substring(FilenamePrefix.Length), out int slot)) return null;
-                return new DemoNameInfo(slot);
+                return new DemoNameInfo(parts, slot);
             }
         }
     }

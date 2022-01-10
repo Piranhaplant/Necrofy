@@ -18,7 +18,7 @@ namespace Necrofy
             AddCreator(new LevelCreator());
         }
 
-        private readonly LevelNameInfo nameInfo;
+        private readonly LevelNameInfo levelNameInfo;
         public readonly Level level;
 
         public static LevelAsset FromProject(Project project, int levelNum) {
@@ -27,12 +27,12 @@ namespace Necrofy
 
         public LevelAsset(int levelNum, Level level) : this(new LevelNameInfo(levelNum, n => level.displayName), level) { }
 
-        private LevelAsset(LevelNameInfo nameInfo, Level level) {
-            this.nameInfo = nameInfo;
+        private LevelAsset(LevelNameInfo nameInfo, Level level) : base(nameInfo) {
+            this.levelNameInfo = nameInfo;
             this.level = level;
         }
 
-        public int LevelNumber => nameInfo.levelNum;
+        public int LevelNumber => levelNameInfo.levelNum;
 
         private static int GetPointerPosition(int levelNum) {
             return ROMPointers.LevelPointers + 2 + levelNum * 4;
@@ -49,12 +49,12 @@ namespace Necrofy
 
             rom.Seek(pointer);
             rom.Write(data, 0, data.Length);
-            rom.Seek(GetPointerPosition(nameInfo.levelNum));
+            rom.Seek(GetPointerPosition(levelNameInfo.levelNum));
             rom.WritePointer(pointer);
         }
 
         public override void ReserveSpace(Freespace freespace) {
-            freespace.Reserve(GetPointerPosition(nameInfo.levelNum), 4);
+            freespace.Reserve(GetPointerPosition(levelNameInfo.levelNum), 4);
         }
 
         protected override AssetCategory Category => nameInfo.Category;
@@ -100,10 +100,11 @@ namespace Necrofy
             private readonly Func<LevelNameInfo, string> displayNameGetter;
             private string displayName = null;
 
-            public LevelNameInfo(int levelNum, Func<LevelNameInfo, string> displayNameGetter) : base(levelNum.ToString()) {
+            private LevelNameInfo(PathParts parts, int levelNum, Func<LevelNameInfo, string> displayNameGetter) : base(parts) {
                 this.levelNum = levelNum;
                 this.displayNameGetter = displayNameGetter;
             }
+            public LevelNameInfo(int levelNum, Func<LevelNameInfo, string> displayNameGetter) : this(new PathParts(Folder, levelNum.ToString(), Extension, null, false), levelNum, displayNameGetter) { }
             
             public override string DisplayName {
                 get {
@@ -115,10 +116,6 @@ namespace Necrofy
             }
 
             public override AssetCategory Category => AssetCat;
-
-            protected override PathParts GetPathParts() {
-                return new PathParts(Folder, levelNum.ToString(), Extension, null, false);
-            }
 
             public override bool Editable => true;
             public override EditorWindow GetEditor(Project project) {
@@ -133,8 +130,9 @@ namespace Necrofy
                 if (parts.folder != Folder) return null;
                 if (parts.fileExtension != Extension) return null;
                 if (parts.pointer != null) return null;
+                if (parts.compressed) return null;
                 if (!int.TryParse(parts.name, out int levelNum)) return null;
-                return new LevelNameInfo(levelNum, displayNameGetter);
+                return new LevelNameInfo(parts, levelNum, displayNameGetter);
             }
         }
     }

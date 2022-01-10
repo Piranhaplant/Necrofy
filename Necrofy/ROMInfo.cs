@@ -68,6 +68,19 @@ namespace Necrofy
             Freespace.AddSize(ROMPointers.LevelPointers + 2, (levelCount + 1) * (NecrofyROM ? 4 : 2));
         }
 
+        /// <summary>Creates a ROMInfo for upgrading a project from the specified version</summary>
+        /// <param name="s">A stream to the base ROM file</param>
+        /// <param name="originalProjectVersion">The project version to upgrade from</param>
+        public ROMInfo(NStream s, Version originalProjectVersion) {
+            Freespace = new Freespace((int)s.Length);
+
+            s.Seek(ROMPointers.LevelPointers);
+            s.ReadInt16(); // Skip past level count
+            NecrofyROM = s.PeekPointer() > 0;
+
+            Asset.AddAllDefaults(s, this, originalProjectVersion);
+        }
+        
         public void AddAssetName(AssetCategory category, int pointer, string name) {
             if (!assetNames.ContainsKey(category)) {
                 assetNames.Add(category, new Dictionary<int, string>());

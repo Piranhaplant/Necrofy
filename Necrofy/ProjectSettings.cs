@@ -7,7 +7,7 @@ namespace Necrofy
 {
     public class ProjectSettings
     {
-        public const int CurMajorVersion = 1;
+        public const int CurMajorVersion = 2;
         public const int CurMinorVersion = 0;
         /// <summary>The major version of the project. Projects with a newer major version cannot be opened in old versions of the program</summary>
         public int MajorVersion { get; set; }

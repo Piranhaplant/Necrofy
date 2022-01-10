@@ -17,15 +17,13 @@ namespace Necrofy
             AddCreator(new DataCreator());
         }
 
-        private readonly DataNameInfo nameInfo;
         public readonly byte[] data;
 
         public static DataAsset FromProject(Project project, string folder, string dataName) {
             return new DataCreator().FromProject(project, folder, dataName);
         }
 
-        private DataAsset(DataNameInfo nameInfo, byte[] data) {
-            this.nameInfo = nameInfo;
+        private DataAsset(DataNameInfo nameInfo, byte[] data) : base(nameInfo) {
             this.data = data;
         }
 
@@ -34,7 +32,11 @@ namespace Necrofy
         }
 
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
-            InsertByteArray(rom, romInfo, data, nameInfo.pointer);
+            if (nameInfo.Parts.compressed) {
+                InsertCompressedByteArray(rom, romInfo, data, nameInfo.GetFilename(project.path), nameInfo.Parts.pointer);
+            } else {
+                InsertByteArray(rom, romInfo, data, nameInfo.Parts.pointer);
+            }
         }
 
         protected override AssetCategory Category => nameInfo.Category;
@@ -64,7 +66,7 @@ namespace Necrofy
 
             public override Asset FromRom(NameInfo nameInfo, NStream romStream, ROMInfo romInfo, int? size, out bool trackFreespace) {
                 DataNameInfo dataNameInfo = (DataNameInfo)nameInfo;
-                trackFreespace = dataNameInfo.pointer == null;
+                trackFreespace = dataNameInfo.Parts.pointer == null;
                 return new DataAsset(dataNameInfo, romStream.ReadBytes((int)size));
             }
         }
@@ -72,27 +74,15 @@ namespace Necrofy
         class DataNameInfo : NameInfo
         {
             private const string Extension = "bin";
-
-            public readonly string folder;
-            public readonly string name;
-            public readonly int? pointer;
             
-            public DataNameInfo(string folder, string name, int? pointer) : base(folder, name) {
-                this.folder = folder;
-                this.name = name;
-                this.pointer = pointer;
-            }
-
-            public override string DisplayName => name;
+            private DataNameInfo(PathParts parts) : base(parts) { }
+            public DataNameInfo(string folder, string name, int? pointer) : this(new PathParts(folder, name, Extension, pointer, false)) { }
+            
             public override AssetCategory Category => AssetCat;
-
-            protected override PathParts GetPathParts() {
-                return new PathParts(folder, name, Extension, pointer, false);
-            }
-
+            
             public static DataNameInfo FromPath(PathParts parts) {
                 if (parts.fileExtension != Extension) return null;
-                return new DataNameInfo(parts.folder, parts.name, parts.pointer);
+                return new DataNameInfo(parts);
             }
         }
     }

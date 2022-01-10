@@ -15,7 +15,6 @@ namespace Necrofy
             AddCreator(new TilesetSuggestionsCreator());
         }
         
-        private TilesetSuggestionsNameInfo nameInfo;
         public TilesetSuggestions data;
 
         public static TilesetSuggestionsAsset FromProject(Project project, string tilemapName) {
@@ -23,8 +22,7 @@ namespace Necrofy
             return new TilesetSuggestionsCreator().FromProject(project, parsedName.Tileset);
         }
 
-        private TilesetSuggestionsAsset(TilesetSuggestionsNameInfo nameInfo, TilesetSuggestions data) {
-            this.nameInfo = nameInfo;
+        private TilesetSuggestionsAsset(TilesetSuggestionsNameInfo nameInfo, TilesetSuggestions data) : base(nameInfo) {
             this.data = data;
         }
 
@@ -62,27 +60,20 @@ namespace Necrofy
         {
             private const string Filename = "Suggestions";
             private const string Extension = "json";
-
-            public readonly string tilesetName;
-
-            public TilesetSuggestionsNameInfo(string tilesetName) : base(tilesetName, Filename) {
-                this.tilesetName = tilesetName;
-            }
-
-            public override string DisplayName => Filename;
+            
+            private TilesetSuggestionsNameInfo(PathParts parts) : base(parts) { }
+            public TilesetSuggestionsNameInfo(string tilesetName) : this(new PathParts(GetTilesetFolder(tilesetName), Filename, Extension, null, false)) { }
+            
             public override AssetCategory Category => AssetCat;
-
-            protected override PathParts GetPathParts() {
-                return new PathParts(GetTilesetFolder(tilesetName), Filename, Extension, null, false);
-            }
-
+            
             public static TilesetSuggestionsNameInfo FromPath(PathParts parts) {
                 string tilesetName = parts.folder.Substring(parts.folder.LastIndexOf(FolderSeparator) + 1);
                 if (parts.folder != GetTilesetFolder(tilesetName)) return null;
                 if (parts.name != Filename) return null;
                 if (parts.fileExtension != Extension) return null;
                 if (parts.pointer != null) return null;
-                return new TilesetSuggestionsNameInfo(tilesetName);
+                if (parts.compressed) return null;
+                return new TilesetSuggestionsNameInfo(parts);
             }
         }
     }

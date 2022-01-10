@@ -20,7 +20,6 @@ namespace Necrofy
             return GetAssetName(romStream, romInfo, new CollisionCreator(), AssetCat, pointer, tileset);
         }
 
-        private readonly CollisionNameInfo nameInfo;
         public readonly byte[] data;
 
         public static CollisionAsset FromProject(Project project, string fullName) {
@@ -28,8 +27,7 @@ namespace Necrofy
             return new CollisionCreator().FromProject(project, parsedName.Folder, parsedName.FinalName);
         }
 
-        private CollisionAsset(CollisionNameInfo nameInfo, byte[] data) {
-            this.nameInfo = nameInfo;
+        private CollisionAsset(CollisionNameInfo nameInfo, byte[] data) : base(nameInfo) {
             this.data = data;
         }
 
@@ -83,26 +81,17 @@ namespace Necrofy
         class CollisionNameInfo : NameInfo
         {
             private const string Extension = "col";
-
-            public readonly string folder;
-            public readonly string name;
-
-            public CollisionNameInfo(string folder, string name) : base(folder, name) {
-                this.folder = folder;
-                this.name = name;
-            }
-
-            public override string DisplayName => name;
+            
+            private CollisionNameInfo(PathParts parts) : base(parts) { }
+            public CollisionNameInfo(string folder, string name) : this(new PathParts(folder, name, Extension, null, false)) { }
+            
             public override AssetCategory Category => AssetCat;
-
-            protected override PathParts GetPathParts() {
-                return new PathParts(folder, name, Extension, null, false);
-            }
-
+            
             public static CollisionNameInfo FromPath(PathParts parts) {
                 if (parts.fileExtension != Extension) return null;
                 if (parts.pointer != null) return null;
-                return new CollisionNameInfo(parts.folder, parts.name);
+                if (parts.compressed) return null;
+                return new CollisionNameInfo(parts);
             }
         }
     }
