@@ -46,6 +46,11 @@ namespace Necrofy
             return undoManager;
         }
 
+        public override void Displayed() {
+            base.Displayed();
+            colorSelector.Focus();
+        }
+
         public override bool HasSelection => true;
         public override bool CanCopy => colorSelectorFocused && colorSelector.SelectionExists;
         public override bool CanPaste => colorSelectorFocused && colorSelector.SelectionExists;
