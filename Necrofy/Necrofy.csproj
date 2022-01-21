@@ -521,6 +521,15 @@
     <None Include="ProjectFiles\Editor\SpriteDisplay.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="ProjectFiles\Patches\NecrofyGraphics.gfx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectFiles\Patches\NecrofyPalette.plt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ProjectFiles\Patches\NecrofyTilemap.tlm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="ProjectFiles\Patches\RecordingComplete.tlm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -673,18 +682,21 @@
     <None Include="Icons\arrow-skip-180.png" />
     <None Include="Icons\arrow-skip.png" />
     <None Include="Icons\paint-can.png" />
-    <Content Include="ProjectFiles\Patches\PerfectPlayerFix.asm">
+    <None Include="ProjectFiles\Patches\NecrofyIntro.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ProjectFiles\Patches\PopupWallFix.asm">
+    </None>
+    <None Include="ProjectFiles\Patches\PerfectPlayerFix.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ProjectFiles\Patches\RecordDemo.asm">
+    </None>
+    <None Include="ProjectFiles\Patches\PopupWallFix.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ProjectFiles\Patches\SkullKeyDoorWeedWhackerFix.asm">
+    </None>
+    <None Include="ProjectFiles\Patches\RecordDemo.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
+    <None Include="ProjectFiles\Patches\SkullKeyDoorWeedWhackerFix.asm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="ProjectFiles\Patches\RunFromLevel.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -723,15 +735,15 @@
     <None Include="Icons\magnifier-zoom-in.png" />
     <None Include="Icons\layer-flip.png" />
     <None Include="Icons\layer-flip-vertical.png" />
-    <Content Include="ProjectFiles\Patches\OtherExpand.asm">
+    <None Include="ProjectFiles\Patches\OtherExpand.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ProjectFiles\Patches\ReverseCycling.asm">
+    </None>
+    <None Include="ProjectFiles\Patches\ReverseCycling.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ProjectFiles\Patches\ROMExpand.asm">
+    </None>
+    <None Include="ProjectFiles\Patches\ROMExpand.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
