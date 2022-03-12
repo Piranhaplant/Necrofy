@@ -210,7 +210,7 @@ namespace Necrofy
             }
             
             public int GetViewCenter() {
-                return (int)TransformPosition(controlSize() / 2);
+                return (int)Math.Round(TransformPosition(controlSize() / 2));
             }
         }
 
