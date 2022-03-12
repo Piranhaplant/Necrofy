@@ -35,8 +35,8 @@ JSR fade_from_black
 	LDA $136C	; Screen display register
 	CMP #$000F
 BNE -			; Wait for screen to be full brightness
-LDA #$0080
-JSL $808353		; Wait 0x80 frames
+LDA #$00C0
+JSL $808353		; Wait 0xC0 frames
 JSR fade_to_black
 -:
 	LDA $136C	; Screen display register
