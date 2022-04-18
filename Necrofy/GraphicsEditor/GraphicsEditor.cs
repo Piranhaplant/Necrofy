@@ -24,7 +24,7 @@ namespace Necrofy
 
         private int tileWidth = 16;
         private bool largeTileMode = false;
-        public int tileSize { get; private set; } = 1; // Set to one for normal mode, set to 2 for large tile (16x16 tile) mode
+        public int tileSize { get; private set; } = 1; // Set to one in normal mode, set to 2 in large tile (16x16 tile) mode
         private Region tileRegion;
 
         private bool showGrid = false;
@@ -61,18 +61,8 @@ namespace Necrofy
             UpdateSize(tileWidth);
             Zoom = 4.0f;
             ScrollWrapper.ScrollToPoint(0, 0);
-
-            if (project.Assets.Root.FindFolder(Path.GetDirectoryName(graphics.graphicsName), out AssetTree.Folder folder)) {
-                foreach (AssetTree.AssetEntry sibling in folder.Assets) {
-                    if (sibling.Asset.Category == AssetCategory.Palette) {
-                        paletteSelector.Items.Add(sibling.Asset.Name);
-                    }
-                }
-
-                if (paletteSelector.Items.Count > 0) {
-                    paletteSelector.SelectedIndex = 0;
-                }
-            }
+            
+            paletteSelector.LoadProject(project, AssetCategory.Palette, graphics.graphicsName);
 
             undoManager = new UndoManager<GraphicsEditor>(mainWindow.UndoButton, mainWindow.RedoButton, this);
             return undoManager;
@@ -164,11 +154,7 @@ namespace Necrofy
         }
 
         protected override void PaintMap(Graphics g) {
-            PointF topLeft = ScrollWrapper.TransformPoint(PointF.Empty);
-            PointF bottomRight = ScrollWrapper.TransformPoint(new PointF(canvas.Width, canvas.Height));
-            RectangleF clipRect = new RectangleF(topLeft, new SizeF(bottomRight.X - topLeft.X, bottomRight.Y - topLeft.Y));
-            clipRect.Intersect(new RectangleF(0, 0, MapWidth, MapHeight));
-
+            RectangleF clipRect = GetVisibleArea();
             g.SetClip(tileRegion, CombineMode.Replace);
 
             if (transparency) {
@@ -256,13 +242,15 @@ namespace Necrofy
             }
         }
 
-        private void paletteSelector_SelectedIndexChanged(object sender, EventArgs e) {
-            if (palette != null) {
-                palette.Updated -= Palette_Updated;
+        private void PaletteSelector_SelectedItemChanged(object sender, EventArgs e) {
+            if (paletteSelector.SelectedItem != null) {
+                if (palette != null) {
+                    palette.Updated -= Palette_Updated;
+                }
+                palette = new LoadedPalette(project, paletteSelector.SelectedItem);
+                palette.Updated += Palette_Updated;
+                LoadPalette();
             }
-            palette = new LoadedPalette(project, (string)paletteSelector.SelectedItem);
-            palette.Updated += Palette_Updated;
-            LoadPalette();
         }
 
         private void Palette_Updated(object sender, EventArgs e) {

@@ -8,22 +8,51 @@ namespace Necrofy
 {
     class LoadedTilemap
     {
+        public readonly TilemapAsset asset;
         public Tile[] tiles;
+        public readonly string tilemapName;
+
+        public event EventHandler Updated;
+
+        private int updating = 0;
 
         public LoadedTilemap(Project project, string tilemapName) {
-            byte[] data = TilemapAsset.FromProject(project, tilemapName).data;
-            tiles = new Tile[data.Length / 2];
-            for (int i = 0; i < tiles.Length; i++) {
-                tiles[i] = new Tile(data[i * 2], data[i * 2 + 1]);
+            this.tilemapName = tilemapName;
+            asset = TilemapAsset.FromProject(project, tilemapName);
+            asset.Updated += Asset_Updated;
+
+            ReadTiles();
+        }
+
+        private void Asset_Updated(object sender, EventArgs e) {
+            if (updating == 0) {
+                ReadTiles();
+                Updated?.Invoke(sender, e);
             }
+        }
+
+        private void ReadTiles() {
+            tiles = new Tile[asset.data.Length / 2];
+            for (int i = 0; i < tiles.Length; i++) {
+                tiles[i] = new Tile(asset.data[i * 2], asset.data[i * 2 + 1]);
+            }
+        }
+
+        public void Save(Project project) {
+            for (int i = 0; i < tiles.Length; i++) {
+                tiles[i].WriteBytes(asset.data, i * 2);
+            }
+            updating++;
+            asset.Save(project);
+            updating--;
         }
         
         public struct Tile
         {
-            public int tileNum;
-            public int palette;
-            public bool xFlip;
-            public bool yFlip;
+            public readonly int tileNum;
+            public readonly int palette;
+            public readonly bool xFlip;
+            public readonly bool yFlip;
 
             public Tile(byte lowByte, byte highByte) {
                 tileNum = lowByte + ((highByte & 1) << 8);
@@ -44,6 +73,11 @@ namespace Necrofy
                 this.palette = palette;
                 this.xFlip = xFlip;
                 this.yFlip = yFlip;
+            }
+
+            public void WriteBytes(byte[] array, int index) {
+                array[index] = (byte)(tileNum & 0xff);
+                array[index + 1] = (byte)(((tileNum & 0x100) >> 8) | ((palette & 7) << 2) | ((xFlip ? 1 : 0) << 6) | ((yFlip ? 1 : 0) << 7));
             }
         }
     }

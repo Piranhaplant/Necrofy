@@ -222,7 +222,7 @@ namespace Necrofy
             }
             EditorWindow editor = assetInfo.GetEditor(project);
             if (editor != null) {
-                editor.Icon = ProjectBrowser.GetEditorIcon(assetInfo.Category);
+                //editor.Icon = ProjectBrowser.GetEditorIcon(assetInfo.Category); //TODO
                 ShowEditor(editor, assetInfo);
             }
         }

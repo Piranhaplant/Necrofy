@@ -15,9 +15,13 @@ namespace Necrofy
         private Bitmap[] tiles = null;
         private Color[] colors = null;
         private readonly ScrollWrapper scrollWrapper;
+        private readonly RadioButton[] paletteButtons;
 
+        private int zoom;
+        private int tileSize;
         private int tilesPerRow;
 
+        private int displayPalette = 0;
         private int palette = 0;
         public int Palette {
             get {
@@ -26,8 +30,39 @@ namespace Necrofy
             set {
                 if (value != palette) {
                     palette = value;
-                    Repaint();
+                    if (value >= 0 && value < paletteButtons.Length) {
+                        displayPalette = palette;
+                        UpdateUI(() => paletteButtons[palette].Checked = true);
+                        Repaint();
+                        PaletteChanged?.Invoke(this, EventArgs.Empty);
+                    } else {
+                        foreach (RadioButton button in paletteButtons) {
+                            button.Checked = false;
+                        }
+                    }
                 }
+            }
+        }
+
+        private bool flipX = false;
+        public bool FlipX {
+            get {
+                return flipX;
+            }
+            set {
+                flipX = value;
+                Repaint();
+            }
+        }
+
+        private bool flipY = false;
+        public bool FlipY {
+            get {
+                return flipY;
+            }
+            set {
+                flipY = value;
+                Repaint();
             }
         }
 
@@ -36,6 +71,9 @@ namespace Necrofy
 
         public delegate void TileDoubleClickedDelegate(object sender, EventArgs e);
         public event TileDoubleClickedDelegate TileDoubleClicked;
+
+        public delegate void PaletteChangedDelegate(object sender, EventArgs e);
+        public event PaletteChangedDelegate PaletteChanged;
 
         private int selectedTile = -1;
         public int SelectedTile {
@@ -51,6 +89,7 @@ namespace Necrofy
 
         public SpriteTilePicker() {
             InitializeComponent();
+            paletteButtons = new RadioButton[] { palette0Button, palette1Button, palette2Button, palette3Button, palette4Button, palette5Button, palette6Button, palette7Button };
 
             scrollWrapper = new ScrollWrapper(canvas, hScrollBar, vScrollBar, autoSize: false);
             scrollWrapper.Scrolled += ScrollWrapper_Scrolled;
@@ -60,9 +99,10 @@ namespace Necrofy
             canvas.Invalidate();
         }
 
-        public void SetTiles(Bitmap[] tiles, Color[] colors) {
+        public void SetTiles(Bitmap[] tiles, Color[] colors, int zoom = 1) {
             this.tiles = tiles;
             this.colors = colors;
+            this.zoom = zoom;
             UpdateSize();
         }
 
@@ -70,9 +110,11 @@ namespace Necrofy
             if (tiles == null) {
                 return;
             }
-            tilesPerRow = canvas.Width / 16;
+            tileSize = tiles[0].Width;
+            tilesPerRow = canvas.Width / tileSize / zoom;
             int height = (int)Math.Ceiling(tiles.Length / (double)tilesPerRow);
-            scrollWrapper.SetClientSize(canvas.Width, Math.Max(canvas.Height, height * 16));
+            scrollWrapper.SetClientSize(canvas.Width / zoom, Math.Max(canvas.Height / zoom, height * tileSize));
+            scrollWrapper.Zoom = zoom;
             Repaint();
         }
 
@@ -91,16 +133,21 @@ namespace Necrofy
             scrollWrapper.TransformGraphics(e.Graphics);
 
             for (int i = 0; i < tiles.Length; i++) {
-                SNESGraphics.DrawWithPlt(e.Graphics, (i % tilesPerRow) * 16, (i / tilesPerRow) * 16, tiles[i], colors, palette * 16, 16);
+                SNESGraphics.DrawWithPlt(e.Graphics, (i % tilesPerRow) * tileSize, (i / tilesPerRow) * tileSize, tiles[i], colors, displayPalette * 16, 16, flipX, flipY);
             }
             if (SelectedTile >= 0) {
-                e.Graphics.DrawRectangle(Pens.White, (SelectedTile % tilesPerRow) * 16, (SelectedTile / tilesPerRow) * 16, 16, 16);
+                using (Pen p = new Pen(Color.White, 1 / zoom)) {
+                    e.Graphics.DrawRectangle(p, (SelectedTile % tilesPerRow) * tileSize, (SelectedTile / tilesPerRow) * tileSize, tileSize, tileSize);
+                }
             }
         }
 
         private void canvas_MouseDown(object sender, MouseEventArgs e) {
+            if (tiles == null) {
+                return;
+            }
             Point transformed = scrollWrapper.TransformPoint(e.Location);
-            int tile = Math.Min(tilesPerRow - 1, transformed.X / 16) + (transformed.Y / 16) * tilesPerRow;
+            int tile = Math.Min(tilesPerRow - 1, transformed.X / tileSize) + (transformed.Y / tileSize) * tilesPerRow;
             if (tile < tiles.Length && e.Button == MouseButtons.Left) {
                 SelectedTile = tile;
                 Repaint();
@@ -114,6 +161,32 @@ namespace Necrofy
             if (selectedTile >= 0) {
                 TileDoubleClicked?.Invoke(this, EventArgs.Empty);
             }
+        }
+
+        private int updatingUI = 0;
+        private void UpdateUI(Action action) {
+            updatingUI++;
+            action();
+            updatingUI--;
+        }
+        
+        private void paletteButton_CheckedChanged(object sender, EventArgs e) {
+            if (updatingUI == 0 && sender is RadioButton button && button.Checked) {
+                Palette = Array.IndexOf(paletteButtons, button);
+            }
+        }
+
+        private static readonly Dictionary<Keys, int> paletteKeys = new Dictionary<Keys, int>() {
+            { Keys.D0, 0 }, { Keys.D1, 1 }, { Keys.D2, 2 }, { Keys.D3, 3 }, { Keys.D4, 4 }, { Keys.D5, 5 }, { Keys.D6, 6 },{ Keys.D7, 7 },
+            { Keys.NumPad0, 0 }, { Keys.NumPad1, 1 }, { Keys.NumPad2, 2 }, { Keys.NumPad3, 3 }, { Keys.NumPad4, 4 }, { Keys.NumPad5, 5 }, { Keys.NumPad6, 6 }, { Keys.NumPad7, 7 }
+        };
+
+        public bool OnKeyDown(Keys keyCode) {
+            if (paletteKeys.TryGetValue(keyCode, out int palette)) {
+                Palette = palette;
+                return true;
+            }
+            return false;
         }
     }
 }

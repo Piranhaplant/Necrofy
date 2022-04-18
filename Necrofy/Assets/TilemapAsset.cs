@@ -111,7 +111,13 @@ namespace Necrofy
             public TilemapNameInfo(string folder, string name, int? pointer = null, bool compressed = false, bool skipped = false) : this(new PathParts(folder, name, Extension, pointer, compressed, skipped)) { }
             
             public override AssetCategory Category => AssetCat;
-            
+
+            public override bool Editable => true;
+
+            public override EditorWindow GetEditor(Project project) {
+                return new TilemapEditor(new LoadedTilemap(project, Name));
+            }
+
             public static TilemapNameInfo FromPath(PathParts parts) {
                 if (parts.fileExtension != Extension) return null;
                 return new TilemapNameInfo(parts);

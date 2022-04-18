@@ -79,6 +79,9 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DropDownControls">
+      <HintPath>Libraries\DropDownControls.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Libraries\Newtonsoft.Json.dll</HintPath>
@@ -103,6 +106,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssetSelector.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AssetSelector.Designer.cs">
+      <DependentUpon>AssetSelector.cs</DependentUpon>
+    </Compile>
     <Compile Include="Assets\Asset.cs" />
     <Compile Include="Assets\CollisionAsset.cs" />
     <Compile Include="Assets\DataAsset.cs" />
@@ -116,6 +125,7 @@
     <Compile Include="Assets\TilemapAsset.cs" />
     <Compile Include="Assets\TilesetSuggestionsAsset.cs" />
     <Compile Include="AssetTree.cs" />
+    <Compile Include="AssetTreePopulator.cs" />
     <Compile Include="BuildResults.cs" />
     <Compile Include="BuildResultsWindow.cs">
       <SubType>Form</SubType>
@@ -146,6 +156,9 @@
     <Compile Include="GraphicsEditor\GraphicsTool.cs" />
     <Compile Include="GraphicsEditor\GraphicsSelectTool.cs" />
     <Compile Include="MapEditor\MapBrushTool.cs" />
+    <Compile Include="MapEditor\MapEditorDesigner.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="MapEditor\MapTileSelectTool.cs" />
     <Compile Include="MapEditor\MapMouseEventArgs.cs" />
     <Compile Include="MapEditor\MapEditor.cs">
@@ -310,6 +323,16 @@
     <Compile Include="TextDisplayForm.Designer.cs">
       <DependentUpon>TextDisplayForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="TilemapEditor\TilemapBrushTool.cs" />
+    <Compile Include="TilemapEditor\TilemapEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TilemapEditor\TilemapEditor.Designer.cs">
+      <DependentUpon>TilemapEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TilemapEditor\TilemapEditorAction.cs" />
+    <Compile Include="TilemapEditor\TilemapSelectTool.cs" />
+    <Compile Include="TilemapEditor\TilemapTool.cs" />
     <Compile Include="ToolBarMenuLinker.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -425,6 +448,9 @@
     <Compile Include="Version.cs" />
     <Compile Include="Win32.cs" />
     <Compile Include="ZAMNCompress.cs" />
+    <EmbeddedResource Include="AssetSelector.resx">
+      <DependentUpon>AssetSelector.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="BuildResultsWindow.resx">
       <DependentUpon>BuildResultsWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -513,6 +539,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="TextDisplayForm.resx">
       <DependentUpon>TextDisplayForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TilemapEditor\TilemapEditor.resx">
+      <DependentUpon>TilemapEditor.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="ProjectFiles\Editor\LevelSettingsPresets.json">

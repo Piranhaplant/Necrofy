@@ -133,9 +133,12 @@ namespace Necrofy
         }
 
         private void canvas_MouseDown(object sender, MouseEventArgs e) {
+            if (colors == null) {
+                return;
+            }
             Point p = MouseToPoint(e.X, e.Y);
             Point clamped = ClampPoint(p);
-            if (colors != null && clamped == p) {
+            if (clamped == p) {
                 if (MultiSelect) {
                     selecting = true;
                 }

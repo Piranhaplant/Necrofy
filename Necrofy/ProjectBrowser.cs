@@ -14,47 +14,24 @@ namespace Necrofy
 {
     partial class ProjectBrowser : DockContent
     {
-        private const int DocumentImageIndex = 0;
-        private const int FolderImageIndex = 1;
-        private const int FolderOpenImageIndex = 2;
-
-        private readonly Dictionary<AssetCategory, Bitmap> displayImages = new Dictionary<AssetCategory, Bitmap> {
-            { AssetCategory.Collision, Resources.block },
-            { AssetCategory.Data, Resources.document_binary },
-            { AssetCategory.Demo, Resources.film },
-            { AssetCategory.Editor, Resources.gear },
-            { AssetCategory.Graphics, Resources.image },
-            { AssetCategory.Level, Resources.map },
-            { AssetCategory.Palette, Resources.color },
-            { AssetCategory.Passwords, Resources.document_binary },
-            { AssetCategory.Sprites, Resources.ghost },
-            { AssetCategory.Tilemap, Resources.layout_4 },
-        };
-        private readonly Dictionary<AssetCategory, int> displayImageIndexes = new Dictionary<AssetCategory, int>();
-        private readonly Dictionary<AssetCategory, Icon> displayIcons = new Dictionary<AssetCategory, Icon>();
-
         private readonly MainWindow mainWindow;
         private Project project;
+        private TreeViewAssetTreePopulator treePopulator = null;
 
         public ProjectBrowser(MainWindow mainWindow) {
             InitializeComponent();
             this.mainWindow = mainWindow;
-            treeImages.Images.Add(Resources.document); // Used as default image
-            treeImages.Images.Add(Resources.folder);
-            treeImages.Images.Add(Resources.folder_open);
         }
 
         public void OpenProject(Project project) {
-            if (this.project != null) {
-                this.project.Assets.AssetChanged -= AssetChanged;
-                this.project.Assets.AssetAdded -= AssetAdded;
-                this.project.Assets.AssetRemoved -= AssetRemoved;
+            if (treePopulator != null) {
+                treePopulator.Dispose();
             }
             this.project = project;
             tree.Nodes.Clear();
 
             if (project != null) {
-                PopulateTree(tree.Nodes, project.Assets.Root);
+                treePopulator = new TreeViewAssetTreePopulator(project.Assets, tree);
                 if (project.userSettings.FolderStates != null) {
                     LoadFolderStates(tree.Nodes, project.userSettings.FolderStates);
                 } else {
@@ -63,89 +40,54 @@ namespace Necrofy
                 if (tree.Nodes.Count > 0) {
                     tree.SelectedNode = tree.Nodes[0]; // Scroll to the top regardless of what folders were opened
                 }
-                project.Assets.AssetChanged += AssetChanged;
-                project.Assets.AssetAdded += AssetAdded;
-                project.Assets.AssetRemoved += AssetRemoved;
             }
         }
 
-        private void PopulateTree(TreeNodeCollection parent, AssetTree.Folder folder) {
-            foreach (AssetTree.Folder subFolder in folder.Folders) {
-                PopulateFolder(parent, subFolder);
+        private class TreeViewAssetTreePopulator : AssetTreePopulator<TreeNodeCollection, TreeNode>
+        {
+            private readonly TreeView treeView;
+
+            public TreeViewAssetTreePopulator(AssetTree tree, TreeView treeView) : base(tree, treeView.Nodes) {
+                this.treeView = treeView;
+                Load();
             }
 
-            foreach (AssetTree.AssetEntry entry in folder.Assets) {
-                PopulateAsset(parent, entry);
+            protected override void SetImageList(ImageList imageList) => treeView.ImageList = imageList;
+
+            protected override TreeNode CreateChild(TreeNodeCollection parent, string text, object tag, bool isFolder, int imageIndex) {
+                TreeNode node = parent.Add(text);
+                node.Name = text;
+                node.Tag = tag;
+                node.ImageIndex = imageIndex;
+                node.SelectedImageIndex = imageIndex;
+                return node;
             }
-        }
 
-        private void PopulateFolder(TreeNodeCollection parent, AssetTree.Folder subFolder) {
-            TreeNode child = parent.Add(subFolder.Name);
-            child.Name = child.Text;
-            child.ImageIndex = FolderImageIndex;
-            child.SelectedImageIndex = FolderImageIndex;
-            child.Tag = subFolder;
-
-            PopulateTree(child.Nodes, subFolder);
-            if (child.Nodes.Count == 0) {
-                child.Remove();
-            }
-        }
-
-        private void PopulateAsset(TreeNodeCollection parent, AssetTree.AssetEntry entry) {
-            TreeNode child = parent.Add(entry.Asset.DisplayName);
-            child.Name = child.Text;
-            SetImage(child, entry.Asset.Category);
-            if (!entry.Asset.Editable) {
-                child.ForeColor = SystemColors.GrayText;
-            } else if (entry.Asset.Parts.skipped) {
-                child.ForeColor = SystemColors.Highlight;
-            }
-            child.Tag = entry;
-        }
-
-        private void AssetChanged(object sender, AssetEventArgs e) {
-            Invoke((MethodInvoker)delegate {
-                TreeNode node = tree.Nodes.FindNodeByTag(e.Asset);
-                node.Text = e.Asset.Asset.DisplayName;
-                node.Name = node.Text;
-            });
-        }
-        
-        private void AssetAdded(object sender, AssetEventArgs e) {
-            Invoke((MethodInvoker)delegate {
-                TreeNode parent = null;
-                AssetTree.Node node = e.Asset;
-                while (node.Parent.Parent != null) {
-                    parent = tree.Nodes.FindNodeByTag(node.Parent);
-                    if (parent != null) {
-                        break;
+            public override TreeNode FindByTag(TreeNodeCollection collection, object tag) {
+                foreach (TreeNode node in collection) {
+                    if (node.Tag == tag) {
+                        return node;
                     }
-                    node = node.Parent;
+                    TreeNode child = FindByTag(node.Nodes, tag);
+                    if (child != null) {
+                        return child;
+                    }
                 }
-                TreeNodeCollection collection = parent == null ? tree.Nodes : parent.Nodes;
-                if (node is AssetTree.Folder folder) {
-                    PopulateFolder(collection, folder);
-                } else if (node is AssetTree.AssetEntry asset) {
-                    PopulateAsset(collection, asset);
-                }
-            });
-        }
+                return null;
+            }
 
-        private void AssetRemoved(object sender, AssetEventArgs e) {
-            Invoke((MethodInvoker)delegate {
-                RemoveNode(tree.Nodes.FindNodeByTag(e.Asset));
-            });
+            protected override TreeNodeCollection GetChildren(TreeNode node) => node.Nodes;
+            protected override TreeNode GetParent(TreeNode node) => node.Parent;
+            protected override bool IsEmpty(TreeNode node) => node.Nodes.Count == 0;
+            protected override void Remove(TreeNode node) => node.Remove();
+            protected override void SetColor(TreeNode node, Color color) => node.ForeColor = color;
+            protected override void SetText(TreeNode node, string text) {
+                node.Text = text;
+                node.Name = text;
+            }
+            protected override void Invoke(MethodInvoker method) => treeView.Invoke(method);
         }
         
-        private void RemoveNode(TreeNode node) {
-            TreeNode parent = node.Parent;
-            node.Remove();
-            if (parent != null && parent.Nodes.Count == 0) {
-                RemoveNode(parent);
-            }
-        }
-
         private void LoadFolderStates(TreeNodeCollection parent, List<ProjectUserSettings.FolderState> folderStates) {
             foreach (ProjectUserSettings.FolderState folderState in folderStates) {
                 TreeNode node = parent[folderState.Name];
@@ -179,13 +121,13 @@ namespace Necrofy
         }
 
         private void tree_BeforeExpand(object sender, TreeViewCancelEventArgs e) {
-            e.Node.ImageIndex = FolderOpenImageIndex;
-            e.Node.SelectedImageIndex = FolderOpenImageIndex;
+            e.Node.ImageIndex += 1;
+            e.Node.SelectedImageIndex += 1;
         }
 
         private void tree_BeforeCollapse(object sender, TreeViewCancelEventArgs e) {
-            e.Node.ImageIndex = FolderImageIndex;
-            e.Node.SelectedImageIndex = FolderImageIndex;
+            e.Node.ImageIndex -= 1;
+            e.Node.SelectedImageIndex -= 1;
         }
 
         private void tree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e) {
@@ -221,22 +163,6 @@ namespace Necrofy
                 }
 #endif
             }
-        }
-
-        public Icon GetEditorIcon(AssetCategory assetCategory) {
-            if (!displayIcons.ContainsKey(assetCategory)) {
-                displayIcons[assetCategory] = Icon.FromHandle(displayImages[assetCategory].GetHicon());
-            }
-            return displayIcons[assetCategory];
-        }
-
-        private void SetImage(TreeNode node, AssetCategory category) {
-            if (!displayImageIndexes.ContainsKey(category)) {
-                displayImageIndexes[category] = treeImages.Images.Count;
-                treeImages.Images.Add(displayImages[category]);
-            }
-            node.ImageIndex = displayImageIndexes[category];
-            node.SelectedImageIndex = node.ImageIndex;
         }
     }
 }

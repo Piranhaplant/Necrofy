@@ -151,6 +151,8 @@ namespace Necrofy
                 return new CheckableSplitButtonItemProxy(checkableSplitButton, clickEventHandler, checkedChangedEventHandler);
             } else if (item is ToolStripMenuItem menuItem) {
                 return new MenuItemProxy(menuItem, clickEventHandler, checkedChangedEventHandler);
+            } else if (item is ToolStripButton button) {
+                return new ButtonItemProxy(button, clickEventHandler, checkedChangedEventHandler);
             } else {
                 return new BaseItemProxy(item, clickEventHandler);
             }
@@ -183,6 +185,20 @@ namespace Necrofy
             public override bool Enabled { get => item.Enabled; set => item.Enabled = value; }
 
             public MenuItemProxy(ToolStripMenuItem item, EventHandler clickEventHandler, EventHandler checkedChangedEventHandler) {
+                this.item = item;
+                item.Click += clickEventHandler;
+                item.CheckedChanged += checkedChangedEventHandler;
+            }
+        }
+
+        private class ButtonItemProxy : ItemProxy
+        {
+            private readonly ToolStripButton item;
+
+            public override bool Checked { get => item.Checked; set => item.Checked = value; }
+            public override bool Enabled { get => item.Enabled; set => item.Enabled = value; }
+
+            public ButtonItemProxy(ToolStripButton item, EventHandler clickEventHandler, EventHandler checkedChangedEventHandler) {
                 this.item = item;
                 item.Click += clickEventHandler;
                 item.CheckedChanged += checkedChangedEventHandler;
@@ -237,6 +253,7 @@ namespace Necrofy
             ViewLargeTileMode,
             ViewTransparency,
             ViewGraphicsGrid,
+            ViewTilemapGrid,
             LevelEditTitle,
             LevelSettings,
             LevelClear,
@@ -273,6 +290,9 @@ namespace Necrofy
             GraphicsPaintbrush,
             GraphicsRectangleSelect,
             GraphicsBucketFill,
+
+            TilemapPaintBrush,
+            TilemapRectangleSelect,
         }
 
         [Flags]
@@ -284,6 +304,7 @@ namespace Necrofy
             SpriteEditor = 4,
             Passwords = 8,
             Graphics = 16,
+            Tilemap = 32,
         }
     }
 }

@@ -25,26 +25,36 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.canvas = new Necrofy.Canvas();
+            this.hScroll = new System.Windows.Forms.HScrollBar();
+            this.vScroll = new System.Windows.Forms.VScrollBar();
             this.panel1 = new System.Windows.Forms.Panel();
             this.colorSelector = new Necrofy.ColorSelector();
-            this.paletteSelector = new System.Windows.Forms.ComboBox();
-            this.vScroll = new System.Windows.Forms.VScrollBar();
-            this.hScroll = new System.Windows.Forms.HScrollBar();
+            this.paletteSelector = new Necrofy.AssetSelector();
+            this.canvas = new Necrofy.Canvas();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // canvas
+            // hScroll
             // 
-            this.canvas.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.hScroll.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.canvas.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.canvas.IsMouseDown = false;
-            this.canvas.Location = new System.Drawing.Point(256, 0);
-            this.canvas.Name = "canvas";
-            this.canvas.Size = new System.Drawing.Size(527, 433);
-            this.canvas.TabIndex = 0;
+            this.hScroll.LargeChange = 16;
+            this.hScroll.Location = new System.Drawing.Point(256, 433);
+            this.hScroll.Name = "hScroll";
+            this.hScroll.Size = new System.Drawing.Size(527, 17);
+            this.hScroll.SmallChange = 16;
+            this.hScroll.TabIndex = 3;
+            // 
+            // vScroll
+            // 
+            this.vScroll.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.vScroll.LargeChange = 16;
+            this.vScroll.Location = new System.Drawing.Point(783, 0);
+            this.vScroll.Name = "vScroll";
+            this.vScroll.Size = new System.Drawing.Size(17, 433);
+            this.vScroll.SmallChange = 16;
+            this.vScroll.TabIndex = 2;
             // 
             // panel1
             // 
@@ -63,6 +73,8 @@
             this.colorSelector.Location = new System.Drawing.Point(0, 21);
             this.colorSelector.MultiSelect = false;
             this.colorSelector.Name = "colorSelector";
+            this.colorSelector.SelectionEnd = new System.Drawing.Point(-1, -1);
+            this.colorSelector.SelectionStart = new System.Drawing.Point(-1, -1);
             this.colorSelector.Size = new System.Drawing.Size(256, 429);
             this.colorSelector.TabIndex = 3;
             this.colorSelector.SelectionChanged += new System.EventHandler(this.colorSelector_SelectionChanged);
@@ -70,35 +82,23 @@
             // paletteSelector
             // 
             this.paletteSelector.Dock = System.Windows.Forms.DockStyle.Top;
-            this.paletteSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.paletteSelector.FormattingEnabled = true;
             this.paletteSelector.Location = new System.Drawing.Point(0, 0);
             this.paletteSelector.Name = "paletteSelector";
             this.paletteSelector.Size = new System.Drawing.Size(256, 21);
-            this.paletteSelector.TabIndex = 2;
-            this.paletteSelector.SelectedIndexChanged += new System.EventHandler(this.paletteSelector_SelectedIndexChanged);
+            this.paletteSelector.TabIndex = 4;
+            this.paletteSelector.SelectedItemChanged += PaletteSelector_SelectedItemChanged;
             // 
-            // vScroll
+            // canvas
             // 
-            this.vScroll.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.canvas.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.vScroll.LargeChange = 16;
-            this.vScroll.Location = new System.Drawing.Point(783, 0);
-            this.vScroll.Name = "vScroll";
-            this.vScroll.Size = new System.Drawing.Size(17, 433);
-            this.vScroll.SmallChange = 16;
-            this.vScroll.TabIndex = 2;
-            // 
-            // hScroll
-            // 
-            this.hScroll.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.hScroll.LargeChange = 16;
-            this.hScroll.Location = new System.Drawing.Point(256, 433);
-            this.hScroll.Name = "hScroll";
-            this.hScroll.Size = new System.Drawing.Size(527, 17);
-            this.hScroll.SmallChange = 16;
-            this.hScroll.TabIndex = 3;
+            this.canvas.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.canvas.IsMouseDown = false;
+            this.canvas.Location = new System.Drawing.Point(256, 0);
+            this.canvas.Name = "canvas";
+            this.canvas.Size = new System.Drawing.Size(527, 433);
+            this.canvas.TabIndex = 0;
             // 
             // GraphicsEditor
             // 
@@ -120,9 +120,9 @@
 
         private Canvas canvas;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.ComboBox paletteSelector;
         private ColorSelector colorSelector;
         private System.Windows.Forms.VScrollBar vScroll;
         private System.Windows.Forms.HScrollBar hScroll;
+        private AssetSelector paletteSelector;
     }
 }

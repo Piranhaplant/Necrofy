@@ -20,9 +20,7 @@ namespace Necrofy
         private const string DragStatus = "Move: {0}, {1}. Hold Shift to snap to 8x8 pixel grid.";
 
         private static readonly SolidBrush selectionFillBrush = new SolidBrush(Color.FromArgb(96, 255, 255, 255));
-
-        private readonly RadioButton[] paletteButtons;
-
+        
         private readonly LoadedSprites loadedSprites;
         private readonly SpriteEditorObjectBrowserContents browserContents;
         private readonly ObjectSelector<WrappedSpriteTile> objectSelector;
@@ -47,9 +45,7 @@ namespace Necrofy
         public SpriteEditor(LoadedSprites loadedSprites) {
             InitializeComponent();
             Disposed += SpriteEditor_Disposed;
-
-            paletteButtons = new RadioButton[] { palette0Button, palette1Button, palette2Button, palette3Button, palette4Button, palette5Button, palette6Button, palette7Button };
-
+            
             this.loadedSprites = loadedSprites;
             loadedSprites.Updated += LoadedSprites_Updated;
             Title = "Sprites";
@@ -351,14 +347,12 @@ namespace Necrofy
         public void UpdateSelectedPalette() {
             if (selectedObjects.Count >= 1) {
                 int palette = selectedObjects.First().tile.palette;
-                tilePicker.Palette = palette;
-                if (selectedObjects.All(t => t.tile.palette == palette)) {
-                    UpdateUI(() => paletteButtons[palette].Checked = true);
-                } else {
-                    foreach (RadioButton button in paletteButtons) {
-                        button.Checked = false;
+                UpdateUI(() => {
+                    tilePicker.Palette = palette;
+                    if (!selectedObjects.All(t => t.tile.palette == palette)) {
+                        tilePicker.Palette = -1;
                     }
-                }
+                });
             }
         }
 
@@ -460,16 +454,10 @@ namespace Necrofy
             }
         }
 
-        private static readonly Dictionary<Keys, int> paletteKeys = new Dictionary<Keys, int>() {
-            { Keys.D0, 0 }, { Keys.D1, 1 }, { Keys.D2, 2 }, { Keys.D3, 3 }, { Keys.D4, 4 }, { Keys.D5, 5 }, { Keys.D6, 6 },{ Keys.D7, 7 },
-            { Keys.NumPad0, 0 }, { Keys.NumPad1, 1 }, { Keys.NumPad2, 2 }, { Keys.NumPad3, 3 }, { Keys.NumPad4, 4 }, { Keys.NumPad5, 5 }, { Keys.NumPad6, 6 }, { Keys.NumPad7, 7 }
-        };
-
         private void canvas_KeyDown(object sender, KeyEventArgs e) {
             objectSelector.KeyDown(e.KeyData);
-            if (paletteKeys.TryGetValue(e.KeyCode, out int palette)) {
-                paletteButtons[palette].Checked = true;
-            } else if (e.KeyData == (Keys.Control | Keys.Alt | Keys.L)) {
+            tilePicker.OnKeyDown(e.KeyCode);
+            if (e.KeyData == (Keys.Control | Keys.Alt | Keys.L)) {
                 //CopySpriteASMText(); // TODO: Remove
             }
         }
@@ -521,21 +509,19 @@ namespace Necrofy
             modifiedSprites.Clear();
             browserContents.Refresh();
         }
-
-        private void paletteButton_CheckedChanged(object sender, EventArgs e) {
-            if (updatingUI == 0 && sender is RadioButton button && button.Checked) {
-                int palette = Array.IndexOf(paletteButtons, button);
-                tilePicker.Palette = palette;
-                undoManager.Do(new ChangeSpriteTilePaletteAction(currentSprite, selectedObjects, palette));
-                canvas.Focus();
-            }
-        }
-
+        
         private void UpdateStatus() {
             if (objectSelector.MovingObjects) {
                 Status = string.Format(DragStatus, objectSelector.TotalMoveX, objectSelector.TotalMoveY);
             } else {
                 Status = DefaultStatus;
+            }
+        }
+
+        private void tilePicker_PaletteChanged(object sender, EventArgs e) {
+            if (updatingUI == 0) {
+                undoManager.Do(new ChangeSpriteTilePaletteAction(currentSprite, selectedObjects, tilePicker.Palette));
+                canvas.Focus();
             }
         }
     }

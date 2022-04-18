@@ -1,0 +1,3034 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DropDownControls</name>
+    </assembly>
+    <members>
+        <member name="T:BufferedPainting.BufferedPainter`1">
+            <summary>
+            Attaches to a System.Windows.Forms.Control and provides buffered 
+            painting functionality.
+            <para>
+            Uses TState to represent the visual state of the control. Animations 
+            are attached to transitions between states.
+            </para>
+            </summary>
+            <typeparam name="TState">Any type representing the visual state of the control.</typeparam>
+        </member>
+        <member name="E:BufferedPainting.BufferedPainter`1.PaintVisualState">
+            <summary>
+            Fired when the control must be painted in a particular state.
+            </summary>
+        </member>
+        <member name="M:BufferedPainting.BufferedPainter`1.OnPaintVisualState(BufferedPainting.BufferedPaintEventArgs{`0})">
+            <summary>
+            Raises the PaintVisualState event.
+            </summary>
+            <param name="e">BufferedPaintEventArgs instance.</param>
+        </member>
+        <member name="P:BufferedPainting.BufferedPainter`1.BufferedPaintSupported">
+            <summary>
+            Gets whether buffered painting is supported for the current OS/configuration.
+            </summary>
+        </member>
+        <member name="P:BufferedPainting.BufferedPainter`1.Control">
+            <summary>
+            Gets the control this instance is attached to.
+            </summary>
+        </member>
+        <member name="P:BufferedPainting.BufferedPainter`1.DefaultDuration">
+            <summary>
+            Gets or sets the default animation duration (in milliseconds) for state transitions. The default is zero (not animated).
+            </summary>
+        </member>
+        <member name="P:BufferedPainting.BufferedPainter`1.Enabled">
+            <summary>
+            Gets or sets whether animation is enabled.
+            </summary>
+        </member>
+        <member name="P:BufferedPainting.BufferedPainter`1.DefaultState">
+            <summary>
+            Gets or sets the default visual state. The default value is 'default(TState)'.
+            </summary>
+        </member>
+        <member name="P:BufferedPainting.BufferedPainter`1.Transitions">
+            <summary>
+            Gets the collection of state transitions and their animation durations. 
+            Only one item for each unique state transition is permitted.
+            </summary>
+        </member>
+        <member name="P:BufferedPainting.BufferedPainter`1.Triggers">
+            <summary>
+            Gets the collection of state change triggers. 
+            Only one item for each unique combination of type and visual state is permitted.
+            </summary>
+        </member>
+        <member name="P:BufferedPainting.BufferedPainter`1.State">
+            <summary>
+            Gets or sets the current visual state.
+            </summary>
+        </member>
+        <member name="M:BufferedPainting.BufferedPainter`1.#ctor(System.Windows.Forms.Control)">
+            <summary>
+            Initialises a new instance of the BufferedPainter class.
+            </summary>
+            <param name="control">
+            Control this instance is attached to.
+            <para>
+            For best results, use a control which does not paint its background.
+            </para>
+            <para>
+            Note: Buffered painting does not work if the OptimizedDoubleBuffer flag is set for the control.
+            </para> 
+            </param>
+        </member>
+        <member name="M:BufferedPainting.BufferedPainter`1.IsSupported">
+            <summary>
+            Returns a value indicating whether buffered painting is supported under the current OS and configuration.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BufferedPainting.BufferedPainter`1.AddTransition(`0,`0,System.Int32)">
+            <summary>
+            Short-hand method for adding a state transition.
+            </summary>
+            <param name="fromState">The previous visual state.</param>
+            <param name="toState">The new visual state.</param>
+            <param name="duration">Duration of the animation (in milliseconds).</param>
+        </member>
+        <member name="M:BufferedPainting.BufferedPainter`1.AddTrigger(BufferedPainting.VisualStateTriggerTypes,`0,System.Drawing.Rectangle,System.Windows.Forms.AnchorStyles)">
+            <summary>
+            Short-hand method for adding a state change trigger.
+            </summary>
+            <param name="type">Type of trigger.</param>
+            <param name="state">Visual state applied when the trigger occurs.</param>
+            <param name="bounds">Bounds within which the trigger applies.</param>
+            <param name="anchor">How the bounds are anchored to the control.</param>
+        </member>
+        <member name="M:BufferedPainting.BufferedPainter`1.EvalTriggers">
+            <summary>
+            Evaluates all state change triggers.
+            </summary>
+        </member>
+        <member name="M:BufferedPainting.BufferedPainter`1.ApplyCondition(BufferedPainting.VisualStateTriggerTypes,`0@)">
+            <summary>
+            Helper method for EvalTriggers().
+            </summary>
+            <param name="type">Type of trigger to search for.</param>
+            <param name="stateIfTrue">Reference to the visual state variable to update (if the trigger occurs).</param>
+        </member>
+        <member name="M:BufferedPainting.BufferedPainter`1.CleanupAnimations">
+            <summary>
+            Deactivates buffered painting.
+            </summary>
+        </member>
+        <member name="T:BufferedPainting.BufferedPaintTransition`1">
+            <summary>
+            Represents a transition between two visual states. Describes the duration of the animation. 
+            Two transitions are considered equal if they represent the same change in visual state.
+            </summary>
+            <typeparam name="TState">Any type representing the visual state of the control.</typeparam>
+        </member>
+        <member name="P:BufferedPainting.BufferedPaintTransition`1.FromState">
+            <summary>
+            Gets the previous visual state.
+            </summary>
+        </member>
+        <member name="P:BufferedPainting.BufferedPaintTransition`1.ToState">
+            <summary>
+            Gets the new visual state.
+            </summary>
+        </member>
+        <member name="P:BufferedPainting.BufferedPaintTransition`1.Duration">
+            <summary>
+            Gets or sets the duration (in milliseconds) of the animation.
+            </summary>
+        </member>
+        <member name="M:BufferedPainting.BufferedPaintTransition`1.#ctor(`0,`0,System.Int32)">
+            <summary>
+            Initialises a new instance of the BufferedPaintTransition class.
+            </summary>
+            <param name="fromState">The previous visual state.</param>
+            <param name="toState">The new visual state.</param>
+            <param name="duration">Duration of the animation (in milliseconds).</param>
+        </member>
+        <member name="M:BufferedPainting.BufferedPaintTransition`1.Equals(System.Object)">
+            <summary>
+            Determines if two instances are equal.
+            </summary>
+            <param name="obj">The object to compare.</param>
+            <returns></returns>
+        </member>
+        <member name="M:BufferedPainting.BufferedPaintTransition`1.GetHashCode">
+            <summary>
+            Serves as a hash function for a particular type.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:BufferedPainting.VisualStateTrigger`1">
+            <summary>
+            Represents a trigger for a particular visual state. 
+            Two triggers are considered equal if they are of the same type and visual state.
+            </summary>
+            <typeparam name="TState">Any type representing the visual state of the control.</typeparam>
+        </member>
+        <member name="P:BufferedPainting.VisualStateTrigger`1.Type">
+            <summary>
+            Gets the type of trigger.
+            </summary>
+        </member>
+        <member name="P:BufferedPainting.VisualStateTrigger`1.State">
+            <summary>
+            Gets the visual state applied when the trigger occurs.
+            </summary>
+        </member>
+        <member name="P:BufferedPainting.VisualStateTrigger`1.Bounds">
+            <summary>
+            Gets or sets the bounds within which the trigger applies.
+            </summary>
+        </member>
+        <member name="P:BufferedPainting.VisualStateTrigger`1.Anchor">
+            <summary>
+            Gets or sets how the bounds are anchored to the edges of the control.
+            </summary>
+        </member>
+        <member name="M:BufferedPainting.VisualStateTrigger`1.#ctor(BufferedPainting.VisualStateTriggerTypes,`0,System.Drawing.Rectangle,System.Windows.Forms.AnchorStyles)">
+            <summary>
+            Initialises a new instance of the VisualStateTrigger class.
+            </summary>
+            <param name="type">Type of trigger.</param>
+            <param name="state">Visual state applied when the trigger occurs.</param>
+            <param name="bounds">Bounds within which the trigger applies.</param>
+            <param name="anchor">How the bounds are anchored to the edges of the control.</param>
+        </member>
+        <member name="M:BufferedPainting.VisualStateTrigger`1.Equals(System.Object)">
+            <summary>
+            Determines if two instances are equal.
+            </summary>
+            <param name="obj">The object to compare.</param>
+            <returns></returns>
+        </member>
+        <member name="M:BufferedPainting.VisualStateTrigger`1.GetHashCode">
+            <summary>
+            Serves as a hash function for a particular type.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:BufferedPainting.VisualStateTriggerTypes">
+            <summary>
+            Represents the types of trigger which can change the visual state of a control.
+            </summary>
+        </member>
+        <member name="F:BufferedPainting.VisualStateTriggerTypes.Focused">
+            <summary>
+            The control receives input focus.
+            </summary>
+        </member>
+        <member name="F:BufferedPainting.VisualStateTriggerTypes.Hot">
+            <summary>
+            The mouse is over the control.
+            </summary>
+        </member>
+        <member name="F:BufferedPainting.VisualStateTriggerTypes.Pushed">
+            <summary>
+            The left mouse button is pressed on the control.
+            </summary>
+        </member>
+        <member name="T:BufferedPainting.BufferedPaintEventArgs`1">
+            <summary>
+            EventArgs class for the BufferedPainter.PaintVisualState event.
+            </summary>
+            <typeparam name="TState">Any type representing the visual state of the control.</typeparam>
+        </member>
+        <member name="P:BufferedPainting.BufferedPaintEventArgs`1.State">
+            <summary>
+            Gets the visual state to paint.
+            </summary>
+        </member>
+        <member name="P:BufferedPainting.BufferedPaintEventArgs`1.Graphics">
+            <summary>
+            Gets the Graphics object on which to paint.
+            </summary>
+        </member>
+        <member name="M:BufferedPainting.BufferedPaintEventArgs`1.#ctor(`0,System.Drawing.Graphics)">
+            <summary>
+            Initialises a new instance of the BufferedPaintEventArgs class.
+            </summary>
+            <param name="state">Visual state to paint.</param>
+            <param name="graphics">Graphics object on which to paint.</param>
+        </member>
+        <member name="T:ComboTreeBox">
+            <summary>
+            Represents a control which provides ComboBox-like functionality, displaying its 
+            dropdown items (nodes) in a manner similar to a TreeView control.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.AllNodes">
+            <summary>
+            Gets the (recursive) superset of the entire tree of nodes contained 
+            within the control.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.CascadeCheckState">
+            <summary>
+            Gets or sets a value indicating whether the check state of a node is 
+            determined by its child nodes, and vice versa. If set to true, this 
+            means that only the check state of leaf nodes is significant.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.CheckedNodes">
+            <summary>
+            Gets or sets a (recursive) sequence containing the nodes whose 
+            <see cref="P:ComboTreeNode.CheckState"/> property is equal to 
+            <see cref="F:System.Windows.Forms.CheckState.Checked"/>. If the <see cref="P:ComboTreeBox.CascadeCheckState"/> 
+            property is set to true, only leaf nodes are included.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.CheckedNodeSeparator">
+            <summary>
+            Gets or sets the string used to separate the checked nodes.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.ConnectorsNeeded">
+            <summary>
+            Gets a value indicating whether connector lines should be rendered.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.DropDownControl">
+            <summary>
+            Gets the toolstrip drop-down control that displays the nodes.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.ShowGlyphs">
+            <summary>
+            Gets or sets a value indicating whether connector lines and expand/collapse glyphs are shown.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.DropDownHeight">
+            <summary>
+            Gets or sets the maximum height of the dropdown portion of the control.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.DropDownWidth">
+            <summary>
+            Gets or sets the width of the dropdown portion of the control. 
+            Value must be greater than or equal to the width of the control.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.DroppedDown">
+            <summary>
+            Gets or sets whether the dropdown portion of the control is displayed.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.ExpandedImageIndex">
+            <summary>
+            Gets or sets the index of the default image to use for nodes when expanded.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.ExpandedImageKey">
+            <summary>
+            Gets or sets the name of the default image to use for nodes when expanded.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.ImageIndex">
+            <summary>
+            Gets or sets the index of the default image to use for nodes.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.ImageKey">
+            <summary>
+            Gets or sets the name of the default image to use for nodes.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.Images">
+            <summary>
+            Gets or sets an ImageList component which provides the images displayed beside nodes in the control.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.Nodes">
+            <summary>
+            Gets or sets the collection of top-level nodes contained by the control.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.NullValue">
+            <summary>
+            Gets or sets the text displayed in the editable portion of the control if the SelectedNode property is null.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.Path">
+            <summary>
+            Gets or sets the path to the selected node.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.PathSeparator">
+            <summary>
+            Gets or sets the string used to separate nodes in the Path property.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.SelectedNode">
+            <summary>
+            Gets or sets the node selected in the control.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.ShowCheckBoxes">
+            <summary>
+            Gets or sets a value indicating whether a checkbox is shown beside each node.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.ShowPath">
+            <summary>
+            Determines whether the full path to the selected node is displayed in the editable portion of the control.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.ShowsFocusCues">
+            <summary>
+            Gets whether the owning control is displaying focus cues.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.Text">
+            <summary>
+            Hides the Text property from the designer.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.ThreeState">
+            <summary>
+            Gets or sets a value indicating whether node checkboxes move into the <see cref="F:System.Windows.Forms.CheckState.Indeterminate"/> state after the <see cref="F:System.Windows.Forms.CheckState.Checked"/> state.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.FirstVisibleNode">
+            <summary>
+            Gets or sets the first visible ComboTreeNode in the drop-down portion of the control.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.UseNodeNamesForPath">
+            <summary>
+            Determines whether the <see cref="P:ComboTreeNode.Name"/> property of the nodes is used to construct the path string. 
+            The default behaviour is to use the <see cref="P:ComboTreeNode.Text"/> property.
+            </summary>
+        </member>
+        <member name="P:ComboTreeBox.VisibleCount">
+            <summary>
+            Gets the number of ComboTreeNodes visible in the drop-down portion of the control.
+            </summary>
+        </member>
+        <member name="E:ComboTreeBox.SelectedNodeChanged">
+            <summary>
+            Fired when the value of the <see cref="P:ComboTreeBox.SelectedNode"/> property changes.
+            </summary>
+        </member>
+        <member name="E:ComboTreeBox.AfterCheck">
+            <summary>
+            Fired when the value of a node's <see cref="P:ComboTreeNode.CheckState"/> property changes.
+            </summary>
+        </member>
+        <member name="E:ComboTreeBox.NodeClick">
+            <summary>
+            Fired when a node is clicked, regardless of whether it can be selected.
+            </summary>
+        </member>
+        <member name="M:ComboTreeBox.#ctor">
+            <summary>
+            Initalises a new instance of ComboTreeBox.
+            </summary>
+        </member>
+        <member name="M:ComboTreeBox.BeginUpdate">
+            <summary>
+            Prevents the dropdown portion of the control from being updated until the EndUpdate method is called.
+            </summary>
+        </member>
+        <member name="M:ComboTreeBox.CheckAll">
+            <summary>
+            Checks all nodes in the tree.
+            </summary>
+        </member>
+        <member name="M:ComboTreeBox.CollapseAll">
+            <summary>
+            Collapses all nodes in the tree for when the dropdown portion of the control is reopened.
+            </summary>
+        </member>
+        <member name="M:ComboTreeBox.Dispose(System.Boolean)">
+            <summary>
+            Disposes of the control and its dropdown.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:ComboTreeBox.EndUpdate">
+            <summary>
+            Updates the dropdown portion of the control after being suspended by the BeginUpdate method.
+            </summary>
+        </member>
+        <member name="M:ComboTreeBox.ExpandAll">
+            <summary>
+            Expands all nodes in the tree for when the dropdown portion of the control is reopened.
+            </summary>
+        </member>
+        <member name="M:ComboTreeBox.GetNextDisplayedNode">
+            <summary>
+            Returns the next displayable node, relative to the selected node.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeBox.GetPrevDisplayedNode">
+            <summary>
+            Returns the previous displayable node, relative to the selected node.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeBox.GetNextSelectableNode">
+            <summary>
+            Returns the next selectable node, relative to the selected node.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeBox.GetPrevSelectableNode">
+            <summary>
+            Returns the previous selectable node, relative to the selected node.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeBox.GetNodeImage(ComboTreeNode)">
+            <summary>
+            Returns the image referenced by the specified node in the ImageList component associated with this control.
+            </summary>
+            <param name="node"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeBox.GetNodeImage(ComboTreeNode,System.Windows.Forms.ImageList,System.Int32,System.String,System.Int32,System.String)">
+            <summary>
+            Returns the image associated with the specified node.
+            </summary>
+            <param name="node"></param>
+            <param name="images"></param>
+            <param name="imageIndex"></param>
+            <param name="imageKey"></param>
+            <param name="expandedImageIndex"></param>
+            <param name="expandedImageKey"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeBox.IsNodeVisible(ComboTreeNode)">
+            <summary>
+            Determines whether the specified node should be displayed.
+            </summary>
+            <param name="node"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeBox.OnMouseClick(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Toggles the visibility of the dropdown portion of the control.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:ComboTreeBox.OnMouseWheel(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Scrolls between adjacent nodes, or scrolls the drop-down portion of 
+            the control in response to the mouse wheel.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:ComboTreeBox.OnNodeClick(ComboTreeNodeEventArgs)">
+            <summary>
+            Raises the <see cref="E:ComboTreeBox.NodeClick"/> event.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:ComboTreeBox.OnFontChanged(System.EventArgs)">
+            <summary>
+            Updates the dropdown's font when the control's font changes.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:ComboTreeBox.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            Handles keyboard shortcuts.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:ComboTreeBox.OnLostFocus(System.EventArgs)">
+            <summary>
+            Closes the dropdown portion of the control when it loses focus.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:ComboTreeBox.OnPaintContent(DropDownPaintEventArgs)">
+            <summary>
+            Paints the selected node in the control.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:ComboTreeBox.ProcessCmdKey(System.Windows.Forms.Message@,System.Windows.Forms.Keys)">
+            <summary>
+            Facilitates various keyboard shortcuts.
+            </summary>
+            <param name="msg"></param>
+            <param name="keyData"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeBox.GetFullPath(ComboTreeNode)">
+            <summary>
+            Returns the full path to the specified <see cref="T:ComboTreeNode"/>.
+            </summary>
+            <param name="node"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeBox.GetNodeAt(System.String)">
+            <summary>
+            Returns the node at the specified path.
+            </summary>
+            <param name="path"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeBox.GetCheckedNodeString">
+            <summary>
+            Returns a string containing the concatenated text of the checked nodes.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeBox.OnSelectedNodeChanged(System.EventArgs)">
+            <summary>
+            Raises the <see cref="E:ComboTreeBox.SelectedNodeChanged"/> event.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:ComboTreeBox.OnAfterCheck(ComboTreeNodeEventArgs)">
+            <summary>
+            Raises the <see cref="E:ComboTreeBox.AfterCheck"/> event.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:ComboTreeBox.OwnsNode(ComboTreeNode)">
+            <summary>
+            Determines whether the specified node belongs to this ComboTreeBox, and 
+            hence is a valid selection. For the purposes of this method, a null 
+            value is always a valid selection.
+            </summary>
+            <param name="node"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeBox.SetDroppedDown(System.Boolean,System.Boolean)">
+            <summary>
+            Sets the value of the DroppedDown property, optionally without raising any events.
+            </summary>
+            <param name="droppedDown"></param>
+            <param name="raiseEvents"></param>
+        </member>
+        <member name="M:ComboTreeBox.SetSelectedNode(ComboTreeNode)">
+            <summary>
+            Sets the value of the SelectedNode property and raises the SelectedNodeChanged event.
+            </summary>
+            <param name="node"></param>
+        </member>
+        <member name="M:ComboTreeBox.ShouldSerializeDropDownWidth">
+            <summary>
+            Returns a value indicating whether the value of the <see cref="P:ComboTreeBox.DropDownWidth"/> 
+            property should be serialized by the designer.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeBox.Sort">
+            <summary>
+            Sorts the contents of the tree using the default comparer.
+            </summary>
+        </member>
+        <member name="M:ComboTreeBox.Sort(System.Collections.Generic.IComparer{ComboTreeNode})">
+            <summary>
+            Sorts the contents of the tree using the specified comparer.
+            </summary>
+            <param name="comparer"></param>
+        </member>
+        <member name="M:ComboTreeBox.SuspendCheckEvents">
+            <summary>
+            Suspends processing of node check events.
+            </summary>
+        </member>
+        <member name="M:ComboTreeBox.ResumeCheckEvents">
+            <summary>
+            Resumes processing of node check events.
+            </summary>
+        </member>
+        <member name="M:ComboTreeBox.UncheckAll">
+            <summary>
+            Un-checks all nodes in the tree.
+            </summary>
+        </member>
+        <member name="T:ComboTreeDropDown">
+            <summary>
+            Represents the dropdown portion of the ComboTreeBox control. The nodes are displayed in a 
+            manner similar to the TreeView control.
+            </summary>
+        </member>
+        <member name="P:ComboTreeDropDown.Collapsed">
+            <summary>
+            Gets the collapsed (+) glyph to paint on the dropdown.
+            </summary>
+        </member>
+        <member name="P:ComboTreeDropDown.DefaultPadding">
+            <summary>
+            Removes extraneous default padding from the dropdown.
+            </summary>
+        </member>
+        <member name="P:ComboTreeDropDown.DropDownHeight">
+            <summary>
+            Gets or sets the maximum height of the dropdown. 
+            If the dropdown contains fewer items, it will be shortened.
+            </summary>
+        </member>
+        <member name="P:ComboTreeDropDown.DropDownWidth">
+            <summary>
+            Gets or sets the width of the dropdown. 
+            Limited to at least the width of the source control.
+            </summary>
+        </member>
+        <member name="P:ComboTreeDropDown.Expanded">
+            <summary>
+            Gets the expanded (-) glyph to paint on the dropdown.
+            </summary>
+        </member>
+        <member name="P:ComboTreeDropDown.ProcessKeys">
+            <summary>
+            Gets or sets a value indicating whether to process keyboard events.
+            </summary>
+        </member>
+        <member name="P:ComboTreeDropDown.TopNode">
+            <summary>
+            Gets or sets the first visible ComboTreeNode in the drop-down portion of the control.
+            </summary>
+        </member>
+        <member name="P:ComboTreeDropDown.VisibleCount">
+            <summary>
+            Gets the number of ComboTreeNodes visible in the drop-down portion of the control.
+            </summary>
+        </member>
+        <member name="E:ComboTreeDropDown.DrawNode">
+            <summary>
+            Fired when a node is drawn in the drop-down portion of the control.
+            </summary>
+        </member>
+        <member name="M:ComboTreeDropDown.#ctor(ComboTreeBox)">
+            <summary>
+            Initialises a new instance of ComboTreeDropDown and associates it with its parent ComboTreeBox.
+            </summary>
+            <param name="sourceControl"></param>
+        </member>
+        <member name="M:ComboTreeDropDown.GenerateBitmap(ComboTreeDropDown.BitmapInfo,System.Drawing.Image)">
+            <summary>
+            Generates a bitmap to display beside the ToolStripItem representation of the specified node.
+            </summary>
+            <param name="bitmapInfo"></param>
+            <param name="nodeImage"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeDropDown.GetButtonState(System.Drawing.Rectangle)">
+            <summary>
+            Determines how to draw a scrollbar button.
+            </summary>
+            <param name="bounds"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeDropDown.GetCheckBoxState(System.Windows.Forms.CheckState,System.Drawing.Rectangle)">
+            <summary>
+            Determines how to draw a checkbox glyph.
+            </summary>
+            <param name="checkState"></param>
+            <param name="bounds"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeDropDown.GetCollectionContainingNode(ComboTreeNode)">
+            <summary>
+            Returns the ComboTreeNodeCollection to which the specified node belongs.
+            </summary>
+            <param name="node"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeDropDown.GetItemBitmap(ComboTreeNode)">
+            <summary>
+            Determines all of the parameters for drawing the bitmap beside the 
+            specified node. If they represent a unique combination, the bitmap is 
+            generated and returned. Otherwise, the appropriate cached bitmap is 
+            returned.
+            </summary>
+            <param name="node"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeDropDown.GetScrollBarState(System.Drawing.Rectangle)">
+            <summary>
+            Determines how to draw the main part of the scrollbar.
+            </summary>
+            <param name="bounds"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeDropDown.GetScrollBarStateDown">
+            <summary>
+            Determines how to draw the down arrow on the scrollbar.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeDropDown.GetScrollBarStateUp">
+            <summary>
+            Determines how to draw the up arrow on the scrollbar.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeDropDown.GetScrollBarThumbState">
+            <summary>
+            Determines how to draw the 'thumb' button on the scrollbar.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeDropDown.IsInputKey(System.Windows.Forms.Keys)">
+            <summary>
+            Registers input keys for the control.
+            </summary>
+            <param name="keyData"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeDropDown.OnClosed(System.Windows.Forms.ToolStripDropDownClosedEventArgs)">
+            <summary>
+            Updates the status of the dropdown on the owning ComboTreeBox control.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:ComboTreeDropDown.OnClosing(System.Windows.Forms.ToolStripDropDownClosingEventArgs)">
+            <summary>
+            Prevents the clicking of items from closing the dropdown.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:ComboTreeDropDown.OnFontChanged(System.EventArgs)">
+            <summary>
+            Updates the font on the items when the drop-down's font changes.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:ComboTreeDropDown.OnKeyPress(System.Windows.Forms.KeyPressEventArgs)">
+            <summary>
+            Handles keyboard shortcuts.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:ComboTreeDropDown.ProcessKey(System.Windows.Forms.Keys,System.Windows.Forms.Keys)">
+            <summary>
+            Processes a key press event.
+            </summary>
+            <param name="keyCode"></param>
+            <param name="modifiers"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeDropDown.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            Handles keyboard shortcuts.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:ComboTreeDropDown.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handles dragging of the scrollbar and hot-tracking in response to movement of the mouse.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:ComboTreeDropDown.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handles scrolling in response to the left mouse button being clicked.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:ComboTreeDropDown.OnMouseUp(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Disengages dragging of the scrollbar and handles hot-tracking in 
+            response to the mouse button being released.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:ComboTreeDropDown.OnMouseClick(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handles the expand/collapse of nodes and selection in response to the 
+            mouse being clicked.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:ComboTreeDropDown.OnMouseEnter(System.EventArgs)">
+            <summary>
+            Terminates dragging of the scrollbar in response to the mouse 
+            returning to the control.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:ComboTreeDropDown.OnMouseLeave(System.EventArgs)">
+            <summary>
+            Terminates dragging of the scrollbar in response to the mouse leaving 
+            the control.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:ComboTreeDropDown.OnMouseWheel(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Scrolls the dropdown in response to the mouse wheel.
+            </summary>
+            <param name="e"></param>
+            <remarks>
+            With thanks to Michael Sanders (mikey.g.sanders@gmail.com).
+            </remarks>
+        </member>
+        <member name="M:ComboTreeDropDown.OnPaint(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            Paints the drop-down, including all items within the scrolled region 
+            and, if appropriate, the scrollbar.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:ComboTreeDropDown.OnDrawNode(ComboTreeNodePaintEventArgs)">
+            <summary>
+            Raises the <see cref="E:ComboTreeDropDown.DrawNode"/> event.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:ComboTreeDropDown.Open">
+            <summary>
+            Displays the dropdown beneath its owning ComboTreeBox control.
+            </summary>
+        </member>
+        <member name="M:ComboTreeDropDown.CalcDropDownLocation">
+            <summary>
+            Calculates the location of the dropdown depending on whether it needs to appear above or below the source control.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeDropDown.ExpandTo(ComboTreeNode)">
+            <summary>
+            Expands parent nodes until the specified node is visible.
+            </summary>
+            <param name="node"></param>
+        </member>
+        <member name="M:ComboTreeDropDown.ScrollTo(ComboTreeNode)">
+            <summary>
+            Highlights and scrolls to the specified node.
+            </summary>
+            <param name="node"></param>
+        </member>
+        <member name="M:ComboTreeDropDown.ScrollDropDown(System.Int32)">
+            <summary>
+            Scrolls the drop-down up or down by the specified number of items.
+            </summary>
+            <param name="offset"></param>
+        </member>
+        <member name="M:ComboTreeDropDown.ScrollToHighlighted(System.Boolean)">
+            <summary>
+            Scrolls the drop-down so as to ensure that the highlighted item is at 
+            either the top or bottom of the scrolled region.
+            </summary>
+            <param name="highlightedAtTop"></param>
+        </member>
+        <member name="M:ComboTreeDropDown.UpdateScrolling">
+            <summary>
+            Updates the items in the scrolled region. This method is called 
+            whenever the scroll offset is changed.
+            </summary>
+        </member>
+        <member name="M:ComboTreeDropDown.ClearBitmapCache">
+            <summary>
+            Releases resources used by the bitmap cache.
+            </summary>
+        </member>
+        <member name="M:ComboTreeDropDown.UpdateVisibleItems">
+            <summary>
+            Regenerates the items on the dropdown. This method is called whenever 
+            a significant change occurs to the dropdown, such as a change in the 
+            tree or changes to the layout of the owning control.
+            </summary>
+        </member>
+        <member name="M:ComboTreeDropDown.Dispose(System.Boolean)">
+            <summary>
+            Releases resources used by the component.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="T:ComboTreeDropDown.NodeInfo">
+            <summary>
+            Represents the information needed to draw and interact with a node in the drop-down.
+            </summary>
+        </member>
+        <member name="P:ComboTreeDropDown.NodeInfo.Node">
+            <summary>
+            Gets the node represented by this item.
+            </summary>
+        </member>
+        <member name="P:ComboTreeDropDown.NodeInfo.Image">
+            <summary>
+            Gets or sets a reference to the bitmap shown beside this item, 
+            containing the node's image, plus/minus glyph and lines.
+            </summary>
+        </member>
+        <member name="P:ComboTreeDropDown.NodeInfo.DisplayRectangle">
+            <summary>
+            Gets or sets the current bounds of the item in the drop-down.
+            </summary>
+        </member>
+        <member name="P:ComboTreeDropDown.NodeInfo.GlyphRectangle">
+            <summary>
+            Gets or sets the current bounds of the glyph section of the 
+            item, which is clickable.
+            </summary>
+        </member>
+        <member name="P:ComboTreeDropDown.NodeInfo.CheckRectangle">
+            <summary>
+            Gets or sets the current bounds of the checkbox section of the 
+            item (if node checkboxes are displayed).
+            </summary>
+        </member>
+        <member name="M:ComboTreeDropDown.NodeInfo.#ctor(ComboTreeNode)">
+            <summary>
+            Creates a new instance of the NodeInfo class to represent the 
+            specified ComboTreeNode.
+            </summary>
+            <param name="node"></param>
+        </member>
+        <member name="T:ComboTreeDropDown.ScrollBarInfo">
+            <summary>
+            Represents the information needed to draw and interact with the scroll 
+            bar.
+            </summary>
+        </member>
+        <member name="P:ComboTreeDropDown.ScrollBarInfo.DisplayRectangle">
+            <summary>
+            Gets or sets the bounds of the entire scrollbar.
+            </summary>
+        </member>
+        <member name="P:ComboTreeDropDown.ScrollBarInfo.UpArrow">
+            <summary>
+            Gets or sets the bounds of the up arrow.
+            </summary>
+        </member>
+        <member name="P:ComboTreeDropDown.ScrollBarInfo.DownArrow">
+            <summary>
+            Gets or sets the bounds of the down arrow.
+            </summary>
+        </member>
+        <member name="P:ComboTreeDropDown.ScrollBarInfo.Thumb">
+            <summary>
+            Gets or sets the bounds of the 'thumb' button.
+            </summary>
+        </member>
+        <member name="T:ComboTreeDropDown.BitmapInfo">
+            <summary>
+            Represents the variables which determine the bitmap to draw beside an 
+            item. In a drop-down with a large number of items, there may be only a
+            small number of distinct bitmaps. This structure serves as a key to 
+            aid in identifying the bitmap to use.
+            </summary>
+        </member>
+        <member name="P:ComboTreeDropDown.BitmapInfo.HasChildren">
+            <summary>
+            Gets or sets whether the node has children. This is used to 
+            determine if the plus/minus glyph is drawn.
+            </summary>
+        </member>
+        <member name="P:ComboTreeDropDown.BitmapInfo.IsLastPeer">
+            <summary>
+            Gets or sets whether the node is the last peer in its branch of 
+            the tree. These nodes do not draw a connector to their successor.
+            </summary>
+        </member>
+        <member name="P:ComboTreeDropDown.BitmapInfo.IsFirst">
+            <summary>
+            Gets or sets whether the node is the first in the entire tree. The 
+            very first node does not draw a connector to its predecessor.
+            </summary>
+        </member>
+        <member name="P:ComboTreeDropDown.BitmapInfo.ImageIndex">
+            <summary>
+            Gets or sets the index of the image in the ComboTreeNode's 
+            ImageList component to draw beside this node.
+            </summary>
+        </member>
+        <member name="P:ComboTreeDropDown.BitmapInfo.ImageKey">
+            <summary>
+            Gets or sets the name of the image in the ComboTreeNode's 
+            ImageList component to draw beside this node.
+            </summary>
+        </member>
+        <member name="P:ComboTreeDropDown.BitmapInfo.NodeDepth">
+            <summary>
+            Gets or sets the zero-based depth of the node in the tree. This is 
+            used to calculate indents.
+            </summary>
+        </member>
+        <member name="P:ComboTreeDropDown.BitmapInfo.NodeExpanded">
+            <summary>
+            Gets or sets whether the node has children and is expanded. This 
+            will cause a connector to be drawn to the sub-tree.
+            </summary>
+        </member>
+        <member name="P:ComboTreeDropDown.BitmapInfo.VerticalLines">
+            <summary>
+            Gets or sets whether outer vertical connectors are to be drawn for 
+            each successive parent of the node.
+            </summary>
+        </member>
+        <member name="M:ComboTreeDropDown.BitmapInfo.Equals(ComboTreeDropDown.BitmapInfo)">
+            <summary>
+            Used as the comparison function in the bitmap cache; ensures that 
+            bitmaps are only created for distinct combinations of these 
+            variables.
+            </summary>
+            <param name="that"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ComboTreeNode">
+            <summary>
+            Represents a node in the ComboTreeBox. A node may have a name, text, font style, image and 
+            may contain child nodes. If so, it can be expanded or collapsed.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNode.Cursor">
+            <summary>
+            Gets or sets the cursor displayed when the user moves the mouse over the node.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNode.Parent">
+            <summary>
+            Gets or sets the node that owns this node, or null for a top-level node.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNode.Text">
+            <summary>
+            Gets or sets the text displayed on the node.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNode.FontStyle">
+            <summary>
+            Gets or sets the font style to use when painting the node.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNode.ImageIndex">
+            <summary>
+            Gets or sets the index of the image (in the ImageList on the ComboTreeBox control) to use for this node.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNode.ImageKey">
+            <summary>
+            Gets or sets the name of the image to use for this node.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNode.Expanded">
+            <summary>
+            Gets or sets whether the node is expanded (i.e. its child nodes are visible). Changes are not reflected in the dropdown portion of the 
+            control until the next time it is opened.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNode.ExpandedImageIndex">
+            <summary>
+            Gets or sets the index of the image to use for this node when expanded.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNode.ExpandedImageKey">
+            <summary>
+            Gets or sets the name of the image to use for this node when expanded.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNode.ForeColor">
+            <summary>
+            Gets or sets the colour of the node. If empty, the control's foreground colour is used.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNode.Nodes">
+            <summary>
+            Gets a collection of the child nodes for this node.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNode.Name">
+            <summary>
+            Gets or sets the name of the node.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNode.Depth">
+            <summary>
+            Determines the zero-based depth of the node, relative to the ComboTreeBox control.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNode.CheckState">
+            <summary>
+            Gets or sets the check state when the <see cref="P:ComboTreeBox.ShowCheckBoxes"/> property is set to true.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNode.Checked">
+            <summary>
+            Gets or sets the checked state when the <see cref="P:ComboTreeBox.ShowCheckBoxes"/> property is set to true.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNode.Selectable">
+            <summary>
+            Gets or sets a value indicating whether the node can be selected by the user.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNode.Tag">
+            <summary>
+            Gets or sets a user-defined object associated with this ComboTreeNode.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNode.ToolTip">
+            <summary>
+            Gets or sets the tooltip text associated with this node.
+            </summary>
+        </member>
+        <member name="E:ComboTreeNode.CheckStateChanged">
+            <summary>
+            Fired when the value of the <see cref="P:ComboTreeNode.CheckState"/> property changes.
+            </summary>
+        </member>
+        <member name="M:ComboTreeNode.#ctor">
+            <summary>
+            Initialises a new instance of ComboTreeNode using default (empty) values.
+            </summary>
+        </member>
+        <member name="M:ComboTreeNode.#ctor(System.String)">
+            <summary>
+            Initialises a new instance of ComboTreeNode with the specified text.
+            </summary>
+            <param name="text"></param>
+        </member>
+        <member name="M:ComboTreeNode.#ctor(System.String,System.String)">
+            <summary>
+            Initialises a new instance of ComboTreeNode with the specified name and text.
+            </summary>
+            <param name="name"></param>
+            <param name="text"></param>
+        </member>
+        <member name="M:ComboTreeNode.GetFullPath(System.String,System.Boolean)">
+            <summary>
+            Returns the full path to this node, using the specified path separator.
+            </summary>
+            <param name="pathSeparator">
+            Separator between the elements that make up the path.
+            </param>
+            <param name="useNodeNamesForPath">
+            Whether to construct the path from the <see cref="P:ComboTreeNode.Name"/> property 
+            instead of the <see cref="P:ComboTreeNode.Text"/> property.
+            </param>
+            <returns>The path string.</returns>
+        </member>
+        <member name="M:ComboTreeNode.GetAggregateCheckState">
+            <summary>
+            Returns the aggregate check state of this node's children.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeNode.ToString">
+            <summary>
+            Returns a string representation of this <see cref="T:ComboTreeNode"/>.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeNode.OnCheckStateChanged">
+            <summary>
+            Raises the <see cref="E:ComboTreeNode.CheckStateChanged"/> event.
+            </summary>
+        </member>
+        <member name="M:ComboTreeNode.Clone(System.Boolean)">
+            <summary>
+            Returns a copy of the node, optionally including all child nodes.
+            </summary>
+            <param name="recursive"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeNode.Clone">
+            <summary>
+            Returns a copy of the node.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeNode.Paint(System.Drawing.Graphics,System.Drawing.Font,System.Drawing.Rectangle,System.Drawing.Color,System.Windows.Forms.TextFormatFlags)">
+            <summary>
+            Paints the node content.
+            </summary>
+            <param name="g"></param>
+            <param name="font"></param>
+            <param name="textBounds"></param>
+            <param name="textColor"></param>
+            <param name="flags"></param>
+        </member>
+        <member name="M:ComboTreeNode.CompareTo(ComboTreeNode)">
+            <summary>
+            Compares two ComboTreeNode objects using a culture-invariant, case-insensitive comparison of the Text property.
+            </summary>
+            <param name="other"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ComboTreeNodeEventArgs">
+            <summary>
+            Arguments for the <see cref="E:ComboTreeBox.AfterCheck"/> event.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNodeEventArgs.Node">
+            <summary>
+            Gets the affected node.
+            </summary>
+        </member>
+        <member name="M:ComboTreeNodeEventArgs.#ctor(ComboTreeNode)">
+            <summary>
+            Initialises a new instance of the <see cref="T:ComboTreeNodeEventArgs"/> class using the specified node.
+            </summary>
+            <param name="node"></param>
+        </member>
+        <member name="T:ComboTreeNodePaintEventArgs">
+            <summary>
+            Arguments for the <see cref="E:ComboTreeDropDown.DrawNode"/> event.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNodePaintEventArgs.Graphics">
+            <summary>
+            Gets the <see cref="P:ComboTreeNodePaintEventArgs.Graphics"/> surface on which the content is drawn.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNodePaintEventArgs.Bounds">
+            <summary>
+            Gets the bounds within which the content is drawn.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNodePaintEventArgs.TextBounds">
+            <summary>
+            Gets the bounds within which the text is drawn.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNodePaintEventArgs.Node">
+            <summary>
+            Gets the <see cref="T:ComboTreeNode"/> to paint.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNodePaintEventArgs.IsHighlighed">
+            <summary>
+            Gets a value indicating whether the node is currently highlighted.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNodePaintEventArgs.DrawDefault">
+            <summary>
+            Gets or sets a value indicating whether to draw the node using default logic.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNodePaintEventArgs.TextFormatFlags">
+            <summary>
+            Gets the format flags used for the text on the node.
+            </summary>
+        </member>
+        <member name="P:ComboTreeNodePaintEventArgs.Font">
+            <summary>
+            Gets the <see cref="T:System.Drawing.Font"/> used on the node.
+            </summary>
+        </member>
+        <member name="M:ComboTreeNodePaintEventArgs.#ctor(System.Drawing.Graphics,ComboTreeNode,System.Drawing.Rectangle,System.Drawing.Rectangle,System.Drawing.Font,System.Boolean)">
+            <summary>
+            Initialises a new instance of the <see cref="T:ComboTreeNodePaintEventArgs"/> class using the specified values.
+            </summary>
+            <param name="graphics"></param>
+            <param name="node"></param>
+            <param name="bounds"></param>
+            <param name="textBounds"></param>
+            <param name="font"></param>
+            <param name="isHighlighted"></param>
+        </member>
+        <member name="T:ComboTreeNodeCollection">
+            <summary>
+            Represents a collection of <see cref="T:ComboTreeNode"/> objects contained 
+            within a node or a <see cref="T:ComboTreeBox"/> control. Supports change 
+            notification through <see cref="T:System.Collections.Specialized.INotifyCollectionChanged"/>. Implements 
+            the non-generic <see cref="T:System.Collections.IList"/> to provide design-time support.
+            </summary>  
+        </member>
+        <member name="E:ComboTreeNodeCollection.AfterCheck">
+            <summary>
+            Fired when the check state of a node in the collection (or one of its children) changes.
+            </summary>
+        </member>
+        <member name="M:ComboTreeNodeCollection.#ctor(ComboTreeNode)">
+            <summary>
+            Initalises a new instance of ComboTreeNodeCollection and associates it with the specified ComboTreeNode.
+            </summary>
+            <param name="node"></param>
+        </member>
+        <member name="P:ComboTreeNodeCollection.Item(System.String)">
+            <summary>
+            Gets the node with the specified name.
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeNodeCollection.Add(System.String)">
+            <summary>
+            Creates a node and adds it to the collection.
+            </summary>
+            <param name="text"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeNodeCollection.Add(System.String,System.String)">
+            <summary>
+            Creates a node and adds it to the collection.
+            </summary>
+            <param name="name"></param>
+            <param name="text"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeNodeCollection.AddRange(System.Collections.Generic.IEnumerable{ComboTreeNode})">
+            <summary>
+            Adds a range of ComboTreeNode to the collection.
+            </summary>
+            <param name="items"></param>
+        </member>
+        <member name="M:ComboTreeNodeCollection.ContainsKey(System.String)">
+            <summary>
+            Determines whether the collection contains a node with the specified name.
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeNodeCollection.Remove(System.String)">
+            <summary>
+            Removes the node with the specified name from the collection.
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeNodeCollection.IndexOf(System.String)">
+            <summary>
+            Returns the index of the node with the specified name.
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeNodeCollection.OnCollectionChanged(System.Collections.Specialized.NotifyCollectionChangedEventArgs)">
+            <summary>
+            Raises the CollectionChanged event.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:ComboTreeNodeCollection.Sort(System.Collections.Generic.IComparer{ComboTreeNode})">
+            <summary>
+            Sorts the collection and its entire sub-tree using the specified comparer.
+            </summary>
+            <param name="comparer"></param>
+        </member>
+        <member name="M:ComboTreeNodeCollection.SortInternal(System.Collections.Generic.IComparer{ComboTreeNode})">
+            <summary>
+            Recursive helper method for Sort(IComparer&lt;ComboTreeNode&gt;).
+            </summary>
+            <param name="comparer"></param>
+        </member>
+        <member name="M:ComboTreeNodeCollection.AddEventHandlers(ComboTreeNode)">
+            <summary>
+            Adds event handlers to the specified node.
+            </summary>
+            <param name="item"></param>
+        </member>
+        <member name="M:ComboTreeNodeCollection.RemoveEventHandlers(ComboTreeNode)">
+            <summary>
+            Removes event handlers from the specified node.
+            </summary>
+            <param name="item"></param>
+        </member>
+        <member name="M:ComboTreeNodeCollection.OnAfterCheck(ComboTreeNodeEventArgs)">
+            <summary>
+            Raises the <see cref="E:ComboTreeNodeCollection.AfterCheck"/> event.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:ComboTreeNodeCollection.ParsePath(System.String,System.String,System.Boolean)">
+            <summary>
+            Returns the <see cref="T:ComboTreeNode"/> that corresponds to the specified path string.
+            </summary>
+            <param name="path">The path string.</param>
+            <param name="pathSeparator">The path separator.</param>
+            <param name="useNodeNamesForPath">Whether the path is constructed from the name of the node instead of its text.</param>
+            <returns>The node, or null if the path is empty.</returns>
+        </member>
+        <member name="M:ComboTreeNodeCollection.Find(System.String,System.StringComparison,System.Boolean)">
+            <summary>
+            Returns the <see cref="T:ComboTreeNode"/> with the specified node text.
+            </summary>
+            <param name="text">The text to match.</param>
+            <param name="comparisonType">The type of string comparison performed.</param>
+            <param name="recurse">Whether to search recursively through all child nodes.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeNodeCollection.Find(System.Func{ComboTreeNode,System.Boolean},System.Boolean)">
+            <summary>
+            Returns the <see cref="T:ComboTreeNode"/> with the specified criteria.
+            </summary>
+            <param name="predicate">Function to use when matching nodes.</param>
+            <param name="recurse">Whether to search recursively through all child nodes.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeNodeCollection.Add(ComboTreeNode)">
+            <summary>
+            Adds a node to the collection.
+            </summary>
+            <param name="item"></param>
+        </member>
+        <member name="M:ComboTreeNodeCollection.Clear">
+            <summary>
+            Clears the collection.
+            </summary>
+        </member>
+        <member name="M:ComboTreeNodeCollection.Contains(ComboTreeNode)">
+            <summary>
+            Determines whether the collection contains the specified node.
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="P:ComboTreeNodeCollection.Count">
+            <summary>
+            Gets the number of nodes in the collection.
+            </summary>
+        </member>
+        <member name="M:ComboTreeNodeCollection.CopyTo(ComboTreeNode[],System.Int32)">
+            <summary>
+            Copies all the nodes from the collection to a compatible array.
+            </summary>
+            <param name="array"></param>
+            <param name="arrayIndex"></param>
+        </member>
+        <member name="M:ComboTreeNodeCollection.Remove(ComboTreeNode)">
+            <summary>
+            Removes the specified node from the collection.
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeNodeCollection.GetEnumerator">
+            <summary>
+            Returns an enumerator which can be used to cycle through the nodes in the collection (non-recursive).
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:ComboTreeNodeCollection.Item(System.Int32)">
+            <summary>
+            Gets or sets the node at the specified index.
+            </summary>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeNodeCollection.IndexOf(ComboTreeNode)">
+            <summary>
+            Returns the index of the specified node.
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ComboTreeNodeCollection.Insert(System.Int32,ComboTreeNode)">
+            <summary>
+            Inserts a node into the collection at the specified index.
+            </summary>
+            <param name="index"></param>
+            <param name="item"></param>
+        </member>
+        <member name="M:ComboTreeNodeCollection.RemoveAt(System.Int32)">
+            <summary>
+            Removes the node at the specified index from the collection.
+            </summary>
+            <param name="index"></param>
+        </member>
+        <member name="E:ComboTreeNodeCollection.CollectionChanged">
+            <summary>
+            Fired when the collection (sub-tree) changes.
+            </summary>
+        </member>
+        <member name="T:DropDownControls.ComboTreeBoxColumn">
+            <summary>
+            A <see cref="T:System.Windows.Forms.DataGridView"/> column type based on the 
+            <see cref="T:ComboTreeBox"/> control.
+            </summary>
+            <remarks>
+            <para>
+            Both the underlying values and formatted values of cells in the column 
+            are path strings. If the column is bound to a data source, the data 
+            source values must also be path strings. You can decide which options 
+            to use when constructing path strings.
+            </para>
+            <para>
+            Some of the more advanced features of the <see cref="T:ComboTreeBox"/> 
+            control (such as checkboxes) are not supported by this column type.
+            </para>
+            </remarks>
+        </member>
+        <member name="P:DropDownControls.ComboTreeBoxColumn.ExpandedImageIndex">
+            <summary>
+            Gets or sets the index of the default image to use for nodes when expanded.
+            </summary>
+        </member>
+        <member name="P:DropDownControls.ComboTreeBoxColumn.ExpandedImageKey">
+            <summary>
+            Gets or sets the name of the default image to use for nodes when expanded.
+            </summary>
+        </member>
+        <member name="P:DropDownControls.ComboTreeBoxColumn.ImageIndex">
+            <summary>
+            Gets or sets the index of the default image to use for nodes.
+            </summary>
+        </member>
+        <member name="P:DropDownControls.ComboTreeBoxColumn.ImageKey">
+            <summary>
+            Gets or sets the name of the default image to use for nodes.
+            </summary>
+        </member>
+        <member name="P:DropDownControls.ComboTreeBoxColumn.Images">
+            <summary>
+            Gets or sets an ImageList component which provides the images displayed beside nodes in the control.
+            </summary>
+        </member>
+        <member name="P:DropDownControls.ComboTreeBoxColumn.Nodes">
+            <summary>
+            Gets the collection of top-level nodes contained by the column.
+            </summary>
+        </member>
+        <member name="P:DropDownControls.ComboTreeBoxColumn.PathSeparator">
+            <summary>
+            Gets or sets the string used to separate nodes in the Path property.
+            </summary>
+        </member>
+        <member name="P:DropDownControls.ComboTreeBoxColumn.ShowPath">
+            <summary>
+            Determines whether the full path to the selected node is displayed in the column.
+            </summary>
+        </member>
+        <member name="P:DropDownControls.ComboTreeBoxColumn.UseNodeNamesForPath">
+            <summary>
+            Determines whether the <see cref="P:ComboTreeNode.Name"/> property of the nodes is used to construct the path string. 
+            The default behaviour is to use the <see cref="P:ComboTreeNode.Text"/> property.
+            </summary>
+        </member>
+        <member name="M:DropDownControls.ComboTreeBoxColumn.#ctor">
+            <summary>
+            Initialises a new instance of the <see cref="T:DropDownControls.ComboTreeBoxColumn"/> class.
+            </summary>
+        </member>
+        <member name="M:DropDownControls.ComboTreeBoxColumn.Clone">
+            <summary>
+            Returns a copy of the column.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:DropDownControls.ComboTreeBoxCell">
+            <summary>
+            Custom cell type to accompany <see cref="T:DropDownControls.ComboTreeBoxColumn"/>.
+            </summary>
+        </member>
+        <member name="P:DropDownControls.ComboTreeBoxCell.Nodes">
+            <summary>
+            Gets a collection of nodes to use instead of the owning column's 
+            nodes.
+            </summary>
+        </member>
+        <member name="P:DropDownControls.ComboTreeBoxCell.UseColumnNodes">
+            <summary>
+            Gets or sets a value indicating whether to use the 
+            <see cref="P:DropDownControls.ComboTreeBoxCell.Nodes"/> collection for the cell instead of the owning 
+            column's nodes.
+            </summary>
+        </member>
+        <member name="P:DropDownControls.ComboTreeBoxCell.EditType">
+            <summary>
+            Gets the type of editing control to use for the cell.
+            </summary>
+        </member>
+        <member name="P:DropDownControls.ComboTreeBoxCell.FormattedValueType">
+            <summary>
+            Gets the type of the cell's formatted values.
+            </summary>
+        </member>
+        <member name="M:DropDownControls.ComboTreeBoxCell.#ctor">
+            <summary>
+            Initialises a new instance of the <see cref="T:DropDownControls.ComboTreeBoxCell"/> class.
+            </summary>
+        </member>
+        <member name="M:DropDownControls.ComboTreeBoxCell.ParseFormattedValue(System.Object,System.Windows.Forms.DataGridViewCellStyle,System.ComponentModel.TypeConverter,System.ComponentModel.TypeConverter)">
+            <summary>
+            Parses the formatted value from the editing control. 
+            For this cell type, the formatted value and the underlying value are the same.
+            </summary>
+            <param name="formattedValue"></param>
+            <param name="cellStyle"></param>
+            <param name="formattedValueTypeConverter"></param>
+            <param name="valueTypeConverter"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DropDownControls.ComboTreeBoxCell.GetFormattedValue(System.Object,System.Int32,System.Windows.Forms.DataGridViewCellStyle@,System.ComponentModel.TypeConverter,System.ComponentModel.TypeConverter,System.Windows.Forms.DataGridViewDataErrorContexts)">
+            <summary>
+            Gets the formatted value for the cell. 
+            For this cell type, the formatted value and the underlying value are the same.
+            </summary>
+            <param name="value"></param>
+            <param name="rowIndex"></param>
+            <param name="cellStyle"></param>
+            <param name="valueTypeConverter"></param>
+            <param name="formattedValueTypeConverter"></param>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DropDownControls.ComboTreeBoxCell.Clone">
+            <summary>
+            Returns a copy of the cell.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DropDownControls.ComboTreeBoxCell.InitializeEditingControl(System.Int32,System.Object,System.Windows.Forms.DataGridViewCellStyle)">
+            <summary>
+            Initialises the editing control for the cell.
+            </summary>
+            <param name="rowIndex"></param>
+            <param name="initialFormattedValue"></param>
+            <param name="dataGridViewCellStyle"></param>
+        </member>
+        <member name="M:DropDownControls.ComboTreeBoxCell.Paint(System.Drawing.Graphics,System.Drawing.Rectangle,System.Drawing.Rectangle,System.Int32,System.Windows.Forms.DataGridViewElementStates,System.Object,System.Object,System.String,System.Windows.Forms.DataGridViewCellStyle,System.Windows.Forms.DataGridViewAdvancedBorderStyle,System.Windows.Forms.DataGridViewPaintParts)">
+            <summary>
+            Paints the cell.
+            </summary>
+            <param name="graphics"></param>
+            <param name="clipBounds"></param>
+            <param name="cellBounds"></param>
+            <param name="rowIndex"></param>
+            <param name="cellState"></param>
+            <param name="value"></param>
+            <param name="formattedValue"></param>
+            <param name="errorText"></param>
+            <param name="cellStyle"></param>
+            <param name="advancedBorderStyle"></param>
+            <param name="paintParts"></param>
+        </member>
+        <member name="T:DropDownControls.ComboTreeBoxEditingControl">
+            <summary>
+            Editing control to accompany <see cref="T:DropDownControls.ComboTreeBoxCell"/>.
+            </summary>
+        </member>
+        <member name="M:DropDownControls.ComboTreeBoxEditingControl.#ctor">
+            <summary>
+            Constructor.
+            </summary>
+        </member>
+        <member name="T:DropDownControls.DropDownColumnBase">
+            <summary>
+            Base class for custom <see cref="T:System.Windows.Forms.DataGridView"/> column types.
+            </summary>
+        </member>
+        <member name="P:DropDownControls.DropDownColumnBase.BufferedPaintingSupported">
+            <summary>
+            Gets a value indicating whether buffered painting is supported. 
+            Used when rendering cells.
+            </summary>
+        </member>
+        <member name="M:DropDownControls.DropDownColumnBase.#ctor">
+            <summary>
+            Constructor.
+            </summary>
+        </member>
+        <member name="T:DropDownControls.DropDownCellBase">
+            <summary>
+            Base class for custom <see cref="T:System.Windows.Forms.DataGridView"/> cell types.
+            </summary>
+        </member>
+        <member name="M:DropDownControls.DropDownCellBase.BeforePaintContent(System.Drawing.Graphics,System.Drawing.Rectangle,System.Windows.Forms.DataGridViewElementStates,System.Windows.Forms.DataGridViewCellStyle,System.Windows.Forms.DataGridViewPaintParts)">
+            <summary>
+            Paints common elements behind the cell content.
+            </summary>
+            <param name="graphics"></param>
+            <param name="cellBounds"></param>
+            <param name="cellState"></param>
+            <param name="cellStyle"></param>
+            <param name="paintParts"></param>
+        </member>
+        <member name="M:DropDownControls.DropDownCellBase.AfterPaintContent(System.Drawing.Graphics,System.Drawing.Rectangle,System.Drawing.Rectangle,System.Int32,System.Windows.Forms.DataGridViewCellStyle,System.Windows.Forms.DataGridViewAdvancedBorderStyle,System.Windows.Forms.DataGridViewPaintParts)">
+            <summary>
+            Paints common elements in front of the cell content.
+            </summary>
+            <param name="graphics"></param>
+            <param name="clipBounds"></param>
+            <param name="cellBounds"></param>
+            <param name="rowIndex"></param>
+            <param name="cellStyle"></param>
+            <param name="advancedBorderStyle"></param>
+            <param name="paintParts"></param>
+        </member>
+        <member name="M:DropDownControls.DropDownCellBase.OnMouseEnter(System.Int32)">
+            <summary>
+            Called when the mouse pointer moves over a cell.
+            </summary>
+            <param name="rowIndex"></param>
+        </member>
+        <member name="M:DropDownControls.DropDownCellBase.OnMouseLeave(System.Int32)">
+            <summary>
+            Called when the mouse pointer leaves the cell.
+            </summary>
+            <param name="rowIndex"></param>
+        </member>
+        <member name="M:DropDownControls.DropDownCellBase.OnMouseDown(System.Windows.Forms.DataGridViewCellMouseEventArgs)">
+            <summary>
+            Called when the user holds down a mouse button while the pointer is on a cell.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownControls.DropDownCellBase.OnMouseUp(System.Windows.Forms.DataGridViewCellMouseEventArgs)">
+            <summary>
+            Called when the user releases a mouse button while the pointer is on a cell.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownControls.DropDownCellBase.OnMouseClick(System.Windows.Forms.DataGridViewCellMouseEventArgs)">
+            <summary>
+            Called when the user clicks a mouse button while the pointer is on a cell.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="T:DropDownControls.GroupedComboBoxColumn">
+            <summary>
+            A <see cref="T:System.Windows.Forms.DataGridView"/> column type based on the 
+            <see cref="T:GroupedComboBox"/> control.
+            </summary>
+            <remarks>
+            <para>
+            Unlike the <see cref="T:System.Windows.Forms.DataGridViewComboBoxColumn"/>, the items in the 
+            combo box for this column type may only come from a data source. 
+            However, you can override the data source for cells on an individual 
+            basis.
+            </para>
+            <para>
+            The formatted value type for this column is always 
+            <see cref="T:System.String"/>. You do not have to explicitly set the 
+            <see cref="P:DropDownControls.GroupedComboBoxColumn.DisplayMember"/>, <see cref="P:DropDownControls.GroupedComboBoxColumn.ValueMember"/> or 
+            <see cref="P:DropDownControls.GroupedComboBoxColumn.GroupMember"/> properties.
+            </para>
+            </remarks>
+        </member>
+        <member name="P:DropDownControls.GroupedComboBoxColumn.DisplayMember">
+            <summary>
+            Gets or sets the name of the property of a list item which provides its display value.
+            </summary>
+        </member>
+        <member name="P:DropDownControls.GroupedComboBoxColumn.ValueMember">
+            <summary>
+            Gets or sets the name of the property of a list item which provides its underlying value.
+            </summary>
+        </member>
+        <member name="P:DropDownControls.GroupedComboBoxColumn.GroupMember">
+            <summary>
+            Gets or sets the name of the property of a list item which provides its grouping value.
+            </summary>
+        </member>
+        <member name="P:DropDownControls.GroupedComboBoxColumn.DataSource">
+            <summary>
+            Gets or sets the data source that populates the items in the combo box.
+            </summary>
+        </member>
+        <member name="M:DropDownControls.GroupedComboBoxColumn.#ctor">
+            <summary>
+            Initialises a new instance of the <see cref="T:DropDownControls.GroupedComboBoxColumn"/> class.
+            </summary>
+        </member>
+        <member name="M:DropDownControls.GroupedComboBoxColumn.Clone">
+            <summary>
+            Returns a copy of the column.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:DropDownControls.GroupedComboBoxCell">
+            <summary>
+            Custom cell type to accompany <see cref="T:DropDownControls.GroupedComboBoxColumn"/>.
+            </summary>
+        </member>
+        <member name="P:DropDownControls.GroupedComboBoxCell.DisplayMember">
+            <summary>
+            Gets or sets a value which overrides the owning column's 
+            <see cref="P:DropDownControls.GroupedComboBoxColumn.DisplayMember"/> property.
+            </summary>
+        </member>
+        <member name="P:DropDownControls.GroupedComboBoxCell.ValueMember">
+            <summary>
+            Gets or sets a value which overrides the owning column's 
+            <see cref="P:DropDownControls.GroupedComboBoxColumn.ValueMember"/> property.
+            </summary>
+        </member>
+        <member name="P:DropDownControls.GroupedComboBoxCell.GroupMember">
+            <summary>
+            Gets or sets a value which overrides the owning column's 
+            <see cref="P:DropDownControls.GroupedComboBoxColumn.GroupMember"/> property.
+            </summary>
+        </member>
+        <member name="P:DropDownControls.GroupedComboBoxCell.DataSource">
+            <summary>
+            Gets or sets a value which overrides the owning column's 
+            <see cref="P:DropDownControls.GroupedComboBoxColumn.DataSource"/> property.
+            </summary>
+        </member>
+        <member name="P:DropDownControls.GroupedComboBoxCell.EditType">
+            <summary>
+            Gets the type of editing control used by the cell.
+            </summary>
+        </member>
+        <member name="P:DropDownControls.GroupedComboBoxCell.FormattedValueType">
+            <summary>
+            Gets the type of the formatted value for the cell, which is 
+            <see cref="T:System.String"/>.
+            </summary>
+        </member>
+        <member name="M:DropDownControls.GroupedComboBoxCell.ParseFormattedValue(System.Object,System.Windows.Forms.DataGridViewCellStyle,System.ComponentModel.TypeConverter,System.ComponentModel.TypeConverter)">
+            <summary>
+            Parses a formatted value from the editing control. 
+            This works by matching the editing control's text against the 
+            display values for the list items.
+            </summary>
+            <param name="formattedValue"></param>
+            <param name="cellStyle"></param>
+            <param name="formattedValueTypeConverter"></param>
+            <param name="valueTypeConverter"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DropDownControls.GroupedComboBoxCell.GetFormattedValue(System.Object,System.Int32,System.Windows.Forms.DataGridViewCellStyle@,System.ComponentModel.TypeConverter,System.ComponentModel.TypeConverter,System.Windows.Forms.DataGridViewDataErrorContexts)">
+            <summary>
+            Gets the formatted value for the cell.
+            </summary>
+            <param name="value"></param>
+            <param name="rowIndex"></param>
+            <param name="cellStyle"></param>
+            <param name="valueTypeConverter"></param>
+            <param name="formattedValueTypeConverter"></param>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DropDownControls.GroupedComboBoxCell.Clone">
+            <summary>
+            Returns a copy of the cell.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DropDownControls.GroupedComboBoxCell.InitializeEditingControl(System.Int32,System.Object,System.Windows.Forms.DataGridViewCellStyle)">
+            <summary>
+            Initialises the editing control for the cell.
+            </summary>
+            <param name="rowIndex"></param>
+            <param name="initialFormattedValue"></param>
+            <param name="dataGridViewCellStyle"></param>
+        </member>
+        <member name="M:DropDownControls.GroupedComboBoxCell.Paint(System.Drawing.Graphics,System.Drawing.Rectangle,System.Drawing.Rectangle,System.Int32,System.Windows.Forms.DataGridViewElementStates,System.Object,System.Object,System.String,System.Windows.Forms.DataGridViewCellStyle,System.Windows.Forms.DataGridViewAdvancedBorderStyle,System.Windows.Forms.DataGridViewPaintParts)">
+            <summary>
+            Paints the cell.
+            </summary>
+            <param name="graphics"></param>
+            <param name="clipBounds"></param>
+            <param name="cellBounds"></param>
+            <param name="rowIndex"></param>
+            <param name="cellState"></param>
+            <param name="value"></param>
+            <param name="formattedValue"></param>
+            <param name="errorText"></param>
+            <param name="cellStyle"></param>
+            <param name="advancedBorderStyle"></param>
+            <param name="paintParts"></param>
+        </member>
+        <member name="T:DropDownControls.GroupedComboBoxEditingControl">
+            <summary>
+            Editing control to accompany <see cref="T:DropDownControls.GroupedComboBoxCell"/>.
+            </summary>
+            <remarks>
+            Implementation based on <see cref="T:System.Windows.Forms.DataGridViewComboBoxEditingControl"/>.
+            </remarks>
+        </member>
+        <member name="M:DropDownControls.GroupedComboBoxEditingControl.#ctor">
+            <summary>
+            Constructor.
+            </summary>
+        </member>
+        <member name="T:DropDownControls.PriorityGroup">
+            <summary>
+            Represents a group with an associated priority.
+            </summary>
+            <remarks>
+            This type is intended to be used in conjunction with <see cref="T:DropDownControls.PriorityComparer"/>.
+            </remarks>
+        </member>
+        <member name="F:DropDownControls.PriorityGroup.Empty">
+            <summary>
+            Represents a group with an empty heading and default priority.
+            </summary>
+        </member>
+        <member name="P:DropDownControls.PriorityGroup.Heading">
+            <summary>
+            Gets the heading text for the group.
+            </summary>
+        </member>
+        <member name="P:DropDownControls.PriorityGroup.Priority">
+            <summary>
+            Gets the priority of the group (lower = more important).
+            </summary>
+        </member>
+        <member name="M:DropDownControls.PriorityGroup.#ctor(System.String,System.Int32)">
+            <summary>
+            Initialises a new instance of the <see cref="T:DropDownControls.PriorityGroup"/> class using the specified values.
+            </summary>
+            <param name="heading">Heading text for the group.</param>
+            <param name="priority">Priority of the group (lower = more important).</param>
+        </member>
+        <member name="M:DropDownControls.PriorityGroup.GetHashCode">
+            <summary>
+            Returns the hash code for the group.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DropDownControls.PriorityGroup.Equals(System.Object)">
+            <summary>
+            Determines whether the specified object is equal to the current group.
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DropDownControls.PriorityGroup.Equals(DropDownControls.PriorityGroup)">
+            <summary>
+            Determines whether the specified group is equal to the current group.
+            </summary>
+            <param name="that"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DropDownControls.PriorityGroup.ToString">
+            <summary>
+            Returns the heading text for the group.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:DropDownControls.PriorityComparer">
+            <summary>
+            Custom <see cref="T:System.Collections.IComparer"/> implementation that compares <see cref="T:DropDownControls.PriorityGroup"/> values.
+            </summary>
+        </member>
+        <member name="M:DropDownControls.PriorityComparer.#ctor">
+            <summary>
+            Initialises a new instance of the <see cref="T:DropDownControls.PriorityComparer"/> class using default values.
+            </summary>
+        </member>
+        <member name="M:DropDownControls.PriorityComparer.#ctor(System.Collections.IComparer)">
+            <summary>
+            Initialises a new instance of the <see cref="T:DropDownControls.PriorityComparer"/> class using the specified fallback comparer.
+            </summary>
+            <param name="fallback">Implementation of <see cref="T:System.Collections.IComparer"/> to use when comparing values of other types.</param>
+        </member>
+        <member name="M:DropDownControls.PriorityComparer.Compare(System.Object,System.Object)">
+            <summary>
+            Compares two objects and returns a value indicating whether one is less than, equal to or greater than the other.
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DropDownControls.PriorityComparer.Compare(System.Object,System.Object,System.Collections.IComparer)">
+            <summary>
+            Compares two objects and returns a value indicating whether one is less than, equal to or greater than the other.
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+            <param name="fallback"></param>
+            <returns></returns>
+        </member>
+        <member name="T:DropDownControlBase">
+            <summary>
+            Abstract base class for a control which behaves like a dropdown but does not contain 
+            logic for displaying a popup window.
+            </summary>
+        </member>
+        <member name="P:DropDownControlBase.DrawWithVisualStyles">
+            <summary>
+            Determines whether to draw the control with visual styles.
+            </summary>
+        </member>
+        <member name="P:DropDownControlBase.DroppedDown">
+            <summary>
+            Opens or closes the dropdown portion of the control.
+            </summary>
+        </member>
+        <member name="P:DropDownControlBase.BackColor">
+            <summary>
+            Gets or sets the background color to use for this control.
+            </summary>
+        </member>
+        <member name="P:DropDownControlBase.BackgroundImage">
+            <summary>
+            Hides the BackgroundImage property on the designer.
+            </summary>
+        </member>
+        <member name="P:DropDownControlBase.BackgroundImageLayout">
+            <summary>
+            Hides the BackgroundImageLayout property on the designer.
+            </summary>
+        </member>
+        <member name="P:DropDownControlBase.DropDownStyle">
+            <summary>
+            Gets or sets the style that the control is rendered in.
+            </summary>
+        </member>
+        <member name="E:DropDownControlBase.DropDownButtonClick">
+            <summary>
+            Fired when the user clicks the dropdown button at the right edge of the control.
+            </summary>
+        </member>
+        <member name="E:DropDownControlBase.DropDown">
+            <summary>
+            Fired when the drop-down portion of the control is displayed.
+            </summary>
+        </member>
+        <member name="E:DropDownControlBase.DropDownClosed">
+            <summary>
+            Fired when the drop-down portion of the control is closed.
+            </summary>
+        </member>
+        <member name="E:DropDownControlBase.PaintContent">
+            <summary>
+            Fired when the content of the editable portion of the control is painted.
+            </summary>
+        </member>
+        <member name="E:DropDownControlBase.DropDownStyleChanged">
+            <summary>
+            Fired when the <see cref="P:DropDownControlBase.DropDownStyle"/> property changes.
+            </summary>
+        </member>
+        <member name="M:DropDownControlBase.#ctor">
+            <summary>
+            Creates a new instance of DropDownControlBase.
+            </summary>
+        </member>
+        <member name="M:DropDownControlBase.GetTextBoxBounds">
+            <summary>
+            Gets the bounds of the textbox portion of the control by subtracting the dropdown button bounds from the client rectangle.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DropDownControlBase.GetTextBoxState">
+            <summary>
+            Determines the state in which to render the textbox portion of the control (when using visual styles).
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DropDownControlBase.GetComboBoxState">
+            <summary>
+            Determines the state in which to render the dropdown button portion of the control (when using visual styles).
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DropDownControlBase.GetPlainButtonState">
+            <summary>
+            Determines the state in which to render the dropdown button portion of the control (when not using visual styles).
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DropDownControlBase.IsInputKey(System.Windows.Forms.Keys)">
+            <summary>
+            Registers the arrow keys as input keys.
+            </summary>
+            <param name="keyData"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DropDownControlBase.OnDropDownButtonClick(System.EventArgs)">
+            <summary>
+            Raised the DropDownButtonClick event.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownControlBase.OnDropDown(System.EventArgs)">
+            <summary>
+            Raises the DropDown event.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownControlBase.OnDropDownClosed(System.EventArgs)">
+            <summary>
+            Raises the DropDownClosed event.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownControlBase.OnDropDownStyleChanged(System.EventArgs)">
+            <summary>
+            Raises the <see cref="E:DropDownControlBase.DropDownStyleChanged"/> event.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownControlBase.OnFontChanged(System.EventArgs)">
+            <summary>
+            Recalculates the fixed height of the control when the font changes.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownControlBase.OnGotFocus(System.EventArgs)">
+            <summary>
+            Repaints the focus rectangle when focus changes.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownControlBase.OnLostFocus(System.EventArgs)">
+            <summary>
+            Repaints the focus rectangle when focus changes.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownControlBase.OnPaintBackground(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            Prevents the control's background from painting normally.
+            </summary>
+            <param name="pevent"></param>
+        </member>
+        <member name="M:DropDownControlBase.OnPaintContent(DropDownPaintEventArgs)">
+            <summary>
+            Paints the content in the editable portion of the control, providing additional measurements and operations.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownControlBase.OnMouseEnter(System.EventArgs)">
+            <summary>
+            Repaints the control when the mouse enters its bounds.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownControlBase.OnMouseLeave(System.EventArgs)">
+            <summary>
+            Repaints the control when the mouse leaves its bounds.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownControlBase.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Repaints the control when a mouse button is pressed.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownControlBase.OnMouseUp(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Repaints the control when a mouse button is released.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownControlBase.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Repaints the control when the mouse is moved over the control.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownControlBase.UpdateCursor">
+            <summary>
+            Updates the mouse cursor when the pointer moves over the control.
+            </summary>
+        </member>
+        <member name="M:DropDownControlBase.OnMouseClick(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Determines when to raise the DropDownButtonClick event.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownControlBase.OnSizeChanged(System.EventArgs)">
+            <summary>
+            Recalculates the bounds for the dropdown button when the control's size changes.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownControlBase.OnEnabledChanged(System.EventArgs)">
+            <summary>
+            Repaints the control when the control is enabled/disabled.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownControlBase.SetHeight">
+            <summary>
+            Sets the fixed height of the control, based on the font size.
+            </summary>
+        </member>
+        <member name="M:DropDownControlBase.GetComboButtonBounds(System.Drawing.Rectangle)">
+            <summary>
+            Calculates and returns the bounds for the dropdown button for a dropdown control.
+            </summary>
+            <param name="bounds"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DropDownControlBase.GetPushButtonState(System.Windows.Forms.VisualStyles.ComboBoxState)">
+            <summary>
+            Converts a ComboBoxState into its equivalent PushButtonState value.
+            </summary>
+            <param name="combo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DropDownControlBase.DrawComboBox(System.Drawing.Graphics,System.Drawing.Rectangle,System.Windows.Forms.VisualStyles.ComboBoxState)">
+            <summary>
+            Draws a combo box in the Windows Vista (and newer) style.
+            </summary>
+            <param name="graphics"></param>
+            <param name="bounds"></param>
+            <param name="state"></param>
+        </member>
+        <member name="M:DropDownControlBase.DrawLegacyComboBox(System.Drawing.Graphics,System.Drawing.Rectangle,System.Drawing.Rectangle,System.Drawing.Color,System.Windows.Forms.ButtonState)">
+            <summary>
+            Draws a legacy style combo box control.
+            </summary>
+            <param name="graphics"></param>
+            <param name="bounds"></param>
+            <param name="buttonBounds"></param>
+            <param name="backColor"></param>
+            <param name="state"></param>
+        </member>
+        <member name="M:DropDownControlBase.DrawDropDownGlyph(System.Drawing.Graphics,System.Drawing.Rectangle,System.Windows.Forms.VisualStyles.ComboBoxState,System.Nullable{System.Drawing.Color})">
+            <summary>
+            Draws a drop-down glyph in the specified bounds.
+            </summary>
+            <param name="g"></param>
+            <param name="bounds"></param>
+            <param name="state"></param>
+            <param name="color"></param>
+        </member>
+        <member name="M:DropDownControlBase.bufferedPainter_PaintVisualState(System.Object,BufferedPainting.BufferedPaintEventArgs{System.Windows.Forms.VisualStyles.ComboBoxState})">
+            <summary>
+            Paints the control using the Buffered Paint API.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="T:DropDownControlStyles">
+            <summary>
+            Styles for the <see cref="T:DropDownControlBase"/> control.
+            </summary>
+        </member>
+        <member name="F:DropDownControlStyles.Discrete">
+            <summary>
+            Discrete set of choices - no editable portion (on Windows Vista and above).
+            </summary>
+        </member>
+        <member name="F:DropDownControlStyles.Editable">
+            <summary>
+            Editable portion with a drop-down button.
+            </summary>
+        </member>
+        <member name="F:DropDownControlStyles.FakeEditable">
+            <summary>
+            Rendered in the <see cref="F:DropDownControlStyles.Editable"/> style but 
+            behaves like <see cref="F:DropDownControlStyles.Discrete"/>.
+            </summary>
+        </member>
+        <member name="T:DropDownPaintEventArgs">
+            <summary>
+            Arguments for the <see cref="E:DropDownControlBase.PaintContent"/> event.
+            </summary>
+        </member>
+        <member name="P:DropDownPaintEventArgs.Bounds">
+            <summary>
+            Gets the display rectangle for the editable portion of the control.
+            </summary>
+        </member>
+        <member name="M:DropDownPaintEventArgs.#ctor(System.Drawing.Graphics,System.Drawing.Rectangle,System.Drawing.Rectangle)">
+            <summary>
+            Creates a new instance of the <see cref="T:DropDownPaintEventArgs"/> class using the specified values.
+            </summary>
+            <param name="graphics"></param>
+            <param name="clipRect"></param>
+            <param name="bounds"></param>
+        </member>
+        <member name="M:DropDownPaintEventArgs.DrawFocusRectangle">
+            <summary>
+            Draws a focus rectangle on the editable portion of the control.
+            </summary>
+        </member>
+        <member name="T:DropDownSearchBox">
+            <summary>
+            Extends the <see cref="T:ComboTreeBox"/> control by adding text searching functionality.
+            </summary>
+        </member>
+        <member name="P:DropDownSearchBox.NormalNodes">
+            <summary>
+            Gets a collection containing the nodes normally displayed in the 
+            drop-down while search mode is active.
+            </summary>
+        </member>
+        <member name="P:DropDownSearchBox.AllNormalNodes">
+            <summary>
+            Gets a collection containing the nodes normally displayed in the 
+            drop-down while search mode is active, including all child nodes.
+            </summary>
+        </member>
+        <member name="P:DropDownSearchBox.MinSearchTermLength">
+            <summary>
+            Gets or sets the minimum length for a search term. No searching 
+            will be performed until the term contains this many characters.
+            </summary>
+        </member>
+        <member name="P:DropDownSearchBox.InSearchMode">
+            <summary>
+            Gets a value indicating whether the control is in search mode.
+            </summary>
+        </member>
+        <member name="P:DropDownSearchBox.TextServices">
+            <summary>
+            Gets the <see cref="P:DropDownSearchBox.TextServices"/> instance used to provide text entry.
+            </summary>
+        </member>
+        <member name="E:DropDownSearchBox.PerformSearch">
+            <summary>
+            Fired when a search needs to be performed.
+            </summary>
+        </member>
+        <member name="E:DropDownSearchBox.CommitSearch">
+            <summary>
+            Fired when a search result is selected by the user.
+            </summary>
+        </member>
+        <member name="M:DropDownSearchBox.#ctor">
+            <summary>
+            Initialises a new instance of the <see cref="T:DropDownSearchBox"/> class using default values.
+            </summary>
+        </member>
+        <member name="M:DropDownSearchBox.Dispose(System.Boolean)">
+            <summary>
+            Releases any resources used by the control.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:DropDownSearchBox.EnterSearchMode">
+            <summary>
+            Places the control in search mode.
+            </summary>
+        </member>
+        <member name="M:DropDownSearchBox.LeaveSearchMode(System.Boolean)">
+            <summary>
+            Places the control in normal mode, optionally committing the search result.
+            </summary>
+            <param name="commit"></param>
+        </member>
+        <member name="M:DropDownSearchBox.DefaultSearchPredicate(ComboTreeNode,System.String)">
+            <summary>
+            Returns a value indicating whether the specified node matches <paramref name="searchTerm"/>.
+            </summary>
+            <param name="node"></param>
+            <param name="searchTerm"></param>
+            <returns></returns>
+            <remarks>
+            The base implementation of this method performs a case-insensitive 
+            comparison on the node text and ignores nodes which are not selectable.
+            </remarks>
+        </member>
+        <member name="M:DropDownSearchBox.DefaultEquivalencePredicate(ComboTreeNode,ComboTreeNode)">
+            <summary>
+            Returns a value indicating whether the <paramref name="test"/> node is equivalent to the <paramref name="result"/> node.
+            </summary>
+            <param name="result"></param>
+            <param name="test"></param>
+            <returns></returns>
+            <remarks>
+            The base implementation of this method performs a case-insensitive 
+            comparison firstly on the <see cref="P:ComboTreeNode.Name"/> property 
+            and then on the <see cref="P:ComboTreeNode.Text"/> property.
+            </remarks>
+        </member>
+        <member name="M:DropDownSearchBox.OnPerformSearch(PerformSearchEventArgs)">
+            <summary>
+            Searches for the specified term and outputs any matching nodes to the 
+            results collection. The method runs in a separate thread.
+            </summary>
+            <param name="e"></param>
+            <remarks>
+            The default logic of this method performs a linear search (using 
+            the <see cref="M:DropDownSearchBox.DefaultSearchPredicate(ComboTreeNode,System.String)"/> method) on the existing nodes 
+            in the drop-down.
+            </remarks>
+        </member>
+        <member name="M:DropDownSearchBox.OnCommitSearch(CommitSearchEventArgs)">
+            <summary>
+            Commits the search by selecting the equivalent node in the drop-down or 
+            adding the result as a new node.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownSearchBox.ApplySearchResults(ComboTreeNodeCollection)">
+            <summary>
+            Applies the specified search result collection to the control by adding the nodes to the drop-down.
+            </summary>
+            <param name="results"></param>
+        </member>
+        <member name="M:DropDownSearchBox.IsInputKey(System.Windows.Forms.Keys)">
+            <summary>
+            Registers the left and right arrow keys as input keys.
+            </summary>
+            <param name="keyData"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DropDownSearchBox.OnSelectedNodeChanged(System.EventArgs)">
+            <summary>
+            Suppresses the <see cref="E:ComboTreeBox.SelectedNodeChanged"/> event 
+            while the control is in search mode and ensures that selecting a 
+            search result commits its value.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownSearchBox.OnDropDownClosed(System.EventArgs)">
+            <summary>
+            Hides the caret when the drop-down is closed.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownSearchBox.OnDropDown(System.EventArgs)">
+            <summary>
+            Shows the caret when the drop-down opens.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownSearchBox.DoPaste">
+            <summary>
+            Pastes the text on the clipboard into the control. 
+            The control is placed in search mode if it is not already.
+            </summary>
+        </member>
+        <member name="M:DropDownSearchBox.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            Handles input keys.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownSearchBox.OnKeyPress(System.Windows.Forms.KeyPressEventArgs)">
+            <summary>
+            Handles input keys.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownSearchBox.OnPaintContent(DropDownPaintEventArgs)">
+            <summary>
+            Draws the text that has been entered into the control by the user.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownSearchBox.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handles mouse events.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownSearchBox.OnMouseUp(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handles mouse events.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownSearchBox.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handles mouse events.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:DropDownSearchBox.OnMouseClick(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handles mouse events.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="T:PerformSearchEventArgs">
+            <summary>
+            Arguments for the <see cref="E:DropDownSearchBox.PerformSearch"/> event.
+            </summary>
+        </member>
+        <member name="P:PerformSearchEventArgs.SearchTerm">
+            <summary>
+            Gets the search term entered by the user.
+            </summary>
+        </member>
+        <member name="P:PerformSearchEventArgs.CancellationToken">
+            <summary>
+            Gets the <see cref="T:System.Threading.CancellationToken"/> that is used to cancel the search operation.
+            </summary>
+        </member>
+        <member name="P:PerformSearchEventArgs.Results">
+            <summary>
+            Gets the collection that will contain the search results.
+            </summary>
+        </member>
+        <member name="M:PerformSearchEventArgs.#ctor(System.String,System.Threading.CancellationToken,ComboTreeNodeCollection)">
+            <summary>
+            Initialises a new instance of the <see cref="T:PerformSearchEventArgs"/> class using the specified values.
+            </summary>
+            <param name="searchTerm"></param>
+            <param name="token"></param>
+            <param name="results"></param>
+        </member>
+        <member name="T:CommitSearchEventArgs">
+            <summary>
+            Arguments for the <see cref="E:DropDownSearchBox.CommitSearch"/> event.
+            </summary>
+        </member>
+        <member name="P:CommitSearchEventArgs.Result">
+            <summary>
+            Gets the search result node that was selected by the user.
+            </summary>
+        </member>
+        <member name="M:CommitSearchEventArgs.#ctor(ComboTreeNode)">
+            <summary>
+            Initialises a new instance of the <see cref="T:CommitSearchEventArgs"/> class using the specified values.
+            </summary>
+            <param name="result"></param>
+        </member>
+        <member name="T:TextServices">
+            <summary>
+            Attaches to a <see cref="T:System.Windows.Forms.Control"/> and provides text entry and caret services.
+            </summary>
+        </member>
+        <member name="T:TextServices.NativeMethods">
+            <summary>
+            Contains native functionality used by this class.
+            </summary>
+        </member>
+        <member name="M:TextServices.NativeMethods.CreateCaret(System.IntPtr,System.IntPtr,System.Int32,System.Int32)">
+            <summary>
+            Creates a new shape for the system caret and assigns ownership of the caret to the specified window.
+            </summary>
+            <param name="hWnd">A handle to the window that owns the caret.</param>
+            <param name="hBitmap">A handle to the bitmap that defines the caret shape.</param>
+            <param name="nWidth">The width of the caret, in logical units.</param>
+            <param name="nHeight">The height of the caret, in logical units.</param>
+            <returns></returns>
+        </member>
+        <member name="M:TextServices.NativeMethods.DestroyCaret">
+            <summary>
+            Destroys the caret's current shape, frees the caret from the window, and removes the caret from the screen.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:TextServices.NativeMethods.HideCaret(System.IntPtr)">
+            <summary>
+            Removes the caret from the screen. Hiding a caret does not destroy its current shape or invalidate the insertion point.
+            </summary>
+            <param name="hWnd">A handle to the window that owns the caret.</param>
+            <returns></returns>
+        </member>
+        <member name="M:TextServices.NativeMethods.SetCaretPos(System.Int32,System.Int32)">
+            <summary>
+            Moves the caret to the specified coordinates.
+            </summary>
+            <param name="x">The new x-coordinate of the caret.</param>
+            <param name="y">The new y-coordinate of the caret.</param>
+            <returns></returns>
+        </member>
+        <member name="M:TextServices.NativeMethods.ShowCaret(System.IntPtr)">
+            <summary>
+            Makes the caret visible on the screen at the caret's current position.
+            </summary>
+            <param name="hWnd">A handle to the window that owns the caret.</param>
+            <returns></returns>
+        </member>
+        <member name="P:TextServices.Owner">
+            <summary>
+            Gets the control that owns this instance.
+            </summary>
+        </member>
+        <member name="P:TextServices.Length">
+            <summary>
+            Gets the length of the text captured by the control.
+            </summary>
+        </member>
+        <member name="P:TextServices.Text">
+            <summary>
+            Gets the text captured by the control.
+            </summary>
+        </member>
+        <member name="P:TextServices.SelectionStart">
+            <summary>
+            Gets the character position of the start of the selection. 
+            If equal to <see cref="P:TextServices.Length"/>, the insertion point is at the end.
+            </summary>
+        </member>
+        <member name="P:TextServices.SelectionLength">
+            <summary>
+            Gets the length of the selection.
+            </summary>
+        </member>
+        <member name="P:TextServices.IsActive">
+            <summary>
+            Gets a value indicating whether text services are currently enabled.
+            </summary>
+        </member>
+        <member name="E:TextServices.TextChanged">
+            <summary>
+            Fired when the text captured for the control changes.
+            </summary>
+        </member>
+        <member name="M:TextServices.OnTextChanged">
+            <summary>
+            Raises the <see cref="E:TextServices.TextChanged"/> event.
+            </summary>
+        </member>
+        <member name="E:TextServices.ContextMenuOpening">
+            <summary>
+            Fired when the context menu provided for the control is about to open.
+            </summary>
+        </member>
+        <member name="M:TextServices.OnContextMenuOpening">
+            <summary>
+            Raises the <see cref="E:TextServices.ContextMenuOpening"/> event.
+            </summary>
+        </member>
+        <member name="E:TextServices.ContextMenuClosed">
+            <summary>
+            Fired when the context menu provided for the control is closed.
+            </summary>
+        </member>
+        <member name="M:TextServices.OnContextMenuClosed">
+            <summary>
+            Raises the <see cref="E:TextServices.ContextMenuClosed"/> event.
+            </summary>
+        </member>
+        <member name="M:TextServices.#ctor(System.Windows.Forms.Control,System.Func{System.Drawing.Rectangle})">
+            <summary>
+            Initalises a new instance of the <see cref="T:TextServices"/> class 
+            using the specified control and callback method.
+            </summary>
+            <param name="owner"></param>
+            <param name="boundsCallback"></param>
+        </member>
+        <member name="M:TextServices.EnsureContextMenu">
+            <summary>
+            Initialises the context menu provided for the control 
+            (if it has not yet been initialised).
+            </summary>
+        </member>
+        <member name="M:TextServices.HandleMouseMove(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handles the <see cref="E:System.Windows.Forms.Control.MouseMove"/> event. 
+            Returns true if the event was consumed.
+            </summary>
+            <param name="e"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TextServices.HandleMouseDown(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handles the <see cref="E:System.Windows.Forms.Control.MouseDown"/> event. 
+            Returns true if the event was consumed.
+            </summary>
+            <param name="e"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TextServices.HandleMouseClick(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handles the <see cref="E:System.Windows.Forms.Control.MouseClick"/> event. 
+            Returns true if the event was consumed.
+            </summary>
+            <param name="e"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TextServices.HandleKeyPress(System.Windows.Forms.KeyPressEventArgs)">
+            <summary>
+            Handles the <see cref="E:System.Windows.Forms.Control.KeyPress"/> event.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:TextServices.HandleKeyDown(System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            Handles the <see cref="E:System.Windows.Forms.Control.KeyDown"/> event.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:TextServices.CharacterHitTest(System.Drawing.Point)">
+            <summary>
+            Returns the index of the character nearest to the specified coordinates.
+            </summary>
+            <param name="location"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TextServices.Begin">
+            <summary>
+            Displays the caret and enables text services.
+            </summary>
+        </member>
+        <member name="M:TextServices.End">
+            <summary>
+            Hides the caret and disables text services.
+            </summary>
+        </member>
+        <member name="M:TextServices.Clear">
+            <summary>
+            Clears the text captured for the control.
+            </summary>
+        </member>
+        <member name="M:TextServices.Select(System.Int32,System.Int32)">
+            <summary>
+            Sets the bounds of the selection.
+            </summary>
+            <param name="start"></param>
+            <param name="length"></param>
+        </member>
+        <member name="M:TextServices.UpdateCaretPos">
+            <summary>
+            Updates the position of the caret. 
+            If the caret is out-of-bounds, it is hidden.
+            </summary>
+        </member>
+        <member name="M:TextServices.Cut">
+            <summary>
+            Cuts the selection to the clipboard.
+            </summary>
+        </member>
+        <member name="M:TextServices.Copy">
+            <summary>
+            Copies the selection to the clipboard.
+            </summary>
+        </member>
+        <member name="M:TextServices.Paste">
+            <summary>
+            Pastes the text on the clipboard into the insertion point. 
+            Any existing selection is replaced.
+            </summary>
+        </member>
+        <member name="M:TextServices.DrawText(System.Drawing.Graphics)">
+            <summary>
+            Draws the captured text on the control.
+            </summary>
+            <param name="graphics"></param>
+        </member>
+        <member name="T:GroupedComboBox">
+            <summary>
+            Represents a Windows combo box control that, when bound to a data source, is capable of 
+            displaying items in groups/categories.
+            </summary>
+        </member>
+        <member name="F:GroupedComboBox.RedrawWindowFlags.Invalidate">
+            <summary>
+            Invalidates the rectangle or region that you specify in lprcUpdate or hrgnUpdate.
+            You can set only one of these parameters to a non-NULL value. If both are NULL, RDW_INVALIDATE invalidates the entire window.
+            </summary>
+        </member>
+        <member name="F:GroupedComboBox.RedrawWindowFlags.InternalPaint">
+            <summary>Causes the OS to post a WM_PAINT message to the window regardless of whether a portion of the window is invalid.</summary>
+        </member>
+        <member name="F:GroupedComboBox.RedrawWindowFlags.Erase">
+            <summary>
+            Causes the window to receive a WM_ERASEBKGND message when the window is repainted.
+            Specify this value in combination with the RDW_INVALIDATE value; otherwise, RDW_ERASE has no effect.
+            </summary>
+        </member>
+        <member name="F:GroupedComboBox.RedrawWindowFlags.Validate">
+            <summary>
+            Validates the rectangle or region that you specify in lprcUpdate or hrgnUpdate.
+            You can set only one of these parameters to a non-NULL value. If both are NULL, RDW_VALIDATE validates the entire window.
+            This value does not affect internal WM_PAINT messages.
+            </summary>
+        </member>
+        <member name="F:GroupedComboBox.RedrawWindowFlags.NoErase">
+            <summary>Suppresses any pending WM_ERASEBKGND messages.</summary>
+        </member>
+        <member name="F:GroupedComboBox.RedrawWindowFlags.NoChildren">
+            <summary>Excludes child windows, if any, from the repainting operation.</summary>
+        </member>
+        <member name="F:GroupedComboBox.RedrawWindowFlags.AllChildren">
+            <summary>Includes child windows, if any, in the repainting operation.</summary>
+        </member>
+        <member name="F:GroupedComboBox.RedrawWindowFlags.UpdateNow">
+            <summary>Causes the affected windows, which you specify by setting the RDW_ALLCHILDREN and RDW_NOCHILDREN values, to receive WM_ERASEBKGND and WM_PAINT messages before the RedrawWindow returns, if necessary.</summary>
+        </member>
+        <member name="F:GroupedComboBox.RedrawWindowFlags.EraseNow">
+            <summary>
+            Causes the affected windows, which you specify by setting the RDW_ALLCHILDREN and RDW_NOCHILDREN values, to receive WM_ERASEBKGND messages before RedrawWindow returns, if necessary.
+            The affected windows receive WM_PAINT messages at the ordinary time.
+            </summary>
+        </member>
+        <member name="P:GroupedComboBox.DataSource">
+            <summary>
+            Gets or sets the data source for this GroupedComboBox.
+            </summary>
+        </member>
+        <member name="P:GroupedComboBox.DrawMode">
+            <summary>
+            Gets a value indicating whether the drawing of elements in the list will be handled by user code. 
+            </summary>
+        </member>
+        <member name="P:GroupedComboBox.GroupMember">
+            <summary>
+            Gets or sets the property to use when grouping items in the list.
+            </summary>
+        </member>
+        <member name="P:GroupedComboBox.SortComparer">
+            <summary>
+            Gets or sets an implementation of the <see cref="T:System.Collections.IComparer"/> interface 
+            that sorts the items in the control. It will be applied separately to 
+            the group headings. The default value is <see cref="F:System.Collections.Comparer.Default"/>.
+            </summary>
+        </member>
+        <member name="P:GroupedComboBox.DropDownHeight">
+            <summary>
+            Gets or sets the height in pixels of the drop-down portion of the control.
+            </summary>
+        </member>
+        <member name="P:GroupedComboBox.Sorted">
+            <summary>
+            Gets a value indicating whether the items in the drop-down portion of the control are sorted.
+            </summary>
+        </member>
+        <member name="P:GroupedComboBox.SortMode">
+            <summary>
+            Gets or sets a value indicating how the list items (within each group) 
+            are passed to the <see cref="T:System.Collections.IComparer"/> that sorts them.
+            </summary>
+        </member>
+        <member name="M:GroupedComboBox.#ctor">
+            <summary>
+            Initialises a new instance of the GroupedComboBox class.
+            </summary>
+        </member>
+        <member name="M:GroupedComboBox.Dispose(System.Boolean)">
+            <summary>
+            Releases the resources used by the control.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:GroupedComboBox.OnDropDownStyleChanged(System.EventArgs)">
+            <summary>
+            Recreates the control's handle when the DropDownStyle property changes.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:GroupedComboBox.OnDropDown(System.EventArgs)">
+            <summary>
+            Redraws the control when the dropdown portion is displayed.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:GroupedComboBox.OnDropDownClosed(System.EventArgs)">
+            <summary>
+            Redraws the control when the dropdown portion closes.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:GroupedComboBox.OnGotFocus(System.EventArgs)">
+            <summary>
+            Repaints the control when it receives input focus.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:GroupedComboBox.OnLostFocus(System.EventArgs)">
+            <summary>
+            Repaints the control when it loses input focus.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:GroupedComboBox.OnPaintBackground(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            Paints the control without a background (when using buffered painting).
+            </summary>
+            <param name="pevent"></param>
+        </member>
+        <member name="M:GroupedComboBox.OnSelectedItemChanged(System.EventArgs)">
+            <summary>
+            Redraws the control when the selected item changes.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:GroupedComboBox.System#Collections#IComparer#Compare(System.Object,System.Object)">
+            <summary>
+            Explicit interface implementation for the IComparer.Compare method. Performs a two-tier comparison 
+            on two list items so that the list can be sorted by group, then by display value.
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GroupedComboBox.GetPushButtonState(System.Windows.Forms.VisualStyles.ComboBoxState)">
+            <summary>
+            Converts a ComboBoxState into its equivalent PushButtonState value.
+            </summary>
+            <param name="combo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GroupedComboBox.GetRenderState">
+            <summary>
+            Determines the state in which to render the control (when using buffered painting).
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:GroupedComboBox.IsGroupStart(System.Int32,System.String@)">
+            <summary>
+            Determines whether the list item at the specified index is the start of a new group. In all 
+            cases, populates the string respresentation of the group that the item belongs to.
+            </summary>
+            <param name="index"></param>
+            <param name="groupText"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GroupedComboBox.mBindingSource_ListChanged(System.Object,System.ComponentModel.ListChangedEventArgs)">
+            <summary>
+            Re-synchronises the internal sorted collection when the data source changes.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:GroupedComboBox.OnFontChanged(System.EventArgs)">
+            <summary>
+            When the control font changes, updates the font used to render group names.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:GroupedComboBox.OnParentChanged(System.EventArgs)">
+            <summary>
+            When the parent control changes, updates the font used to render group names.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:GroupedComboBox.OnDrawItem(System.Windows.Forms.DrawItemEventArgs)">
+            <summary>
+            Performs custom painting for a list item.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:GroupedComboBox.OnMeasureItem(System.Windows.Forms.MeasureItemEventArgs)">
+            <summary>
+            Determines the size of a list item.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:GroupedComboBox.SyncInternalItems">
+            <summary>
+            Rebuilds the internal sorted collection.
+            </summary>
+        </member>
+        <member name="M:GroupedComboBox.ToggleStyle">
+            <summary>
+            Changes the control style to allow user-painting in DropDownList mode (when using buffered painting).
+            </summary>
+        </member>
+        <member name="M:GroupedComboBox.WndProc(System.Windows.Forms.Message@)">
+            <summary>
+            Processes Windows messages.
+            </summary>
+            <param name="m"></param>
+        </member>
+        <member name="M:GroupedComboBox.DrawComboBox(System.Drawing.Graphics,System.Drawing.Rectangle,System.Windows.Forms.VisualStyles.ComboBoxState)">
+            <summary>
+            Draws a combo box in the Windows Vista (and newer) style.
+            </summary>
+            <param name="graphics"></param>
+            <param name="bounds"></param>
+            <param name="state"></param>
+        </member>
+        <member name="M:GroupedComboBox._bufferedPainter_PaintVisualState(System.Object,BufferedPainting.BufferedPaintEventArgs{System.Windows.Forms.VisualStyles.ComboBoxState})">
+            <summary>
+            Paints the control (using the Buffered Paint API).
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="T:GroupItemSortModes">
+            <summary>
+            Describes the methods by which list items are sorted.
+            </summary>
+        </member>
+        <member name="F:GroupItemSortModes.Display">
+            <summary>
+            List items are sorted by the text obtained through the 
+            <see cref="P:System.Windows.Forms.ListControl.DisplayMember"/> property. 
+            This is the default behaviour.
+            </summary>
+        </member>
+        <member name="F:GroupItemSortModes.Value">
+            <summary>
+            List items are sorted by the value obtained through the 
+            <see cref="P:System.Windows.Forms.ListControl.ValueMember"/> property.
+            </summary>
+        </member>
+        <member name="F:GroupItemSortModes.Item">
+            <summary>
+            List items are passed directly to the <see cref="T:System.Collections.IComparer"/> 
+            implementation that is assigned to the 
+            <see cref="P:GroupedComboBox.SortComparer"/> property.
+            </summary>
+            <remarks>
+            Unless a custom comparer is used, the list items must implement <see cref="T:System.IComparable"/>.
+            </remarks>
+        </member>
+    </members>
+</doc>

@@ -45,7 +45,7 @@ namespace Necrofy
         private Rectangle selectionDrawRect = Rectangle.Empty;
         public Pen WhitePen { get; private set; }
         public Pen SelectionDashPen { get; private set; }
-
+        
         public MapEditor(int tileSize) {
             this.tileSize = tileSize;
             Disposed += MapEditor_Disposed;
@@ -272,6 +272,14 @@ namespace Necrofy
                 }
                 await Task.Delay(100);
             }
+        }
+
+        public RectangleF GetVisibleArea() {
+            PointF topLeft = ScrollWrapper.TransformPoint(PointF.Empty);
+            PointF bottomRight = ScrollWrapper.TransformPoint(new PointF(canvas.Width, canvas.Height));
+            RectangleF clipRect = new RectangleF(topLeft, new SizeF(bottomRight.X - topLeft.X, bottomRight.Y - topLeft.Y));
+            clipRect.Intersect(new RectangleF(0, 0, MapWidth * tileSize, MapHeight * tileSize));
+            return clipRect;
         }
 
         public override bool CanCopy => CurrentTool.CanCopy;
