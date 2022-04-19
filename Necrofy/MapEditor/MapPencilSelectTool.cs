@@ -9,6 +9,7 @@ namespace Necrofy
 {
     class MapPencilSelectTool : MapTool
     {
+        private bool mouseDownFirstPoint = false;
         private int prevX;
         private int prevY;
         private bool addingToSelection;
@@ -18,16 +19,21 @@ namespace Necrofy
         }
         
         public override void MouseDown(MapMouseEventArgs e) {
-            prevX = -1;
-            prevY = -1;
+            mouseDownFirstPoint = true;
+            prevX = e.TileX;
+            prevY = e.TileY;
             addingToSelection = Control.ModifierKeys != Keys.Alt;
             MouseMove(e);
         }
 
         public override void MouseMove(MapMouseEventArgs e) {
-            // TODO: use lines for selecting
-            if (e.MouseIsDown && (e.TileX != prevX || e.TileY != prevY)) {
-                mapEditor.Selection.SetPoint(e.TileX, e.TileY, addingToSelection);
+            if (e.MouseIsDown && (e.TileX != prevX || e.TileY != prevY || mouseDownFirstPoint)) {
+                mouseDownFirstPoint = false;
+                MapEditor.DrawLine(prevX, prevY, e.TileX, e.TileY, (x, y) => {
+                    mapEditor.Selection.SetPoint(x, y, addingToSelection);
+                });
+                prevX = e.TileX;
+                prevY = e.TileY;
             }
         }
     }

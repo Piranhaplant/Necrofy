@@ -11,11 +11,25 @@ namespace Necrofy
         protected Dictionary<int, LoadedTilemap.Tile> oldTiles = new Dictionary<int, LoadedTilemap.Tile>();
         protected Dictionary<int, LoadedTilemap.Tile> newTiles = new Dictionary<int, LoadedTilemap.Tile>();
 
-        protected void SetTile(int x, int y, LoadedTilemap.Tile tile) {
-            int tileNum = editor.GetLocationTileNum(x, y);
-            if (tileNum >= 0) {
-                oldTiles[tileNum] = editor.tilemap[tileNum];
-                newTiles[tileNum] = tile;
+        protected void SetTile(int x, int y, LoadedTilemap.Tile tile, bool lockTileNum, bool lockPalette, bool lockFlip) {
+            int tileIndex = editor.GetLocationTileIndex(x, y);
+            if (tileIndex >= 0) {
+                LoadedTilemap.Tile oldTile = editor.tilemap[tileIndex];
+                LoadedTilemap.Tile newTile;
+
+                if (!lockTileNum && !lockPalette && !lockFlip) {
+                    newTile = tile;
+                } else {
+                    int tileNum = lockTileNum ? oldTile.tileNum : tile.tileNum;
+                    int palette = lockPalette ? oldTile.palette : tile.palette;
+                    bool xFlip = lockFlip ? oldTile.xFlip : tile.xFlip;
+                    bool yFlip = lockFlip ? oldTile.yFlip : tile.yFlip;
+                    newTile = new LoadedTilemap.Tile(tileNum, palette, xFlip, yFlip);
+                }
+                if (!newTile.Equals(oldTile)) {
+                    oldTiles[tileIndex] = editor.tilemap[tileIndex];
+                    newTiles[tileIndex] = newTile;
+                }
             }
         }
 
@@ -68,8 +82,9 @@ namespace Necrofy
         public override void SetEditor(TilemapEditor editor) {
             base.SetEditor(editor);
             MapEditor.DrawLine(x1, y1, x2, y2, (x, y) => {
-                SetTile(x, y, tile);
+                SetTile(x, y, tile, editor.LockTileNum, editor.LockPalette, editor.LockFlip);
             });
+            cancel = oldTiles.Count == 0;
         }
 
         public override string ToString() {
@@ -94,11 +109,12 @@ namespace Necrofy
             for (int y = 0; y < tiles.GetHeight(); y++) {
                 for (int x = 0; x < tiles.GetWidth(); x++) {
                     if (tiles[x, y] != null) {
-                        SetTile(pasteX + x, pasteY + y, (LoadedTilemap.Tile)tiles[x, y]);
+                        SetTile(pasteX + x, pasteY + y, (LoadedTilemap.Tile)tiles[x, y], false, false, false);
                     }
                 }
             }
             tiles = null; // Allow this to be garbage collected
+            cancel = oldTiles.Count == 0;
         }
 
         public override bool Merge(UndoAction<TilemapEditor> action) {
@@ -107,6 +123,31 @@ namespace Necrofy
 
         public override string ToString() {
             return "Paste tiles";
+        }
+    }
+
+    class FillTilemapSelectionAction : TilemapEditorAction
+    {
+        private readonly LoadedTilemap.Tile tile;
+
+        public FillTilemapSelectionAction(LoadedTilemap.Tile tile) {
+            this.tile = tile;
+        }
+
+        public override void SetEditor(TilemapEditor editor) {
+            base.SetEditor(editor);
+            for (int y = 0; y < editor.Selection.height; y++) {
+                for (int x = 0; x < editor.Selection.width; x++) {
+                    if (editor.Selection.GetPoint(x, y)) {
+                        SetTile(x, y, tile, editor.LockTileNum, editor.LockPalette, editor.LockFlip);
+                    }
+                }
+            }
+            cancel = oldTiles.Count == 0;
+        }
+        
+        public override string ToString() {
+            return "Fill selection";
         }
     }
 
@@ -120,14 +161,11 @@ namespace Necrofy
             for (int y = 0; y < editor.Selection.height; y++) {
                 for (int x = 0; x < editor.Selection.width; x++) {
                     if (editor.Selection.GetPoint(x, y)) {
-                        SetTile(x, y, tile);
+                        SetTile(x, y, tile, false, false, false);
                     }
                 }
             }
-        }
-
-        public override bool Merge(UndoAction<TilemapEditor> action) {
-            return false;
+            cancel = oldTiles.Count == 0;
         }
 
         public override string ToString() {

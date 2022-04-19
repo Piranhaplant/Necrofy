@@ -293,6 +293,7 @@ namespace Necrofy
 
             TilemapPaintBrush,
             TilemapRectangleSelect,
+            TilemapPencilSelect,
         }
 
         [Flags]

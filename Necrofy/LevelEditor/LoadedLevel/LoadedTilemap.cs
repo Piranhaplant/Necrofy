@@ -41,8 +41,8 @@ namespace Necrofy
         public void Save(Project project) {
             for (int i = 0; i < tiles.Length; i++) {
                 ushort value = tiles[i].ToUshort();
-                asset.data[i] = (byte)(value & 0xff);
-                asset.data[i + 1] = (byte)((value >> 8) & 0xff);
+                asset.data[i * 2] = (byte)(value & 0xff);
+                asset.data[i * 2 + 1] = (byte)((value >> 8) & 0xff);
             }
             updating++;
             asset.Save(project);
@@ -86,6 +86,27 @@ namespace Necrofy
                     ((xFlip ? 1 : 0) << 14) |
                     ((yFlip ? 1 : 0) << 15)
                 );
+            }
+
+            public override bool Equals(object obj) {
+                if (!(obj is Tile)) {
+                    return false;
+                }
+
+                var tile = (Tile)obj;
+                return tileNum == tile.tileNum &&
+                       palette == tile.palette &&
+                       xFlip == tile.xFlip &&
+                       yFlip == tile.yFlip;
+            }
+
+            public override int GetHashCode() {
+                var hashCode = -787655182;
+                hashCode = hashCode * -1521134295 + tileNum.GetHashCode();
+                hashCode = hashCode * -1521134295 + palette.GetHashCode();
+                hashCode = hashCode * -1521134295 + xFlip.GetHashCode();
+                hashCode = hashCode * -1521134295 + yFlip.GetHashCode();
+                return hashCode;
             }
         }
     }

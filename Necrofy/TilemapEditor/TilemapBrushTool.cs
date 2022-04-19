@@ -26,9 +26,9 @@ namespace Necrofy
             }
 
             protected override void SelectTile(int x, int y) {
-                int tileNum = editor.GetLocationTileNum(x, y);
-                if (tileNum >= 0) {
-                    LoadedTilemap.Tile tile = editor.tilemap[tileNum];
+                int tileIndex = editor.GetLocationTileIndex(x, y);
+                if (tileIndex >= 0) {
+                    LoadedTilemap.Tile tile = editor.tilemap[tileIndex];
                     editor.SelectedTile = tile.tileNum;
                     editor.SelectedPalette = tile.palette;
                     editor.FlipX = tile.xFlip;

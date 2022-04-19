@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
+using System.Threading.Tasks;
 
 namespace Necrofy
 {
-    class TilemapSelectTool : TilemapTool
+    class TilemapPencilSelectTool : TilemapTool
     {
-        public TilemapSelectTool(TilemapEditor editor) : base(editor) {
-            AddSubTool(new MapRectangleSelectTool(editor));
+        public TilemapPencilSelectTool(TilemapEditor editor) : base(editor) {
+            AddSubTool(new MapPencilSelectTool(editor));
         }
 
         public override void TileChanged() {

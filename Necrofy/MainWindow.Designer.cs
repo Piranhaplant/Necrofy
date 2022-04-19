@@ -83,6 +83,9 @@
             this.graphicsPaintbrushButton = new System.Windows.Forms.ToolStripButton();
             this.graphicsRectangleSelectButton = new System.Windows.Forms.ToolStripButton();
             this.bucketFillButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator22 = new System.Windows.Forms.ToolStripSeparator();
+            this.tilemapPaintbrushButton = new System.Windows.Forms.ToolStripButton();
+            this.tilemapRectangleSelectButton = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.fileNewProject = new System.Windows.Forms.ToolStripMenuItem();
@@ -136,6 +139,7 @@
             this.viewLargeTileMode = new System.Windows.Forms.ToolStripMenuItem();
             this.viewTransparency = new System.Windows.Forms.ToolStripMenuItem();
             this.viewGraphicsGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewTilemapGrid = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator20 = new System.Windows.Forms.ToolStripSeparator();
             this.viewZoomOut = new System.Windows.Forms.ToolStripMenuItem();
             this.viewZoomIn = new System.Windows.Forms.ToolStripMenuItem();
@@ -156,6 +160,8 @@
             this.toolsGraphicsPaintbrush = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsGraphicsRectangleSelect = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsBucketFill = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsTilemapPaintbrush = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsTilemapRectangleSelect = new System.Windows.Forms.ToolStripMenuItem();
             this.arrangeMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.arrangeFlipHorizontal = new System.Windows.Forms.ToolStripMenuItem();
             this.arrangeFlipVertical = new System.Windows.Forms.ToolStripMenuItem();
@@ -185,12 +191,7 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.buildStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripSeparator22 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolsTilemapPaintbrush = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolsTilemapRectangleSelect = new System.Windows.Forms.ToolStripMenuItem();
-            this.tilemapPaintbrushButton = new System.Windows.Forms.ToolStripButton();
-            this.tilemapRectangleSelectButton = new System.Windows.Forms.ToolStripButton();
-            this.viewTilemapGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.tilemapPencilSelectTool = new System.Windows.Forms.ToolStripButton();
             this.spritesButton = new Necrofy.CheckableToolStripSplitButton();
             this.spritesItems = new Necrofy.SeparateCheckToolStripMenuItem();
             this.spritesVictims = new Necrofy.SeparateCheckToolStripMenuItem();
@@ -204,6 +205,7 @@
             this.toolsSprites = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripGrouper = new Necrofy.ToolStripGrouper(this.components);
             this.toolBarMenuLinker = new Necrofy.ToolBarMenuLinker(this.components);
+            this.toolsTilemapPencilSelect = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -283,7 +285,8 @@
             this.bucketFillButton,
             this.toolStripSeparator22,
             this.tilemapPaintbrushButton,
-            this.tilemapRectangleSelectButton});
+            this.tilemapRectangleSelectButton,
+            this.tilemapPencilSelectTool});
             this.toolStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
@@ -774,6 +777,36 @@
             this.bucketFillButton.Name = "bucketFillButton";
             this.bucketFillButton.Size = new System.Drawing.Size(23, 22);
             this.bucketFillButton.Text = "Bucket Fill";
+            // 
+            // toolStripSeparator22
+            // 
+            this.toolStripGrouper.SetItemSet(this.toolStripSeparator22, Necrofy.ToolStripGrouper.ItemSet.Tilemap);
+            this.toolStripSeparator22.Name = "toolStripSeparator22";
+            this.toolStripSeparator22.Size = new System.Drawing.Size(6, 25);
+            // 
+            // tilemapPaintbrushButton
+            // 
+            this.tilemapPaintbrushButton.Checked = true;
+            this.tilemapPaintbrushButton.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.tilemapPaintbrushButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tilemapPaintbrushButton.Image = global::Necrofy.Properties.Resources.paint_brush;
+            this.tilemapPaintbrushButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripGrouper.SetItemSet(this.tilemapPaintbrushButton, Necrofy.ToolStripGrouper.ItemSet.Tilemap);
+            this.toolStripGrouper.SetItemType(this.tilemapPaintbrushButton, Necrofy.ToolStripGrouper.ItemType.TilemapPaintBrush);
+            this.tilemapPaintbrushButton.Name = "tilemapPaintbrushButton";
+            this.tilemapPaintbrushButton.Size = new System.Drawing.Size(23, 22);
+            this.tilemapPaintbrushButton.Text = "Paintbrush";
+            // 
+            // tilemapRectangleSelectButton
+            // 
+            this.tilemapRectangleSelectButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tilemapRectangleSelectButton.Image = global::Necrofy.Properties.Resources.selection_select;
+            this.tilemapRectangleSelectButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripGrouper.SetItemSet(this.tilemapRectangleSelectButton, Necrofy.ToolStripGrouper.ItemSet.Tilemap);
+            this.toolStripGrouper.SetItemType(this.tilemapRectangleSelectButton, Necrofy.ToolStripGrouper.ItemType.TilemapRectangleSelect);
+            this.tilemapRectangleSelectButton.Name = "tilemapRectangleSelectButton";
+            this.tilemapRectangleSelectButton.Size = new System.Drawing.Size(23, 22);
+            this.tilemapRectangleSelectButton.Text = "Rectangle Select";
             // 
             // menuStrip1
             // 
@@ -1300,6 +1333,16 @@
             this.viewGraphicsGrid.Size = new System.Drawing.Size(208, 22);
             this.viewGraphicsGrid.Text = "&Grid";
             // 
+            // viewTilemapGrid
+            // 
+            this.viewTilemapGrid.CheckOnClick = true;
+            this.toolStripGrouper.SetItemSet(this.viewTilemapGrid, Necrofy.ToolStripGrouper.ItemSet.Tilemap);
+            this.toolStripGrouper.SetItemType(this.viewTilemapGrid, Necrofy.ToolStripGrouper.ItemType.ViewTilemapGrid);
+            this.viewTilemapGrid.Name = "viewTilemapGrid";
+            this.viewTilemapGrid.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
+            this.viewTilemapGrid.Size = new System.Drawing.Size(208, 22);
+            this.viewTilemapGrid.Text = "&Grid";
+            // 
             // toolStripSeparator20
             // 
             this.toolStripGrouper.SetItemSet(this.toolStripSeparator20, ((Necrofy.ToolStripGrouper.ItemSet)((Necrofy.ToolStripGrouper.ItemSet.Graphics | Necrofy.ToolStripGrouper.ItemSet.Tilemap))));
@@ -1394,7 +1437,8 @@
             this.toolsGraphicsRectangleSelect,
             this.toolsBucketFill,
             this.toolsTilemapPaintbrush,
-            this.toolsTilemapRectangleSelect});
+            this.toolsTilemapRectangleSelect,
+            this.toolsTilemapPencilSelect});
             this.toolStripGrouper.SetItemSet(this.toolsMenu, ((Necrofy.ToolStripGrouper.ItemSet)(((Necrofy.ToolStripGrouper.ItemSet.LevelEditor | Necrofy.ToolStripGrouper.ItemSet.Graphics) 
                 | Necrofy.ToolStripGrouper.ItemSet.Tilemap))));
             this.toolsMenu.Name = "toolsMenu";
@@ -1411,7 +1455,7 @@
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsPaintbrush, this.paintbrushButton);
             this.toolsPaintbrush.Name = "toolsPaintbrush";
             this.toolsPaintbrush.ShortcutKeyDisplayString = "P";
-            this.toolsPaintbrush.Size = new System.Drawing.Size(174, 22);
+            this.toolsPaintbrush.Size = new System.Drawing.Size(180, 22);
             this.toolsPaintbrush.Text = "&Paintbrush";
             // 
             // toolsTileSuggest
@@ -1422,7 +1466,7 @@
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsTileSuggest, this.tileSuggestButton);
             this.toolsTileSuggest.Name = "toolsTileSuggest";
             this.toolsTileSuggest.ShortcutKeyDisplayString = "S";
-            this.toolsTileSuggest.Size = new System.Drawing.Size(174, 22);
+            this.toolsTileSuggest.Size = new System.Drawing.Size(180, 22);
             this.toolsTileSuggest.Text = "Tile &Suggest";
             // 
             // toolsRectangleSelect
@@ -1433,7 +1477,7 @@
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsRectangleSelect, this.rectangleSelectButton);
             this.toolsRectangleSelect.Name = "toolsRectangleSelect";
             this.toolsRectangleSelect.ShortcutKeyDisplayString = "R";
-            this.toolsRectangleSelect.Size = new System.Drawing.Size(174, 22);
+            this.toolsRectangleSelect.Size = new System.Drawing.Size(180, 22);
             this.toolsRectangleSelect.Text = "&Rectangle Select";
             // 
             // toolsPencilSelect
@@ -1444,7 +1488,7 @@
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsPencilSelect, this.pencilSelectButton);
             this.toolsPencilSelect.Name = "toolsPencilSelect";
             this.toolsPencilSelect.ShortcutKeyDisplayString = "C";
-            this.toolsPencilSelect.Size = new System.Drawing.Size(174, 22);
+            this.toolsPencilSelect.Size = new System.Drawing.Size(180, 22);
             this.toolsPencilSelect.Text = "Pen&cil Select";
             // 
             // toolsTileSelect
@@ -1455,7 +1499,7 @@
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsTileSelect, this.tileSelectButton);
             this.toolsTileSelect.Name = "toolsTileSelect";
             this.toolsTileSelect.ShortcutKeyDisplayString = "T";
-            this.toolsTileSelect.Size = new System.Drawing.Size(174, 22);
+            this.toolsTileSelect.Size = new System.Drawing.Size(180, 22);
             this.toolsTileSelect.Text = "&Tile Select";
             // 
             // toolsResizeLevel
@@ -1466,7 +1510,7 @@
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsResizeLevel, this.resizeLevelButton);
             this.toolsResizeLevel.Name = "toolsResizeLevel";
             this.toolsResizeLevel.ShortcutKeyDisplayString = "L";
-            this.toolsResizeLevel.Size = new System.Drawing.Size(174, 22);
+            this.toolsResizeLevel.Size = new System.Drawing.Size(180, 22);
             this.toolsResizeLevel.Text = "Resize &Level";
             // 
             // toolsGraphicsPaintbrush
@@ -1479,7 +1523,7 @@
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsGraphicsPaintbrush, this.graphicsPaintbrushButton);
             this.toolsGraphicsPaintbrush.Name = "toolsGraphicsPaintbrush";
             this.toolsGraphicsPaintbrush.ShortcutKeyDisplayString = "P";
-            this.toolsGraphicsPaintbrush.Size = new System.Drawing.Size(174, 22);
+            this.toolsGraphicsPaintbrush.Size = new System.Drawing.Size(180, 22);
             this.toolsGraphicsPaintbrush.Text = "&Paintbrush";
             // 
             // toolsGraphicsRectangleSelect
@@ -1490,7 +1534,7 @@
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsGraphicsRectangleSelect, this.graphicsRectangleSelectButton);
             this.toolsGraphicsRectangleSelect.Name = "toolsGraphicsRectangleSelect";
             this.toolsGraphicsRectangleSelect.ShortcutKeyDisplayString = "R";
-            this.toolsGraphicsRectangleSelect.Size = new System.Drawing.Size(174, 22);
+            this.toolsGraphicsRectangleSelect.Size = new System.Drawing.Size(180, 22);
             this.toolsGraphicsRectangleSelect.Text = "&Rectangle Select";
             // 
             // toolsBucketFill
@@ -1501,8 +1545,32 @@
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsBucketFill, this.bucketFillButton);
             this.toolsBucketFill.Name = "toolsBucketFill";
             this.toolsBucketFill.ShortcutKeyDisplayString = "B";
-            this.toolsBucketFill.Size = new System.Drawing.Size(174, 22);
+            this.toolsBucketFill.Size = new System.Drawing.Size(180, 22);
             this.toolsBucketFill.Text = "&Bucket Fill";
+            // 
+            // toolsTilemapPaintbrush
+            // 
+            this.toolsTilemapPaintbrush.Checked = true;
+            this.toolsTilemapPaintbrush.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.toolsTilemapPaintbrush.Image = global::Necrofy.Properties.Resources.paint_brush;
+            this.toolStripGrouper.SetItemSet(this.toolsTilemapPaintbrush, Necrofy.ToolStripGrouper.ItemSet.Tilemap);
+            this.toolStripGrouper.SetItemType(this.toolsTilemapPaintbrush, Necrofy.ToolStripGrouper.ItemType.TilemapPaintBrush);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsTilemapPaintbrush, this.tilemapPaintbrushButton);
+            this.toolsTilemapPaintbrush.Name = "toolsTilemapPaintbrush";
+            this.toolsTilemapPaintbrush.ShortcutKeyDisplayString = "P";
+            this.toolsTilemapPaintbrush.Size = new System.Drawing.Size(180, 22);
+            this.toolsTilemapPaintbrush.Text = "&Paintbrush";
+            // 
+            // toolsTilemapRectangleSelect
+            // 
+            this.toolsTilemapRectangleSelect.Image = global::Necrofy.Properties.Resources.selection_select;
+            this.toolStripGrouper.SetItemSet(this.toolsTilemapRectangleSelect, Necrofy.ToolStripGrouper.ItemSet.Tilemap);
+            this.toolStripGrouper.SetItemType(this.toolsTilemapRectangleSelect, Necrofy.ToolStripGrouper.ItemType.TilemapRectangleSelect);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsTilemapRectangleSelect, this.tilemapRectangleSelectButton);
+            this.toolsTilemapRectangleSelect.Name = "toolsTilemapRectangleSelect";
+            this.toolsTilemapRectangleSelect.ShortcutKeyDisplayString = "R";
+            this.toolsTilemapRectangleSelect.Size = new System.Drawing.Size(180, 22);
+            this.toolsTilemapRectangleSelect.Text = "&Rectangle Select";
             // 
             // arrangeMenu
             // 
@@ -1529,7 +1597,7 @@
             this.toolStripGrouper.SetItemType(this.arrangeFlipHorizontal, Necrofy.ToolStripGrouper.ItemType.FlipHorizontally);
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.arrangeFlipHorizontal, this.flipHorizontalButton);
             this.arrangeFlipHorizontal.Name = "arrangeFlipHorizontal";
-            this.arrangeFlipHorizontal.Size = new System.Drawing.Size(176, 22);
+            this.arrangeFlipHorizontal.Size = new System.Drawing.Size(180, 22);
             this.arrangeFlipHorizontal.Text = "Flip H&orizontally";
             // 
             // arrangeFlipVertical
@@ -1539,7 +1607,7 @@
             this.toolStripGrouper.SetItemType(this.arrangeFlipVertical, Necrofy.ToolStripGrouper.ItemType.FlipVertically);
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.arrangeFlipVertical, this.flipVerticalButton);
             this.arrangeFlipVertical.Name = "arrangeFlipVertical";
-            this.arrangeFlipVertical.Size = new System.Drawing.Size(176, 22);
+            this.arrangeFlipVertical.Size = new System.Drawing.Size(180, 22);
             this.arrangeFlipVertical.Text = "Flip V&ertically";
             // 
             // toolStripSeparator12
@@ -1555,7 +1623,7 @@
             this.toolStripGrouper.SetItemType(this.arrangeCenterHorizontally, Necrofy.ToolStripGrouper.ItemType.CenterHorizontally);
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.arrangeCenterHorizontally, this.centerHorizontallyButton);
             this.arrangeCenterHorizontally.Name = "arrangeCenterHorizontally";
-            this.arrangeCenterHorizontally.Size = new System.Drawing.Size(176, 22);
+            this.arrangeCenterHorizontally.Size = new System.Drawing.Size(180, 22);
             this.arrangeCenterHorizontally.Text = "Center &Horizontally";
             // 
             // arrangeCenterVertically
@@ -1565,7 +1633,7 @@
             this.toolStripGrouper.SetItemType(this.arrangeCenterVertically, Necrofy.ToolStripGrouper.ItemType.CenterVertically);
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.arrangeCenterVertically, this.centerVerticallyButton);
             this.arrangeCenterVertically.Name = "arrangeCenterVertically";
-            this.arrangeCenterVertically.Size = new System.Drawing.Size(176, 22);
+            this.arrangeCenterVertically.Size = new System.Drawing.Size(180, 22);
             this.arrangeCenterVertically.Text = "Center &Vertically";
             // 
             // titleSeparator
@@ -1581,7 +1649,7 @@
             this.toolStripGrouper.SetItemType(this.arrangeMoveUp, Necrofy.ToolStripGrouper.ItemType.MoveUp);
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.arrangeMoveUp, this.moveUpButton);
             this.arrangeMoveUp.Name = "arrangeMoveUp";
-            this.arrangeMoveUp.Size = new System.Drawing.Size(176, 22);
+            this.arrangeMoveUp.Size = new System.Drawing.Size(180, 22);
             this.arrangeMoveUp.Text = "Move &Up";
             // 
             // arrangeMoveDown
@@ -1591,7 +1659,7 @@
             this.toolStripGrouper.SetItemType(this.arrangeMoveDown, Necrofy.ToolStripGrouper.ItemType.MoveDown);
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.arrangeMoveDown, this.moveDownButton);
             this.arrangeMoveDown.Name = "arrangeMoveDown";
-            this.arrangeMoveDown.Size = new System.Drawing.Size(176, 22);
+            this.arrangeMoveDown.Size = new System.Drawing.Size(180, 22);
             this.arrangeMoveDown.Text = "Move &Down";
             // 
             // arrangeMoveToFront
@@ -1601,7 +1669,7 @@
             this.toolStripGrouper.SetItemType(this.arrangeMoveToFront, Necrofy.ToolStripGrouper.ItemType.MoveToFront);
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.arrangeMoveToFront, this.moveToFrontButton);
             this.arrangeMoveToFront.Name = "arrangeMoveToFront";
-            this.arrangeMoveToFront.Size = new System.Drawing.Size(176, 22);
+            this.arrangeMoveToFront.Size = new System.Drawing.Size(180, 22);
             this.arrangeMoveToFront.Text = "Move to &Front";
             // 
             // arrangeMoveToBack
@@ -1611,7 +1679,7 @@
             this.toolStripGrouper.SetItemType(this.arrangeMoveToBack, Necrofy.ToolStripGrouper.ItemType.MoveToBack);
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.arrangeMoveToBack, this.moveToBackButton);
             this.arrangeMoveToBack.Name = "arrangeMoveToBack";
-            this.arrangeMoveToBack.Size = new System.Drawing.Size(176, 22);
+            this.arrangeMoveToBack.Size = new System.Drawing.Size(180, 22);
             this.arrangeMoveToBack.Text = "Move to &Back";
             // 
             // passwordsMenu
@@ -1760,69 +1828,16 @@
             this.buildStatusLabel.Text = "Build Status";
             this.buildStatusLabel.Visible = false;
             // 
-            // toolStripSeparator22
+            // tilemapPencilSelectTool
             // 
-            this.toolStripGrouper.SetItemSet(this.toolStripSeparator22, Necrofy.ToolStripGrouper.ItemSet.Tilemap);
-            this.toolStripSeparator22.Name = "toolStripSeparator22";
-            this.toolStripSeparator22.Size = new System.Drawing.Size(6, 25);
-            // 
-            // toolsTilemapPaintbrush
-            // 
-            this.toolsTilemapPaintbrush.Checked = true;
-            this.toolsTilemapPaintbrush.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.toolsTilemapPaintbrush.Image = global::Necrofy.Properties.Resources.paint_brush;
-            this.toolStripGrouper.SetItemSet(this.toolsTilemapPaintbrush, Necrofy.ToolStripGrouper.ItemSet.Tilemap);
-            this.toolStripGrouper.SetItemType(this.toolsTilemapPaintbrush, Necrofy.ToolStripGrouper.ItemType.TilemapPaintBrush);
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsTilemapPaintbrush, this.tilemapPaintbrushButton);
-            this.toolsTilemapPaintbrush.Name = "toolsTilemapPaintbrush";
-            this.toolsTilemapPaintbrush.ShortcutKeyDisplayString = "P";
-            this.toolsTilemapPaintbrush.Size = new System.Drawing.Size(174, 22);
-            this.toolsTilemapPaintbrush.Text = "&Paintbrush";
-            // 
-            // toolsTilemapRectangleSelect
-            // 
-            this.toolsTilemapRectangleSelect.Image = global::Necrofy.Properties.Resources.selection_select;
-            this.toolStripGrouper.SetItemSet(this.toolsTilemapRectangleSelect, Necrofy.ToolStripGrouper.ItemSet.Tilemap);
-            this.toolStripGrouper.SetItemType(this.toolsTilemapRectangleSelect, Necrofy.ToolStripGrouper.ItemType.TilemapRectangleSelect);
-            this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsTilemapRectangleSelect, this.tilemapRectangleSelectButton);
-            this.toolsTilemapRectangleSelect.Name = "toolsTilemapRectangleSelect";
-            this.toolsTilemapRectangleSelect.ShortcutKeyDisplayString = "R";
-            this.toolsTilemapRectangleSelect.Size = new System.Drawing.Size(174, 22);
-            this.toolsTilemapRectangleSelect.Text = "&Rectangle Select";
-            // 
-            // tilemapPaintbrushButton
-            // 
-            this.tilemapPaintbrushButton.Checked = true;
-            this.tilemapPaintbrushButton.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.tilemapPaintbrushButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tilemapPaintbrushButton.Image = global::Necrofy.Properties.Resources.paint_brush;
-            this.tilemapPaintbrushButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripGrouper.SetItemSet(this.tilemapPaintbrushButton, Necrofy.ToolStripGrouper.ItemSet.Tilemap);
-            this.toolStripGrouper.SetItemType(this.tilemapPaintbrushButton, Necrofy.ToolStripGrouper.ItemType.TilemapPaintBrush);
-            this.tilemapPaintbrushButton.Name = "tilemapPaintbrushButton";
-            this.tilemapPaintbrushButton.Size = new System.Drawing.Size(23, 22);
-            this.tilemapPaintbrushButton.Text = "Paintbrush";
-            // 
-            // tilemapRectangleSelectButton
-            // 
-            this.tilemapRectangleSelectButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tilemapRectangleSelectButton.Image = global::Necrofy.Properties.Resources.selection_select;
-            this.tilemapRectangleSelectButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripGrouper.SetItemSet(this.tilemapRectangleSelectButton, Necrofy.ToolStripGrouper.ItemSet.Tilemap);
-            this.toolStripGrouper.SetItemType(this.tilemapRectangleSelectButton, Necrofy.ToolStripGrouper.ItemType.TilemapRectangleSelect);
-            this.tilemapRectangleSelectButton.Name = "tilemapRectangleSelectButton";
-            this.tilemapRectangleSelectButton.Size = new System.Drawing.Size(23, 22);
-            this.tilemapRectangleSelectButton.Text = "Rectangle Select";
-            // 
-            // viewTilemapGrid
-            // 
-            this.viewTilemapGrid.CheckOnClick = true;
-            this.toolStripGrouper.SetItemSet(this.viewTilemapGrid, Necrofy.ToolStripGrouper.ItemSet.Tilemap);
-            this.toolStripGrouper.SetItemType(this.viewTilemapGrid, Necrofy.ToolStripGrouper.ItemType.ViewTilemapGrid);
-            this.viewTilemapGrid.Name = "viewTilemapGrid";
-            this.viewTilemapGrid.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
-            this.viewTilemapGrid.Size = new System.Drawing.Size(208, 22);
-            this.viewTilemapGrid.Text = "&Grid";
+            this.tilemapPencilSelectTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tilemapPencilSelectTool.Image = global::Necrofy.Properties.Resources.pencil_select;
+            this.tilemapPencilSelectTool.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripGrouper.SetItemSet(this.tilemapPencilSelectTool, Necrofy.ToolStripGrouper.ItemSet.Tilemap);
+            this.toolStripGrouper.SetItemType(this.tilemapPencilSelectTool, Necrofy.ToolStripGrouper.ItemType.TilemapPencilSelect);
+            this.tilemapPencilSelectTool.Name = "tilemapPencilSelectTool";
+            this.tilemapPencilSelectTool.Size = new System.Drawing.Size(23, 22);
+            this.tilemapPencilSelectTool.Text = "Rectangle Select";
             // 
             // spritesButton
             // 
@@ -1936,13 +1951,24 @@
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsSprites, this.spritesButton);
             this.toolsSprites.Name = "toolsSprites";
             this.toolsSprites.ShortcutKeyDisplayString = "I";
-            this.toolsSprites.Size = new System.Drawing.Size(174, 22);
+            this.toolsSprites.Size = new System.Drawing.Size(180, 22);
             this.toolsSprites.Text = "Spr&ites";
             // 
             // toolStripGrouper
             // 
             this.toolStripGrouper.ItemClick += new System.EventHandler<Necrofy.ToolStripGrouper.ItemEventArgs>(this.toolStripGrouper_ItemClick);
             this.toolStripGrouper.ItemCheckedChanged += new System.EventHandler<Necrofy.ToolStripGrouper.ItemEventArgs>(this.toolStripGrouper_ItemCheckedChanged);
+            // 
+            // toolsTilemapPencilSelect
+            // 
+            this.toolsTilemapPencilSelect.Image = global::Necrofy.Properties.Resources.pencil_select;
+            this.toolStripGrouper.SetItemSet(this.toolsTilemapPencilSelect, Necrofy.ToolStripGrouper.ItemSet.Tilemap);
+            this.toolStripGrouper.SetItemType(this.toolsTilemapPencilSelect, Necrofy.ToolStripGrouper.ItemType.TilemapPencilSelect);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.toolsTilemapPencilSelect, this.tilemapPencilSelectTool);
+            this.toolsTilemapPencilSelect.Name = "toolsTilemapPencilSelect";
+            this.toolsTilemapPencilSelect.ShortcutKeyDisplayString = "C";
+            this.toolsTilemapPencilSelect.Size = new System.Drawing.Size(180, 22);
+            this.toolsTilemapPencilSelect.Text = "Pen&cil Select";
             // 
             // MainWindow
             // 
@@ -2149,6 +2175,8 @@
         private System.Windows.Forms.ToolStripMenuItem toolsTilemapPaintbrush;
         private System.Windows.Forms.ToolStripMenuItem toolsTilemapRectangleSelect;
         private System.Windows.Forms.ToolStripMenuItem viewTilemapGrid;
+        private System.Windows.Forms.ToolStripButton tilemapPencilSelectTool;
+        private System.Windows.Forms.ToolStripMenuItem toolsTilemapPencilSelect;
     }
 }
 

@@ -28,6 +28,8 @@ namespace Necrofy
             editor.undoManager.Do(new DeleteTilemapAction());
         }
 
+        public virtual void TileChanged() { }
+
         private class PasteTool : MapPasteTool
         {
             private readonly TilemapEditor editor;
@@ -44,7 +46,7 @@ namespace Necrofy
                 for (int y = bounds.Top; y < bounds.Bottom; y++) {
                     for (int x = bounds.Left; x < bounds.Right; x++) {
                         if (editor.Selection.GetPoint(x, y)) {
-                            tiles[x - bounds.Left, y - bounds.Top] = editor.tilemap[editor.GetLocationTileNum(x, y)].ToUshort();
+                            tiles[x - bounds.Left, y - bounds.Top] = editor.tilemap[editor.GetLocationTileIndex(x, y)].ToUshort();
                         }
                     }
                 }

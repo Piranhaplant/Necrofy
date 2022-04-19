@@ -25,22 +25,28 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            this.components = new System.ComponentModel.Container();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tilePicker = new Necrofy.SpriteTilePicker();
-            this.graphicsSelector = new Necrofy.AssetSelector();
+            this.optionsPanel = new Necrofy.NoAutoScalePanel();
+            this.lockFlip = new System.Windows.Forms.CheckBox();
+            this.lockPalette = new System.Windows.Forms.CheckBox();
+            this.lockTileNum = new System.Windows.Forms.CheckBox();
+            this.lockLabel = new System.Windows.Forms.Label();
+            this.flipLabel = new System.Windows.Forms.Label();
+            this.flipX = new System.Windows.Forms.CheckBox();
+            this.flipY = new System.Windows.Forms.CheckBox();
             this.paletteSelector = new Necrofy.AssetSelector();
+            this.graphicsSelector = new Necrofy.AssetSelector();
             this.canvas = new Necrofy.Canvas();
             this.vScroll = new System.Windows.Forms.VScrollBar();
             this.hScroll = new System.Windows.Forms.HScrollBar();
-            this.flipPanel = new Necrofy.NoAutoScalePanel();
-            this.flipX = new System.Windows.Forms.CheckBox();
-            this.flipY = new System.Windows.Forms.CheckBox();
-            this.clearFlip = new System.Windows.Forms.Button();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.flipPanel.SuspendLayout();
+            this.optionsPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -53,9 +59,9 @@
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.tilePicker);
-            this.splitContainer1.Panel1.Controls.Add(this.flipPanel);
-            this.splitContainer1.Panel1.Controls.Add(this.graphicsSelector);
+            this.splitContainer1.Panel1.Controls.Add(this.optionsPanel);
             this.splitContainer1.Panel1.Controls.Add(this.paletteSelector);
+            this.splitContainer1.Panel1.Controls.Add(this.graphicsSelector);
             this.splitContainer1.Panel1MinSize = 273;
             // 
             // splitContainer1.Panel2
@@ -71,30 +77,132 @@
             // tilePicker
             // 
             this.tilePicker.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tilePicker.Location = new System.Drawing.Point(0, 65);
+            this.tilePicker.FlipX = false;
+            this.tilePicker.FlipY = false;
+            this.tilePicker.Location = new System.Drawing.Point(0, 70);
             this.tilePicker.Name = "tilePicker";
             this.tilePicker.Palette = 0;
             this.tilePicker.SelectedTile = -1;
-            this.tilePicker.Size = new System.Drawing.Size(273, 739);
+            this.tilePicker.Size = new System.Drawing.Size(273, 734);
             this.tilePicker.TabIndex = 0;
+            this.tilePicker.SelectedTileChanged += new Necrofy.SpriteTilePicker.SelectedTileChangedDelegate(this.tilePicker_SelectedTileChanged);
+            this.tilePicker.PaletteChanged += new Necrofy.SpriteTilePicker.PaletteChangedDelegate(this.tilePicker_PaletteChanged);
             // 
-            // graphicsSelector
+            // optionsPanel
             // 
-            this.graphicsSelector.Dock = System.Windows.Forms.DockStyle.Top;
-            this.graphicsSelector.Location = new System.Drawing.Point(0, 21);
-            this.graphicsSelector.Name = "graphicsSelector";
-            this.graphicsSelector.Size = new System.Drawing.Size(273, 21);
-            this.graphicsSelector.TabIndex = 2;
-            this.graphicsSelector.SelectedItemChanged += new System.EventHandler(this.graphicsSelector_SelectedItemChanged);
+            this.optionsPanel.Controls.Add(this.lockFlip);
+            this.optionsPanel.Controls.Add(this.lockPalette);
+            this.optionsPanel.Controls.Add(this.lockTileNum);
+            this.optionsPanel.Controls.Add(this.lockLabel);
+            this.optionsPanel.Controls.Add(this.flipLabel);
+            this.optionsPanel.Controls.Add(this.flipX);
+            this.optionsPanel.Controls.Add(this.flipY);
+            this.optionsPanel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.optionsPanel.Location = new System.Drawing.Point(0, 42);
+            this.optionsPanel.Name = "optionsPanel";
+            this.optionsPanel.Size = new System.Drawing.Size(273, 28);
+            this.optionsPanel.TabIndex = 3;
+            // 
+            // lockFlip
+            // 
+            this.lockFlip.Appearance = System.Windows.Forms.Appearance.Button;
+            this.lockFlip.AutoSize = true;
+            this.lockFlip.Image = global::Necrofy.Properties.Resources.layer_flip;
+            this.lockFlip.Location = new System.Drawing.Point(187, 3);
+            this.lockFlip.Name = "lockFlip";
+            this.lockFlip.Size = new System.Drawing.Size(22, 22);
+            this.lockFlip.TabIndex = 10;
+            this.toolTip1.SetToolTip(this.lockFlip, "Lock Flip (e)");
+            this.lockFlip.UseVisualStyleBackColor = true;
+            this.lockFlip.CheckedChanged += new System.EventHandler(this.lock_CheckedChanged);
+            // 
+            // lockPalette
+            // 
+            this.lockPalette.Appearance = System.Windows.Forms.Appearance.Button;
+            this.lockPalette.AutoSize = true;
+            this.lockPalette.Image = global::Necrofy.Properties.Resources.color;
+            this.lockPalette.Location = new System.Drawing.Point(159, 3);
+            this.lockPalette.Name = "lockPalette";
+            this.lockPalette.Size = new System.Drawing.Size(22, 22);
+            this.lockPalette.TabIndex = 9;
+            this.toolTip1.SetToolTip(this.lockPalette, "Lock Palette (w)");
+            this.lockPalette.UseVisualStyleBackColor = true;
+            this.lockPalette.CheckedChanged += new System.EventHandler(this.lock_CheckedChanged);
+            // 
+            // lockTileNum
+            // 
+            this.lockTileNum.Appearance = System.Windows.Forms.Appearance.Button;
+            this.lockTileNum.AutoSize = true;
+            this.lockTileNum.Image = global::Necrofy.Properties.Resources.image;
+            this.lockTileNum.Location = new System.Drawing.Point(131, 3);
+            this.lockTileNum.Name = "lockTileNum";
+            this.lockTileNum.Size = new System.Drawing.Size(22, 22);
+            this.lockTileNum.TabIndex = 8;
+            this.toolTip1.SetToolTip(this.lockTileNum, "Lock Tile Number (q)");
+            this.lockTileNum.UseVisualStyleBackColor = true;
+            this.lockTileNum.CheckedChanged += new System.EventHandler(this.lock_CheckedChanged);
+            // 
+            // lockLabel
+            // 
+            this.lockLabel.AutoSize = true;
+            this.lockLabel.Location = new System.Drawing.Point(95, 8);
+            this.lockLabel.Name = "lockLabel";
+            this.lockLabel.Size = new System.Drawing.Size(34, 13);
+            this.lockLabel.TabIndex = 7;
+            this.lockLabel.Text = "Lock:";
+            // 
+            // flipLabel
+            // 
+            this.flipLabel.AutoSize = true;
+            this.flipLabel.Location = new System.Drawing.Point(3, 8);
+            this.flipLabel.Name = "flipLabel";
+            this.flipLabel.Size = new System.Drawing.Size(26, 13);
+            this.flipLabel.TabIndex = 6;
+            this.flipLabel.Text = "Flip:";
+            // 
+            // flipX
+            // 
+            this.flipX.Appearance = System.Windows.Forms.Appearance.Button;
+            this.flipX.AutoSize = true;
+            this.flipX.Image = global::Necrofy.Properties.Resources.layer_flip;
+            this.flipX.Location = new System.Drawing.Point(31, 3);
+            this.flipX.Name = "flipX";
+            this.flipX.Size = new System.Drawing.Size(22, 22);
+            this.flipX.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.flipX, "Flip Horizontally (x)");
+            this.flipX.UseVisualStyleBackColor = true;
+            this.flipX.CheckedChanged += new System.EventHandler(this.flipX_CheckedChanged);
+            // 
+            // flipY
+            // 
+            this.flipY.Appearance = System.Windows.Forms.Appearance.Button;
+            this.flipY.AutoSize = true;
+            this.flipY.Image = global::Necrofy.Properties.Resources.layer_flip_vertical;
+            this.flipY.Location = new System.Drawing.Point(59, 3);
+            this.flipY.Name = "flipY";
+            this.flipY.Size = new System.Drawing.Size(22, 22);
+            this.flipY.TabIndex = 5;
+            this.toolTip1.SetToolTip(this.flipY, "Flip Vertically (y)");
+            this.flipY.UseVisualStyleBackColor = true;
+            this.flipY.CheckedChanged += new System.EventHandler(this.flipY_CheckedChanged);
             // 
             // paletteSelector
             // 
             this.paletteSelector.Dock = System.Windows.Forms.DockStyle.Top;
-            this.paletteSelector.Location = new System.Drawing.Point(0, 0);
+            this.paletteSelector.Location = new System.Drawing.Point(0, 21);
             this.paletteSelector.Name = "paletteSelector";
             this.paletteSelector.Size = new System.Drawing.Size(273, 21);
             this.paletteSelector.TabIndex = 1;
             this.paletteSelector.SelectedItemChanged += new System.EventHandler(this.paletteSelector_SelectedItemChanged);
+            // 
+            // graphicsSelector
+            // 
+            this.graphicsSelector.Dock = System.Windows.Forms.DockStyle.Top;
+            this.graphicsSelector.Location = new System.Drawing.Point(0, 0);
+            this.graphicsSelector.Name = "graphicsSelector";
+            this.graphicsSelector.Size = new System.Drawing.Size(273, 21);
+            this.graphicsSelector.TabIndex = 2;
+            this.graphicsSelector.SelectedItemChanged += new System.EventHandler(this.graphicsSelector_SelectedItemChanged);
             // 
             // canvas
             // 
@@ -107,6 +215,7 @@
             this.canvas.Name = "canvas";
             this.canvas.Size = new System.Drawing.Size(1108, 787);
             this.canvas.TabIndex = 6;
+            this.canvas.KeyDown += new System.Windows.Forms.KeyEventHandler(this.canvas_KeyDown);
             // 
             // vScroll
             // 
@@ -130,49 +239,6 @@
             this.hScroll.SmallChange = 16;
             this.hScroll.TabIndex = 7;
             // 
-            // flipPanel
-            // 
-            this.flipPanel.Controls.Add(this.clearFlip);
-            this.flipPanel.Controls.Add(this.flipY);
-            this.flipPanel.Controls.Add(this.flipX);
-            this.flipPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.flipPanel.Location = new System.Drawing.Point(0, 42);
-            this.flipPanel.Name = "flipPanel";
-            this.flipPanel.Size = new System.Drawing.Size(273, 23);
-            this.flipPanel.TabIndex = 3;
-            // 
-            // flipX
-            // 
-            this.flipX.AutoSize = true;
-            this.flipX.Location = new System.Drawing.Point(3, 3);
-            this.flipX.Name = "flipX";
-            this.flipX.Size = new System.Drawing.Size(99, 17);
-            this.flipX.TabIndex = 4;
-            this.flipX.Text = "Flip Horizontally";
-            this.flipX.UseVisualStyleBackColor = true;
-            this.flipX.CheckedChanged += new System.EventHandler(this.flipX_CheckedChanged);
-            // 
-            // flipY
-            // 
-            this.flipY.AutoSize = true;
-            this.flipY.Location = new System.Drawing.Point(108, 3);
-            this.flipY.Name = "flipY";
-            this.flipY.Size = new System.Drawing.Size(87, 17);
-            this.flipY.TabIndex = 5;
-            this.flipY.Text = "Flip Vertically";
-            this.flipY.UseVisualStyleBackColor = true;
-            this.flipY.CheckedChanged += new System.EventHandler(this.flipY_CheckedChanged);
-            // 
-            // clearFlip
-            // 
-            this.clearFlip.Location = new System.Drawing.Point(199, 0);
-            this.clearFlip.Name = "clearFlip";
-            this.clearFlip.Size = new System.Drawing.Size(75, 23);
-            this.clearFlip.TabIndex = 6;
-            this.clearFlip.Text = "Clear";
-            this.clearFlip.UseVisualStyleBackColor = true;
-            this.clearFlip.Click += new System.EventHandler(this.clearFlip_Click);
-            // 
             // TilemapEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -185,8 +251,8 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.flipPanel.ResumeLayout(false);
-            this.flipPanel.PerformLayout();
+            this.optionsPanel.ResumeLayout(false);
+            this.optionsPanel.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -200,9 +266,14 @@
         private System.Windows.Forms.HScrollBar hScroll;
         private AssetSelector graphicsSelector;
         private AssetSelector paletteSelector;
-        private NoAutoScalePanel flipPanel;
-        private System.Windows.Forms.Button clearFlip;
+        private NoAutoScalePanel optionsPanel;
         private System.Windows.Forms.CheckBox flipY;
         private System.Windows.Forms.CheckBox flipX;
+        private System.Windows.Forms.CheckBox lockFlip;
+        private System.Windows.Forms.CheckBox lockPalette;
+        private System.Windows.Forms.CheckBox lockTileNum;
+        private System.Windows.Forms.Label lockLabel;
+        private System.Windows.Forms.Label flipLabel;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }

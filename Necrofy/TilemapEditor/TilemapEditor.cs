@@ -48,11 +48,20 @@ namespace Necrofy
             set => tilePicker.Palette = value;
         }
 
+        public bool LockTileNum => lockTileNum.Checked;
+        public bool LockPalette => lockPalette.Checked;
+        public bool LockFlip => lockFlip.Checked;
+
+        private readonly Dictionary<Keys, CheckBox> checkboxKeys;
+
         public override ToolStripGrouper.ItemSet ToolStripItemSet => ToolStripGrouper.ItemSet.Tilemap;
 
         public TilemapEditor(LoadedTilemap loadedTilemap) : base(8) {
             InitializeComponent();
             Disposed += TilemapEditor_Disposed;
+            checkboxKeys = new Dictionary<Keys, CheckBox>() {
+                { Keys.X, flipX }, { Keys.Y, flipY }, { Keys.Q, lockTileNum }, { Keys.W, lockPalette }, { Keys.E, lockFlip }
+            };
 
             this.loadedTilemap = loadedTilemap;
             tilemap = new LoadedTilemap.Tile[loadedTilemap.tiles.Length];
@@ -87,6 +96,8 @@ namespace Necrofy
             SetupMapEditor(canvas, hScroll, vScroll);
             SetupTool(new TilemapBrushTool(this), ToolStripGrouper.ItemType.TilemapPaintBrush, Keys.P);
             SetupTool(new TilemapSelectTool(this), ToolStripGrouper.ItemType.TilemapRectangleSelect, Keys.R);
+            SetupTool(new TilemapPencilSelectTool(this), ToolStripGrouper.ItemType.TilemapPencilSelect, Keys.C);
+            Selection.Changed += Selection_Changed;
 
             UpdateSize(tileWidth);
             Zoom = 4.0f;
@@ -98,6 +109,10 @@ namespace Necrofy
 
             undoManager = new UndoManager<TilemapEditor>(mainWindow.UndoButton, mainWindow.RedoButton, this);
             return undoManager;
+        }
+
+        private void Selection_Changed(object sender, EventArgs e) {
+            undoManager?.ForceNoMerge();
         }
 
         private void UpdateSize(int newTileWidth) {
@@ -122,7 +137,7 @@ namespace Necrofy
             tileRegion = new Region(s.GetGraphicsPath());
         }
         
-        public int GetLocationTileNum(int tileX, int tileY) {
+        public int GetLocationTileIndex(int tileX, int tileY) {
             int tileNum = tileY * tileWidth + tileX;
             if (tileX < 0 || tileX >= tileWidth || tileX < 0 || tileNum >= tilemap.Length) {
                 tileNum = -1;
@@ -133,6 +148,12 @@ namespace Necrofy
         public void GetTileLocation(int tileNum, out int x, out int y) {
             x = tileNum % tileWidth;
             y = tileNum / tileWidth;
+        }
+
+        public void FillSelection() {
+            if (SelectionExists) {
+                undoManager.Do(new FillTilemapSelectionAction(new LoadedTilemap.Tile(SelectedTile, SelectedPalette, FlipX, FlipY)));
+            }
         }
 
         protected override void PaintMap(Graphics g) {
@@ -167,16 +188,19 @@ namespace Necrofy
         }
 
         protected override void PaintSelectionDrawRectangle(Graphics g, Rectangle r) {
-            g.DrawRectangle(WhitePen, r);
+            // Nothing to do
         }
 
         protected override void PaintSelection(Graphics g, GraphicsPath path) {
+            g.FillPath(LevelEditor.selectionFillBrush, path);
             g.DrawPath(WhitePen, path);
             g.DrawPath(SelectionDashPen, path);
         }
 
         protected override void PaintSelectionEraser(Graphics g, Rectangle r) {
-            // Nothing to do
+            g.FillRectangle(LevelEditor.eraserFillBrush, r);
+            g.DrawRectangle(WhitePen, r);
+            g.DrawRectangle(SelectionDashPen, r);
         }
 
         protected override void PaintExtras(Graphics g) {
@@ -185,6 +209,13 @@ namespace Necrofy
 
         protected override void ToolChanged(TilemapTool currentTool) {
             // Nothing to do
+        }
+
+        private void canvas_KeyDown(object sender, KeyEventArgs e) {
+            tilePicker.OnKeyDown(e.KeyCode);
+            if (checkboxKeys.TryGetValue(e.KeyCode, out CheckBox checkbox)) {
+                checkbox.Checked = !checkbox.Checked;
+            }
         }
 
         private void paletteSelector_SelectedItemChanged(object sender, EventArgs e) {
@@ -284,17 +315,29 @@ namespace Necrofy
 
         private void flipX_CheckedChanged(object sender, EventArgs e) {
             tilePicker.FlipX = flipX.Checked;
-            canvas.Focus();
+            SelectedTileChanged();
         }
 
         private void flipY_CheckedChanged(object sender, EventArgs e) {
             tilePicker.FlipY = flipY.Checked;
-            canvas.Focus();
+            SelectedTileChanged();
+        }
+        
+        private void tilePicker_SelectedTileChanged(object sender, EventArgs e) {
+            SelectedTileChanged();
         }
 
-        private void clearFlip_Click(object sender, EventArgs e) {
-            flipX.Checked = false;
-            flipY.Checked = false;
+        private void tilePicker_PaletteChanged(object sender, EventArgs e) {
+            SelectedTileChanged();
+        }
+
+        private void SelectedTileChanged() {
+            canvas.Focus();
+            CurrentTool?.TileChanged();
+        }
+
+        private void lock_CheckedChanged(object sender, EventArgs e) {
+            canvas.Focus();
         }
     }
 }
