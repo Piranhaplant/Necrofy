@@ -40,7 +40,9 @@ namespace Necrofy
 
         public void Save(Project project) {
             for (int i = 0; i < tiles.Length; i++) {
-                tiles[i].WriteBytes(asset.data, i * 2);
+                ushort value = tiles[i].ToUshort();
+                asset.data[i] = (byte)(value & 0xff);
+                asset.data[i + 1] = (byte)((value >> 8) & 0xff);
             }
             updating++;
             asset.Save(project);
@@ -53,6 +55,8 @@ namespace Necrofy
             public readonly int palette;
             public readonly bool xFlip;
             public readonly bool yFlip;
+
+            public Tile(ushort value) : this((byte)(value & 0xff), (byte)((value >> 8) & 0xff)) { }
 
             public Tile(byte lowByte, byte highByte) {
                 tileNum = lowByte + ((highByte & 1) << 8);
@@ -75,9 +79,13 @@ namespace Necrofy
                 this.yFlip = yFlip;
             }
 
-            public void WriteBytes(byte[] array, int index) {
-                array[index] = (byte)(tileNum & 0xff);
-                array[index + 1] = (byte)(((tileNum & 0x100) >> 8) | ((palette & 7) << 2) | ((xFlip ? 1 : 0) << 6) | ((yFlip ? 1 : 0) << 7));
+            public ushort ToUshort() {
+                return (ushort)(
+                    (tileNum & 0x1ff) |
+                    ((palette & 7) << 10) |
+                    ((xFlip ? 1 : 0) << 14) |
+                    ((yFlip ? 1 : 0) << 15)
+                );
             }
         }
     }

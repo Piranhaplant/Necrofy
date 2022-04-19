@@ -11,6 +11,14 @@ namespace Necrofy
         protected Dictionary<int, LoadedTilemap.Tile> oldTiles = new Dictionary<int, LoadedTilemap.Tile>();
         protected Dictionary<int, LoadedTilemap.Tile> newTiles = new Dictionary<int, LoadedTilemap.Tile>();
 
+        protected void SetTile(int x, int y, LoadedTilemap.Tile tile) {
+            int tileNum = editor.GetLocationTileNum(x, y);
+            if (tileNum >= 0) {
+                oldTiles[tileNum] = editor.tilemap[tileNum];
+                newTiles[tileNum] = tile;
+            }
+        }
+
         protected override void Undo() {
             foreach (KeyValuePair<int, LoadedTilemap.Tile> tile in oldTiles) {
                 editor.tilemap[tile.Key] = tile.Value;
@@ -60,16 +68,70 @@ namespace Necrofy
         public override void SetEditor(TilemapEditor editor) {
             base.SetEditor(editor);
             MapEditor.DrawLine(x1, y1, x2, y2, (x, y) => {
-                int tileNum = editor.GetLocationTileNum(x, y);
-                if (tileNum >= 0) {
-                    oldTiles[tileNum] = editor.tilemap[tileNum];
-                    newTiles[tileNum] = tile;
-                }
+                SetTile(x, y, tile);
             });
         }
 
         public override string ToString() {
             return "Paintbrush";
+        }
+    }
+
+    class PasteTilemapAction : TilemapEditorAction
+    {
+        private LoadedTilemap.Tile?[,] tiles;
+        private readonly int pasteX;
+        private readonly int pasteY;
+
+        public PasteTilemapAction(LoadedTilemap.Tile?[,] tiles, int pasteX, int pasteY) {
+            this.tiles = tiles;
+            this.pasteX = pasteX;
+            this.pasteY = pasteY;
+        }
+
+        public override void SetEditor(TilemapEditor editor) {
+            base.SetEditor(editor);
+            for (int y = 0; y < tiles.GetHeight(); y++) {
+                for (int x = 0; x < tiles.GetWidth(); x++) {
+                    if (tiles[x, y] != null) {
+                        SetTile(pasteX + x, pasteY + y, (LoadedTilemap.Tile)tiles[x, y]);
+                    }
+                }
+            }
+            tiles = null; // Allow this to be garbage collected
+        }
+
+        public override bool Merge(UndoAction<TilemapEditor> action) {
+            return false;
+        }
+
+        public override string ToString() {
+            return "Paste tiles";
+        }
+    }
+
+    class DeleteTilemapAction : TilemapEditorAction
+    {
+        public DeleteTilemapAction() { }
+
+        public override void SetEditor(TilemapEditor editor) {
+            base.SetEditor(editor);
+            LoadedTilemap.Tile tile = new LoadedTilemap.Tile(0, 0, false, false);
+            for (int y = 0; y < editor.Selection.height; y++) {
+                for (int x = 0; x < editor.Selection.width; x++) {
+                    if (editor.Selection.GetPoint(x, y)) {
+                        SetTile(x, y, tile);
+                    }
+                }
+            }
+        }
+
+        public override bool Merge(UndoAction<TilemapEditor> action) {
+            return false;
+        }
+
+        public override string ToString() {
+            return "Delete tiles";
         }
     }
 }

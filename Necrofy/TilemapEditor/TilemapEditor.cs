@@ -20,17 +20,16 @@ namespace Necrofy
         public UndoManager<TilemapEditor> undoManager { get; private set; }
 
         private int tileWidth = 32;
-        private GraphicsPath tilePath;
         private Region tileRegion;
 
         private bool showGrid = false;
-        private bool transparency = false;
+        public bool transparency { get; private set; }
 
         private LoadedPalette palette;
-        private Color[] Colors;
+        public Color[] Colors { get; private set; }
 
         private LoadedGraphics graphics;
-        private Bitmap[] tiles;
+        public Bitmap[] tiles { get; private set; }
 
         public bool FlipX {
             get => flipX.Checked;
@@ -119,10 +118,8 @@ namespace Necrofy
                 GetTileLocation(i, out int x, out int y);
                 s.SetPoint(x, y, true);
             }
-            tilePath?.Dispose();
-            tilePath = s.GetGraphicsPath();
             tileRegion?.Dispose();
-            tileRegion = new Region(tilePath);
+            tileRegion = new Region(s.GetGraphicsPath());
         }
         
         public int GetLocationTileNum(int tileX, int tileY) {
@@ -145,6 +142,10 @@ namespace Necrofy
             RectangleF clipRect = GetVisibleArea();
             g.SetClip(tileRegion, CombineMode.Replace);
 
+            if (transparency) {
+                SNESGraphics.DrawTransparencyGrid(g, clipRect, Zoom);
+            }
+
             for (int i = 0; i < tilemap.Length; i++) {
                 LoadedTilemap.Tile t = tilemap[i];
                 GetTileLocation(i, out int x, out int y);
@@ -163,10 +164,6 @@ namespace Necrofy
             }
 
             g.ResetClip();
-
-            if (transparency) {
-                g.DrawPath(WhitePen, tilePath);
-            }
         }
 
         protected override void PaintSelectionDrawRectangle(Graphics g, Rectangle r) {
