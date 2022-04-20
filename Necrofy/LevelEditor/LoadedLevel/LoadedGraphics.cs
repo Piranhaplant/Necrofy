@@ -21,6 +21,7 @@ namespace Necrofy
             this.graphicsName = graphicsName;
             asset = GraphicsAsset.FromProject(project, graphicsName);
             asset.Updated += Asset_Updated;
+
             ReadGraphics();
         }
 

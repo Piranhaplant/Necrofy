@@ -91,6 +91,7 @@ namespace Necrofy
             viewAxes.Checked = Properties.Settings.Default.ShowAxes;
             viewTileBorders.Checked = Properties.Settings.Default.ShowTileBorders;
             viewSpriteGrid.Checked = Properties.Settings.Default.ShowSpriteGrid;
+            viewTilemapGrid.Checked = Properties.Settings.Default.ShowTilemapGrid;
 
             projectMenuItems = new List<ToolStripMenuItem>() { projectBuildProject, projectRunProject, projectSettings };
             toolStripGrouper.HideAllSetItems();
@@ -125,6 +126,7 @@ namespace Necrofy
             Properties.Settings.Default.ShowTileBorders = viewTileBorders.Checked;
             Properties.Settings.Default.ShowAxes = viewAxes.Checked;
             Properties.Settings.Default.ShowSpriteGrid = viewSpriteGrid.Checked;
+            Properties.Settings.Default.ShowTilemapGrid = viewTilemapGrid.Checked;
             if (WindowState.HasFlag(FormWindowState.Maximized)) {
                 Properties.Settings.Default.WindowSize = RestoreBounds.Size;
                 Properties.Settings.Default.Maximized = true;

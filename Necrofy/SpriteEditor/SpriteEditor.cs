@@ -286,12 +286,7 @@ namespace Necrofy
 
                 if (showGrid) {
                     using (Pen gridPen = new Pen(Color.Gray, 1 / Zoom)) {
-                        for (int x = -MaxDimension + 16; x < MaxDimension; x += 16) {
-                            e.Graphics.DrawLine(gridPen, x, -MaxDimension, x, MaxDimension);
-                        }
-                        for (int y = -MaxDimension + 16; y < MaxDimension; y += 16) {
-                            e.Graphics.DrawLine(gridPen, -MaxDimension, y, MaxDimension, y);
-                        }
+                        MapEditor.DrawGrid(e.Graphics, gridPen, new RectangleF(-MaxDimension, -MaxDimension, AllowedSize, AllowedSize), 16);
                     }
                     using (Pen axesPen = new Pen(Color.BlueViolet, 1 / Zoom)) {
                         e.Graphics.DrawLine(axesPen, 0, -MaxDimension, 0, MaxDimension);

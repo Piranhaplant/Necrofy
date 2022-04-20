@@ -351,5 +351,18 @@ namespace Necrofy
                 }
             }
         }
+
+        public static void DrawGrid(Graphics g, Pen p, RectangleF area, float gridSize) {
+            DrawGrid(g, p, area, gridSize, gridSize);
+        }
+
+        public static void DrawGrid(Graphics g, Pen p, RectangleF area, float gridSizeX, float gridSizeY) {
+            for (float x = (float)Math.Floor(area.Left / gridSizeX + 1) * gridSizeX; x < area.Right; x += gridSizeX) {
+                g.DrawLine(p, x, area.Top, x, area.Bottom);
+            }
+            for (float y = (float)Math.Floor(area.Top / gridSizeY + 1) * gridSizeY; y < area.Bottom; y += gridSizeY) {
+                g.DrawLine(p, area.Left, y, area.Right, y);
+            }
+        }
     }
 }

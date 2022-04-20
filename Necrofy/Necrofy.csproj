@@ -106,6 +106,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssetOptions.cs" />
     <Compile Include="AssetSelector.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -323,6 +324,7 @@
     <Compile Include="TextDisplayForm.Designer.cs">
       <DependentUpon>TextDisplayForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="TilemapEditor\Hinting.cs" />
     <Compile Include="TilemapEditor\TilemapBrushTool.cs" />
     <Compile Include="TilemapEditor\TilemapEditor.cs">
       <SubType>Form</SubType>

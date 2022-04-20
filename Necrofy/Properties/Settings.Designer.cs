@@ -214,5 +214,17 @@ namespace Necrofy.Properties {
                 this["UpgradeRequired"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ShowTilemapGrid {
+            get {
+                return ((bool)(this["ShowTilemapGrid"]));
+            }
+            set {
+                this["ShowTilemapGrid"] = value;
+            }
+        }
     }
 }

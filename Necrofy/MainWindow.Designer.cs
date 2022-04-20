@@ -193,6 +193,10 @@
             this.buildStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.tilemapPencilSelectTool = new System.Windows.Forms.ToolStripButton();
             this.toolsTilemapPencilSelect = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewHinting = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewHintingNone = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewHintingLevelTitle = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewHintingTileset = new System.Windows.Forms.ToolStripMenuItem();
             this.spritesButton = new Necrofy.CheckableToolStripSplitButton();
             this.spritesItems = new Necrofy.SeparateCheckToolStripMenuItem();
             this.spritesVictims = new Necrofy.SeparateCheckToolStripMenuItem();
@@ -1143,6 +1147,7 @@
             this.viewTransparency,
             this.viewGraphicsGrid,
             this.viewTilemapGrid,
+            this.viewHinting,
             this.toolStripSeparator20,
             this.viewZoomOut,
             this.viewZoomIn});
@@ -1389,38 +1394,38 @@
             // 
             this.toolStripGrouper.SetItemType(this.levelEditTitle, Necrofy.ToolStripGrouper.ItemType.LevelEditTitle);
             this.levelEditTitle.Name = "levelEditTitle";
-            this.levelEditTitle.Size = new System.Drawing.Size(159, 22);
+            this.levelEditTitle.Size = new System.Drawing.Size(180, 22);
             this.levelEditTitle.Text = "Edit Title...";
             // 
             // levelSettings
             // 
             this.toolStripGrouper.SetItemType(this.levelSettings, Necrofy.ToolStripGrouper.ItemType.LevelSettings);
             this.levelSettings.Name = "levelSettings";
-            this.levelSettings.Size = new System.Drawing.Size(159, 22);
+            this.levelSettings.Size = new System.Drawing.Size(180, 22);
             this.levelSettings.Text = "&Settings...";
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(156, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(177, 6);
             // 
             // levelClear
             // 
             this.toolStripGrouper.SetItemType(this.levelClear, Necrofy.ToolStripGrouper.ItemType.LevelClear);
             this.levelClear.Name = "levelClear";
-            this.levelClear.Size = new System.Drawing.Size(159, 22);
+            this.levelClear.Size = new System.Drawing.Size(180, 22);
             this.levelClear.Text = "Clear";
             // 
             // toolStripSeparator8
             // 
             this.toolStripSeparator8.Name = "toolStripSeparator8";
-            this.toolStripSeparator8.Size = new System.Drawing.Size(156, 6);
+            this.toolStripSeparator8.Size = new System.Drawing.Size(177, 6);
             // 
             // levelSaveAsImage
             // 
             this.toolStripGrouper.SetItemType(this.levelSaveAsImage, Necrofy.ToolStripGrouper.ItemType.LevelSaveAsImage);
             this.levelSaveAsImage.Name = "levelSaveAsImage";
-            this.levelSaveAsImage.Size = new System.Drawing.Size(159, 22);
+            this.levelSaveAsImage.Size = new System.Drawing.Size(180, 22);
             this.levelSaveAsImage.Text = "Save As Image...";
             // 
             // toolsMenu
@@ -1837,7 +1842,7 @@
             this.toolStripGrouper.SetItemType(this.tilemapPencilSelectTool, Necrofy.ToolStripGrouper.ItemType.TilemapPencilSelect);
             this.tilemapPencilSelectTool.Name = "tilemapPencilSelectTool";
             this.tilemapPencilSelectTool.Size = new System.Drawing.Size(23, 22);
-            this.tilemapPencilSelectTool.Text = "Rectangle Select";
+            this.tilemapPencilSelectTool.Text = "Pencil Select";
             // 
             // toolsTilemapPencilSelect
             // 
@@ -1849,6 +1854,38 @@
             this.toolsTilemapPencilSelect.ShortcutKeyDisplayString = "C";
             this.toolsTilemapPencilSelect.Size = new System.Drawing.Size(174, 22);
             this.toolsTilemapPencilSelect.Text = "Pen&cil Select";
+            // 
+            // viewHinting
+            // 
+            this.viewHinting.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.viewHintingNone,
+            this.viewHintingLevelTitle,
+            this.viewHintingTileset});
+            this.toolStripGrouper.SetItemSet(this.viewHinting, Necrofy.ToolStripGrouper.ItemSet.Tilemap);
+            this.viewHinting.Name = "viewHinting";
+            this.viewHinting.Size = new System.Drawing.Size(208, 22);
+            this.viewHinting.Text = "&Hinting";
+            // 
+            // viewHintingNone
+            // 
+            this.toolStripGrouper.SetItemType(this.viewHintingNone, Necrofy.ToolStripGrouper.ItemType.ViewHintingNone);
+            this.viewHintingNone.Name = "viewHintingNone";
+            this.viewHintingNone.Size = new System.Drawing.Size(180, 22);
+            this.viewHintingNone.Text = "None";
+            // 
+            // viewHintingLevelTitle
+            // 
+            this.toolStripGrouper.SetItemType(this.viewHintingLevelTitle, Necrofy.ToolStripGrouper.ItemType.ViewHintingLevelTitle);
+            this.viewHintingLevelTitle.Name = "viewHintingLevelTitle";
+            this.viewHintingLevelTitle.Size = new System.Drawing.Size(180, 22);
+            this.viewHintingLevelTitle.Text = "Level Title";
+            // 
+            // viewHintingTileset
+            // 
+            this.toolStripGrouper.SetItemType(this.viewHintingTileset, Necrofy.ToolStripGrouper.ItemType.ViewHintingTileset);
+            this.viewHintingTileset.Name = "viewHintingTileset";
+            this.viewHintingTileset.Size = new System.Drawing.Size(180, 22);
+            this.viewHintingTileset.Text = "Tileset";
             // 
             // spritesButton
             // 
@@ -2177,6 +2214,10 @@
         private System.Windows.Forms.ToolStripMenuItem viewTilemapGrid;
         private System.Windows.Forms.ToolStripButton tilemapPencilSelectTool;
         private System.Windows.Forms.ToolStripMenuItem toolsTilemapPencilSelect;
+        private System.Windows.Forms.ToolStripMenuItem viewHinting;
+        private System.Windows.Forms.ToolStripMenuItem viewHintingNone;
+        private System.Windows.Forms.ToolStripMenuItem viewHintingLevelTitle;
+        private System.Windows.Forms.ToolStripMenuItem viewHintingTileset;
     }
 }
 

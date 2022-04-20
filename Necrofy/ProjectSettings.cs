@@ -19,6 +19,8 @@ namespace Necrofy
         public int EndGameLevel { get; set; }
         /// <summary>List of the built-in patches that will be applied on build</summary>
         public List<Patch> EnabledPatches { get; set; } = new List<Patch>();
+        /// <summary>Various per-asset settings</summary>
+        public AssetOptions AssetOptions { get; set; } = new AssetOptions();
 
         private ProjectSettings() { }
 

@@ -195,12 +195,7 @@ namespace Necrofy
             }
             RenderLevel(g);
             if (showGrid) {
-                for (int x = 1; x < level.Level.width; x++) {
-                    g.DrawLine(WhitePen, x * 64, 0, x * 64, level.Level.height * 64);
-                }
-                for (int y = 1; y < level.Level.height; y++) {
-                    g.DrawLine(WhitePen, 0, y * 64, level.Level.width * 64, y * 64);
-                }
+                DrawGrid(g, WhitePen, GetVisibleArea(), 64);
             }
         }
 

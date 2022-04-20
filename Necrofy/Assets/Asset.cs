@@ -134,6 +134,9 @@ namespace Necrofy
                     if ((defaultParams.extractFromNecrofyROM || !romInfo.NecrofyROM) && (defaultParams.versionAdded.Major > originalProjectVersion.Major || defaultParams.versionAdded.Minor > originalProjectVersion.Minor)) {
                         CreateAsset(romStream, romInfo, creator, defaultParams.nameInfo, defaultParams.pointer, defaultParams.size);
                     }
+                    if (defaultParams.options != null) {
+                        romInfo.assetOptions.SetOptions(defaultParams.nameInfo.Category, defaultParams.nameInfo.Name, defaultParams.options);
+                    }
                 }
             }
         }
@@ -406,8 +409,9 @@ namespace Necrofy
             public readonly int? size;
             public readonly bool extractFromNecrofyROM;
             public readonly Version versionAdded;
+            public readonly AssetOptions.Options options;
 
-            public DefaultParams(int pointer, NameInfo nameInfo, int? size = null, bool extractFromNecrofyROM = false, Version versionAdded = default) {
+            public DefaultParams(int pointer, NameInfo nameInfo, int? size = null, bool extractFromNecrofyROM = false, Version versionAdded = default, AssetOptions.Options options = null) {
                 this.pointer = pointer;
                 this.nameInfo = nameInfo;
                 this.size = size;
@@ -417,6 +421,7 @@ namespace Necrofy
                 } else {
                     this.versionAdded = versionAdded;
                 }
+                this.options = options;
             }
         }
     }

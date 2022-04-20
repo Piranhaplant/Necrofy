@@ -81,14 +81,14 @@ namespace Necrofy
         public Project(string settingsFile) {
             path = FixPath(Path.GetDirectoryName(settingsFile));
             settingsFilename = Path.GetFileName(settingsFile);
-            settings = JsonConvert.DeserializeObject<ProjectSettings>(File.ReadAllText(settingsFile));
+            settings = JsonConvert.DeserializeObject<ProjectSettings>(File.ReadAllText(settingsFile), new AssetOptions.OptionJsonConverter());
             if (File.Exists(UserSettingsPath)) {
                 userSettings = JsonConvert.DeserializeObject<ProjectUserSettings>(File.ReadAllText(UserSettingsPath));
             } else {
                 userSettings = new ProjectUserSettings();
             }
 
-            if (settings.MajorVersion < ProjectSettings.CurMajorVersion || settings.MinorVersion < ProjectSettings.CurMinorVersion) {
+            if (settings.MajorVersion < ProjectSettings.CurMajorVersion || settings.MinorVersion < ProjectSettings.CurMinorVersion || settings.AssetOptions.entries.Count == 0) {
                 Upgrade();
             }
 
@@ -139,6 +139,7 @@ namespace Necrofy
                 foreach (Asset asset in info.assets) {
                     asset.Save(this);
                 }
+                settings.AssetOptions.Merge(info.assetOptions);
             }
             settings.MajorVersion = ProjectSettings.CurMajorVersion;
             settings.MinorVersion = ProjectSettings.CurMinorVersion;

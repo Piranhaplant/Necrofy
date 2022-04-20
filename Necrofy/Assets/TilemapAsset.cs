@@ -65,14 +65,14 @@ namespace Necrofy
 
             public override List<DefaultParams> GetDefaults() {
                 return new List<DefaultParams>() {
-                    new DefaultParams(0xb5641, new TilemapNameInfo(LevelTitleFolder, DefaultName, 0xb5641), 0x1200, extractFromNecrofyROM: true),
-                    new DefaultParams(0xf5700, new TilemapNameInfo(TitleScreenFolder, DefaultName, 0xf5700), 0x800, extractFromNecrofyROM: true),
+                    new DefaultParams(0xb5641, new TilemapNameInfo(LevelTitleFolder, DefaultName, 0xb5641), 0x1200, extractFromNecrofyROM: true, options: new AssetOptions.TilemapOptions(128, true, Hinting.Type.LevelTitle)),
+                    new DefaultParams(0xf5700, new TilemapNameInfo(TitleScreenFolder, DefaultName, 0xf5700), 0x800, extractFromNecrofyROM: true, options: new AssetOptions.TilemapOptions(32, true)),
 
-                    new DefaultParams(0xd4000, new TilemapNameInfo(GetTilesetFolder(Castle), DefaultName, compressed: true)),
-                    new DefaultParams(0xd8000, new TilemapNameInfo(GetTilesetFolder(Grass), DefaultName, compressed: true)),
-                    new DefaultParams(0xdbcb5, new TilemapNameInfo(GetTilesetFolder(Sand), DefaultName, compressed: true)),
-                    new DefaultParams(0xe0000, new TilemapNameInfo(GetTilesetFolder(Office), DefaultName, compressed: true)),
-                    new DefaultParams(0xe36ef, new TilemapNameInfo(GetTilesetFolder(Mall), DefaultName, compressed: true)),
+                    new DefaultParams(0xd4000, new TilemapNameInfo(GetTilesetFolder(Castle), DefaultName, compressed: true), options: new AssetOptions.TilemapOptions(8, false, Hinting.Type.Tileset)),
+                    new DefaultParams(0xd8000, new TilemapNameInfo(GetTilesetFolder(Grass), DefaultName, compressed: true), options: new AssetOptions.TilemapOptions(8, false, Hinting.Type.Tileset)),
+                    new DefaultParams(0xdbcb5, new TilemapNameInfo(GetTilesetFolder(Sand), DefaultName, compressed: true), options: new AssetOptions.TilemapOptions(8, false, Hinting.Type.Tileset)),
+                    new DefaultParams(0xe0000, new TilemapNameInfo(GetTilesetFolder(Office), DefaultName, compressed: true), options: new AssetOptions.TilemapOptions(8, false, Hinting.Type.Tileset)),
+                    new DefaultParams(0xe36ef, new TilemapNameInfo(GetTilesetFolder(Mall), DefaultName, compressed: true), options: new AssetOptions.TilemapOptions(8, false, Hinting.Type.Tileset)),
 
                     new DefaultParams(0, new TilemapNameInfo(ScratchPadFolder, DefaultName, skipped: true), extractFromNecrofyROM: true, versionAdded: new Version(2, 0)),
                 };
@@ -115,7 +115,7 @@ namespace Necrofy
             public override bool Editable => true;
 
             public override EditorWindow GetEditor(Project project) {
-                return new TilemapEditor(new LoadedTilemap(project, Name));
+                return new TilemapEditor(new LoadedTilemap(project, Name), project);
             }
 
             public static TilemapNameInfo FromPath(PathParts parts) {

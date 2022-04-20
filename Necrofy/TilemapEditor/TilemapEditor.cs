@@ -24,6 +24,8 @@ namespace Necrofy
 
         private bool showGrid = false;
         public bool transparency { get; private set; }
+        private Hinting.Type hintingType = Hinting.Type.None;
+        private Hinting hinting;
 
         private LoadedPalette palette;
         public Color[] Colors { get; private set; }
@@ -56,9 +58,10 @@ namespace Necrofy
 
         public override ToolStripGrouper.ItemSet ToolStripItemSet => ToolStripGrouper.ItemSet.Tilemap;
 
-        public TilemapEditor(LoadedTilemap loadedTilemap) : base(8) {
+        public TilemapEditor(LoadedTilemap loadedTilemap, Project project) : base(8) {
             InitializeComponent();
             Disposed += TilemapEditor_Disposed;
+            FormClosed += TilemapEditor_FormClosed;
             checkboxKeys = new Dictionary<Keys, CheckBox>() {
                 { Keys.X, flipX }, { Keys.Y, flipY }, { Keys.Q, lockTileNum }, { Keys.W, lockPalette }, { Keys.E, lockFlip }
             };
@@ -68,6 +71,13 @@ namespace Necrofy
             Array.Copy(loadedTilemap.tiles, tilemap, tilemap.Length);
 
             Title = loadedTilemap.tilemapName;
+
+            AssetOptions.TilemapOptions options = project.settings.AssetOptions.GetOptions(AssetCategory.Tilemap, loadedTilemap.tilemapName) as AssetOptions.TilemapOptions;
+            if (options != null) {
+                tileWidth = options.width;
+                transparency = options.transparency;
+                hintingType = options.hinting;
+            }
         }
 
         private void TilemapEditor_Disposed(object sender, EventArgs e) {
@@ -82,11 +92,21 @@ namespace Necrofy
             UpdateViewOptions();
             UpdateToolbar();
             UpdateSize(tileWidth); // Update the enabled state of the menu items
+            UpdateHinting();
+        }
+
+        private void TilemapEditor_FormClosed(object sender, FormClosedEventArgs e) {
+            SaveOptions();
         }
 
         protected override void DoSave(Project project) {
             Array.Copy(tilemap, loadedTilemap.tiles, tilemap.Length);
             loadedTilemap.Save(project);
+            SaveOptions();
+        }
+
+        private void SaveOptions() {
+            project.settings.AssetOptions.SetOptions(AssetCategory.Tilemap, loadedTilemap.tilemapName, new AssetOptions.TilemapOptions(tileWidth, transparency, hintingType));
         }
 
         private void UpdateViewOptions() {
@@ -102,6 +122,20 @@ namespace Necrofy
             foreach (ToolStripGrouper.ItemType item in tileSelectedItems) {
                 mainWindow.GetToolStripItem(item).Enabled = enabled;
             }
+        }
+
+        private static readonly Dictionary<Hinting.Type, ToolStripGrouper.ItemType> hintingItems = new Dictionary<Hinting.Type, ToolStripGrouper.ItemType>() {
+            { Hinting.Type.None, ToolStripGrouper.ItemType.ViewHintingNone },
+            { Hinting.Type.LevelTitle, ToolStripGrouper.ItemType.ViewHintingLevelTitle },
+            { Hinting.Type.Tileset, ToolStripGrouper.ItemType.ViewHintingTileset },
+        };
+
+        private void UpdateHinting() {
+            hinting = Hinting.ForType(hintingType);
+            foreach (ToolStripGrouper.ItemType item in hintingItems.Values) {
+                mainWindow.GetToolStripItem(item).Checked = false;
+            }
+            mainWindow.GetToolStripItem(hintingItems[hintingType]).Checked = true;
         }
 
         protected override UndoManager Setup() {
@@ -189,15 +223,14 @@ namespace Necrofy
             }
 
             if (showGrid) {
-                for (float x = (float)Math.Floor(clipRect.Left / 8 + 1) * 8; x < clipRect.Right; x += 8) {
-                    g.DrawLine(WhitePen, x, clipRect.Top, x, clipRect.Bottom);
-                }
-                for (float y = (float)Math.Floor(clipRect.Top / 8 + 1) * 8; y < clipRect.Bottom; y += 8) {
-                    g.DrawLine(WhitePen, clipRect.Left, y, clipRect.Right, y);
+                using (Pen pen = new Pen(Color.FromArgb(150, Color.White), 1 / Zoom)) {
+                    DrawGrid(g, pen, clipRect, 8);
                 }
             }
 
             g.ResetClip();
+
+            hinting.Render(g, clipRect, Zoom);
         }
 
         protected override void PaintSelectionDrawRectangle(Graphics g, Rectangle r) {
@@ -310,6 +343,10 @@ namespace Necrofy
                 CurrentTool?.Flip(true);
             } else if (item == ToolStripGrouper.ItemType.FlipVertically) {
                 CurrentTool?.Flip(false);
+            } else if (hintingItems.ContainsValue(item)) {
+                hintingType = hintingItems.Where(pair => pair.Value == item).Select(pair => pair.Key).FirstOrDefault();
+                UpdateHinting();
+                Repaint();
             }
         }
 

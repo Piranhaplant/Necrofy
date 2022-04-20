@@ -25,6 +25,8 @@ namespace Necrofy
         public int EndGameLevel { get; private set; }
         /// <summary>Definitions that will be available to patches</summary>
         public readonly Dictionary<string, string> exportedDefines = new Dictionary<string, string>();
+        /// <summary>Various per-asset settings</summary>
+        public readonly AssetOptions assetOptions = new AssetOptions();
 
         /// <summary>Loads the ROMInfo data from an already opened stream.</summary>
         /// <param name="s">A stream to a ROM file</param>

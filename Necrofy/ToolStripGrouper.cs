@@ -294,6 +294,9 @@ namespace Necrofy
             TilemapPaintBrush,
             TilemapRectangleSelect,
             TilemapPencilSelect,
+            ViewHintingNone,
+            ViewHintingLevelTitle,
+            ViewHintingTileset,
         }
 
         [Flags]

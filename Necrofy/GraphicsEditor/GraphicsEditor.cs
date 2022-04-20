@@ -36,9 +36,10 @@ namespace Necrofy
 
         public override ToolStripGrouper.ItemSet ToolStripItemSet => ToolStripGrouper.ItemSet.Graphics;
 
-        public GraphicsEditor(LoadedGraphics graphics) : base(1) {
+        public GraphicsEditor(LoadedGraphics graphics, Project project) : base(1) {
             InitializeComponent();
             Disposed += GraphicsEditor_Disposed;
+            FormClosed += GraphicsEditor_FormClosed;
             
             Title = graphics.graphicsName;
             this.graphics = graphics;
@@ -49,6 +50,14 @@ namespace Necrofy
                 SNESGraphics.DrawTile(data, 0, 0, new LoadedTilemap.Tile(i, 0, false, false), graphics.linearGraphics);
                 tile.UnlockBits(data);
                 tiles.Add(tile);
+            }
+
+            AssetOptions.GraphicsOptions options = project.settings.AssetOptions.GetOptions(AssetCategory.Graphics, graphics.graphicsName) as AssetOptions.GraphicsOptions;
+            if (options != null) {
+                tileWidth = options.width / 2 * 2;
+                transparency = options.transparency;
+                largeTileMode = options.largeTiles;
+                tileSize = largeTileMode ? 2 : 1;
             }
         }
 
@@ -79,9 +88,18 @@ namespace Necrofy
             UpdateViewOptions();
             UpdateSize(tileWidth); // Update the enabled state of the menu items
         }
-        
+
+        private void GraphicsEditor_FormClosed(object sender, FormClosedEventArgs e) {
+            SaveOptions();
+        }
+
         protected override void DoSave(Project project) {
             graphics.Save(project, tiles);
+            SaveOptions();
+        }
+
+        private void SaveOptions() {
+            project.settings.AssetOptions.SetOptions(AssetCategory.Graphics, graphics.graphicsName, new AssetOptions.GraphicsOptions(tileWidth, transparency, largeTileMode));
         }
         
         public int SelectedColor => colorSelector.SelectionStart.X;
@@ -173,21 +191,10 @@ namespace Necrofy
             }
 
             if (showGrid) {
-                int fullTileSize = tileSize * 8;
-                for (float x = (float)Math.Floor(clipRect.Left / fullTileSize + 1) * fullTileSize; x < clipRect.Right; x += fullTileSize) {
-                    g.DrawLine(WhitePen, x, clipRect.Top, x, clipRect.Bottom);
-                }
-                for (float y = (float)Math.Floor(clipRect.Top / fullTileSize + 1) * fullTileSize; y < clipRect.Bottom; y += fullTileSize) {
-                    g.DrawLine(WhitePen, clipRect.Left, y, clipRect.Right, y);
-                }
+                DrawGrid(g, WhitePen, clipRect, tileSize * 8);
                 if (Zoom >= 8.0f) {
                     using (Pen pen = new Pen(Color.FromArgb(80, Color.White), 1 / Zoom)) {
-                        for (float x = (float)Math.Floor(clipRect.Left) + 1; x < clipRect.Right; x++) {
-                            g.DrawLine(pen, x, clipRect.Top, x, clipRect.Bottom);
-                        }
-                        for (float y = (float)Math.Floor(clipRect.Top) + 1; y < clipRect.Bottom; y++) {
-                            g.DrawLine(pen, clipRect.Left, y, clipRect.Right, y);
-                        }
+                        DrawGrid(g, pen, clipRect, 1);
                     }
                 }
             }
