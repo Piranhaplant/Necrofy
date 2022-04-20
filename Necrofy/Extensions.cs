@@ -79,5 +79,31 @@ namespace Necrofy
                     break;
             }
         }
+
+        public delegate void SwapDelegate(int x1, int y1, int x2, int y2);
+
+        public static void Flip(bool horizontal, int startX, int startY, int width, int height, SwapDelegate swap) {
+            if (width <= 0 || height <= 0) {
+                return;
+            }
+            int endX = startX + (width - 1) / (horizontal ? 2 : 1) + 1;
+            int endY = startY + (height - 1) / (horizontal ? 1 : 2) + 1;
+            for (int y = startY; y < endY; y++) {
+                for (int x = startX; x < endX; x++) {
+                    int otherX = horizontal ? width - (x - startX) + startX - 1 : x;
+                    int otherY = horizontal ? y : height - (y - startY) + startY - 1;
+                    swap(x, y, otherX, otherY);
+                }
+            }
+        }
+
+        public static void Flip<T>(this T[,] array, bool horizontal, int startX, int startY, int width, int height, Func<T, T> transform) {
+            Flip(horizontal, startX, startY, width, height, (x1, y1, x2, y2) => {
+                T element = array[x1, y1];
+                T other = array[x2, y2];
+                array[x1, y1] = transform(other);
+                array[x2, y2] = transform(element);
+            });
+        }
     }
 }

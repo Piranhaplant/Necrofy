@@ -13,10 +13,12 @@ namespace Necrofy
     abstract class TilemapTool : MapTool
     {
         protected readonly TilemapEditor editor;
+        private readonly PasteTool pasteTool;
 
         public TilemapTool(TilemapEditor editor) : base(editor) {
             this.editor = editor;
-            AddSubTool(new PasteTool(editor));
+            pasteTool = new PasteTool(editor);
+            AddSubTool(pasteTool);
         }
 
         public override bool CanCopy => mapEditor.SelectionExists;
@@ -29,6 +31,16 @@ namespace Necrofy
         }
 
         public virtual void TileChanged() { }
+        
+        public void Flip(bool horizontal) {
+            if (pasteTool.IsPasting) {
+                pasteTool.Flip(horizontal);
+            } else {
+                editor.undoManager.Do(new FlipTilemapAction(horizontal));
+            }
+        }
+
+        public bool CanFlip => editor.SelectionExists || pasteTool.IsPasting;
 
         private class PasteTool : MapPasteTool
         {
@@ -37,6 +49,11 @@ namespace Necrofy
 
             public PasteTool(TilemapEditor editor) : base(editor) {
                 this.editor = editor;
+            }
+
+            public override void Paste() {
+                base.Paste();
+                editor.UpdateToolbar();
             }
 
             public override void Copy() {
@@ -93,6 +110,11 @@ namespace Necrofy
 
             protected override void ClearPasteData() {
                 pasteTiles = null;
+                editor.UpdateToolbar();
+            }
+
+            protected override void FlipSelectionData(bool horizontalFlip) {
+                pasteTiles.Flip(horizontalFlip, 0, 0, pasteTiles.GetWidth(), pasteTiles.GetHeight(), t => LoadedTilemap.Tile.Flip(t, horizontalFlip));
             }
         }
 

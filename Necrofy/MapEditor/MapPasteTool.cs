@@ -11,7 +11,7 @@ namespace Necrofy
 {
     abstract class MapPasteTool : MapTool
     {
-        private bool IsPasting => pasteSize != Size.Empty;
+        public bool IsPasting => pasteSize != Size.Empty;
         private Size pasteSize = Size.Empty;
         private GraphicsPath pasteTilesPath;
         private int pasteX;
@@ -167,8 +167,8 @@ namespace Necrofy
         protected abstract void DoPasteAction(int pasteX, int pasteY);
 
         private void EndPaste() {
-            ClearPasteData();
             pasteSize = Size.Empty;
+            ClearPasteData();
             pasteTilesPath.Dispose();
             pasteTilesPath = null;
             mapEditor.SetCursor(Cursors.Default);
@@ -180,5 +180,22 @@ namespace Necrofy
         private int RoundToTile(int position) {
             return (int)Math.Round((double)position / mapEditor.TileSize);
         }
+        
+        public void Flip(bool horizontal) {
+            if (IsPasting) {
+                FlipSelectionData(horizontal);
+
+                pasteTilesPath.Dispose();
+                TileSelection selection = new TileSelection(pasteSize.Width, pasteSize.Height, scale: mapEditor.TileSize);
+                selection.SetAllPoints(PointInPaste);
+                pasteTilesPath = selection.GetGraphicsPath();
+                TranslatePath(pasteX, pasteY);
+
+                mapEditor.GenerateMouseMove(); // To update the cursor
+                mapEditor.Repaint();
+            }
+        }
+
+        protected virtual void FlipSelectionData(bool horizontalFlip) { }
     }
 }

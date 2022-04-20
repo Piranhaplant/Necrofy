@@ -80,6 +80,7 @@ namespace Necrofy
             base.Displayed();
             mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewTransparency).Checked = transparency;
             UpdateViewOptions();
+            UpdateToolbar();
             UpdateSize(tileWidth); // Update the enabled state of the menu items
         }
 
@@ -90,6 +91,17 @@ namespace Necrofy
 
         private void UpdateViewOptions() {
             showGrid = mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewTilemapGrid).Checked;
+        }
+
+        private static readonly ToolStripGrouper.ItemType[] tileSelectedItems = new ToolStripGrouper.ItemType[] {
+            ToolStripGrouper.ItemType.FlipHorizontally, ToolStripGrouper.ItemType.FlipVertically,
+        };
+
+        public void UpdateToolbar() {
+            bool enabled = CurrentTool?.CanFlip ?? false;
+            foreach (ToolStripGrouper.ItemType item in tileSelectedItems) {
+                mainWindow.GetToolStripItem(item).Enabled = enabled;
+            }
         }
 
         protected override UndoManager Setup() {
@@ -113,6 +125,7 @@ namespace Necrofy
 
         private void Selection_Changed(object sender, EventArgs e) {
             undoManager?.ForceNoMerge();
+            UpdateToolbar();
         }
 
         private void UpdateSize(int newTileWidth) {
@@ -293,6 +306,10 @@ namespace Necrofy
                 UpdateSize(tileWidth - 1);
             } else if (item == ToolStripGrouper.ItemType.ViewIncreaseWidth) {
                 UpdateSize(tileWidth + 1);
+            } else if (item == ToolStripGrouper.ItemType.FlipHorizontally) {
+                CurrentTool?.Flip(true);
+            } else if (item == ToolStripGrouper.ItemType.FlipVertically) {
+                CurrentTool?.Flip(false);
             }
         }
 

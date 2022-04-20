@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace Necrofy
             if (tileIndex >= 0) {
                 LoadedTilemap.Tile oldTile = editor.tilemap[tileIndex];
                 LoadedTilemap.Tile newTile;
-
+                
                 if (!lockTileNum && !lockPalette && !lockFlip) {
                     newTile = tile;
                 } else {
@@ -153,15 +154,12 @@ namespace Necrofy
 
     class DeleteTilemapAction : TilemapEditorAction
     {
-        public DeleteTilemapAction() { }
-
         public override void SetEditor(TilemapEditor editor) {
             base.SetEditor(editor);
-            LoadedTilemap.Tile tile = new LoadedTilemap.Tile(0, 0, false, false);
             for (int y = 0; y < editor.Selection.height; y++) {
                 for (int x = 0; x < editor.Selection.width; x++) {
                     if (editor.Selection.GetPoint(x, y)) {
-                        SetTile(x, y, tile, false, false, false);
+                        SetTile(x, y, LoadedTilemap.Tile.Empty, false, false, false);
                     }
                 }
             }
@@ -170,6 +168,33 @@ namespace Necrofy
 
         public override string ToString() {
             return "Delete tiles";
+        }
+    }
+
+    class FlipTilemapAction : TilemapEditorAction
+    {
+        private readonly bool flipHorizontally;
+
+        public FlipTilemapAction(bool flipHorizontally) {
+            this.flipHorizontally = flipHorizontally;
+        }
+
+        public override void SetEditor(TilemapEditor editor) {
+            base.SetEditor(editor);
+            Rectangle bounds = editor.Selection.GetSelectedAreaBounds();
+            Extensions.Flip(flipHorizontally, bounds.X, bounds.Y, bounds.Width, bounds.Height, (x1, y1, x2, y2) => {
+                LoadedTilemap.Tile? tile1 = editor.Selection.GetPoint(x1, y1) ? editor.tilemap[editor.GetLocationTileIndex(x1, y1)] : (LoadedTilemap.Tile?)null;
+                LoadedTilemap.Tile? tile2 = editor.Selection.GetPoint(x2, y2) ? editor.tilemap[editor.GetLocationTileIndex(x2, y2)] : (LoadedTilemap.Tile?)null;
+                if (tile1 != null || tile2 != null) {
+                    SetTile(x1, y1, LoadedTilemap.Tile.Flip(tile2, flipHorizontally) ?? LoadedTilemap.Tile.Empty, false, false, false);
+                    SetTile(x2, y2, LoadedTilemap.Tile.Flip(tile1, flipHorizontally) ?? LoadedTilemap.Tile.Empty, false, false, false);
+                }
+            });
+            cancel = oldTiles.Count == 0;
+        }
+
+        public override string ToString() {
+            return "Flip tiles";
         }
     }
 }

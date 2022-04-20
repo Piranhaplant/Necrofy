@@ -51,6 +51,8 @@ namespace Necrofy
         
         public struct Tile
         {
+            public static readonly Tile Empty = new Tile(0, 0, false, false);
+
             public readonly int tileNum;
             public readonly int palette;
             public readonly bool xFlip;
@@ -107,6 +109,16 @@ namespace Necrofy
                 hashCode = hashCode * -1521134295 + xFlip.GetHashCode();
                 hashCode = hashCode * -1521134295 + yFlip.GetHashCode();
                 return hashCode;
+            }
+
+            public static Tile? Flip(Tile? t, bool horizontal) {
+                if (t == null) {
+                    return null;
+                } else if (horizontal) {
+                    return new Tile(t.Value.tileNum, t.Value.palette, !t.Value.xFlip, t.Value.yFlip);
+                } else {
+                    return new Tile(t.Value.tileNum, t.Value.palette, t.Value.xFlip, !t.Value.yFlip);
+                }
             }
         }
     }
