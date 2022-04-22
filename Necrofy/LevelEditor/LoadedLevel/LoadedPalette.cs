@@ -12,7 +12,7 @@ namespace Necrofy
         private readonly PaletteAsset asset;
         public readonly string paletteName;
         public readonly bool transparent;
-        public Color[] colors { get; private set; }
+        public Color[] colors;
 
         public event EventHandler Updated;
 

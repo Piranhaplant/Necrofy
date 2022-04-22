@@ -17,7 +17,7 @@ namespace Necrofy
         }
 
         private readonly DemoNameInfo demoNameInfo;
-        public readonly Demo demo;
+        public Demo demo;
         public int slot => demoNameInfo.slot;
         
         public static DemoAsset FromNameInfo(NameInfo nameInfo, Project project) {
@@ -34,7 +34,15 @@ namespace Necrofy
             this.demoNameInfo = nameInfo;
             this.demo = demo;
         }
-        
+
+        private DemoAsset(DemoNameInfo nameInfo, string filename) : base(nameInfo, filename) {
+            this.demoNameInfo = nameInfo;
+        }
+
+        protected override void Reload(string filename) {
+            demo = JsonConvert.DeserializeObject<Demo>(File.ReadAllText(filename));
+        }
+
         protected override void WriteFile(Project project) {
             File.WriteAllText(nameInfo.GetFilename(project.path, createDirectories: true), JsonConvert.SerializeObject(demo, Formatting.Indented));
         }
@@ -54,9 +62,6 @@ namespace Necrofy
             rom.Write(inputData);
         }
         
-        protected override AssetCategory Category => nameInfo.Category;
-        protected override string Name => nameInfo.Name;
-
         class DemoCreator : Creator
         {
             public override NameInfo GetNameInfo(NameInfo.PathParts pathParts, Project project) {
@@ -64,7 +69,7 @@ namespace Necrofy
             }
 
             public override Asset FromFile(NameInfo nameInfo, string filename) {
-                return new DemoAsset((DemoNameInfo)nameInfo, JsonConvert.DeserializeObject<Demo>(File.ReadAllText(filename)));
+                return new DemoAsset((DemoNameInfo)nameInfo, filename);
             }
 
             public override List<DefaultParams> GetDefaults() {

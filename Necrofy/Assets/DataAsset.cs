@@ -17,7 +17,7 @@ namespace Necrofy
             AddCreator(new DataCreator());
         }
 
-        public readonly byte[] data;
+        public byte[] data;
 
         public static DataAsset FromProject(Project project, string folder, string dataName) {
             return new DataCreator().FromProject(project, folder, dataName);
@@ -25,6 +25,12 @@ namespace Necrofy
 
         private DataAsset(DataNameInfo nameInfo, byte[] data) : base(nameInfo) {
             this.data = data;
+        }
+
+        private DataAsset(DataNameInfo nameInfo, string filename) : base(nameInfo, filename) { }
+
+        protected override void Reload(string filename) {
+            data = File.ReadAllBytes(filename);
         }
 
         protected override void WriteFile(Project project) {
@@ -38,16 +44,15 @@ namespace Necrofy
                 InsertByteArray(rom, romInfo, data, nameInfo.Parts.pointer);
             }
         }
-
-        protected override AssetCategory Category => nameInfo.Category;
-        protected override string Name => nameInfo.Name;
-
+        
         class DataCreator : Creator
         {
             public DataAsset FromProject(Project project, string folder, string name) {
                 NameInfo nameInfo = new DataNameInfo(folder, name, null);
-                string filename = nameInfo.FindFilename(project.path);
-                return (DataAsset)FromFile(nameInfo, filename);
+                return project.GetCachedAsset(nameInfo, () => {
+                    string filename = nameInfo.FindFilename(project.path);
+                    return (DataAsset)FromFile(nameInfo, filename);
+                });
             }
 
             public override NameInfo GetNameInfo(NameInfo.PathParts pathParts, Project project) {
@@ -55,7 +60,7 @@ namespace Necrofy
             }
 
             public override Asset FromFile(NameInfo nameInfo, string filename) {
-                return new DataAsset((DataNameInfo)nameInfo, File.ReadAllBytes(filename));
+                return new DataAsset((DataNameInfo)nameInfo, filename);
             }
 
             public override List<DefaultParams> GetDefaults() {

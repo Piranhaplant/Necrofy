@@ -93,7 +93,7 @@ namespace Necrofy
             CalculateBounds();
         }
 
-        private void CalculateBounds() {
+        public void CalculateBounds() {
             CharXPositions.Clear();
 
             int x = (word.x % MaxX) * 8;

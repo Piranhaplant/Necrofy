@@ -14,6 +14,7 @@ namespace Necrofy
     partial class PaletteEditor : EditorWindow
     {
         private readonly LoadedPalette palette;
+        private readonly Color[] colors;
         private UndoManager<PaletteEditor> undoManager;
 
         private int uiUpdate;
@@ -26,7 +27,8 @@ namespace Necrofy
 
             Title = palette.paletteName;
             this.palette = palette;
-            colorSelector.Colors = palette.colors;
+            colors = (Color[])palette.colors.Clone();
+            colorSelector.Colors = colors;
 
             colorSelector.SelectionChanged += ColorSelector_SelectionChanged;
             colorEditor.ColorChanged += ColorEditor_ColorChanged;
@@ -73,6 +75,7 @@ namespace Necrofy
         }
 
         protected override void DoSave(Project project) {
+            palette.colors = (Color[])colors.Clone();
             palette.Save(project);
         }
 

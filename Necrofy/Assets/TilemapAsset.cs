@@ -21,7 +21,7 @@ namespace Necrofy
             return GetAssetName(romStream, romInfo, new TilemapCreator(), AssetCat, pointer);
         }
 
-        public readonly byte[] data;
+        public byte[] data;
 
         public static TilemapAsset FromProject(Project project, string fullName) {
             ParsedName parsedName = new ParsedName(fullName);
@@ -30,6 +30,12 @@ namespace Necrofy
 
         private TilemapAsset(TilemapNameInfo nameInfo, byte[] data) : base(nameInfo) {
             this.data = data;
+        }
+
+        private TilemapAsset(TilemapNameInfo nameInfo, string filename) : base(nameInfo, filename) { }
+
+        protected override void Reload(string filename) {
+            data = File.ReadAllBytes(filename);
         }
 
         protected override void WriteFile(Project project) {
@@ -43,16 +49,15 @@ namespace Necrofy
                 InsertByteArray(rom, romInfo, data, nameInfo.Parts.pointer);
             }
         }
-
-        protected override AssetCategory Category => nameInfo.Category;
-        protected override string Name => nameInfo.Name;
-
+        
         class TilemapCreator : Creator
         {
             public TilemapAsset FromProject(Project project, string folder, string tilemapName) {
                 NameInfo nameInfo = new TilemapNameInfo(folder, tilemapName, null);
-                string filename = nameInfo.FindFilename(project.path);
-                return (TilemapAsset)FromFile(nameInfo, filename);
+                return project.GetCachedAsset(nameInfo, () => {
+                    string filename = nameInfo.FindFilename(project.path);
+                    return (TilemapAsset)FromFile(nameInfo, filename);
+                });
             }
 
             public override NameInfo GetNameInfo(NameInfo.PathParts pathParts, Project project) {
@@ -60,7 +65,7 @@ namespace Necrofy
             }
 
             public override Asset FromFile(NameInfo nameInfo, string filename) {
-                return new TilemapAsset((TilemapNameInfo)nameInfo, File.ReadAllBytes(filename));
+                return new TilemapAsset((TilemapNameInfo)nameInfo, filename);
             }
 
             public override List<DefaultParams> GetDefaults() {

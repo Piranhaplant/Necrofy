@@ -618,7 +618,14 @@ namespace Necrofy
         public void ParsePositionChange(string position, bool isX) {
             objectSelector.ParsePositionChange(position, isX);
         }
-        
+
+        public void CharactersUpdated() {
+            foreach (WrappedTitleWord word in wrappedWords) {
+                word.CalculateBounds();
+            }
+            Invalidate();
+        }
+
         public IEnumerable<WrappedTitleWord> GetObjects() {
             return wrappedWords;
         }

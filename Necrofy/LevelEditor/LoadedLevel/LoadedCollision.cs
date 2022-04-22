@@ -7,14 +7,32 @@ namespace Necrofy
 {
     class LoadedCollision
     {
-        public readonly ushort[] tiles;
+        public readonly CollisionAsset asset;
+        public readonly string collisionName;
+        public ushort[] tiles;
+
+        public event EventHandler Updated;
+        private int updating = 0;
 
         public LoadedCollision(Project project, string collisionName) {
-            CollisionAsset collisionAsset = CollisionAsset.FromProject(project, collisionName);
+            this.collisionName = collisionName;
+            asset = CollisionAsset.FromProject(project, collisionName);
+            asset.Updated += Asset_Updated;
 
-            tiles = new ushort[collisionAsset.data.Length / 2];
+            ReadCollision();
+        }
+
+        private void Asset_Updated(object sender, EventArgs e) {
+            if (updating == 0) {
+                ReadCollision();
+                Updated?.Invoke(sender, e);
+            }
+        }
+
+        private void ReadCollision() {
+            tiles = new ushort[asset.data.Length / 2];
             for (int i = 0; i < tiles.Length; i++) {
-                tiles[i] = (ushort)(collisionAsset.data[i * 2] + (collisionAsset.data[i * 2 + 1] << 8));
+                tiles[i] = (ushort)(asset.data[i * 2] + (asset.data[i * 2 + 1] << 8));
             }
         }
     }

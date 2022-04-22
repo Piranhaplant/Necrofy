@@ -85,7 +85,6 @@ namespace Necrofy
                 node.Text = text;
                 node.Name = text;
             }
-            protected override void Invoke(MethodInvoker method) => treeView.Invoke(method);
         }
         
         private void LoadFolderStates(TreeNodeCollection parent, List<ProjectUserSettings.FolderState> folderStates) {

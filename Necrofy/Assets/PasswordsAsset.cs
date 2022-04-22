@@ -16,7 +16,7 @@ namespace Necrofy
             AddCreator(new PasswordsCreator());
         }
 
-        public readonly PasswordData data;
+        public PasswordData data;
 
         public static PasswordsAsset FromProject(Project project) {
             return new PasswordsCreator().FromProject(project);
@@ -24,6 +24,12 @@ namespace Necrofy
 
         private PasswordsAsset(PasswordsNameInfo nameInfo, PasswordData data) : base(nameInfo) {
             this.data = data;
+        }
+
+        private PasswordsAsset(PasswordsNameInfo nameInfo, string filename) : base(nameInfo, filename) { }
+
+        protected override void Reload(string filename) {
+            data = JsonConvert.DeserializeObject<PasswordData>(File.ReadAllText(filename));
         }
 
         protected override void WriteFile(Project project) {
@@ -37,16 +43,15 @@ namespace Necrofy
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
             data.WriteToROM(rom, romInfo);
         }
-
-        protected override AssetCategory Category => nameInfo.Category;
-        protected override string Name => nameInfo.Name;
-
+        
         class PasswordsCreator : Creator
         {
             public PasswordsAsset FromProject(Project project) {
                 NameInfo nameInfo = new PasswordsNameInfo();
-                string filename = nameInfo.FindFilename(project.path);
-                return (PasswordsAsset)FromFile(nameInfo, filename);
+                return project.GetCachedAsset(nameInfo, () => {
+                    string filename = nameInfo.FindFilename(project.path);
+                    return (PasswordsAsset)FromFile(nameInfo, filename);
+                });
             }
 
             public override NameInfo GetNameInfo(NameInfo.PathParts pathParts, Project project) {
@@ -54,7 +59,7 @@ namespace Necrofy
             }
 
             public override Asset FromFile(NameInfo nameInfo, string filename) {
-                return new PasswordsAsset((PasswordsNameInfo)nameInfo, JsonConvert.DeserializeObject<PasswordData>(File.ReadAllText(filename)));
+                return new PasswordsAsset((PasswordsNameInfo)nameInfo, filename);
             }
 
             public override List<DefaultParams> GetDefaults() {

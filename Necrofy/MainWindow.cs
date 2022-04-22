@@ -395,7 +395,7 @@ namespace Necrofy
 #if !DEBUG
                 try {
 #endif
-                project = new Project(newProjectDialog.BaseROM, newProjectDialog.ProjectLocation);
+                project = new Project(newProjectDialog.BaseROM, newProjectDialog.ProjectLocation, this);
 #if !DEBUG
                 } catch (Exception ex) {
                     Console.WriteLine(ex.StackTrace);
@@ -424,7 +424,7 @@ namespace Necrofy
 #if !DEBUG
             try {
 #endif
-            project = new Project(settingsFilename);
+            project = new Project(settingsFilename, this);
 #if !DEBUG
             } catch (Exception ex) {
                 MessageBox.Show($"Error opening project: {Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -435,12 +435,6 @@ namespace Necrofy
         }
 
         private void ProjectReady() {
-            if (project.settings.MajorVersion > ProjectSettings.CurMajorVersion) {
-                MessageBox.Show($"Project was created with a newer version of {Application.ProductName} and cannot be opened.", "Error");
-                project = null;
-                return;
-            }
-
             if (startupWindow != null) {
                 startupWindow.Close();
                 startupWindow = null;

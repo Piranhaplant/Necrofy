@@ -81,9 +81,7 @@ namespace Necrofy
         }
 
         private void TilemapEditor_Disposed(object sender, EventArgs e) {
-            foreach (Bitmap tile in tiles) {
-                tile.Dispose();
-            }
+            DisposeTiles();
         }
 
         public override void Displayed() {
@@ -308,13 +306,16 @@ namespace Necrofy
             LoadGraphics();
         }
 
-        private void LoadGraphics() {
+        private void DisposeTiles() {
             if (tiles != null) {
-                for (int i = 0; i < tiles.Length; i++) {
-                    tiles[i].Dispose();
+                foreach (Bitmap tile in tiles) {
+                    tile.Dispose();
                 }
             }
+        }
 
+        private void LoadGraphics() {
+            DisposeTiles();
             tiles = new Bitmap[graphics.linearGraphics.Length];
             for (int i = 0; i < tiles.Length; i++) {
                 Bitmap tile = new Bitmap(8, 8, PixelFormat.Format8bppIndexed);

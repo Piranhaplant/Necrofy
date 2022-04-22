@@ -11,14 +11,16 @@ namespace Necrofy
     {
         private const AssetCategory AssetCat = AssetCategory.Editor;
         
-        public readonly T data;
+        public T data;
         
         public static EditorAsset<T> FromProject(Project project, string name) {
             return new EditorCreator().FromProject(project, name);
         }
 
-        private EditorAsset(EditorNameInfo nameInfo, T data) : base(nameInfo) {
-            this.data = data;
+        private EditorAsset(EditorNameInfo nameInfo, string filename) : base(nameInfo, filename) { }
+
+        protected override void Reload(string filename) {
+            data = JsonConvert.DeserializeObject<T>(File.ReadAllText(filename));
         }
 
         protected override void WriteFile(Project project) {
@@ -26,10 +28,7 @@ namespace Necrofy
         }
 
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) { }
-
-        protected override AssetCategory Category => nameInfo.Category;
-        protected override string Name => nameInfo.Name;
-
+        
         class EditorCreator : Creator
         {
             public EditorAsset<T> FromProject(Project project, string name) {
@@ -46,7 +45,7 @@ namespace Necrofy
             }
 
             public override Asset FromFile(NameInfo nameInfo, string filename) {
-                return new EditorAsset<T>((EditorNameInfo)nameInfo, JsonConvert.DeserializeObject<T>(File.ReadAllText(filename)));
+                return new EditorAsset<T>((EditorNameInfo)nameInfo, filename);
             }
         }
 

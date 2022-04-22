@@ -15,7 +15,7 @@ namespace Necrofy
             AddCreator(new SpritesCreator());
         }
 
-        public readonly Sprite[] sprites;
+        public Sprite[] sprites;
 
         public static SpritesAsset FromProject(Project project, string folder) {
             return new SpritesCreator().FromProject(project, folder);
@@ -25,6 +25,12 @@ namespace Necrofy
             this.sprites = sprites;
         }
 
+        private SpritesAsset(SpritesNameInfo nameInfo, string filename) : base(nameInfo, filename) { }
+
+        protected override void Reload(string filename) {
+            sprites = JsonConvert.DeserializeObject<Sprite[]>(File.ReadAllText(filename));
+        }
+
         protected override void WriteFile(Project project) {
             File.WriteAllText(nameInfo.GetFilename(project.path, createDirectories: true), JsonConvert.SerializeObject(sprites, Formatting.Indented));
         }
@@ -32,10 +38,7 @@ namespace Necrofy
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
             Sprite.WriteToROM(sprites, rom, romInfo.Freespace);
         }
-
-        protected override AssetCategory Category => nameInfo.Category;
-        protected override string Name => nameInfo.Name;
-
+        
         class SpritesCreator : Creator
         {
             public SpritesAsset FromProject(Project project, string folder) {
@@ -51,7 +54,7 @@ namespace Necrofy
             }
 
             public override Asset FromFile(NameInfo nameInfo, string filename) {
-                return new SpritesAsset((SpritesNameInfo)nameInfo, JsonConvert.DeserializeObject<Sprite[]>(File.ReadAllText(filename)));
+                return new SpritesAsset((SpritesNameInfo)nameInfo, filename);
             }
 
             public override List<DefaultParams> GetDefaults() {

@@ -19,7 +19,7 @@ namespace Necrofy
         }
 
         private readonly LevelNameInfo levelNameInfo;
-        public readonly Level level;
+        public Level level;
 
         public static LevelAsset FromProject(Project project, int levelNum) {
             return new LevelCreator().FromProject(project, levelNum);
@@ -32,10 +32,18 @@ namespace Necrofy
             this.level = level;
         }
 
+        private LevelAsset(LevelNameInfo nameInfo, string filename) : base(nameInfo, filename) {
+            this.levelNameInfo = nameInfo;
+        }
+
         public int LevelNumber => levelNameInfo.levelNum;
 
         private static int GetPointerPosition(int levelNum) {
             return ROMPointers.LevelPointers + 2 + levelNum * 4;
+        }
+
+        protected override void Reload(string filename) {
+            level = JsonConvert.DeserializeObject<Level>(File.ReadAllText(filename), new LevelJsonConverter());
         }
 
         protected override void WriteFile(Project project) {
@@ -56,10 +64,7 @@ namespace Necrofy
         public override void ReserveSpace(Freespace freespace) {
             freespace.Reserve(GetPointerPosition(levelNameInfo.levelNum), 4);
         }
-
-        protected override AssetCategory Category => nameInfo.Category;
-        protected override string Name => nameInfo.Name;
-
+        
         class LevelCreator : Creator
         {
             public LevelAsset FromProject(Project project, int levelNum) {
@@ -73,7 +78,7 @@ namespace Necrofy
             }
 
             public override Asset FromFile(NameInfo nameInfo, string filename) {
-                return new LevelAsset((LevelNameInfo)nameInfo, JsonConvert.DeserializeObject<Level>(File.ReadAllText(filename), new LevelJsonConverter()));
+                return new LevelAsset((LevelNameInfo)nameInfo, filename);
             }
 
             private string GetDisplayName(LevelNameInfo nameInfo, Project project) {

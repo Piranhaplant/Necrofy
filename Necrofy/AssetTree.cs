@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -20,12 +21,13 @@ namespace Necrofy
         public event EventHandler<AssetEventArgs> AssetAdded;
         public event EventHandler<AssetEventArgs> AssetRemoved;
 
-        public AssetTree(Project project) {
+        public AssetTree(Project project, ISynchronizeInvoke synchronizingObject) {
             this.project = project;
 
             Root = ReadAssets(project.path, null);
 
             watcher = new FileSystemWatcher(project.path);
+            watcher.SynchronizingObject = synchronizingObject;
             watcher.IncludeSubdirectories = true;
             watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
             watcher.Changed += File_Changed;

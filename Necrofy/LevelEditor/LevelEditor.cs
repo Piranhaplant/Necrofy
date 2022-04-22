@@ -91,7 +91,7 @@ namespace Necrofy
         }
 
         public void UpdateTitle() {
-            Title = level.levelAsset.LevelNumber.ToString() + " " + level.Level.displayName;
+            Title = level.LevelNumber.ToString() + " " + level.Level.displayName;
         }
 
         public void FillSelection() {
@@ -133,10 +133,10 @@ namespace Necrofy
         }
 
         protected override void DoSave(Project project) {
-            level.levelAsset.Save(project);
+            level.Save(project);
         }
 
-        public override int? LevelNumber => level.levelAsset.LevelNumber;
+        public override int? LevelNumber => level.LevelNumber;
         
         public void NonTileSelectionChanged() {
             RaiseSelectionChanged();

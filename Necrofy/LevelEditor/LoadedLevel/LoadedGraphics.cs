@@ -14,7 +14,6 @@ namespace Necrofy
         public LinearGraphics linearGraphics { get; private set; }
 
         public event EventHandler Updated;
-
         private int updating = 0;
 
         public LoadedGraphics(Project project, string graphicsName) {

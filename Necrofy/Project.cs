@@ -5,6 +5,8 @@ using System.Text;
 using System.IO;
 using System.Diagnostics;
 using Newtonsoft.Json;
+using System.ComponentModel;
+using System.Windows.Forms;
 
 namespace Necrofy
 {
@@ -43,7 +45,7 @@ namespace Necrofy
         /// <summary>Creates a new project from the given base ROM.</summary>
         /// <param name="baseROM">The path to a ROM that the files in the project will be extracted from.</param>
         /// <param name="path">The path to a directory in which all of the project files will be placed.</param>
-        public Project(string baseROM, string path) {
+        public Project(string baseROM, string path, ISynchronizeInvoke synchronizingObject) {
             this.path = FixPath(path);
 
             Directory.CreateDirectory(path);
@@ -68,17 +70,18 @@ namespace Necrofy
                 settings = ProjectSettings.CreateNew();
                 settings.WinLevel = info.WinLevel;
                 settings.EndGameLevel = info.EndGameLevel;
+                settings.AssetOptions = info.assetOptions;
             }
 
             userSettings = new ProjectUserSettings();
             WriteSettings();
 
-            ReadAssets();
+            ReadAssets(synchronizingObject);
         }
 
         /// <summary>Loads an existing project from the given settings file.</summary>
         /// <param name="path">The filename of the settings file.</param>
-        public Project(string settingsFile) {
+        public Project(string settingsFile, ISynchronizeInvoke synchronizingObject) {
             path = FixPath(Path.GetDirectoryName(settingsFile));
             settingsFilename = Path.GetFileName(settingsFile);
             settings = JsonConvert.DeserializeObject<ProjectSettings>(File.ReadAllText(settingsFile), new AssetOptions.OptionJsonConverter());
@@ -88,11 +91,15 @@ namespace Necrofy
                 userSettings = new ProjectUserSettings();
             }
 
+            if (settings.MajorVersion > ProjectSettings.CurMajorVersion) {
+                throw new Exception($"Project was created with a newer version of {Application.ProductName}.");
+            }
+
             if (settings.MajorVersion < ProjectSettings.CurMajorVersion || settings.MinorVersion < ProjectSettings.CurMinorVersion || settings.AssetOptions.entries.Count == 0) {
                 Upgrade();
             }
 
-            ReadAssets();
+            ReadAssets(synchronizingObject);
         }
 
         private static string FixPath(string path) {
@@ -102,10 +109,18 @@ namespace Necrofy
             return path;
         }
 
-        private void ReadAssets() {
-            Assets = new AssetTree(this);
+        private void ReadAssets(ISynchronizeInvoke synchronizingObject) {
+            Assets = new AssetTree(this, synchronizingObject);
+            Assets.AssetChanged += Assets_AssetChanged;
         }
-        
+
+        private void Assets_AssetChanged(object sender, AssetEventArgs e) {
+            Asset asset = GetCachedAsset(e.Asset.Asset, () => (Asset)null);
+            if (asset != null) {
+                asset.Reload(this);
+            }
+        }
+
         public void WriteSettings() {
             File.WriteAllText(SettingsPath, JsonConvert.SerializeObject(settings, Formatting.Indented));
             File.WriteAllText(UserSettingsPath, JsonConvert.SerializeObject(userSettings, Formatting.Indented));
@@ -128,7 +143,9 @@ namespace Necrofy
                 return (T)cachedAsset;
             } else {
                 T asset = getter();
-                assetCache[nameInfo.Category][nameInfo.Name] = new WeakReference<Asset>(asset);
+                if (asset != null) {
+                    assetCache[nameInfo.Category][nameInfo.Name] = new WeakReference<Asset>(asset);
+                }
                 return asset;
             }
         }
@@ -141,8 +158,14 @@ namespace Necrofy
                 }
                 settings.AssetOptions.Merge(info.assetOptions);
             }
+
+            if (settings.MajorVersion == ProjectSettings.CurMajorVersion) {
+                // If upgrading only for asset options and project is from a newer version, then don't override minor version
+                settings.MinorVersion = Math.Max(settings.MinorVersion, ProjectSettings.CurMinorVersion);
+            } else {
+                settings.MinorVersion = ProjectSettings.CurMinorVersion;
+            }
             settings.MajorVersion = ProjectSettings.CurMajorVersion;
-            settings.MinorVersion = ProjectSettings.CurMinorVersion;
             WriteSettings();
         }
 

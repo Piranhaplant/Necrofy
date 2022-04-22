@@ -10,10 +10,11 @@ namespace Necrofy
 {
     class LoadedSprites : IDisposable
     {
-        public readonly SpritesAsset spritesAsset;
+        private readonly SpritesAsset spritesAsset;
         public readonly LoadedGraphics loadedGraphics;
         public readonly LoadedPalette loadedPalette;
 
+        public Sprite[] Sprites { get; private set; }
         public Bitmap[] images;
         public Bitmap[] tileImages;
 
@@ -27,6 +28,7 @@ namespace Necrofy
             loadedPalette.Updated += Asset_Updated;
             loadedGraphics.Updated += Asset_Updated;
 
+            Sprites = spritesAsset.sprites.JsonClone();
             Load();
         }
 
@@ -59,6 +61,11 @@ namespace Necrofy
 
         public void LoadSprite(int i) {
             images[i] = spritesAsset.sprites[i].Render(loadedGraphics.linearGraphics, loadedPalette.colors, null, out int anchorX, out int anchorY);
+        }
+
+        public void Save(Project project) {
+            spritesAsset.sprites = Sprites.JsonClone();
+            spritesAsset.Save(project);
         }
 
         public void Dispose() {

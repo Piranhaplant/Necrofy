@@ -22,8 +22,10 @@ namespace Necrofy
             return new TilesetSuggestionsCreator().FromProject(project, parsedName.Tileset);
         }
 
-        private TilesetSuggestionsAsset(TilesetSuggestionsNameInfo nameInfo, TilesetSuggestions data) : base(nameInfo) {
-            this.data = data;
+        private TilesetSuggestionsAsset(TilesetSuggestionsNameInfo nameInfo, string filename) : base(nameInfo, filename) { }
+
+        protected override void Reload(string filename) {
+            data = new TilesetSuggestions(File.ReadAllText(filename));
         }
 
         protected override void WriteFile(Project project) {
@@ -32,19 +34,18 @@ namespace Necrofy
         }
 
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) { }
-
-        protected override AssetCategory Category => nameInfo.Category;
-        protected override string Name => nameInfo.Name;
-
+        
         class TilesetSuggestionsCreator : Creator
         {
             public TilesetSuggestionsAsset FromProject(Project project, string tilesetName) {
                 NameInfo nameInfo = new TilesetSuggestionsNameInfo(tilesetName);
-                string filename = nameInfo.GetFilename(project.path);
-                if (!File.Exists(filename)) {
-                    filename = nameInfo.GetFilename(Project.internalProjectFilesPath);
-                }
-                return (TilesetSuggestionsAsset)FromFile(nameInfo, filename);
+                return project.GetCachedAsset(nameInfo, () => {
+                    string filename = nameInfo.GetFilename(project.path);
+                    if (!File.Exists(filename)) {
+                        filename = nameInfo.GetFilename(Project.internalProjectFilesPath);
+                    }
+                    return (TilesetSuggestionsAsset)FromFile(nameInfo, filename);
+                });
             }
 
             public override NameInfo GetNameInfo(NameInfo.PathParts pathParts, Project project) {
@@ -52,7 +53,7 @@ namespace Necrofy
             }
 
             public override Asset FromFile(NameInfo nameInfo, string filename) {
-                return new TilesetSuggestionsAsset((TilesetSuggestionsNameInfo)nameInfo, new TilesetSuggestions(File.ReadAllText(filename)));
+                return new TilesetSuggestionsAsset((TilesetSuggestionsNameInfo)nameInfo, filename);
             }
         }
 

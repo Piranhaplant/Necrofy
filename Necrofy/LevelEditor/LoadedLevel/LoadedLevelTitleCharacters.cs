@@ -30,6 +30,8 @@ namespace Necrofy
 
             loadedPalette.Updated += Asset_Updated;
             loadedGraphics.Updated += Asset_Updated;
+            loadedTilemap.Updated += Asset_Updated;
+            charData.Updated += Asset_Updated;
 
             Load();
         }

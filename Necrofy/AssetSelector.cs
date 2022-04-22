@@ -95,7 +95,6 @@ namespace Necrofy
                 node.Name = text;
             }
             protected override bool IncludeAsset(AssetTree.AssetEntry entry) => entry.Asset.Category == category;
-            protected override void Invoke(MethodInvoker method) => comboBox.Invoke(method);
         }
     }
 }

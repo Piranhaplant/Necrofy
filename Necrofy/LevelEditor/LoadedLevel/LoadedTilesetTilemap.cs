@@ -12,23 +12,23 @@ namespace Necrofy
         public LoadedTilesetTilemap(Project project, string tilesetTilemapName) : base(project, tilesetTilemapName) {
             tiles = new TileBlock[0x100];
             for (int i = 0; i < tiles.Length; i++) {
-                tiles[i] = new TileBlock(base.tiles, i);
+                tiles[i] = new TileBlock(this, i);
             }
         }
 
         public class TileBlock
         {
-            private readonly Tile[] tiles;
+            private readonly LoadedTilemap tilemap;
             private readonly int i;
 
             public Tile this[int x, int y] {
                 get {
-                    return tiles[x + y * 8 + i * 8 * 8];
+                    return tilemap.tiles[x + y * 8 + i * 8 * 8];
                 }
             }
 
-            public TileBlock(Tile[] tiles, int i) {
-                this.tiles = tiles;
+            public TileBlock(LoadedTilemap tilemap, int i) {
+                this.tilemap = tilemap;
                 this.i = i;
             }
         }

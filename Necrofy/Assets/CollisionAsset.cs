@@ -11,7 +11,7 @@ namespace Necrofy
     {
         public const string DefaultName = "Collision";
         private const AssetCategory AssetCat = AssetCategory.Collision;
-
+        
         static CollisionAsset() {
             AddCreator(new CollisionCreator());
         }
@@ -20,7 +20,7 @@ namespace Necrofy
             return GetAssetName(romStream, romInfo, new CollisionCreator(), AssetCat, pointer, tileset);
         }
 
-        public readonly byte[] data;
+        public byte[] data;
 
         public static CollisionAsset FromProject(Project project, string fullName) {
             ParsedName parsedName = new ParsedName(fullName);
@@ -31,6 +31,12 @@ namespace Necrofy
             this.data = data;
         }
 
+        private CollisionAsset(CollisionNameInfo nameInfo, string filename) : base(nameInfo, filename) { }
+
+        protected override void Reload(string filename) {
+            data = File.ReadAllBytes(filename);
+        }
+
         protected override void WriteFile(Project project) {
             File.WriteAllBytes(nameInfo.GetFilename(project.path, createDirectories: true), data);
         }
@@ -38,16 +44,15 @@ namespace Necrofy
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
             InsertByteArray(rom, romInfo, data);
         }
-
-        protected override AssetCategory Category => nameInfo.Category;
-        protected override string Name => nameInfo.Name;
-
+        
         class CollisionCreator : Creator
         {
             public CollisionAsset FromProject(Project project, string folder, string CollisionName) {
                 NameInfo nameInfo = new CollisionNameInfo(folder, CollisionName);
-                string filename = nameInfo.FindFilename(project.path);
-                return (CollisionAsset)FromFile(nameInfo, filename);
+                return project.GetCachedAsset(nameInfo, () => {
+                    string filename = nameInfo.FindFilename(project.path);
+                    return (CollisionAsset)FromFile(nameInfo, filename);
+                });
             }
 
             public override NameInfo GetNameInfo(NameInfo.PathParts pathParts, Project project) {
@@ -55,7 +60,7 @@ namespace Necrofy
             }
 
             public override Asset FromFile(NameInfo nameInfo, string filename) {
-                return new CollisionAsset((CollisionNameInfo)nameInfo, File.ReadAllBytes(filename));
+                return new CollisionAsset((CollisionNameInfo)nameInfo, filename);
             }
 
             public override List<DefaultParams> GetDefaults() {

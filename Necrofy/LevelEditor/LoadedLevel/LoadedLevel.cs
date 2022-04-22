@@ -9,12 +9,12 @@ namespace Necrofy
 {
     class LoadedLevel : IDisposable
     {
-        public readonly LevelAsset levelAsset;
+        private readonly LevelAsset levelAsset;
         public LoadedPalette palette;
         public LoadedGraphics graphics;
         public LoadedTilesetTilemap tilemap;
-        public LoadedLevelSprites spriteGraphics;
         public LoadedCollision collision;
+        public LoadedLevelSprites spriteGraphics;
 
         public Bitmap[] tiles;
         public Bitmap[] priorityTiles;
@@ -25,14 +25,21 @@ namespace Necrofy
         public event EventHandler SpritesChanged;
         public event EventHandler TilesChanged;
 
-        public Level Level => levelAsset.level;
+        public Level Level { get; private set; }
+        public int LevelNumber => levelAsset.LevelNumber;
         public TilesetSuggestions TilesetSuggestions { get; private set; }
 
         public LoadedLevel(Project project, int levelNum) {
             levelAsset = LevelAsset.FromProject(project, levelNum);
+            Level = levelAsset.level.JsonClone(new LevelJsonConverter());
             LoadSprites(project);
             LoadTilesetSuggestions(project);
             LoadTiles(project);
+        }
+
+        public void Save(Project project) {
+            levelAsset.level = Level.JsonClone(new LevelJsonConverter());
+            levelAsset.Save(project);
         }
         
         public void Dispose() {
@@ -83,8 +90,10 @@ namespace Necrofy
             graphics = new LoadedGraphics(project, Level.tilesetGraphicsName);
             palette = new LoadedPalette(project, Level.paletteName);
 
-            palette.Updated += Asset_Updated;
+            tilemap.Updated += Asset_Updated;
+            collision.Updated += Asset_Updated;
             graphics.Updated += Asset_Updated;
+            palette.Updated += Asset_Updated;
 
             LoadTilesFromData();
         }

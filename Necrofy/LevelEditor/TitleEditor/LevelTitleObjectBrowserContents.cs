@@ -17,6 +17,12 @@ namespace Necrofy
 
         public LevelTitleObjectBrowserContents(LoadedLevelTitleCharacters characters) {
             this.characters = characters;
+            LoadCharacters();
+        }
+
+        private void LoadCharacters() {
+            characterSizes.Clear();
+            characterNumbers.Clear();
             for (int i = 0; i <= byte.MaxValue; i++) {
                 Bitmap image = characters.GetImageForChar((byte)i);
                 if (image != null) {
@@ -24,6 +30,11 @@ namespace Necrofy
                     characterNumbers.Add((byte)i);
                 }
             }
+        }
+
+        public void CharactersUpdated() {
+            LoadCharacters();
+            RaiseObjectsChangedEvent(scrollToTop: false);
         }
 
         public void SetPalette(byte palette) {

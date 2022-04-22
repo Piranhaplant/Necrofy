@@ -89,9 +89,9 @@ namespace Necrofy
         }
         
         private void Characters_Updated(object sender, EventArgs e) {
-            pageEditor1.Invalidate();
-            pageEditor2.Invalidate();
-            levelTitleContents.Repaint();
+            pageEditor1.CharactersUpdated();
+            pageEditor2.CharactersUpdated();
+            levelTitleContents.CharactersUpdated();
             palette.Invalidate();
         }
 
@@ -220,7 +220,7 @@ namespace Necrofy
             }
         }
 
-        public override int? LevelNumber => levelEditor.level.levelAsset.LevelNumber;
+        public override int? LevelNumber => levelEditor.level.LevelNumber;
 
         protected override UndoManager Setup() {
             undoManager = new UndoManager<TitleEditor>(mainWindow.UndoButton, mainWindow.RedoButton, this);

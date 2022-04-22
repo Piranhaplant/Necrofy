@@ -94,40 +94,34 @@ namespace Necrofy
         }
 
         private void AssetChanged(object sender, AssetEventArgs e) {
-            Invoke(delegate {
-                N node = FindByTag(root, e.Asset);
-                if (node != null) {
-                    SetText(node, e.Asset.Asset.DisplayName);
-                }
-            });
+            N node = FindByTag(root, e.Asset);
+            if (node != null) {
+                SetText(node, e.Asset.Asset.DisplayName);
+            }
         }
 
         private void AssetAdded(object sender, AssetEventArgs e) {
-            Invoke(delegate {
-                if (IncludeAsset(e.Asset)) {
-                    N parent = null;
-                    AssetTree.Node node = e.Asset;
-                    while (node.Parent.Parent != null) {
-                        parent = FindByTag(root, node.Parent);
-                        if (parent != null) {
-                            break;
-                        }
-                        node = node.Parent;
+            if (IncludeAsset(e.Asset)) {
+                N parent = null;
+                AssetTree.Node node = e.Asset;
+                while (node.Parent.Parent != null) {
+                    parent = FindByTag(root, node.Parent);
+                    if (parent != null) {
+                        break;
                     }
-                    NC collection = parent == null ? root : GetChildren(parent);
-                    if (node is AssetTree.Folder folder) {
-                        PopulateFolder(collection, folder);
-                    } else if (node is AssetTree.AssetEntry asset) {
-                        PopulateAsset(collection, asset);
-                    }
+                    node = node.Parent;
                 }
-            });
+                NC collection = parent == null ? root : GetChildren(parent);
+                if (node is AssetTree.Folder folder) {
+                    PopulateFolder(collection, folder);
+                } else if (node is AssetTree.AssetEntry asset) {
+                    PopulateAsset(collection, asset);
+                }
+            }
         }
 
         private void AssetRemoved(object sender, AssetEventArgs e) {
-            Invoke(delegate {
-                RemoveNode(FindByTag(root, e.Asset));
-            });
+            RemoveNode(FindByTag(root, e.Asset));
         }
 
         private void RemoveNode(N node) {
@@ -152,7 +146,6 @@ namespace Necrofy
         }
 
         protected abstract void SetImageList(ImageList imageList);
-        protected abstract void Invoke(MethodInvoker method);
         protected abstract N CreateChild(NC parent, string text, object tag, bool isFolder, int imageIndex);
         protected abstract NC GetChildren(N node);
         protected abstract N GetParent(N node);

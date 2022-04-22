@@ -50,6 +50,9 @@ namespace Necrofy
         protected Asset(NameInfo nameInfo) {
             this.nameInfo = nameInfo;
         }
+        protected Asset(NameInfo nameInfo, string filename) : this(nameInfo) {
+            Reload(filename);
+        }
         /// <summary>Writes a file containing the asset into the given project directory</summary>
         /// <param name="project">The project</param>
         public void Save(Project project) {
@@ -58,10 +61,6 @@ namespace Necrofy
         }
         protected abstract void WriteFile(Project project);
         public event EventHandler Updated;
-        /// <summary>Gets the order that this asset should be inserted</summary>
-        protected abstract AssetCategory Category { get; }
-        /// <summary>Gets the name of this asset</summary>
-        protected abstract string Name { get; }
         /// <summary>Gets whether the asset should be skipped when building a ROM</summary>
         public bool IsSkipped => nameInfo.Parts.skipped;
         /// <summary>Reserves any space that will be needed by this asset before inserting into a ROM.</summary>
@@ -78,7 +77,7 @@ namespace Necrofy
             }
             rom.Seek((int)pointer);
             rom.Write(data, 0, data.Length);
-            romInfo.AddAssetPointer(Category, Name, (int)pointer);
+            romInfo.AddAssetPointer(nameInfo.Category, nameInfo.Name, (int)pointer);
         }
         protected void InsertCompressedByteArray(NStream rom, ROMInfo romInfo, byte[] data, string filename, int? pointer = null) {
             string compressedFilename = filename + ".nfyz";
@@ -91,7 +90,7 @@ namespace Necrofy
             }
             
             int newPointer = ZAMNCompress.Insert(rom, romInfo.Freespace, compressedData, pointer);
-            romInfo.AddAssetPointer(Category, Name, newPointer);
+            romInfo.AddAssetPointer(nameInfo.Category, nameInfo.Name, newPointer);
         }
 
         private static List<Creator> creators = new List<Creator>();
@@ -178,6 +177,13 @@ namespace Necrofy
             romStream.PopPosition();
         }
 
+        /// <summary>Reloads the asset from disk</summary>
+        public void Reload(Project project) {
+            Reload(nameInfo.GetFilename(project.path));
+            Updated?.Invoke(this, EventArgs.Empty);
+        }
+        protected abstract void Reload(string filename);
+
         protected static string GetTilesetFolder(string tileset) {
             return TilesetFolder + FolderSeparator + tileset;
         }
@@ -190,7 +196,7 @@ namespace Necrofy
         }
 
         public int CompareTo(Asset other) {
-            return Category.CompareTo(other.Category);
+            return nameInfo.Category.CompareTo(other.nameInfo.Category);
         }
 
         /// <summary>Holds information about an asset's name</summary>

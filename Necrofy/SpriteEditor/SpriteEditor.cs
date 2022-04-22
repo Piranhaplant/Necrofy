@@ -102,7 +102,7 @@ namespace Necrofy
         }
 
         protected override void DoSave(Project project) {
-            loadedSprites.spritesAsset.Save(project);
+            loadedSprites.Save(project);
             UpdateSpritePreviews();
         }
 
@@ -241,7 +241,7 @@ namespace Necrofy
             currentSprite = s;
             objectSelector.SelectNone();
             UpdateSpritePreviews();
-            browserContents.SelectedIndex = Array.IndexOf(loadedSprites.spritesAsset.sprites, currentSprite);
+            browserContents.SelectedIndex = Array.IndexOf(loadedSprites.Sprites, currentSprite);
             PropertyBrowserObjects = new object[] { new WrappedSprite(s) };
             Repaint();
         }
@@ -256,7 +256,7 @@ namespace Necrofy
                 if (currentSprite == null) {
                     scrollWrapper.ScrollToPoint(MaxDimension, MaxDimension);
                 }
-                SetCurrentSprite(loadedSprites.spritesAsset.sprites[browserContents.SelectedIndex]);
+                SetCurrentSprite(loadedSprites.Sprites[browserContents.SelectedIndex]);
             }
         }
         
@@ -498,7 +498,7 @@ namespace Necrofy
 
         private void UpdateSpritePreviews() {
             foreach (Sprite s in modifiedSprites) {
-                int index = Array.IndexOf(loadedSprites.spritesAsset.sprites, s);
+                int index = Array.IndexOf(loadedSprites.Sprites, s);
                 loadedSprites.LoadSprite(index);
             }
             modifiedSprites.Clear();

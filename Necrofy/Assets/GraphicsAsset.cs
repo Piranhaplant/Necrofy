@@ -21,7 +21,7 @@ namespace Necrofy
             return GetAssetName(romStream, romInfo, new GraphicsCreator(), AssetCat, pointer, tileset);
         }
 
-        public readonly byte[] data;
+        public byte[] data;
 
         public static GraphicsAsset FromProject(Project project, string fullName) {
             ParsedName parsedName = new ParsedName(fullName);
@@ -30,6 +30,12 @@ namespace Necrofy
 
         private GraphicsAsset(GraphicsNameInfo nameInfo, byte[] data) : base(nameInfo) {
             this.data = data;
+        }
+
+        private GraphicsAsset(GraphicsNameInfo nameInfo, string filename) : base(nameInfo, filename) { }
+
+        protected override void Reload(string filename) {
+            data = File.ReadAllBytes(filename);
         }
 
         protected override void WriteFile(Project project) {
@@ -43,10 +49,7 @@ namespace Necrofy
                 InsertByteArray(rom, romInfo, data, nameInfo.Parts.pointer);
             }
         }
-
-        protected override AssetCategory Category => nameInfo.Category;
-        protected override string Name => nameInfo.Name;
-
+        
         class GraphicsCreator : Creator
         {
             public GraphicsAsset FromProject(Project project, string folder, string graphicsName) {
@@ -62,7 +65,7 @@ namespace Necrofy
             }
 
             public override Asset FromFile(NameInfo nameInfo, string filename) {
-                return new GraphicsAsset((GraphicsNameInfo)nameInfo, File.ReadAllBytes(filename));
+                return new GraphicsAsset((GraphicsNameInfo)nameInfo, filename);
             }
 
             public override List<DefaultParams> GetDefaults() {

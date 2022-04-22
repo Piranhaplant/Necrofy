@@ -21,7 +21,7 @@ namespace Necrofy
             return GetAssetName(romStream, romInfo, new PaletteCreator(), AssetCat, pointer, tileset);
         }
 
-        public readonly byte[] data;
+        public byte[] data;
 
         public static PaletteAsset FromProject(Project project, string fullName) {
             ParsedName parsedName = new ParsedName(fullName);
@@ -30,6 +30,12 @@ namespace Necrofy
         
         private PaletteAsset(PaletteNameInfo nameInfo, byte[] data) : base(nameInfo) {
             this.data = data;
+        }
+
+        private PaletteAsset(PaletteNameInfo nameInfo, string filename) : base(nameInfo, filename) { }
+
+        protected override void Reload(string filename) {
+            data = File.ReadAllBytes(filename);
         }
 
         protected override void WriteFile(Project project) {
@@ -45,10 +51,7 @@ namespace Necrofy
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
             InsertByteArray(rom, romInfo, data, nameInfo.Parts.pointer);
         }
-
-        protected override AssetCategory Category => nameInfo.Category;
-        protected override string Name => nameInfo.Name;
-
+        
         class PaletteCreator : Creator
         {
             public PaletteAsset FromProject(Project project, string folder, string paletteName) {
@@ -64,7 +67,7 @@ namespace Necrofy
             }
 
             public override Asset FromFile(NameInfo nameInfo, string filename) {
-                return new PaletteAsset((PaletteNameInfo)nameInfo, File.ReadAllBytes(filename));
+                return new PaletteAsset((PaletteNameInfo)nameInfo, filename);
             }
 
             public override List<DefaultParams> GetDefaults() {
