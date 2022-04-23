@@ -28,7 +28,7 @@ namespace Necrofy
             data = new TilesetSuggestions(File.ReadAllText(filename));
         }
 
-        protected override void WriteFile(Project project) {
+        protected override void WriteFile(string filename) {
             // TODO: data would need to be converted back to JSON format first
             throw new NotImplementedException();
         }

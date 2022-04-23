@@ -47,6 +47,8 @@ namespace Necrofy
         protected const string Mall = "Mall+Factory";
 
         protected readonly NameInfo nameInfo;
+        private DateTime lastWriteTime = DateTime.MinValue;
+
         protected Asset(NameInfo nameInfo) {
             this.nameInfo = nameInfo;
         }
@@ -55,16 +57,15 @@ namespace Necrofy
         }
         /// <summary>Writes a file containing the asset into the given project directory</summary>
         /// <param name="project">The project</param>
-        public void Save(Project project) {
-            WriteFile(project);
-            Updated?.Invoke(this, EventArgs.Empty);
-        }
-        public void SaveIfNew(Project project) {
-            if (!File.Exists(nameInfo.GetFilename(project.path))) {
-                Save(project);
+        public void Save(Project project, bool overriteExisting = true) {
+            string filename = nameInfo.GetFilename(project.path, createDirectories: true);
+            if (overriteExisting || !File.Exists(filename)) {
+                WriteFile(filename);
+                lastWriteTime = File.GetLastWriteTime(filename);
+                Updated?.Invoke(this, EventArgs.Empty);
             }
         }
-        protected abstract void WriteFile(Project project);
+        protected abstract void WriteFile(string filename);
         public event EventHandler Updated;
         /// <summary>Gets whether the asset should be skipped when building a ROM</summary>
         public bool IsSkipped => nameInfo.Parts.skipped;
@@ -184,8 +185,13 @@ namespace Necrofy
 
         /// <summary>Reloads the asset from disk</summary>
         public void Reload(Project project) {
-            Reload(nameInfo.GetFilename(project.path));
-            Updated?.Invoke(this, EventArgs.Empty);
+            string filename = nameInfo.GetFilename(project.path);
+            DateTime newWriteTime = File.GetLastWriteTime(filename);
+            if (newWriteTime > lastWriteTime) {
+                lastWriteTime = newWriteTime;
+                Reload(filename);
+                Updated?.Invoke(this, EventArgs.Empty);
+            }
         }
         protected abstract void Reload(string filename);
 

@@ -31,8 +31,8 @@ namespace Necrofy
             sprites = JsonConvert.DeserializeObject<Sprite[]>(File.ReadAllText(filename));
         }
 
-        protected override void WriteFile(Project project) {
-            File.WriteAllText(nameInfo.GetFilename(project.path, createDirectories: true), JsonConvert.SerializeObject(sprites, Formatting.Indented));
+        protected override void WriteFile(string filename) {
+            File.WriteAllText(filename, JsonConvert.SerializeObject(sprites, Formatting.Indented));
         }
 
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) {

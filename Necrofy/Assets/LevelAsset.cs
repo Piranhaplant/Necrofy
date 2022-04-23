@@ -46,8 +46,8 @@ namespace Necrofy
             level = JsonConvert.DeserializeObject<Level>(File.ReadAllText(filename), new LevelJsonConverter());
         }
 
-        protected override void WriteFile(Project project) {
-            File.WriteAllText(nameInfo.GetFilename(project.path, createDirectories: true), JsonConvert.SerializeObject(level, Formatting.Indented));
+        protected override void WriteFile(string filename) {
+            File.WriteAllText(filename, JsonConvert.SerializeObject(level, Formatting.Indented));
         }
 
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) {

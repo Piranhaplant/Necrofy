@@ -154,7 +154,7 @@ namespace Necrofy
             using (NStream s = new NStream(new FileStream(Path.Combine(path, baseROMFilename), FileMode.Open, FileAccess.ReadWrite, FileShare.Read))) {
                 ROMInfo info = new ROMInfo(s, new Version(settings.MajorVersion, settings.MinorVersion));
                 foreach (Asset asset in info.assets) {
-                    asset.SaveIfNew(this);
+                    asset.Save(this, overriteExisting: false);
                 }
                 settings.AssetOptions.Merge(info.assetOptions);
             }

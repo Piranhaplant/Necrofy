@@ -32,8 +32,8 @@ namespace Necrofy
             data = JsonConvert.DeserializeObject<PasswordData>(File.ReadAllText(filename));
         }
 
-        protected override void WriteFile(Project project) {
-            File.WriteAllText(nameInfo.GetFilename(project.path, createDirectories: true), JsonConvert.SerializeObject(data, Formatting.Indented));
+        protected override void WriteFile(string filename) {
+            File.WriteAllText(filename, JsonConvert.SerializeObject(data, Formatting.Indented));
         }
 
         public override void ReserveSpace(Freespace freespace) {

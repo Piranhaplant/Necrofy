@@ -38,8 +38,8 @@ namespace Necrofy
             data = File.ReadAllBytes(filename);
         }
 
-        protected override void WriteFile(Project project) {
-            File.WriteAllBytes(nameInfo.GetFilename(project.path, createDirectories: true), data);
+        protected override void WriteFile(string filename) {
+            File.WriteAllBytes(filename, data);
         }
 
         public override void ReserveSpace(Freespace freespace) {
