@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Necrofy
 {
-    struct Version
+    public struct Version : IComparable<Version>
     {
         public readonly int Major;
         public readonly int Minor;
@@ -14,6 +14,13 @@ namespace Necrofy
         public Version(int major, int minor) {
             Major = major;
             Minor = minor;
+        }
+
+        public int CompareTo(Version other) {
+            if (Major == other.Major) {
+                return Minor.CompareTo(other.Minor);
+            }
+            return Major.CompareTo(other.Major);
         }
 
         public override bool Equals(object obj) {

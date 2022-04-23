@@ -95,7 +95,7 @@ namespace Necrofy
                 throw new Exception($"Project was created with a newer version of {Application.ProductName}.");
             }
 
-            if (settings.MajorVersion < ProjectSettings.CurMajorVersion || settings.MinorVersion < ProjectSettings.CurMinorVersion || settings.AssetOptions.entries.Count == 0) {
+            if (settings.Version.CompareTo(ProjectSettings.CurVersion) < 0 || settings.AssetOptions.entries.Count == 0) {
                 Upgrade();
             }
 
@@ -154,7 +154,7 @@ namespace Necrofy
             using (NStream s = new NStream(new FileStream(Path.Combine(path, baseROMFilename), FileMode.Open, FileAccess.ReadWrite, FileShare.Read))) {
                 ROMInfo info = new ROMInfo(s, new Version(settings.MajorVersion, settings.MinorVersion));
                 foreach (Asset asset in info.assets) {
-                    asset.Save(this);
+                    asset.SaveIfNew(this);
                 }
                 settings.AssetOptions.Merge(info.assetOptions);
             }

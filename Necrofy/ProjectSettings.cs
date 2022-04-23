@@ -9,10 +9,12 @@ namespace Necrofy
     {
         public const int CurMajorVersion = 2;
         public const int CurMinorVersion = 0;
+        public static Version CurVersion => new Version(CurMajorVersion, CurMinorVersion);
         /// <summary>The major version of the project. Projects with a newer major version cannot be opened in old versions of the program</summary>
         public int MajorVersion { get; set; }
         /// <summary>The minor version of the project. Different versions here are still compatible with older versions of the program</summary>
         public int MinorVersion { get; set; }
+        public Version Version => new Version(MajorVersion, MinorVersion);
         /// <summary>The level after which the winner screen will be shown</summary>
         public int WinLevel { get; set; }
         /// <summary>The level after which the game will end and the player will be sent back to the main menu loop</summary>

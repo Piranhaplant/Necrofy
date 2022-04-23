@@ -59,6 +59,11 @@ namespace Necrofy
             WriteFile(project);
             Updated?.Invoke(this, EventArgs.Empty);
         }
+        public void SaveIfNew(Project project) {
+            if (!File.Exists(nameInfo.GetFilename(project.path))) {
+                Save(project);
+            }
+        }
         protected abstract void WriteFile(Project project);
         public event EventHandler Updated;
         /// <summary>Gets whether the asset should be skipped when building a ROM</summary>
@@ -130,7 +135,7 @@ namespace Necrofy
         public static void AddAllDefaults(NStream romStream, ROMInfo romInfo, Version originalProjectVersion = default) {
             foreach (Creator creator in creators) {
                 foreach (DefaultParams defaultParams in creator.GetDefaults()) {
-                    if ((defaultParams.extractFromNecrofyROM || !romInfo.NecrofyROM) && (defaultParams.versionAdded.Major > originalProjectVersion.Major || defaultParams.versionAdded.Minor > originalProjectVersion.Minor)) {
+                    if ((defaultParams.extractFromNecrofyROM || !romInfo.NecrofyROM) && defaultParams.versionAdded.CompareTo(originalProjectVersion) > 0) {
                         CreateAsset(romStream, romInfo, creator, defaultParams.nameInfo, defaultParams.pointer, defaultParams.size);
                     }
                     if (defaultParams.options != null) {
