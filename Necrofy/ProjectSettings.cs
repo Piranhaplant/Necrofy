@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace Necrofy
 {
@@ -14,6 +15,7 @@ namespace Necrofy
         public int MajorVersion { get; set; }
         /// <summary>The minor version of the project. Different versions here are still compatible with older versions of the program</summary>
         public int MinorVersion { get; set; }
+        [JsonIgnore()]
         public Version Version => new Version(MajorVersion, MinorVersion);
         /// <summary>The level after which the winner screen will be shown</summary>
         public int WinLevel { get; set; }
