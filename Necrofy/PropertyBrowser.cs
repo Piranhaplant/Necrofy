@@ -5,6 +5,8 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -18,7 +20,14 @@ namespace Necrofy
 
         public PropertyBrowser() {
             InitializeComponent();
+            Disposed += PropertyBrowser_Disposed;
+
             SetHexPointers(Properties.Settings.Default.hexPointers);
+            RefreshTimer(timerCancel.Token);
+        }
+
+        private void PropertyBrowser_Disposed(object sender, EventArgs e) {
+            timerCancel.Cancel();
         }
 
         public void SetObjects(object[] objects) {
@@ -26,7 +35,20 @@ namespace Necrofy
         }
 
         public void RefreshProperties() {
-            propertyGrid.Refresh();
+            refreshQueued = true;
+        }
+
+        private CancellationTokenSource timerCancel = new CancellationTokenSource();
+        private bool refreshQueued = false;
+
+        private async void RefreshTimer(CancellationToken cancellation) {
+            while (!cancellation.IsCancellationRequested) {
+                await Task.Delay(5);
+                if (refreshQueued) {
+                    propertyGrid.Refresh();
+                    refreshQueued = false;
+                }
+            }
         }
 
         private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e) {
