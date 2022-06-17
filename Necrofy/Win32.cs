@@ -31,6 +31,16 @@ namespace Necrofy
         }
 
         [DllImport("shlwapi.dll")]
-        public static extern int ColorHLSToRGB(int H, int L, int S);
+        private static extern int ColorHLSToRGB(int H, int L, int S);
+
+        public const int HSLMax = 240;
+
+        public static Color HLSToRGB(int H, int L, int S) {
+            if (S == 0) {
+                int v = (int)Math.Round((double)L / HSLMax * 255);
+                return Color.FromArgb(v, v, v);
+            }
+            return ColorTranslator.FromWin32(ColorHLSToRGB(H, L, S));
+        }
     }
 }

@@ -13,16 +13,19 @@ namespace Necrofy
         private static readonly Size fontSize = TextRenderer.MeasureText("0", font);
         private const int fontPadding = 2;
 
-        private readonly LoadedLevel level;
+        private readonly Func<LoadedTileset> tilesetGetter;
+        private LoadedTileset tileset;
         private List<ushort> visibleTiles = new List<ushort>();
 
-        public TilesetObjectBrowserContents(LoadedLevel level) {
-            this.level = level;
-            level.TilesChanged += Level_TilesChanged;
+        public TilesetObjectBrowserContents(Func<LoadedTileset> tilesetGetter, Action<EventHandler> addChangedListener) {
+            this.tilesetGetter = tilesetGetter;
+            tileset = tilesetGetter();
+            addChangedListener(TilesChanged);
             ShowAllTiles();
         }
-
-        private void Level_TilesChanged(object sender, EventArgs e) {
+        
+        private void TilesChanged(object sender, EventArgs e) {
+            tileset = tilesetGetter();
             Repaint();
         }
 
@@ -40,10 +43,10 @@ namespace Necrofy
         }
 
         public void ShowAllTiles() {
-            if (visibleTiles.Count != level.tiles.Length) {
+            if (visibleTiles.Count != tileset.tiles.Length) {
                 int selectedTile = SelectedTile;
                 visibleTiles.Clear();
-                for (ushort i = 0; i < level.tiles.Length; i++) {
+                for (ushort i = 0; i < tileset.tiles.Length; i++) {
                     visibleTiles.Add(i);
                 }
                 RaiseObjectsChangedEvent();
@@ -62,7 +65,7 @@ namespace Necrofy
         public override IEnumerable<ObjectBrowserObject> Objects {
             get {
                 foreach (ushort tile in visibleTiles) {
-                    Bitmap bitmap = level.tiles[tile];
+                    Bitmap bitmap = tileset.tiles[tile];
                     yield return new ObjectBrowserObject(new Size(bitmap.Size.Width + fontSize.Width + fontPadding, bitmap.Size.Height));
                 }
             }
@@ -71,12 +74,12 @@ namespace Necrofy
         public override void PaintObject(int i, Graphics g, int x, int y) {
             ushort tile = visibleTiles[i];
             if (solidOnly) {
-                g.DrawImage(level.solidOnlyTiles[tile], x, y);
+                g.DrawImage(tileset.solidOnlyTiles[tile], x, y);
             } else {
-                g.DrawImage(level.tiles[tile], x, y);
+                g.DrawImage(tileset.tiles[tile], x, y);
             }
-            g.DrawString((tile / 0x10).ToString("X"), font, Brushes.Black, x + level.tiles[tile].Width + fontPadding, y);
-            g.DrawString((tile % 0x10).ToString("X"), font, Brushes.Black, x + level.tiles[tile].Width + fontPadding, y + fontSize.Height);
+            g.DrawString((tile / 0x10).ToString("X"), font, Brushes.Black, x + tileset.tiles[tile].Width + fontPadding, y);
+            g.DrawString((tile % 0x10).ToString("X"), font, Brushes.Black, x + tileset.tiles[tile].Width + fontPadding, y + fontSize.Height);
         }
     }
 }

@@ -23,11 +23,11 @@ namespace Necrofy
             entries = new Dictionary<int, Entry>();
         }
 
-        public TileAnimator(LoadedLevel level, TileAnimLevelMonster levelMonster) {
+        public TileAnimator(LoadedTileset tileset, TileAnimLevelMonster levelMonster) {
             entries = new Dictionary<int, Entry>();
             foreach (TileAnimLevelMonster.Entry e in levelMonster.entries) {
                 if (e.frames.Count > 0) {
-                    entries[e.initialTile] = new Entry(level, e);
+                    entries[e.initialTile] = new Entry(tileset, e);
                 }
             }
         }
@@ -96,7 +96,7 @@ namespace Necrofy
 
         private class Entry
         {
-            private readonly LoadedLevel level;
+            private readonly LoadedTileset tileset;
             private readonly TileAnimLevelMonster.Entry entry;
             private readonly List<Location> locations = new List<Location>();
 
@@ -105,8 +105,8 @@ namespace Necrofy
 
             public bool Done => curAnimationFrame < 0;
 
-            public Entry(LoadedLevel level, TileAnimLevelMonster.Entry entry) {
-                this.level = level;
+            public Entry(LoadedTileset tileset, TileAnimLevelMonster.Entry entry) {
+                this.tileset = tileset;
                 this.entry = entry;
             }
 
@@ -141,9 +141,9 @@ namespace Necrofy
             private void RenderFrame() {
                 ushort tile = curAnimationFrame == 0 && curFrame == 0 ? entry.initialTile : entry.frames[curAnimationFrame].tile;
                 foreach (Location location in locations) {
-                    Bitmap image = level.tiles[location.bgTile];
+                    Bitmap image = tileset.tiles[location.bgTile];
                     BitmapData data = image.LockBits(new Rectangle(location.x * 8, location.y * 8, 8, 8), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
-                    SNESGraphics.DrawTile(data, 0, 0, new LoadedTilemap.Tile(level.tilemap.tiles[location.bgTile][location.x, location.y], tile), level.graphics.linearGraphics);
+                    SNESGraphics.DrawTile(data, 0, 0, new LoadedTilemap.Tile(tileset.tilemap.tiles[location.bgTile][location.x, location.y], tile), tileset.graphics.linearGraphics);
                     image.UnlockBits(data);
                 }
             }

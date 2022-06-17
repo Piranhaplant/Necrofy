@@ -35,5 +35,15 @@ namespace Necrofy
                 tiles[i] = (ushort)(asset.data[i * 2] + (asset.data[i * 2 + 1] << 8));
             }
         }
+
+        public void Save(Project project) {
+            for (int i = 0; i < tiles.Length; i++) {
+                asset.data[i * 2] = (byte)(tiles[i] & 0xff);
+                asset.data[i * 2 + 1] = (byte)((tiles[i] >> 8) & 0xff);
+            }
+            updating++;
+            asset.Save(project);
+            updating--;
+        }
     }
 }

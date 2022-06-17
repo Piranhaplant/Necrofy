@@ -143,6 +143,18 @@
     <Compile Include="CheckableToolStripSplitButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="CollisionEditor\CollisionColoring.cs" />
+    <Compile Include="CollisionEditor\CollisionEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CollisionEditor\CollisionEditor.Designer.cs">
+      <DependentUpon>CollisionEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CollisionEditor\CollisionEditorAction.cs" />
+    <Compile Include="CollisionEditor\CollisionPreset.cs" />
+    <Compile Include="CollisionEditor\TwoColorCheckbox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Demo.cs" />
     <Compile Include="GraphicsEditor\BucketFillTool.cs" />
     <Compile Include="GraphicsEditor\GraphicsEditorAction.cs" />
@@ -156,6 +168,7 @@
     <Compile Include="GraphicsEditor\GraphicsTileList.cs" />
     <Compile Include="GraphicsEditor\GraphicsTool.cs" />
     <Compile Include="GraphicsEditor\GraphicsSelectTool.cs" />
+    <Compile Include="LevelEditor\LoadedLevel\LoadedTileset.cs" />
     <Compile Include="MapEditor\MapBrushTool.cs" />
     <Compile Include="MapEditor\MapEditorDesigner.cs">
       <SubType>Form</SubType>
@@ -460,6 +473,9 @@
     <EmbeddedResource Include="Canvas.resx">
       <DependentUpon>Canvas.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="CollisionEditor\CollisionEditor.resx">
+      <DependentUpon>CollisionEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GraphicsEditor\GraphicsEditor.resx">
       <DependentUpon>GraphicsEditor.cs</DependentUpon>
     </EmbeddedResource>
@@ -547,6 +563,9 @@
       <DependentUpon>TilemapEditor.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="ProjectFiles\Editor\CollisionPresets.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="ProjectFiles\Editor\LevelSettingsPresets.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

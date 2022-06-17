@@ -104,6 +104,7 @@ namespace Necrofy
             this.colors = colors;
             this.zoom = zoom;
             UpdateSize();
+            scrollWrapper.ScrollToPoint(0, 0);
         }
 
         private void UpdateSize() {

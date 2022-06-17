@@ -39,7 +39,7 @@ namespace Necrofy
             this.level = level;
             UpdateTitle();
             
-            tilesetObjectBrowserContents = new TilesetObjectBrowserContents(level);
+            tilesetObjectBrowserContents = new TilesetObjectBrowserContents(() => level.tileset, handler => level.TilesChanged += handler);
             tilesetObjectBrowserContents.SelectedIndexChanged += TilesetObjectBrowserContents_SelectedIndexChanged;
             spriteObjectBrowserContents = new SpriteObjectBrowserContents(level);
             spriteObjectBrowserContents.SelectedIndexChanged += SpriteObjectBrowserContents_SelectedIndexChanged;
@@ -120,15 +120,15 @@ namespace Necrofy
         public override void Hidden() {
             base.Hidden();
             if (!DockVisible) {
-                level.tileAnimator.Pause();
+                level.tileset.tileAnimator.Pause();
             }
         }
 
         private void UpdateAnimationState() {
             if (mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewAnimate).Checked) {
-                level.tileAnimator.Run();
+                level.tileset.tileAnimator.Run();
             } else {
-                level.tileAnimator.Pause();
+                level.tileset.tileAnimator.Pause();
             }
         }
 
@@ -230,9 +230,9 @@ namespace Necrofy
         
         private void RenderLevel(Graphics g) {
             if (solidTilesOnly) {
-                RenderBackground(g, level.solidOnlyTiles);
+                RenderBackground(g, level.tileset.solidOnlyTiles);
             } else {
-                RenderBackground(g, level.tiles);
+                RenderBackground(g, level.tileset.tiles);
             }
 
             List<WrappedLevelObject> objects = level.GetAllObjects().ToList();
@@ -241,7 +241,7 @@ namespace Necrofy
             }
 
             if (showTilePriority && !solidTilesOnly) {
-                RenderBackground(g, level.priorityTiles);
+                RenderBackground(g, level.tileset.priorityTiles);
             }
 
             foreach (WrappedLevelObject obj in objects) {
@@ -341,9 +341,9 @@ namespace Necrofy
                     SaveAsImage(saveAsImageDialog.FileName);
                 }
             } else if (item == ToolStripGrouper.ItemType.ViewNextFrame) {
-                level.tileAnimator.Advance();
+                level.tileset.tileAnimator.Advance();
             } else if (item == ToolStripGrouper.ItemType.ViewRestartAnimation) {
-                level.tileAnimator.Restart();
+                level.tileset.tileAnimator.Restart();
             }
         }
 

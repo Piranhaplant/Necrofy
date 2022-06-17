@@ -44,11 +44,7 @@ namespace Necrofy
             Title = graphics.graphicsName;
             this.graphics = graphics;
             
-            for (int i = 0; i < graphics.linearGraphics.Length; i++) {
-                Bitmap tile = new Bitmap(8, 8, PixelFormat.Format8bppIndexed);
-                BitmapData data = tile.LockBits(new Rectangle(Point.Empty, tile.Size), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
-                SNESGraphics.DrawTile(data, 0, 0, new LoadedTilemap.Tile(i, 0, false, false), graphics.linearGraphics);
-                tile.UnlockBits(data);
+            foreach (Bitmap tile in SNESGraphics.RenderAllTiles(graphics)) {
                 tiles.Add(tile);
             }
 

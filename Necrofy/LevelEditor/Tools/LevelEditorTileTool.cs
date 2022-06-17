@@ -50,7 +50,7 @@ namespace Necrofy
                 for (int y = 0; y < pasteTiles.GetHeight(); y++) {
                     for (int x = 0; x < pasteTiles.GetWidth(); x++) {
                         if (pasteTiles[x, y] != null) {
-                            g.DrawImage(editor.level.tiles[(int)pasteTiles[x, y]], pixelX + x * 64, pixelY + y * 64);
+                            g.DrawImage(editor.level.tileset.tiles[(int)pasteTiles[x, y]], pixelX + x * 64, pixelY + y * 64);
                         }
                     }
                 }

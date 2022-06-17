@@ -176,5 +176,17 @@ namespace Necrofy
                 }
             }
         }
+
+        public static Bitmap[] RenderAllTiles(LoadedGraphics graphics) {
+            Bitmap[]  tiles = new Bitmap[graphics.linearGraphics.Length];
+            for (int i = 0; i < tiles.Length; i++) {
+                Bitmap tile = new Bitmap(8, 8, PixelFormat.Format8bppIndexed);
+                BitmapData data = tile.LockBits(new Rectangle(Point.Empty, tile.Size), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
+                SNESGraphics.DrawTile(data, 0, 0, new LoadedTilemap.Tile(i, 0, false, false), graphics.linearGraphics);
+                tile.UnlockBits(data);
+                tiles[i] = tile;
+            }
+            return tiles;
+        }
     }
 }

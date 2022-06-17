@@ -91,7 +91,12 @@ namespace Necrofy
             public CollisionNameInfo(string folder, string name) : this(new PathParts(folder, name, Extension, null, false)) { }
             
             public override AssetCategory Category => AssetCat;
-            
+
+            public override bool Editable => true;
+            public override EditorWindow GetEditor(Project project) {
+                return new CollisionEditor(new LoadedCollision(project, Name));
+            }
+
             public static CollisionNameInfo FromPath(PathParts parts) {
                 if (parts.fileExtension != Extension) return null;
                 if (parts.pointer != null) return null;

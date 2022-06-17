@@ -13,7 +13,6 @@ namespace Necrofy
 {
     public partial class ColorEditor : UserControl
     {
-        private const int HSLMax = 240;
         private static readonly Bitmap ColorArrow = Properties.Resources.colorArrow;
         private static readonly Bitmap Crosshairs = Properties.Resources.crosshairs;
 
@@ -38,14 +37,6 @@ namespace Necrofy
         }
 
         public event EventHandler ColorChanged;
-        
-        private static Color HLSToRGB(int H, int L, int S) {
-            if (S == 0) {
-                int v = (int)Math.Round((double)L / HSLMax * 255);
-                return Color.FromArgb(v, v, v);
-            }
-            return ColorTranslator.FromWin32(Win32.ColorHLSToRGB(H, L, S));
-        }
 
         private static Color HexToColor(string hex) {
             try {
@@ -77,9 +68,9 @@ namespace Necrofy
         }
 
         public void SelectRGB(Color c, bool updateHex = true) {
-            selectedH = (int)(c.GetHue() / 360 * HSLMax);
-            selectedS = (int)(c.GetSaturation() * HSLMax);
-            selectedL = (int)(c.GetBrightness() * HSLMax);
+            selectedH = (int)(c.GetHue() / 360 * Win32.HSLMax);
+            selectedS = (int)(c.GetSaturation() * Win32.HSLMax);
+            selectedL = (int)(c.GetBrightness() * Win32.HSLMax);
             UpdateLum();
             SelectedColor = c;
             if (updateHex) {
@@ -88,7 +79,7 @@ namespace Necrofy
         }
 
         public void SelectHSL(int h, int s, int l) {
-            Color c = HLSToRGB(h, l, s);
+            Color c = Win32.HLSToRGB(h, l, s);
             bool updateLum = h != selectedH || s != selectedS;
 
             selectedH = h;
@@ -108,11 +99,11 @@ namespace Necrofy
                 lumImage.Dispose();
             }
 
-            lumImage = new Bitmap(lCanvas.Width - ColorArrow.Width - 2, HSLMax + 1);
+            lumImage = new Bitmap(lCanvas.Width - ColorArrow.Width - 2, Win32.HSLMax + 1);
             using (Graphics g = Graphics.FromImage(lumImage)) {
-                for (int l = 0; l <= HSLMax; l++) {
-                    using (Pen p = new Pen(HLSToRGB(selectedH, l, selectedS))) {
-                        g.DrawLine(p, 0, HSLMax - l, lumImage.Width, HSLMax - l);
+                for (int l = 0; l <= Win32.HSLMax; l++) {
+                    using (Pen p = new Pen(Win32.HLSToRGB(selectedH, l, selectedS))) {
+                        g.DrawLine(p, 0, Win32.HSLMax - l, lumImage.Width, Win32.HSLMax - l);
                     }
                 }
             }
@@ -150,14 +141,14 @@ namespace Necrofy
 
         private void hsCanvas_Paint(object sender, PaintEventArgs e) {
             int x = selectedH;
-            int y = HSLMax - selectedS;
+            int y = Win32.HSLMax - selectedS;
             e.Graphics.DrawImage(Crosshairs, x - Crosshairs.Width / 2, y - Crosshairs.Height / 2, Crosshairs.Width, Crosshairs.Height);
         }
 
         private void lCanvas_Paint(object sender, PaintEventArgs e) {
             if (lumImage != null) {
                 e.Graphics.DrawImage(lumImage, 0, ColorArrow.Height / 2);
-                e.Graphics.DrawImage(ColorArrow, lCanvas.Width - ColorArrow.Width, HSLMax - selectedL, ColorArrow.Width, ColorArrow.Height);
+                e.Graphics.DrawImage(ColorArrow, lCanvas.Width - ColorArrow.Width, Win32.HSLMax - selectedL, ColorArrow.Width, ColorArrow.Height);
             }
         }
 
@@ -167,7 +158,7 @@ namespace Necrofy
 
         private void hsCanvas_MouseMove(object sender, MouseEventArgs e) {
             if (hsCanvas.IsMouseDown) {
-                SelectHSL(Math.Max(0, Math.Min(HSLMax, e.X)), HSLMax - Math.Max(0, Math.Min(HSLMax, e.Y)), selectedL);
+                SelectHSL(Math.Max(0, Math.Min(Win32.HSLMax, e.X)), Win32.HSLMax - Math.Max(0, Math.Min(Win32.HSLMax, e.Y)), selectedL);
             }
         }
         
@@ -177,7 +168,7 @@ namespace Necrofy
 
         private void lCanvas_MouseMove(object sender, MouseEventArgs e) {
             if (lCanvas.IsMouseDown) {
-                SelectHSL(selectedH, selectedS, Math.Max(0, Math.Min(HSLMax, HSLMax - (e.Y - ColorArrow.Height / 2))));
+                SelectHSL(selectedH, selectedS, Math.Max(0, Math.Min(Win32.HSLMax, Win32.HSLMax - (e.Y - ColorArrow.Height / 2))));
             }
         }
     }
