@@ -155,7 +155,7 @@ namespace Necrofy
         private void PaintPreview(Graphics g, bool collisionMode) {
             int selectedTilesetTile = SelectedTilesetTile;
             if (selectedTilesetTile >= 0) {
-                int tileSize = tilesetPreview.Width / 8;
+                float tileSize = tilesetPreview.Width / 8f;
 
                 if (!collisionMode) {
                     g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
@@ -168,7 +168,7 @@ namespace Necrofy
                 for (int y = 0; y < 8; y++) {
                     for (int x = 0; x < 8; x++) {
                         int tileNum = loadedTileset.tilemap.tiles[selectedTilesetTile][x, y].tileNum;
-                        Rectangle r = new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize);
+                        RectangleF r = new RectangleF(x * tileSize, y * tileSize, tileSize, tileSize);
                         if (collisionMode) {
                             ushort collision = collisions[tileNum];
                             GetCollisionTypeColors(collision, out Color lightColor, out Color darkColor);
@@ -176,7 +176,7 @@ namespace Necrofy
                                 g.FillRectangle(b, r);
                             }
                             using (Pen p = new Pen(darkColor)) {
-                                g.DrawRectangle(p, r);
+                                g.DrawRectangle(p, r.X, r.Y, r.Width, r.Height);
                             }
                             g.DrawString(collision.ToString("X4"), tileTypeFont, Brushes.White, r, tileTypeStringFormat);
                         }
@@ -238,9 +238,9 @@ namespace Necrofy
         private void tilesetPreview_MouseMove(object sender, MouseEventArgs e) {
             if (e.Button == MouseButtons.Left) {
                 int selectedTilesetTile = SelectedTilesetTile;
-                int tileSize = tilesetPreview.Width / 8;
-                int x = e.X / tileSize;
-                int y = e.Y / tileSize;
+                float tileSize = tilesetPreview.Width / 8f;
+                int x = (int)(e.X / tileSize);
+                int y = (int)(e.Y / tileSize);
                 if (selectedTilesetTile >= 0 && x >= 0 && x < 8 && y >= 0 && y < 8) {
                     LoadedTilemap.Tile tile = loadedTileset.tilemap.tiles[selectedTilesetTile][x, y];
                     tilePicker.SelectedTile = tile.tileNum;
@@ -303,6 +303,12 @@ namespace Necrofy
 
         private Color GetColor(ushort bitmask, ushort value) {
             return ((prevCollision & bitmask) == value) ? SystemColors.ControlText : SystemColors.ControlDark;
+        }
+
+        private void CollisionEditor_Layout(object sender, LayoutEventArgs e) {
+            // Fixes auto-scaling making these not square
+            tilesetPreview.Height = tilesetPreview.Width;
+            tilesetPreviewCollision.Height = tilesetPreviewCollision.Width;
         }
     }
 }

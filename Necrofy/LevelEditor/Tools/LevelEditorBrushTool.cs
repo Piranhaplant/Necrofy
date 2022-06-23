@@ -26,7 +26,6 @@ namespace Necrofy
                 base.MouseDown(e);
             }
 
-
             public override void MouseUp(MapMouseEventArgs e) {
                 editor.undoManager.ForceNoMerge();
             }

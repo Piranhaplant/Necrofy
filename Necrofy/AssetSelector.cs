@@ -12,7 +12,7 @@ using System.IO;
 
 namespace Necrofy
 {
-    partial class AssetSelector : UserControl
+    partial class AssetSelector : NoAutoScalePanel
     {
         public string SelectedItem => comboTree.SelectedNode?.GetFullPath(Asset.FolderSeparator.ToString(), false);
         public event EventHandler SelectedItemChanged;

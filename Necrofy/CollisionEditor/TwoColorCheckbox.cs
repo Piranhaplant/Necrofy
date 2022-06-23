@@ -51,7 +51,7 @@ namespace Necrofy
         
         protected override void OnPaint(PaintEventArgs pevent) {
             base.OnPaint(pevent);
-            int x = 16;
+            int x = Height;
 
             DrawText(pevent.Graphics, ref x, text1, ForeColor);
             DrawText(pevent.Graphics, ref x, text2, foreColor2);
