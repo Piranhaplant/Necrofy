@@ -258,7 +258,7 @@ namespace Necrofy
             while (!cancellation.IsCancellationRequested) {
                 await Task.Delay(5);
                 if (repaintQueued) {
-                    canvas.Invalidate();
+                    canvas.Refresh();
                     repaintQueued = false;
                 }
             }
