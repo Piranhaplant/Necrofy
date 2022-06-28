@@ -83,6 +83,7 @@ namespace Necrofy
 
         public void SetCollision(int tileNum, ushort collision) {
             uiUpdate++;
+            tilePicker.SelectedTile = tileNum;
             collisions[tileNum] = collision;
             for (int i = 0; i < checkboxes.Length; i++) {
                 checkboxes[i].Checked = (collision & (1 << i)) > 0;
