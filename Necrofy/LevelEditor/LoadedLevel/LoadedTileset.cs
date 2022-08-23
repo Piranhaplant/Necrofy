@@ -34,7 +34,7 @@ namespace Necrofy
 
             tilemap = new LoadedTilesetTilemap(project, tilemapName);
             collision = new LoadedCollision(project, collisionName);
-            graphics = new LoadedGraphics(project, graphicsName);
+            graphics = new LoadedGraphics(project, graphicsName, GraphicsAsset.Type.Normal);
             palette = new LoadedPalette(project, paletteName);
 
             tilemap.Updated += Asset_Updated;

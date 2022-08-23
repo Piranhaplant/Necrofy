@@ -132,9 +132,15 @@ namespace Necrofy
                 return;
             }
             scrollWrapper.TransformGraphics(e.Graphics);
+            PointF topLeft = scrollWrapper.TransformPoint(PointF.Empty);
+            PointF bottomRight = scrollWrapper.TransformPoint(new PointF(canvas.Width, canvas.Height));
 
             for (int i = 0; i < tiles.Length; i++) {
-                SNESGraphics.DrawWithPlt(e.Graphics, (i % tilesPerRow) * tileSize, (i / tilesPerRow) * tileSize, tiles[i], colors, displayPalette * 16, 16, flipX, flipY);
+                int x = (i % tilesPerRow) * tileSize;
+                int y = (i / tilesPerRow) * tileSize;
+                if (y > topLeft.Y - tileSize && y < bottomRight.Y) {
+                    SNESGraphics.DrawWithPlt(e.Graphics, x, y, tiles[i], colors, displayPalette * 16, 16, flipX, flipY);
+                }
             }
             if (SelectedTile >= 0) {
                 using (Pen p = new Pen(Color.White, 1 / zoom)) {

@@ -292,11 +292,12 @@ namespace Necrofy
         }
 
         private void graphicsSelector_SelectedItemChanged(object sender, EventArgs e) {
-            if (graphicsSelector.SelectedItem != null) {
+            GraphicsAsset.Type? graphicsType = GraphicsAsset.GetGraphicsType(graphicsSelector.SelectedNameInfo);
+            if (graphicsType != null) {
                 if (graphics != null) {
                     graphics.Updated -= Graphics_Updated;
                 }
-                graphics = new LoadedGraphics(project, graphicsSelector.SelectedItem);
+                graphics = new LoadedGraphics(project, graphicsSelector.SelectedItem, (GraphicsAsset.Type)graphicsType);
                 graphics.Updated += Graphics_Updated;
                 LoadGraphics();
             }

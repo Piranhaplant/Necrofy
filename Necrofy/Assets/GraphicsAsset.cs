@@ -8,8 +8,18 @@ namespace Necrofy
 {
     class GraphicsAsset : Asset
     {
+        public enum Type
+        {
+            Normal,
+            Sprite
+        }
+
         public const string DefaultName = "Graphics";
-        public const string Extension = "gfx";
+        public static readonly Dictionary<string, Type> Extensions = new Dictionary<string, Type>() {
+            {"gfx", Type.Normal },
+            {"gfxs", Type.Sprite },
+        };
+        public static readonly Dictionary<Type, string> TypeToExtension = Extensions.Reverse();
 
         private const AssetCategory AssetCat = AssetCategory.Graphics;
 
@@ -21,11 +31,15 @@ namespace Necrofy
             return GetAssetName(romStream, romInfo, new GraphicsCreator(), AssetCat, pointer, tileset);
         }
 
+        public static Type? GetGraphicsType(NameInfo nameInfo) {
+            return (nameInfo as GraphicsNameInfo)?.type;
+        }
+
         public byte[] data;
 
-        public static GraphicsAsset FromProject(Project project, string fullName) {
+        public static GraphicsAsset FromProject(Project project, string fullName, Type type) {
             ParsedName parsedName = new ParsedName(fullName);
-            return new GraphicsCreator().FromProject(project, parsedName.Folder, parsedName.FinalName);
+            return new GraphicsCreator().FromProject(project, parsedName.Folder, parsedName.FinalName, type);
         }
 
         private GraphicsAsset(GraphicsNameInfo nameInfo, byte[] data) : base(nameInfo) {
@@ -52,8 +66,8 @@ namespace Necrofy
         
         class GraphicsCreator : Creator
         {
-            public GraphicsAsset FromProject(Project project, string folder, string graphicsName) {
-                NameInfo nameInfo = new GraphicsNameInfo(folder, graphicsName, null);
+            public GraphicsAsset FromProject(Project project, string folder, string graphicsName, Type type) {
+                NameInfo nameInfo = new GraphicsNameInfo(folder, graphicsName, type: type);
                 return project.GetCachedAsset(nameInfo, () => {
                     string filename = nameInfo.FindFilename(project.path);
                     return (GraphicsAsset)FromFile(nameInfo, filename);
@@ -105,24 +119,29 @@ namespace Necrofy
             }
 
             public override NameInfo GetNameInfoForName(string name, string group) {
-                return new GraphicsNameInfo(GetTilesetFolder(group), name, null);
+                return new GraphicsNameInfo(GetTilesetFolder(group), name);
             }
         }
 
         class GraphicsNameInfo : NameInfo
         {
-            private GraphicsNameInfo(PathParts parts) : base(parts) { }
-            public GraphicsNameInfo(string folder, string name, int? pointer = null, bool compressed = false, bool skipped = false) : this(new PathParts(folder, name, Extension, pointer, compressed, skipped)) { }
+            public readonly Type type;
+
+            private GraphicsNameInfo(PathParts parts) : base(parts) {
+                type = Extensions[parts.fileExtension];
+            }
+            public GraphicsNameInfo(string folder, string name, int? pointer = null, Type type = Type.Normal, bool compressed = false, bool skipped = false)
+                : this(new PathParts(folder, name, TypeToExtension[type], pointer, compressed, skipped)) { }
             
             public override AssetCategory Category => AssetCat;
             
             public override bool Editable => true;
             public override EditorWindow GetEditor(Project project) {
-                return new GraphicsEditor(new LoadedGraphics(project, Name), project);
+                return new GraphicsEditor(new LoadedGraphics(project, Name, type), project);
             }
             
             public static GraphicsNameInfo FromPath(PathParts parts) {
-                if (parts.fileExtension != Extension) return null;
+                if (!Extensions.ContainsKey(parts.fileExtension)) return null;
                 return new GraphicsNameInfo(parts);
             }
         }

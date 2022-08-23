@@ -16,9 +16,9 @@ namespace Necrofy
         public event EventHandler Updated;
         private int updating = 0;
 
-        public LoadedGraphics(Project project, string graphicsName) {
+        public LoadedGraphics(Project project, string graphicsName, GraphicsAsset.Type type) {
             this.graphicsName = graphicsName;
-            asset = GraphicsAsset.FromProject(project, graphicsName);
+            asset = GraphicsAsset.FromProject(project, graphicsName, type);
             asset.Updated += Asset_Updated;
 
             ReadGraphics();

@@ -22,7 +22,7 @@ namespace Necrofy
 
         public LoadedSprites(Project project, string folder) {
             spritesAsset = SpritesAsset.FromProject(project, folder);
-            loadedGraphics = new LoadedGraphics(project, folder + Asset.FolderSeparator + GraphicsAsset.DefaultName);
+            loadedGraphics = new LoadedGraphics(project, folder + Asset.FolderSeparator + GraphicsAsset.DefaultName, GraphicsAsset.Type.Normal);
             loadedPalette = new LoadedPalette(project, Asset.SpritesFolder + Asset.FolderSeparator + PaletteAsset.DefaultSpritePaletteName, transparent: true);
 
             loadedPalette.Updated += Asset_Updated;

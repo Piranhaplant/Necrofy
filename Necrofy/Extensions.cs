@@ -105,5 +105,13 @@ namespace Necrofy
                 array[x2, y2] = transform(element);
             });
         }
+
+        public static Dictionary<V, K> Reverse<K, V>(this Dictionary<K, V> dict) {
+            Dictionary<V, K> reversed = new Dictionary<V, K>();
+            foreach (KeyValuePair<K, V> pair in dict) {
+                reversed.Add(pair.Value, pair.Key);
+            }
+            return reversed;
+        }
     }
 }

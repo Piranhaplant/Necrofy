@@ -23,7 +23,7 @@ namespace Necrofy
         public event EventHandler Updated;
 
         public LoadedLevelTitleCharacters(Project project) {
-            loadedGraphics = new LoadedGraphics(project, Asset.LevelTitleFolder + Asset.FolderSeparator + GraphicsAsset.DefaultName);
+            loadedGraphics = new LoadedGraphics(project, Asset.LevelTitleFolder + Asset.FolderSeparator + GraphicsAsset.DefaultName, GraphicsAsset.Type.Normal);
             loadedPalette = new LoadedPalette(project, Asset.LevelTitleFolder + Asset.FolderSeparator + PaletteAsset.DefaultName);
             loadedTilemap = new LoadedTilemap(project, Asset.LevelTitleFolder + Asset.FolderSeparator + TilemapAsset.DefaultName);
             charData = DataAsset.FromProject(project, Asset.LevelTitleFolder, DataAsset.LevelTitleCharacterMapName);

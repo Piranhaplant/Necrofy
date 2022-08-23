@@ -28,7 +28,7 @@ namespace Necrofy
 
         public LoadedLevelSprites(Project project, string spritePaletteName) {
             loadedPalette = new LoadedPalette(project, spritePaletteName, transparent: true);
-            loadedGraphics = new LoadedGraphics(project, Asset.SpritesFolder + Asset.FolderSeparator + GraphicsAsset.DefaultName);
+            loadedGraphics = new LoadedGraphics(project, Asset.SpritesFolder + Asset.FolderSeparator + GraphicsAsset.DefaultName, GraphicsAsset.Type.Normal);
             spritesAsset = SpritesAsset.FromProject(project, Asset.SpritesFolder);
             spriteDisplayAsset = EditorAsset<SpriteDisplayList>.FromProject(project, "SpriteDisplay");
 

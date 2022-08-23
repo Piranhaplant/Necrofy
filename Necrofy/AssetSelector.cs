@@ -15,6 +15,7 @@ namespace Necrofy
     partial class AssetSelector : NoAutoScalePanel
     {
         public string SelectedItem => comboTree.SelectedNode?.GetFullPath(Asset.FolderSeparator.ToString(), false);
+        public Asset.NameInfo SelectedNameInfo => (comboTree.SelectedNode?.Tag as AssetTree.AssetEntry)?.Asset;
         public event EventHandler SelectedItemChanged;
 
         private DropDownAssetTreePopulator populator;
