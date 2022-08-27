@@ -70,8 +70,8 @@ namespace Necrofy
         /// <summary>Gets whether the asset should be skipped when building a ROM</summary>
         public bool IsSkipped => nameInfo.Parts.skipped;
         /// <summary>Reserves any space that will be needed by this asset before inserting into a ROM.</summary>
-        /// <param name="freespace">The freespace</param>
-        public virtual void ReserveSpace(Freespace freespace) { }
+        /// <param name="romInfo">The ROM info</param>
+        public virtual void ReserveSpace(ROMInfo romInfo) { }
         /// <summary>Inserts the asset into the given ROM</summary>
         /// <param name="rom">The ROM</param>
         /// <param name="romInfo">The ROM info</param>

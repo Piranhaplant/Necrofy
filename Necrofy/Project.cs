@@ -203,9 +203,11 @@ namespace Necrofy
                         }
                     }
 
+                    info.WriteToBuild(s, settings, results);
+
                     info.assets.Sort();
                     foreach (Asset asset in info.assets) {
-                        asset.ReserveSpace(info.Freespace);
+                        asset.ReserveSpace(info);
                     }
                     foreach (Asset asset in info.assets) {
                         asset.Insert(s, info, this);
@@ -222,6 +224,8 @@ namespace Necrofy
 
                 info.exportedDefines["win_level"] = settings.WinLevel.ToString();
                 info.exportedDefines["end_game_level"] = settings.EndGameLevel.ToString();
+                info.exportedDefines["extra_sprite_graphics_base"] = ROMPointers.PointerToHexString(info.ExtraSpriteGraphicsBasePointer);
+                info.exportedDefines["extra_sprite_graphics_start_index"] = info.ExtraSpriteGraphicsStartIndex.ToString();
 
                 foreach (KeyValuePair<string, string> define in info.exportedDefines) {
                     Console.WriteLine("!" + define.Key + "=" + define.Value);

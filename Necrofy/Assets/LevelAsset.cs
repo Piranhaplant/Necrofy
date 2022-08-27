@@ -61,8 +61,8 @@ namespace Necrofy
             rom.WritePointer(pointer);
         }
 
-        public override void ReserveSpace(Freespace freespace) {
-            freespace.Reserve(GetPointerPosition(levelNameInfo.levelNum), 4);
+        public override void ReserveSpace(ROMInfo romInfo) {
+            romInfo.Freespace.Reserve(GetPointerPosition(levelNameInfo.levelNum), 4);
         }
         
         class LevelCreator : Creator

@@ -154,7 +154,7 @@ namespace Necrofy
         }
 
         public static string PointerToHexString(int pointer) {
-            return ((pointer / 0x8000) + 0x80).ToString("X2") + ((pointer % 0x8000) + 0x8000).ToString("X4");
+            return"$" + ((pointer / 0x8000) + 0x80).ToString("X2") + ((pointer % 0x8000) + 0x8000).ToString("X4");
         }
         
         /// <summary>Adds a 2-byte SNES LoROM pointer to the list.</summary>

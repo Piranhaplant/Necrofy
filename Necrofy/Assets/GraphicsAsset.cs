@@ -35,6 +35,7 @@ namespace Necrofy
             return (nameInfo as GraphicsNameInfo)?.type;
         }
 
+        private readonly GraphicsNameInfo graphicsNameInfo;
         public byte[] data;
 
         public static GraphicsAsset FromProject(Project project, string fullName, Type type) {
@@ -43,10 +44,13 @@ namespace Necrofy
         }
 
         private GraphicsAsset(GraphicsNameInfo nameInfo, byte[] data) : base(nameInfo) {
+            this.graphicsNameInfo = nameInfo;
             this.data = data;
         }
 
-        private GraphicsAsset(GraphicsNameInfo nameInfo, string filename) : base(nameInfo, filename) { }
+        private GraphicsAsset(GraphicsNameInfo nameInfo, string filename) : base(nameInfo, filename) {
+            this.graphicsNameInfo = nameInfo;
+        }
 
         protected override void Reload(string filename) {
             data = File.ReadAllBytes(filename);
@@ -55,9 +59,26 @@ namespace Necrofy
         protected override void WriteFile(string filename) {
             File.WriteAllBytes(filename, data);
         }
-        
+
+        public override void ReserveSpace(ROMInfo romInfo) {
+            if (nameInfo.Parts.folder == SpritesFolder && nameInfo.Parts.name == DefaultName) {
+                romInfo.ExtraSpriteGraphicsStartIndex = data.Length / 0x80;
+            } else if (graphicsNameInfo.type == Type.Sprite) {
+                romInfo.ExtraSpriteGraphicsSize += data.Length;
+            }
+        }
+
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
-            if (nameInfo.Parts.compressed) {
+            if (graphicsNameInfo.type == Type.Sprite) {
+                if (romInfo.ExtraSpriteGraphicsBasePointer == 0) {
+                    romInfo.ExtraSpriteGraphicsBasePointer = romInfo.Freespace.Claim(romInfo.ExtraSpriteGraphicsSize);
+                }
+                if (romInfo.ExtraSpriteGraphicsCurrentPointer == 0) {
+                    romInfo.ExtraSpriteGraphicsCurrentPointer = romInfo.ExtraSpriteGraphicsBasePointer;
+                }
+                InsertByteArray(rom, romInfo, data, romInfo.ExtraSpriteGraphicsCurrentPointer);
+                romInfo.ExtraSpriteGraphicsCurrentPointer += data.Length;
+            } else if (nameInfo.Parts.compressed) {
                 InsertCompressedByteArray(rom, romInfo, data, nameInfo.GetFilename(project.path), nameInfo.Parts.pointer);
             } else {
                 InsertByteArray(rom, romInfo, data, nameInfo.Parts.pointer);

@@ -504,7 +504,7 @@ LDY #$003E
 LDA [$10],Y
 RTS
 
-warnpc $82D25E
+warnpc $82D1EE ; Necrofy properties will be inserted over the secret bonus code pointers, so don't go past this
 
 ; Modify password code to use a set string for each password
 

@@ -42,9 +42,9 @@ namespace Necrofy
             File.WriteAllBytes(filename, data);
         }
 
-        public override void ReserveSpace(Freespace freespace) {
+        public override void ReserveSpace(ROMInfo romInfo) {
             if (nameInfo.Parts.pointer != null) {
-                freespace.Reserve((int)nameInfo.Parts.pointer, data.Length);
+                romInfo.Freespace.Reserve((int)nameInfo.Parts.pointer, data.Length);
             }
         }
 

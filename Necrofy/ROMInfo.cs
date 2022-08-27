@@ -28,6 +28,17 @@ namespace Necrofy
         /// <summary>Various per-asset settings</summary>
         public readonly AssetOptions assetOptions = new AssetOptions();
 
+        private const string PropertiesHeader = "NFY";
+        private const byte PropertiesVersion = 2;
+        /// <summary>The total number of bytes that will be used by custom sprite graphics. This is cleared once the space for them has been claimed.</summary>
+        public int ExtraSpriteGraphicsSize { get; set; }
+        /// <summary>A pointer to the start of the custom sprite graphics</summary>
+        public int ExtraSpriteGraphicsBasePointer { get; set; }
+        /// <summary>The current pointer that custom sprite graphics will be inserted at.</summary>
+        public int ExtraSpriteGraphicsCurrentPointer { get; set; }
+        /// <summary>The starting index for custom sprite tiles</summary>
+        public int ExtraSpriteGraphicsStartIndex { get; set; }
+
         /// <summary>Loads the ROMInfo data from an already opened stream.</summary>
         /// <param name="s">A stream to a ROM file</param>
         public ROMInfo(NStream s) {
@@ -40,6 +51,10 @@ namespace Necrofy
             int levelCount = s.ReadInt16();
             EndGameLevel = levelCount - 1;
             NecrofyROM = s.PeekPointer() > 0;
+
+            if (NecrofyROM) {
+                ReadProperties(s);
+            }
             
             Asset.AddAllDefaults(s, this);
             
@@ -82,6 +97,32 @@ namespace Necrofy
 
             Asset.AddAllDefaults(s, this, originalProjectVersion);
         }
+
+        private void ReadProperties(NStream s) {
+            s.PushPosition();
+            s.Seek(ROMPointers.SecretBonusCodePointers);
+
+            if (Encoding.ASCII.GetString(s.ReadBytes(PropertiesHeader.Length)) == PropertiesHeader) {
+                int version = s.ReadByte();
+                if (version == 2) {
+                    ExtraSpriteGraphicsBasePointer = s.ReadPointer();
+                    ExtraSpriteGraphicsCurrentPointer = s.ReadPointer();
+                }
+            }
+
+            s.PopPosition();
+        }
+
+        private void WriteProperties(NStream s) {
+            s.Seek(ROMPointers.SecretBonusCodePointers);
+            s.Write(Encoding.ASCII.GetBytes(PropertiesHeader));
+            s.WriteByte(PropertiesVersion);
+            s.WritePointer(ExtraSpriteGraphicsBasePointer);
+            s.WritePointer(ExtraSpriteGraphicsCurrentPointer);
+            if (s.Position > 0x1525E) {
+                throw new Exception("Properties overflowed available space");
+            }
+        }
         
         public void AddAssetName(AssetCategory category, int pointer, string name) {
             if (!assetNames.ContainsKey(category)) {
@@ -95,7 +136,7 @@ namespace Necrofy
                 assetPointers.Add(category, new Dictionary<string, int>());
             }
             assetPointers[category].Add(name, pointer);
-            exportedDefines.Add("ASSET_" + category.ToString() + "_" + FixDefineName(name), "$" + ROMPointers.PointerToHexString(pointer));
+            exportedDefines.Add("ASSET_" + category.ToString() + "_" + FixDefineName(name), ROMPointers.PointerToHexString(pointer));
         }
 
         private static string FixDefineName(string s) {
@@ -127,6 +168,32 @@ namespace Necrofy
                 throw new Exception("No asset found for category " + category + " with name " + name);
             }
             return assetPointers[category][name];
+        }
+
+        public void WriteToBuild(NStream s, ProjectSettings settings, BuildResults results) {
+            WriteProperties(s);
+
+            if (settings.ExtraSpriteGraphicsBasePointer != null) {
+                ExtraSpriteGraphicsBasePointer = (int)settings.ExtraSpriteGraphicsBasePointer;
+            }
+            if (settings.ExtraSpriteGraphicsCurrentPointer != null) {
+                ExtraSpriteGraphicsCurrentPointer = (int)settings.ExtraSpriteGraphicsCurrentPointer;
+            }
+
+            if (ExtraSpriteGraphicsStartIndex + (ExtraSpriteGraphicsCurrentPointer - ExtraSpriteGraphicsBasePointer + ExtraSpriteGraphicsSize) / 0x80 > 0x1000) {
+                results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, "", "Number of sprite tiles has exceeded the 0x1000 tile limit"));
+            }
+            // Check that all bytes that will be overwritten by custom sprite graphics are the same value (indicating unused data)
+            if (ExtraSpriteGraphicsCurrentPointer > 0 && ExtraSpriteGraphicsSize > 0) {
+                s.Seek(ExtraSpriteGraphicsCurrentPointer);
+                int startByte = s.ReadByte();
+                for (int i = 1; i < ExtraSpriteGraphicsSize; i++) {
+                    if (s.ReadByte() != startByte) {
+                        results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, "", "Added sprite graphics will overwrite existing data"));
+                        break;
+                    }
+                }
+            }
         }
     }
 }

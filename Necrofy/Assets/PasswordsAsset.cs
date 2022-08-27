@@ -36,8 +36,8 @@ namespace Necrofy
             File.WriteAllText(filename, JsonConvert.SerializeObject(data, Formatting.Indented));
         }
 
-        public override void ReserveSpace(Freespace freespace) {
-            data.ReserveSpace(freespace);
+        public override void ReserveSpace(ROMInfo romInfo) {
+            data.ReserveSpace(romInfo.Freespace);
         }
 
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) {

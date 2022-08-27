@@ -3,9 +3,6 @@
 
 lorom
 
-!EXTRA_GFX_BANK = $00A0
-!EXTRA_GFX_BASE = $9000
-
 ; Allow more banks to be used for sprite tile data
 org $80BD9C
 CMP #$00B0
@@ -18,12 +15,12 @@ PHX
 PHY
 LDX #$0084
 LDY #$8000
-CMP #$0BA6
+CMP.w #!extra_sprite_graphics_start_index
 BCC + ; Branch if less than
-LDX #!EXTRA_GFX_BANK
-LDY #!EXTRA_GFX_BASE
+LDX.w #!extra_sprite_graphics_base>>16
+LDY.w #!extra_sprite_graphics_base
 SEC
-SBC #$0BA6
+SBC.w #!extra_sprite_graphics_start_index
 +:
 STX $80
 STY $7E
