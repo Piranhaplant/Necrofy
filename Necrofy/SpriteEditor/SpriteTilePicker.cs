@@ -44,6 +44,17 @@ namespace Necrofy
             }
         }
 
+        private int colorsPerPalette = 16;
+        public int ColorsPerPalette {
+            get {
+                return colorsPerPalette;
+            }
+            set {
+                colorsPerPalette = value;
+                Repaint();
+            }
+        }
+
         private bool flipX = false;
         public bool FlipX {
             get {
@@ -139,7 +150,7 @@ namespace Necrofy
                 int x = (i % tilesPerRow) * tileSize;
                 int y = (i / tilesPerRow) * tileSize;
                 if (y > topLeft.Y - tileSize && y < bottomRight.Y) {
-                    SNESGraphics.DrawWithPlt(e.Graphics, x, y, tiles[i], colors, displayPalette * 16, 16, flipX, flipY);
+                    SNESGraphics.DrawWithPlt(e.Graphics, x, y, tiles[i], colors, displayPalette * colorsPerPalette, colorsPerPalette, flipX, flipY);
                 }
             }
             if (SelectedTile >= 0) {

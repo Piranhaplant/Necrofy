@@ -12,7 +12,16 @@ namespace Necrofy
 {
     public partial class ColorSelector : UserControl
     {
-        private const int SquaresPerRow = 16;
+        private int squaresPerRow = 16;
+        public int SquaresPerRow {
+            get {
+                return squaresPerRow;
+            }
+            set {
+                squaresPerRow = value;
+                UpdateSize();
+            }
+        }
 
         private Color[] colors = null;
         public Color[] Colors {
@@ -87,14 +96,18 @@ namespace Necrofy
         }
         
         private void canvas_SizeChanged(object sender, EventArgs e) {
-            squareSize = Width / (float)SquaresPerRow;
+            UpdateSize();
+        }
+
+        private void UpdateSize() {
+            squareSize = Width / (float)squaresPerRow;
             Repaint();
         }
 
         private void canvas_Paint(object sender, PaintEventArgs e) {
             if (colors != null) {
                 for (int i = 0; i < colors.Length; i++) {
-                    RectangleF rect = new RectangleF(squareSize * (i % SquaresPerRow), squareSize * (i / SquaresPerRow), squareSize, squareSize);
+                    RectangleF rect = new RectangleF(squareSize * (i % squaresPerRow), squareSize * (i / squaresPerRow), squareSize, squareSize);
                     if (colors[i].A < 255) {
                         e.Graphics.FillRectangle(SNESGraphics.TransparencyGridBrush1, rect);
                         e.Graphics.FillRectangle(SNESGraphics.TransparencyGridBrush2, new RectangleF(rect.X, rect.Y, rect.Width / 2, rect.Height / 2));
@@ -116,11 +129,11 @@ namespace Necrofy
         }
 
         public Point IndexToPoint(int i) {
-            return new Point(i % SquaresPerRow, i / SquaresPerRow);
+            return new Point(i % squaresPerRow, i / squaresPerRow);
         }
 
         public int PointToIndex(Point p) {
-            return p.Y * SquaresPerRow + p.X;
+            return p.Y * squaresPerRow + p.X;
         }
 
         private Point MouseToPoint(int x, int y) {
@@ -128,8 +141,8 @@ namespace Necrofy
         }
 
         private Point ClampPoint(Point p) {
-            return new Point(Math.Max(0, Math.Min(SquaresPerRow - 1, p.X)),
-                Math.Max(0, Math.Min(colors.Length / SquaresPerRow - 1, p.Y)));
+            return new Point(Math.Max(0, Math.Min(squaresPerRow - 1, p.X)),
+                Math.Max(0, Math.Min(colors.Length / squaresPerRow - 1, p.Y)));
         }
 
         private void canvas_MouseDown(object sender, MouseEventArgs e) {

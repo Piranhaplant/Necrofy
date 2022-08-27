@@ -19,6 +19,7 @@ namespace Necrofy
     {
         private readonly LoadedGraphics graphics;
         public readonly GraphicsTileList tiles = new GraphicsTileList();
+        private int colorsPerPalette;
 
         public UndoManager<GraphicsEditor> undoManager { get; private set; }
 
@@ -43,6 +44,8 @@ namespace Necrofy
             
             Title = graphics.graphicsName;
             this.graphics = graphics;
+            colorsPerPalette = graphics.Is2BPP ? 4 : 16;
+            colorSelector.SquaresPerRow = colorsPerPalette;
             
             foreach (Bitmap tile in SNESGraphics.RenderAllTiles(graphics)) {
                 tiles.Add(tile);
@@ -179,7 +182,7 @@ namespace Necrofy
                 GetTileLocation(i, out int x, out int y);
                 if (clipRect.IntersectsWith(new RectangleF(x * 8, y * 8, 8, 8))) {
                     if (Colors != null) {
-                        SNESGraphics.DrawWithPlt(g, x * 8, y * 8, tiles.GetTemporarily(i), Colors, selectedPalette * 16, 16);
+                        SNESGraphics.DrawWithPlt(g, x * 8, y * 8, tiles.GetTemporarily(i), Colors, selectedPalette * colorsPerPalette, colorsPerPalette);
                     } else {
                         g.DrawImage(tiles.GetTemporarily(i), x * 8, y * 8);
                     }
@@ -261,9 +264,13 @@ namespace Necrofy
         }
 
         private void LoadPalette() {
-            Colors = (Color[])palette.colors.Clone();
+            if (palette == null) {
+                return;
+            }
+            Colors = new Color[colorsPerPalette * 8];
+            Array.Copy(palette.colors, Colors, Colors.Length);
             if (transparency) {
-                for (int i = 0; i < Colors.Length; i += 16) {
+                for (int i = 0; i < Colors.Length; i += colorsPerPalette) {
                     Colors[i] = Color.Transparent;
                 }
             }

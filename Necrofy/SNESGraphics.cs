@@ -50,10 +50,18 @@ namespace Necrofy
         }
 
         public static byte[,] PlanarToLinear(byte[] bytes, int index) {
+            return PlanarToLinear(bytes, index, 0x20);
+        }
+
+        public static byte[,] PlanarToLinear2BPP(byte[] bytes, int index) {
+            return PlanarToLinear(bytes, index, 0x10);
+        }
+
+        private static byte[,] PlanarToLinear(byte[] bytes, int index, int tileSize) {
             byte[,] result = new byte[8, 8];
             int line = 0;
             int bit = 0;
-            for (int iy = index; iy < index + 0x20; iy += 2) {
+            for (int iy = index; iy < index + tileSize; iy += 2) {
                 for (int ix = 0; ix < 8; ix++) {
                     if ((bytes[iy] & (1 << ix)) != 0) {
                         result[7 - ix, line] |= (byte)(1 << bit);
@@ -70,10 +78,17 @@ namespace Necrofy
             }
             return result;
         }
-
         public static void BitmapToPlanar(Bitmap bitmap, byte[] bytes, int index) {
+            BitmapToPlanar(bitmap, bytes, index, 0x20);
+        }
+
+        public static void BitmapToPlanar2BPP(Bitmap bitmap, byte[] bytes, int index) {
+            BitmapToPlanar(bitmap, bytes, index, 0x10);
+        }
+
+        public static void BitmapToPlanar(Bitmap bitmap, byte[] bytes, int index, int tileSize) {
             BitmapData data = bitmap.LockBits(new Rectangle(0, 0, 8, 8), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
-            for (int i = 0; i < 0x20; i++) {
+            for (int i = 0; i < tileSize; i++) {
                 bytes[index + i] = 0;
                 for (int b = 0; b < 8; b++) {
                     int x = 7 - b;
@@ -172,7 +187,7 @@ namespace Necrofy
             int rightSquare = (int)Math.Floor(r.Right / squareSize);
             for (int y = topSquare; y <= bottomSquare; y++) {
                 for (int x = leftSquare + ((leftSquare + y) % 2); x <= rightSquare; x += 2) {
-                    g.FillRectangle(SNESGraphics.TransparencyGridBrush2, new RectangleF(x * squareSize, y * squareSize, squareSize, squareSize));
+                    g.FillRectangle(TransparencyGridBrush2, new RectangleF(x * squareSize, y * squareSize, squareSize, squareSize));
                 }
             }
         }
@@ -182,7 +197,7 @@ namespace Necrofy
             for (int i = 0; i < tiles.Length; i++) {
                 Bitmap tile = new Bitmap(8, 8, PixelFormat.Format8bppIndexed);
                 BitmapData data = tile.LockBits(new Rectangle(Point.Empty, tile.Size), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
-                SNESGraphics.DrawTile(data, 0, 0, new LoadedTilemap.Tile(i, 0, false, false), graphics.linearGraphics);
+                DrawTile(data, 0, 0, new LoadedTilemap.Tile(i, 0, false, false), graphics.linearGraphics);
                 tile.UnlockBits(data);
                 tiles[i] = tile;
             }

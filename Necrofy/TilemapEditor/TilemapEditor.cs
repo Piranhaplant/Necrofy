@@ -32,6 +32,7 @@ namespace Necrofy
 
         private LoadedGraphics graphics;
         public Bitmap[] tiles { get; private set; }
+        private int colorsPerPalette;
 
         public bool FlipX {
             get => flipX.Checked;
@@ -216,7 +217,7 @@ namespace Necrofy
                 LoadedTilemap.Tile t = tilemap[i];
                 GetTileLocation(i, out int x, out int y);
                 if (t.tileNum < tiles.Length && clipRect.IntersectsWith(new RectangleF(x * 8, y * 8, 8, 8))) {
-                    SNESGraphics.DrawWithPlt(g, x * 8, y * 8, tiles[t.tileNum], Colors, t.palette * 16, 16, t.xFlip, t.yFlip);
+                    SNESGraphics.DrawWithPlt(g, x * 8, y * 8, tiles[t.tileNum], Colors, t.palette * colorsPerPalette, colorsPerPalette, t.xFlip, t.yFlip);
                 }
             }
 
@@ -318,6 +319,7 @@ namespace Necrofy
         private void LoadGraphics() {
             DisposeTiles();
             tiles = SNESGraphics.RenderAllTiles(graphics);
+            colorsPerPalette = graphics.Is2BPP ? 4 : 16;
             UpdateTilePicker();
             Repaint();
         }
@@ -325,6 +327,7 @@ namespace Necrofy
         private void UpdateTilePicker() {
             if (tiles != null && Colors != null) {
                 tilePicker.SetTiles(tiles, Colors, zoom: 2);
+                tilePicker.ColorsPerPalette = colorsPerPalette;
             }
         }
 

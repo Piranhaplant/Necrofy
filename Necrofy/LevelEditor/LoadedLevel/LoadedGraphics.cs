@@ -24,6 +24,8 @@ namespace Necrofy
             ReadGraphics();
         }
 
+        public bool Is2BPP => asset.Is2BPP;
+
         private void Asset_Updated(object sender, EventArgs e) {
             if (updating == 0) {
                 ReadGraphics();
@@ -32,12 +34,16 @@ namespace Necrofy
         }
 
         private void ReadGraphics() {
-            linearGraphics = new LinearGraphics(asset.data);
+            linearGraphics = new LinearGraphics(asset.data, asset.Is2BPP);
         }
 
         public void Save(Project project, GraphicsTileList tiles) {
             for (int i = 0; i < tiles.Count; i++) {
-                SNESGraphics.BitmapToPlanar(tiles.GetTemporarily(i), asset.data, i * 0x20);
+                if (asset.Is2BPP) {
+                    SNESGraphics.BitmapToPlanar2BPP(tiles.GetTemporarily(i), asset.data, i * 0x10);
+                } else {
+                    SNESGraphics.BitmapToPlanar(tiles.GetTemporarily(i), asset.data, i * 0x20);
+                }
             }
             ReadGraphics();
             updating++;
@@ -48,6 +54,7 @@ namespace Necrofy
         public class LinearGraphics
         {
             private readonly byte[] data;
+            private readonly bool is2BPP;
             private readonly byte[][,] linearData;
 
             public int Length => linearData.Length;
@@ -55,15 +62,20 @@ namespace Necrofy
             public byte[,] this[int i] {
                 get {
                     if (linearData[i] == null) {
-                        linearData[i] = SNESGraphics.PlanarToLinear(data, i * 0x20);
+                        if (is2BPP) {
+                            linearData[i] = SNESGraphics.PlanarToLinear2BPP(data, i * 0x10);
+                        } else {
+                            linearData[i] = SNESGraphics.PlanarToLinear(data, i * 0x20);
+                        }
                     }
                     return linearData[i];
                 }
             }
 
-            public LinearGraphics(byte[] data) {
+            public LinearGraphics(byte[] data, bool is2BPP) {
                 this.data = data;
-                linearData = new byte[data.Length / 0x20][,];
+                this.is2BPP = is2BPP;
+                linearData = new byte[data.Length / (is2BPP ? 0x10 : 0x20)][,];
             }
         }
     }

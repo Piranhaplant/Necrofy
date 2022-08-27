@@ -11,13 +11,15 @@ namespace Necrofy
         public enum Type
         {
             Normal,
-            Sprite
+            Sprite,
+            TwoBPP,
         }
 
         public const string DefaultName = "Graphics";
         public static readonly Dictionary<string, Type> Extensions = new Dictionary<string, Type>() {
             {"gfx", Type.Normal },
             {"gfxs", Type.Sprite },
+            {"gfx2", Type.TwoBPP },
         };
         public static readonly Dictionary<Type, string> TypeToExtension = Extensions.Reverse();
 
@@ -51,6 +53,8 @@ namespace Necrofy
         private GraphicsAsset(GraphicsNameInfo nameInfo, string filename) : base(nameInfo, filename) {
             this.graphicsNameInfo = nameInfo;
         }
+
+        public bool Is2BPP => graphicsNameInfo.type == Type.TwoBPP;
 
         protected override void Reload(string filename) {
             data = File.ReadAllBytes(filename);
