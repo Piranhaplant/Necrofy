@@ -12,20 +12,21 @@ namespace Necrofy
         protected Dictionary<int, LoadedTilemap.Tile> oldTiles = new Dictionary<int, LoadedTilemap.Tile>();
         protected Dictionary<int, LoadedTilemap.Tile> newTiles = new Dictionary<int, LoadedTilemap.Tile>();
 
-        protected void SetTile(int x, int y, LoadedTilemap.Tile tile, bool lockTileNum, bool lockPalette, bool lockFlip) {
+        protected void SetTile(int x, int y, LoadedTilemap.Tile tile, bool lockTileNum, bool lockPalette, bool lockFlip, bool lockPriority) {
             int tileIndex = editor.GetLocationTileIndex(x, y);
             if (tileIndex >= 0) {
                 LoadedTilemap.Tile oldTile = editor.tilemap[tileIndex];
                 LoadedTilemap.Tile newTile;
                 
-                if (!lockTileNum && !lockPalette && !lockFlip) {
+                if (!lockTileNum && !lockPalette && !lockFlip && !lockPriority) {
                     newTile = tile;
                 } else {
                     int tileNum = lockTileNum ? oldTile.tileNum : tile.tileNum;
                     int palette = lockPalette ? oldTile.palette : tile.palette;
+                    bool priority = lockPriority ? oldTile.priority : tile.priority;
                     bool xFlip = lockFlip ? oldTile.xFlip : tile.xFlip;
                     bool yFlip = lockFlip ? oldTile.yFlip : tile.yFlip;
-                    newTile = new LoadedTilemap.Tile(tileNum, palette, xFlip, yFlip);
+                    newTile = new LoadedTilemap.Tile(tileNum, palette, priority, xFlip, yFlip);
                 }
                 if (!newTile.Equals(oldTile)) {
                     oldTiles[tileIndex] = editor.tilemap[tileIndex];
@@ -83,7 +84,7 @@ namespace Necrofy
         public override void SetEditor(TilemapEditor editor) {
             base.SetEditor(editor);
             MapEditor.DrawLine(x1, y1, x2, y2, (x, y) => {
-                SetTile(x, y, tile, editor.LockTileNum, editor.LockPalette, editor.LockFlip);
+                SetTile(x, y, tile, editor.LockTileNum, editor.LockPalette, editor.LockFlip, editor.LockPriority);
             });
             cancel = oldTiles.Count == 0;
         }
@@ -110,7 +111,7 @@ namespace Necrofy
             for (int y = 0; y < tiles.GetHeight(); y++) {
                 for (int x = 0; x < tiles.GetWidth(); x++) {
                     if (tiles[x, y] != null) {
-                        SetTile(pasteX + x, pasteY + y, (LoadedTilemap.Tile)tiles[x, y], false, false, false);
+                        SetTile(pasteX + x, pasteY + y, (LoadedTilemap.Tile)tiles[x, y], false, false, false, false);
                     }
                 }
             }
@@ -140,7 +141,7 @@ namespace Necrofy
             for (int y = 0; y < editor.Selection.height; y++) {
                 for (int x = 0; x < editor.Selection.width; x++) {
                     if (editor.Selection.GetPoint(x, y)) {
-                        SetTile(x, y, tile, editor.LockTileNum, editor.LockPalette, editor.LockFlip);
+                        SetTile(x, y, tile, editor.LockTileNum, editor.LockPalette, editor.LockFlip, editor.LockPriority);
                     }
                 }
             }
@@ -159,7 +160,7 @@ namespace Necrofy
             for (int y = 0; y < editor.Selection.height; y++) {
                 for (int x = 0; x < editor.Selection.width; x++) {
                     if (editor.Selection.GetPoint(x, y)) {
-                        SetTile(x, y, LoadedTilemap.Tile.Empty, false, false, false);
+                        SetTile(x, y, LoadedTilemap.Tile.Empty, false, false, editor.LockFlip, editor.LockPriority);
                     }
                 }
             }
@@ -186,8 +187,8 @@ namespace Necrofy
                 LoadedTilemap.Tile? tile1 = editor.Selection.GetPoint(x1, y1) ? editor.tilemap[editor.GetLocationTileIndex(x1, y1)] : (LoadedTilemap.Tile?)null;
                 LoadedTilemap.Tile? tile2 = editor.Selection.GetPoint(x2, y2) ? editor.tilemap[editor.GetLocationTileIndex(x2, y2)] : (LoadedTilemap.Tile?)null;
                 if (tile1 != null || tile2 != null) {
-                    SetTile(x1, y1, LoadedTilemap.Tile.Flip(tile2, flipHorizontally) ?? LoadedTilemap.Tile.Empty, false, false, false);
-                    SetTile(x2, y2, LoadedTilemap.Tile.Flip(tile1, flipHorizontally) ?? LoadedTilemap.Tile.Empty, false, false, false);
+                    SetTile(x1, y1, LoadedTilemap.Tile.Flip(tile2, flipHorizontally) ?? LoadedTilemap.Tile.Empty, false, false, false, false);
+                    SetTile(x2, y2, LoadedTilemap.Tile.Flip(tile1, flipHorizontally) ?? LoadedTilemap.Tile.Empty, false, false, false, false);
                 }
             });
             cancel = oldTiles.Count == 0;

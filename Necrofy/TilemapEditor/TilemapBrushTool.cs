@@ -22,7 +22,7 @@ namespace Necrofy
             }
 
             protected override void DrawLine(int x1, int y1, int x2, int y2) {
-                editor.undoManager.Do(new PaintTilemapAction(x1, y1, x2, y2, new LoadedTilemap.Tile(editor.SelectedTile, editor.SelectedPalette, editor.FlipX, editor.FlipY)));
+                editor.undoManager.Do(new PaintTilemapAction(x1, y1, x2, y2, new LoadedTilemap.Tile(editor.SelectedTile, editor.SelectedPalette, editor.Priority, editor.FlipX, editor.FlipY)));
             }
 
             protected override void SelectTile(int x, int y) {
@@ -31,6 +31,7 @@ namespace Necrofy
                     LoadedTilemap.Tile tile = editor.tilemap[tileIndex];
                     editor.SelectedTile = tile.tileNum;
                     editor.SelectedPalette = tile.palette;
+                    editor.Priority = tile.priority;
                     editor.FlipX = tile.xFlip;
                     editor.FlipY = tile.yFlip;
                 }

@@ -118,17 +118,8 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="arrow-circle-3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\arrow-circle-3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="dice-3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\dice-3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="clipboard-paste" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\clipboard-paste.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="arrow-circle-2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\arrow-circle-2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="colorArrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\colorArrow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -141,6 +132,9 @@
   </data>
   <data name="layers-alignment-center" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\layers-alignment-center.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="spectrum1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\spectrum.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="map" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\map.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -157,35 +151,29 @@
   <data name="layer-flip" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\layer-flip.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="arrow-return-180" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\arrow-return-180.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="victim" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\victim.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="disks" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\disks.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="magnifier-zoom-out" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\magnifier-zoom-out.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="disk" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\disk.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="dice-2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\dice-2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="arrow-stop-270" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\arrow-stop-270.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="arrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\arrow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="scissors" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\scissors.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="cross-script" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\cross-script.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="arrow-skip-180" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\arrow-skip-180.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="arrow-270" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\arrow-270.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="paint-can" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\paint-can.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="information" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\information.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="arrow-stop-090" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\arrow-stop-090.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="light-bulb" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\light-bulb.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -196,8 +184,11 @@
   <data name="ghost" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\ghost.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="arrow-circle" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\arrow-circle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="arrow-skip-180" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\arrow-skip-180.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="blue-document-rename" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\blue-document-rename.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="control-cursor" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\control-cursor.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -214,14 +205,14 @@
   <data name="cross-circle" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\cross-circle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="arrow-circle-4" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\arrow-circle-4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="arrow-circle-2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\arrow-circle-2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="boss-monster" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\boss-monster.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="blue-document-rename" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\blue-document-rename.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="arrow-circle-3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\arrow-circle-3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="arrow-skip" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\arrow-skip.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -235,11 +226,14 @@
   <data name="tick-button" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\tick-button.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="dice-2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\dice-2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="dice-1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\dice-1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="control" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\control.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="dice-3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\dice-3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="arrow-return" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\arrow-return.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -256,17 +250,14 @@
   <data name="tile-select" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\tile-select.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="cross-script" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\cross-script.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="arrow-circle" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\arrow-circle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="dice-1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\dice-1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="arrow-stop-090" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\arrow-stop-090.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="disk" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\disk.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="spectrum1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\spectrum.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="arrow-270" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\arrow-270.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="document--pencil" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\document--pencil.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -301,9 +292,6 @@
   <data name="document-copy" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\document-copy.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="layout-4" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\layout-4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="film" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\film.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -316,8 +304,11 @@
   <data name="layers-alignment-middle" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\layers-alignment-middle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="magnifier-zoom-in" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\magnifier-zoom-in.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="scissors" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\scissors.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="arrow-circle-4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\arrow-circle-4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="zeke" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\zeke.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -325,16 +316,28 @@
   <data name="StartPage" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\StartPage.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="magnifier-zoom-out" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\magnifier-zoom-out.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="map-resize" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\map-resize.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="layout-4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\layout-4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="exclamation" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\exclamation.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="arrow-stop-270" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\arrow-stop-270.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="arrow-return-180" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\arrow-return-180.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="paint-can" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\paint-can.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="magnifier-zoom-in" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\magnifier-zoom-in.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="victim" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\victim.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fill-090" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\fill-090.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

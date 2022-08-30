@@ -29,6 +29,9 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tilePicker = new Necrofy.SpriteTilePicker();
             this.optionsPanel = new Necrofy.NoAutoScalePanel();
+            this.priorityLabel = new System.Windows.Forms.Label();
+            this.priority = new System.Windows.Forms.CheckBox();
+            this.lockPriority = new System.Windows.Forms.CheckBox();
             this.lockFlip = new System.Windows.Forms.CheckBox();
             this.lockPalette = new System.Windows.Forms.CheckBox();
             this.lockTileNum = new System.Windows.Forms.CheckBox();
@@ -76,6 +79,7 @@
             // 
             // tilePicker
             // 
+            this.tilePicker.ColorsPerPalette = 16;
             this.tilePicker.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tilePicker.FlipX = false;
             this.tilePicker.FlipY = false;
@@ -90,6 +94,9 @@
             // 
             // optionsPanel
             // 
+            this.optionsPanel.Controls.Add(this.priorityLabel);
+            this.optionsPanel.Controls.Add(this.priority);
+            this.optionsPanel.Controls.Add(this.lockPriority);
             this.optionsPanel.Controls.Add(this.lockFlip);
             this.optionsPanel.Controls.Add(this.lockPalette);
             this.optionsPanel.Controls.Add(this.lockTileNum);
@@ -103,12 +110,51 @@
             this.optionsPanel.Size = new System.Drawing.Size(273, 28);
             this.optionsPanel.TabIndex = 3;
             // 
+            // priorityLabel
+            // 
+            this.priorityLabel.AutoSize = true;
+            this.priorityLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+            this.priorityLabel.Location = new System.Drawing.Point(82, 8);
+            this.priorityLabel.Name = "priorityLabel";
+            this.priorityLabel.Size = new System.Drawing.Size(28, 13);
+            this.priorityLabel.TabIndex = 1;
+            this.priorityLabel.Text = "Prio:";
+            // 
+            // priority
+            // 
+            this.priority.Appearance = System.Windows.Forms.Appearance.Button;
+            this.priority.AutoSize = true;
+            this.priority.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+            this.priority.Image = global::Necrofy.Properties.Resources.fill_090;
+            this.priority.Location = new System.Drawing.Point(112, 3);
+            this.priority.Name = "priority";
+            this.priority.Size = new System.Drawing.Size(22, 22);
+            this.priority.TabIndex = 12;
+            this.toolTip1.SetToolTip(this.priority, "Priority (p)");
+            this.priority.UseVisualStyleBackColor = true;
+            // 
+            // lockPriority
+            // 
+            this.lockPriority.Appearance = System.Windows.Forms.Appearance.Button;
+            this.lockPriority.AutoSize = true;
+            this.lockPriority.Checked = true;
+            this.lockPriority.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.lockPriority.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+            this.lockPriority.Image = global::Necrofy.Properties.Resources.fill_090;
+            this.lockPriority.Location = new System.Drawing.Point(245, 3);
+            this.lockPriority.Name = "lockPriority";
+            this.lockPriority.Size = new System.Drawing.Size(22, 22);
+            this.lockPriority.TabIndex = 11;
+            this.toolTip1.SetToolTip(this.lockPriority, "Lock Priority (r)");
+            this.lockPriority.UseVisualStyleBackColor = true;
+            // 
             // lockFlip
             // 
             this.lockFlip.Appearance = System.Windows.Forms.Appearance.Button;
             this.lockFlip.AutoSize = true;
+            this.lockFlip.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
             this.lockFlip.Image = global::Necrofy.Properties.Resources.layer_flip;
-            this.lockFlip.Location = new System.Drawing.Point(187, 3);
+            this.lockFlip.Location = new System.Drawing.Point(222, 3);
             this.lockFlip.Name = "lockFlip";
             this.lockFlip.Size = new System.Drawing.Size(22, 22);
             this.lockFlip.TabIndex = 10;
@@ -120,8 +166,9 @@
             // 
             this.lockPalette.Appearance = System.Windows.Forms.Appearance.Button;
             this.lockPalette.AutoSize = true;
+            this.lockPalette.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
             this.lockPalette.Image = global::Necrofy.Properties.Resources.color;
-            this.lockPalette.Location = new System.Drawing.Point(159, 3);
+            this.lockPalette.Location = new System.Drawing.Point(199, 3);
             this.lockPalette.Name = "lockPalette";
             this.lockPalette.Size = new System.Drawing.Size(22, 22);
             this.lockPalette.TabIndex = 9;
@@ -133,8 +180,9 @@
             // 
             this.lockTileNum.Appearance = System.Windows.Forms.Appearance.Button;
             this.lockTileNum.AutoSize = true;
+            this.lockTileNum.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
             this.lockTileNum.Image = global::Necrofy.Properties.Resources.image;
-            this.lockTileNum.Location = new System.Drawing.Point(131, 3);
+            this.lockTileNum.Location = new System.Drawing.Point(176, 3);
             this.lockTileNum.Name = "lockTileNum";
             this.lockTileNum.Size = new System.Drawing.Size(22, 22);
             this.lockTileNum.TabIndex = 8;
@@ -145,7 +193,8 @@
             // lockLabel
             // 
             this.lockLabel.AutoSize = true;
-            this.lockLabel.Location = new System.Drawing.Point(95, 8);
+            this.lockLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+            this.lockLabel.Location = new System.Drawing.Point(140, 8);
             this.lockLabel.Name = "lockLabel";
             this.lockLabel.Size = new System.Drawing.Size(34, 13);
             this.lockLabel.TabIndex = 7;
@@ -154,6 +203,7 @@
             // flipLabel
             // 
             this.flipLabel.AutoSize = true;
+            this.flipLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
             this.flipLabel.Location = new System.Drawing.Point(3, 8);
             this.flipLabel.Name = "flipLabel";
             this.flipLabel.Size = new System.Drawing.Size(26, 13);
@@ -164,6 +214,7 @@
             // 
             this.flipX.Appearance = System.Windows.Forms.Appearance.Button;
             this.flipX.AutoSize = true;
+            this.flipX.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
             this.flipX.Image = global::Necrofy.Properties.Resources.layer_flip;
             this.flipX.Location = new System.Drawing.Point(31, 3);
             this.flipX.Name = "flipX";
@@ -177,8 +228,9 @@
             // 
             this.flipY.Appearance = System.Windows.Forms.Appearance.Button;
             this.flipY.AutoSize = true;
+            this.flipY.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
             this.flipY.Image = global::Necrofy.Properties.Resources.layer_flip_vertical;
-            this.flipY.Location = new System.Drawing.Point(59, 3);
+            this.flipY.Location = new System.Drawing.Point(54, 3);
             this.flipY.Name = "flipY";
             this.flipY.Size = new System.Drawing.Size(22, 22);
             this.flipY.TabIndex = 5;
@@ -275,5 +327,8 @@
         private System.Windows.Forms.Label lockLabel;
         private System.Windows.Forms.Label flipLabel;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.CheckBox lockPriority;
+        private System.Windows.Forms.Label priorityLabel;
+        private System.Windows.Forms.CheckBox priority;
     }
 }

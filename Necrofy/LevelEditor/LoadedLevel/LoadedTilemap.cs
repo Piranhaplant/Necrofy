@@ -51,10 +51,11 @@ namespace Necrofy
         
         public struct Tile
         {
-            public static readonly Tile Empty = new Tile(0, 0, false, false);
+            public static readonly Tile Empty = new Tile(0, 0, false, false, false);
 
             public readonly int tileNum;
             public readonly int palette;
+            public readonly bool priority;
             public readonly bool xFlip;
             public readonly bool yFlip;
 
@@ -63,6 +64,7 @@ namespace Necrofy
             public Tile(byte lowByte, byte highByte) {
                 tileNum = lowByte + ((highByte & 1) << 8);
                 palette = (highByte >> 2) & 7;
+                priority = ((highByte >> 5) & 1) > 0;
                 xFlip = ((highByte >> 6) & 1) > 0;
                 yFlip = ((highByte >> 7) & 1) > 0;
             }
@@ -70,13 +72,15 @@ namespace Necrofy
             public Tile(Tile original, int tileNum) {
                 this.tileNum = tileNum;
                 palette = original.palette;
+                priority = original.priority;
                 xFlip = original.xFlip;
                 yFlip = original.yFlip;
             }
 
-            public Tile(int tileNum, int palette, bool xFlip, bool yFlip) {
+            public Tile(int tileNum, int palette, bool priority, bool xFlip, bool yFlip) {
                 this.tileNum = tileNum;
                 this.palette = palette;
+                this.priority = priority;
                 this.xFlip = xFlip;
                 this.yFlip = yFlip;
             }
@@ -85,6 +89,7 @@ namespace Necrofy
                 return (ushort)(
                     (tileNum & 0x1ff) |
                     ((palette & 7) << 10) |
+                    ((priority ? 1 : 0) << 13) |
                     ((xFlip ? 1 : 0) << 14) |
                     ((yFlip ? 1 : 0) << 15)
                 );
@@ -98,6 +103,7 @@ namespace Necrofy
                 var tile = (Tile)obj;
                 return tileNum == tile.tileNum &&
                        palette == tile.palette &&
+                       priority == tile.priority &&
                        xFlip == tile.xFlip &&
                        yFlip == tile.yFlip;
             }
@@ -106,6 +112,7 @@ namespace Necrofy
                 var hashCode = -787655182;
                 hashCode = hashCode * -1521134295 + tileNum.GetHashCode();
                 hashCode = hashCode * -1521134295 + palette.GetHashCode();
+                hashCode = hashCode * -1521134295 + priority.GetHashCode();
                 hashCode = hashCode * -1521134295 + xFlip.GetHashCode();
                 hashCode = hashCode * -1521134295 + yFlip.GetHashCode();
                 return hashCode;
@@ -115,9 +122,9 @@ namespace Necrofy
                 if (t == null) {
                     return null;
                 } else if (horizontal) {
-                    return new Tile(t.Value.tileNum, t.Value.palette, !t.Value.xFlip, t.Value.yFlip);
+                    return new Tile(t.Value.tileNum, t.Value.palette, t.Value.priority, !t.Value.xFlip, t.Value.yFlip);
                 } else {
-                    return new Tile(t.Value.tileNum, t.Value.palette, t.Value.xFlip, !t.Value.yFlip);
+                    return new Tile(t.Value.tileNum, t.Value.palette, t.Value.priority, t.Value.xFlip, !t.Value.yFlip);
                 }
             }
         }

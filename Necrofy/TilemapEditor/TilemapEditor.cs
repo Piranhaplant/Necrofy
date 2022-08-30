@@ -32,7 +32,7 @@ namespace Necrofy
 
         private LoadedGraphics graphics;
         public Bitmap[] tiles { get; private set; }
-        private int colorsPerPalette;
+        private int colorsPerPalette = 16;
 
         public bool FlipX {
             get => flipX.Checked;
@@ -41,6 +41,10 @@ namespace Necrofy
         public bool FlipY {
             get => flipY.Checked;
             set => flipY.Checked = value;
+        }
+        public bool Priority {
+            get => priority.Checked;
+            set => priority.Checked = value;
         }
         public int SelectedTile {
             get => tilePicker.SelectedTile;
@@ -54,6 +58,7 @@ namespace Necrofy
         public bool LockTileNum => lockTileNum.Checked;
         public bool LockPalette => lockPalette.Checked;
         public bool LockFlip => lockFlip.Checked;
+        public bool LockPriority => lockPriority.Checked;
 
         private readonly Dictionary<Keys, CheckBox> checkboxKeys;
 
@@ -199,7 +204,7 @@ namespace Necrofy
 
         public void FillSelection() {
             if (SelectionExists) {
-                undoManager.Do(new FillTilemapSelectionAction(new LoadedTilemap.Tile(SelectedTile, SelectedPalette, FlipX, FlipY)));
+                undoManager.Do(new FillTilemapSelectionAction(new LoadedTilemap.Tile(SelectedTile, SelectedPalette, Priority, FlipX, FlipY)));
             }
         }
 
@@ -285,7 +290,7 @@ namespace Necrofy
             }
             Colors = (Color[])palette.colors.Clone();
             if (transparency) {
-                for (int i = 0; i < Colors.Length; i += 16) {
+                for (int i = 0; i < Colors.Length; i += colorsPerPalette) {
                     Colors[i] = Color.Transparent;
                 }
             }
@@ -321,8 +326,7 @@ namespace Necrofy
             DisposeTiles();
             tiles = SNESGraphics.RenderAllTiles(graphics);
             colorsPerPalette = graphics.Is2BPP ? 4 : 16;
-            UpdateTilePicker();
-            Repaint();
+            LoadPalette(); // Reload palette, since graphics may have changed between 2bpp and 4bpp
         }
 
         private void UpdateTilePicker() {

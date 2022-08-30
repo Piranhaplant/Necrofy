@@ -736,6 +736,7 @@
     <None Include="ProjectFiles\Patches\NecrofyIntro.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Icons\fill-090.png" />
     <Content Include="ProjectFiles\Patches\FootballPlayerWaterFix.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
