@@ -162,6 +162,7 @@ namespace Necrofy
         {
             public abstract bool Checked { get; set; }
             public abstract bool Enabled { get; set; }
+            public abstract string Text { get; set; }
         }
 
         private class BaseItemProxy : ItemProxy
@@ -170,6 +171,7 @@ namespace Necrofy
 
             public override bool Checked { get => false; set { } }
             public override bool Enabled { get => item.Enabled; set => item.Enabled = value; }
+            public override string Text { get => item.Text; set => item.Text = value; }
 
             public BaseItemProxy(ToolStripItem item, EventHandler clickEventHandler) {
                 this.item = item;
@@ -183,6 +185,7 @@ namespace Necrofy
 
             public override bool Checked { get => item.Checked; set => item.Checked = value; }
             public override bool Enabled { get => item.Enabled; set => item.Enabled = value; }
+            public override string Text { get => item.Text; set => item.Text = value; }
 
             public MenuItemProxy(ToolStripMenuItem item, EventHandler clickEventHandler, EventHandler checkedChangedEventHandler) {
                 this.item = item;
@@ -197,6 +200,7 @@ namespace Necrofy
 
             public override bool Checked { get => item.Checked; set => item.Checked = value; }
             public override bool Enabled { get => item.Enabled; set => item.Enabled = value; }
+            public override string Text { get => item.Text; set => item.Text = value; }
 
             public ButtonItemProxy(ToolStripButton item, EventHandler clickEventHandler, EventHandler checkedChangedEventHandler) {
                 this.item = item;
@@ -211,6 +215,7 @@ namespace Necrofy
 
             public override bool Checked { get => item.Checked; set => item.Checked = value; }
             public override bool Enabled { get => item.Enabled; set => item.Enabled = value; }
+            public override string Text { get => item.Text; set => item.Text = value; }
 
             public CheckableSplitButtonItemProxy(CheckableToolStripSplitButton item, EventHandler clickEventHandler, EventHandler checkedChangedEventHandler) {
                 this.item = item;
@@ -225,6 +230,7 @@ namespace Necrofy
 
             public override bool Checked { get => item.Checked; set => item.Checked = value; }
             public override bool Enabled { get => item.Enabled; set => item.Enabled = value; }
+            public override string Text { get => item.Text; set => item.Text = value; }
 
             public SeparateCheckMenuItemProxy(SeparateCheckToolStripMenuItem item, EventHandler clickEventHandler, EventHandler checkedChangedEventHandler) {
                 this.item = item;
@@ -249,6 +255,7 @@ namespace Necrofy
             ViewTileBorders,
             ViewSpriteGrid,
             ViewDecreaseWidth,
+            WidthLabel,
             ViewIncreaseWidth,
             ViewLargeTileMode,
             ViewTransparency,

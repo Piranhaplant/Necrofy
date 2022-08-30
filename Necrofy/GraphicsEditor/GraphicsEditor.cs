@@ -109,6 +109,7 @@ namespace Necrofy
             tileWidth = Math.Max(minWidth, Math.Min(maxWidth, newTileWidth));
             mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewDecreaseWidth).Enabled = tileWidth > minWidth;
             mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewIncreaseWidth).Enabled = tileWidth < maxWidth;
+            mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.WidthLabel).Text = tileWidth.ToString();
             
             int tilesPerRow = tileWidth * tileSize;
             int tileHeight = tiles.Count / tilesPerRow * tileSize;

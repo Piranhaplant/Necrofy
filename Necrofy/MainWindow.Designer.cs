@@ -78,6 +78,7 @@
             this.addPasswordsRowButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator19 = new System.Windows.Forms.ToolStripSeparator();
             this.decreaseWidthButton = new System.Windows.Forms.ToolStripButton();
+            this.widthLabel = new System.Windows.Forms.ToolStripLabel();
             this.increaseWidthButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator21 = new System.Windows.Forms.ToolStripSeparator();
             this.graphicsPaintbrushButton = new System.Windows.Forms.ToolStripButton();
@@ -282,6 +283,7 @@
             this.addPasswordsRowButton,
             this.toolStripSeparator19,
             this.decreaseWidthButton,
+            this.widthLabel,
             this.increaseWidthButton,
             this.toolStripSeparator21,
             this.graphicsPaintbrushButton,
@@ -729,6 +731,14 @@
             this.decreaseWidthButton.Name = "decreaseWidthButton";
             this.decreaseWidthButton.Size = new System.Drawing.Size(23, 22);
             this.decreaseWidthButton.Text = "Decrease Width";
+            // 
+            // widthLabel
+            // 
+            this.toolStripGrouper.SetItemSet(this.widthLabel, ((Necrofy.ToolStripGrouper.ItemSet)((Necrofy.ToolStripGrouper.ItemSet.Graphics | Necrofy.ToolStripGrouper.ItemSet.Tilemap))));
+            this.toolStripGrouper.SetItemType(this.widthLabel, Necrofy.ToolStripGrouper.ItemType.WidthLabel);
+            this.widthLabel.Name = "widthLabel";
+            this.widthLabel.Size = new System.Drawing.Size(25, 22);
+            this.widthLabel.Text = "888";
             // 
             // increaseWidthButton
             // 
@@ -2218,6 +2228,7 @@
         private System.Windows.Forms.ToolStripMenuItem viewHintingNone;
         private System.Windows.Forms.ToolStripMenuItem viewHintingLevelTitle;
         private System.Windows.Forms.ToolStripMenuItem viewHintingTileset;
+        private System.Windows.Forms.ToolStripLabel widthLabel;
     }
 }
 
