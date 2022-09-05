@@ -122,7 +122,7 @@ namespace Necrofy
             if (tiles == null) {
                 return;
             }
-            tileSize = tiles[0].Width;
+            tileSize = tiles.Length > 0 ? tiles[0].Width : 1;
             tilesPerRow = canvas.Width / tileSize / zoom;
             int height = (int)Math.Ceiling(tiles.Length / (double)tilesPerRow);
             scrollWrapper.SetClientSize(canvas.Width / zoom, Math.Max(canvas.Height / zoom, height * tileSize));

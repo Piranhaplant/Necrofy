@@ -19,7 +19,7 @@ namespace Necrofy
     {
         private readonly LoadedGraphics graphics;
         public readonly GraphicsTileList tiles = new GraphicsTileList();
-        private int colorsPerPalette;
+        public int colorsPerPalette { get; private set; }
 
         public UndoManager<GraphicsEditor> undoManager { get; private set; }
 

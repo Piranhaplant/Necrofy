@@ -102,7 +102,7 @@ namespace Necrofy
                     for (int x = 0; x < pasteTiles.GetWidth(); x++) {
                         if (pasteTiles[x, y] != null) {
                             LoadedTilemap.Tile tile = (LoadedTilemap.Tile)pasteTiles[x, y];
-                            SNESGraphics.DrawWithPlt(g, pixelX + x * 8, pixelY + y * 8, editor.tiles[tile.tileNum], editor.Colors, tile.palette * 16, 16, tile.xFlip, tile.yFlip);
+                            SNESGraphics.DrawWithPlt(g, pixelX + x * 8, pixelY + y * 8, editor.tiles[tile.tileNum], editor.Colors, tile.palette * editor.colorsPerPalette, editor.colorsPerPalette, tile.xFlip, tile.yFlip);
                         }
                     }
                 }

@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace Necrofy
 {
-    partial class TilemapEditor : MapEditorDesigner<TilemapTool>
+    partial class TilemapEditor : MapEditor<TilemapTool>
     {
         private readonly LoadedTilemap loadedTilemap;
         public LoadedTilemap.Tile[] tilemap;
@@ -32,7 +32,7 @@ namespace Necrofy
 
         private LoadedGraphics graphics;
         public Bitmap[] tiles { get; private set; }
-        private int colorsPerPalette = 16;
+        public int colorsPerPalette { get; private set; } = 16;
 
         public bool FlipX {
             get => flipX.Checked;
@@ -69,7 +69,8 @@ namespace Necrofy
             Disposed += TilemapEditor_Disposed;
             FormClosed += TilemapEditor_FormClosed;
             checkboxKeys = new Dictionary<Keys, CheckBox>() {
-                { Keys.X, flipX }, { Keys.Y, flipY }, { Keys.Q, lockTileNum }, { Keys.W, lockPalette }, { Keys.E, lockFlip }
+                { Keys.X, flipX }, { Keys.Y, flipY }, { Keys.P, priority },
+                { Keys.Q, lockTileNum }, { Keys.W, lockPalette }, { Keys.E, lockFlip }, { Keys.R, lockPriority },
             };
 
             this.loadedTilemap = loadedTilemap;

@@ -69,7 +69,7 @@ namespace Necrofy
                 for (int y = 0; y < image.Height; y++) {
                     for (int x = 0; x < image.Width; x++) {
                         if (editor.Selection.GetPoint(x + bounds.X, y + bounds.Y) && GetPixel(x + bounds.X, y + bounds.Y, out byte pixel)) {
-                            Marshal.WriteInt32(bitmapData.Scan0, y * bitmapData.Stride + x * 4, editor.Colors[editor.selectedPalette * 16 + pixel].ToArgb());
+                            Marshal.WriteInt32(bitmapData.Scan0, y * bitmapData.Stride + x * 4, editor.Colors[editor.selectedPalette * editor.colorsPerPalette + pixel].ToArgb());
                             rawData[x, y] = (sbyte)pixel;
                         } else {
                             rawData[x, y] = -1;
@@ -92,7 +92,6 @@ namespace Necrofy
                 }
                 
                 image.Dispose();
-                // TODO: Make it so graphics data isn't compatible with level background data
             }
 
             protected override Size ReadPaste() {
@@ -114,7 +113,7 @@ namespace Necrofy
                 BitmapData bitmapData = pasteImage.LockBits(new Rectangle(Point.Empty, pasteImage.Size), ImageLockMode.WriteOnly, pasteImage.PixelFormat);
                 for (int y = 0; y < pasteImage.Height; y++) {
                     for (int x = 0; x < pasteImage.Width; x++) {
-                        pasteData[x, y] = (sbyte)(pasteData[x, y] % 16);
+                        pasteData[x, y] = (sbyte)(pasteData[x, y] % editor.colorsPerPalette);
                         byte value = pasteData[x, y] >= 0 ? (byte)pasteData[x, y] : (byte)255;
                         Marshal.WriteByte(bitmapData.Scan0, y * bitmapData.Stride + x, value);
                     }
@@ -122,8 +121,8 @@ namespace Necrofy
                 pasteImage.UnlockBits(bitmapData);
 
                 ColorPalette palette = pasteImage.Palette;
-                for (int i = 0; i < 16; i++) {
-                    palette.Entries[i] = editor.Colors[editor.selectedPalette * 16 + i];
+                for (int i = 0; i < editor.colorsPerPalette; i++) {
+                    palette.Entries[i] = editor.Colors[editor.selectedPalette * editor.colorsPerPalette + i];
                 }
                 palette.Entries[255] = Color.Transparent;
                 pasteImage.Palette = palette;
@@ -157,8 +156,8 @@ namespace Necrofy
             private sbyte GetClosestPaletteEntry(Color c) {
                 sbyte bestPaletteEntry = 0;
                 float bestDistance = 100000f;
-                for (sbyte i = 0; i < 16; i++) {
-                    Color paletteEntry = editor.Colors[editor.selectedPalette * 16 + i];
+                for (sbyte i = 0; i < editor.colorsPerPalette; i++) {
+                    Color paletteEntry = editor.Colors[editor.selectedPalette * editor.colorsPerPalette + i];
                     if (paletteEntry.A > 0) {
                         float distance = Square(c.R - paletteEntry.R) + Square(c.B - paletteEntry.B) + Square(c.G - paletteEntry.G);
                         if (distance == 0f) {
