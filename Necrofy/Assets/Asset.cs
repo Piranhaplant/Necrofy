@@ -52,9 +52,6 @@ namespace Necrofy
         protected Asset(NameInfo nameInfo) {
             this.nameInfo = nameInfo;
         }
-        protected Asset(NameInfo nameInfo, string filename) : this(nameInfo) {
-            Reload(filename);
-        }
         /// <summary>Writes a file containing the asset into the given project directory</summary>
         /// <param name="project">The project</param>
         public void Save(Project project, bool overriteExisting = true) {
@@ -183,6 +180,20 @@ namespace Necrofy
             romStream.PopPosition();
         }
 
+        public static void Extract(NStream romStream, ROMInfo romInfo, ExtractionPreset preset) {
+            foreach (Creator creator in creators) {
+                NameInfo nameInfo = creator.GetNameInfoForExtraction(preset);
+                if (nameInfo != null) {
+                    CreateAsset(romStream, romInfo, creator, nameInfo, preset.Address, preset.Length);
+                    if (preset.Options != null) {
+                        romInfo.assetOptions.SetOptions(nameInfo.Category, nameInfo.Name, preset.Options);
+                    }
+                    return;
+                }
+            }
+            throw new Exception("No asset type found to extract " + preset.Description);
+        }
+
         /// <summary>Reloads the asset from disk</summary>
         public void Reload(Project project) {
             string filename = nameInfo.GetFilename(project.path);
@@ -224,7 +235,11 @@ namespace Necrofy
 
             protected NameInfo(PathParts parts) {
                 Parts = parts;
-                Name = parts.folder + FolderSeparator + parts.name;
+                if (parts.folder == "") {
+                    Name = parts.name;
+                } else {
+                    Name = parts.folder + FolderSeparator + parts.name;
+                }
                 ParsedName = new ParsedName(Name);
             }
             
@@ -416,6 +431,10 @@ namespace Necrofy
             /// <param name="name">The desired name of the asset</param>
             /// <param name="group">The group the asset will belong to. This is used to group assets into a signle tileset. May be null</param>
             public virtual NameInfo GetNameInfoForName(string name, string group) { return null; }
+            /// <summary>Gets a NameInfo for extracting the given extraction preset.</summary>
+            /// <param name="preset">The extraction preset</param>
+            /// <returns>The NameInfo, or null if not supported by this asset creator</returns>
+            public virtual NameInfo GetNameInfoForExtraction(ExtractionPreset preset) { return null; }
         }
         
         /// <summary>Information about an asset that exists in a clean ROM</summary>

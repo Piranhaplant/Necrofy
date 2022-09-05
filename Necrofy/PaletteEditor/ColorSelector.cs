@@ -151,7 +151,7 @@ namespace Necrofy
             }
             Point p = MouseToPoint(e.X, e.Y);
             Point clamped = ClampPoint(p);
-            if (clamped == p) {
+            if (clamped == p && PointToIndex(p) < Colors.Length) {
                 if (MultiSelect) {
                     selecting = true;
                 }

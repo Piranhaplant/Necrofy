@@ -182,7 +182,10 @@ namespace Necrofy
         public void SetColor(Color color, Point start, Point end) {
             for (int y = start.Y; y <= end.Y; y++) {
                 for (int x = start.X; x <= end.X; x++) {
-                    colorSelector.Colors[colorSelector.PointToIndex(new Point(x, y))] = color;
+                    int index = colorSelector.PointToIndex(new Point(x, y));
+                    if (index < colorSelector.Colors.Length) {
+                        colorSelector.Colors[index] = color;
+                    }
                 }
             }
             UpdateColors();

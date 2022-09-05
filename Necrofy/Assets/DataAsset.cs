@@ -27,7 +27,9 @@ namespace Necrofy
             this.data = data;
         }
 
-        private DataAsset(DataNameInfo nameInfo, string filename) : base(nameInfo, filename) { }
+        private DataAsset(DataNameInfo nameInfo, string filename) : base(nameInfo) {
+            Reload(filename);
+        }
 
         protected override void Reload(string filename) {
             data = File.ReadAllBytes(filename);
@@ -72,7 +74,24 @@ namespace Necrofy
             public override Asset FromRom(NameInfo nameInfo, NStream romStream, ROMInfo romInfo, int? size, out bool trackFreespace) {
                 DataNameInfo dataNameInfo = (DataNameInfo)nameInfo;
                 trackFreespace = dataNameInfo.Parts.pointer == null;
-                return new DataAsset(dataNameInfo, romStream.ReadBytes((int)size));
+                if (nameInfo.Parts.compressed) {
+                    if (trackFreespace) {
+                        romStream.PushPosition();
+                        ZAMNCompress.AddToFreespace(romStream, romInfo.Freespace);
+                        romStream.PopPosition();
+                        trackFreespace = false;
+                    }
+                    return new DataAsset(dataNameInfo, ZAMNCompress.Decompress(romStream));
+                } else {
+                    return new DataAsset(dataNameInfo, romStream.ReadBytes((int)size));
+                }
+            }
+
+            public override NameInfo GetNameInfoForExtraction(ExtractionPreset preset) {
+                if (preset.Type == ExtractionPreset.AssetType.Binary) {
+                    return new DataNameInfo(preset.Category, preset.Filename, preset.Address, preset.Compressed);
+                }
+                return null;
             }
         }
 
@@ -81,7 +100,7 @@ namespace Necrofy
             private const string Extension = "bin";
             
             private DataNameInfo(PathParts parts) : base(parts) { }
-            public DataNameInfo(string folder, string name, int? pointer) : this(new PathParts(folder, name, Extension, pointer, false)) { }
+            public DataNameInfo(string folder, string name, int? pointer, bool compressed = false) : this(new PathParts(folder, name, Extension, pointer, compressed)) { }
             
             public override AssetCategory Category => AssetCat;
             

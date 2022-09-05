@@ -35,8 +35,9 @@ namespace Necrofy
             this.demo = demo;
         }
 
-        private DemoAsset(DemoNameInfo nameInfo, string filename) : base(nameInfo, filename) {
+        private DemoAsset(DemoNameInfo nameInfo, string filename) : base(nameInfo) {
             this.demoNameInfo = nameInfo;
+            Reload(filename);
         }
 
         protected override void Reload(string filename) {

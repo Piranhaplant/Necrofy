@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Necrofy</RootNamespace>
     <AssemblyName>Necrofy</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -106,9 +106,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssetExtraction\AssetExtractorDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AssetExtraction\AssetExtractorDialog.Designer.cs">
+      <DependentUpon>AssetExtractorDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AssetExtraction\ExtractionFile.cs" />
+    <Compile Include="AssetExtraction\ExtractionPreset.cs" />
     <Compile Include="AssetOptions.cs" />
     <Compile Include="AssetSelector.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="AssetSelector.Designer.cs">
       <DependentUpon>AssetSelector.cs</DependentUpon>
@@ -464,6 +472,9 @@
     <Compile Include="Version.cs" />
     <Compile Include="Win32.cs" />
     <Compile Include="ZAMNCompress.cs" />
+    <EmbeddedResource Include="AssetExtraction\AssetExtractorDialog.resx">
+      <DependentUpon>AssetExtractorDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="AssetSelector.resx">
       <DependentUpon>AssetSelector.cs</DependentUpon>
     </EmbeddedResource>
@@ -563,6 +574,9 @@
       <DependentUpon>TilemapEditor.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="ProjectFiles\Editor\AssetExtractionPresets.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="ProjectFiles\Editor\CollisionPresets.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

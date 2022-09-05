@@ -25,7 +25,9 @@ namespace Necrofy
             this.sprites = sprites;
         }
 
-        private SpritesAsset(SpritesNameInfo nameInfo, string filename) : base(nameInfo, filename) { }
+        private SpritesAsset(SpritesNameInfo nameInfo, string filename) : base(nameInfo) {
+            Reload(filename);
+        }
 
         protected override void Reload(string filename) {
             sprites = JsonConvert.DeserializeObject<Sprite[]>(File.ReadAllText(filename));

@@ -1,0 +1,269 @@
+{
+	"Presets": [
+		{
+			"Description": "HUD Graphics",
+			"Filename": "HUD",
+			"Category": "HUD",
+			"Address": 747585,
+			"Length": 4496,
+			"Compressed": false,
+			"Type": "Graphics2BPP",
+			"Options": {
+				"width": 16,
+				"transparency": true,
+				"largeTiles": false
+			}
+		},
+		{
+			"Description": "Copyright Tilemap",
+			"Filename": "Copyright",
+			"Category": "HUD",
+			"Address": 1007232,
+			"Length": 1920,
+			"Compressed": false,
+			"Type": "Tilemap",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Game Over Graphics",
+			"Filename": "Graphics",
+			"Category": "Game Over",
+			"Address": 1009152,
+			"Length": 1888,
+			"Compressed": false,
+			"Type": "Graphics2BPP",
+			"Options": {
+				"width": 16,
+				"transparency": true,
+				"largeTiles": false
+			}
+		},
+		{
+			"Description": "Game Over Tilemap Bottom",
+			"Filename": "Tilemap Bottom",
+			"Category": "Game Over",
+			"Address": 771044,
+			"Length": 1792,
+			"Compressed": false,
+			"Type": "Tilemap",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Game Over Tilemap Top",
+			"Filename": "Tilemap Top",
+			"Category": "Game Over",
+			"Address": 769508,
+			"Length": 1792,
+			"Compressed": false,
+			"Type": "Tilemap",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Select Player Foreground Graphics",
+			"Filename": "Foreground",
+			"Category": "Select Player",
+			"Address": 664320,
+			"Length": 0,
+			"Compressed": true,
+			"Type": "Graphics",
+			"Options": {
+				"width": 16,
+				"transparency": true,
+				"largeTiles": false
+			}
+		},
+		{
+			"Description": "Select Player Background Graphics",
+			"Filename": "Background",
+			"Category": "Select Player",
+			"Address": 775586,
+			"Length": 2672,
+			"Compressed": false,
+			"Type": "Graphics2BPP",
+			"Options": {
+				"width": 16,
+				"transparency": false,
+				"largeTiles": false
+			}
+		},
+		{
+			"Description": "Select Player Film Strip Graphics",
+			"Filename": "Film Strip",
+			"Category": "Select Player",
+			"Address": 753421,
+			"Length": 224,
+			"Compressed": false,
+			"Type": "Graphics",
+			"Options": {
+				"width": 16,
+				"transparency": true,
+				"largeTiles": false
+			}
+		},
+		{
+			"Description": "Select Player Foreground Text Tilemap",
+			"Filename": "Foreground Text",
+			"Category": "Select Player",
+			"Address": 999168,
+			"Length": 2048,
+			"Compressed": false,
+			"Type": "Tilemap",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Select Player Zeke Tilemap",
+			"Filename": "Foreground Zeke",
+			"Category": "Select Player",
+			"Address": 126188,
+			"Length": 416,
+			"Compressed": false,
+			"Type": "Tilemap",
+			"Options": {
+				"width": 13,
+				"transparency": true,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Select Player Julie Tilemap",
+			"Filename": "Foreground Julie",
+			"Category": "Select Player",
+			"Address": 125772,
+			"Length": 416,
+			"Compressed": false,
+			"Type": "Tilemap",
+			"Options": {
+				"width": 13,
+				"transparency": true,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Select Player Background Tilemap",
+			"Filename": "Background",
+			"Category": "Select Player",
+			"Address": 997120,
+			"Length": 2048,
+			"Compressed": false,
+			"Type": "Tilemap",
+			"Options": {
+				"width": 32,
+				"transparency": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Select Player Film Strip Tilemap",
+			"Filename": "Film Strip",
+			"Category": "Select Player",
+			"Address": 1001216,
+			"Length": 2048,
+			"Compressed": false,
+			"Type": "Tilemap",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Select Player Palette",
+			"Filename": "Palette",
+			"Category": "Select Player",
+			"Address": 126860,
+			"Length": 256,
+			"Compressed": false,
+			"Type": "Palette"
+		},
+		{
+			"Description": "LucasArts Foreground Graphics",
+			"Filename": "Foreground",
+			"Category": "LucasArts",
+			"Address": 765892,
+			"Length": 3616,
+			"Compressed": false,
+			"Type": "Graphics",
+			"Options": {
+				"width": 16,
+				"transparency": true,
+				"largeTiles": false
+			}
+		},
+		{
+			"Description": "LucasArts Background Graphics",
+			"Filename": "Background",
+			"Category": "LucasArts",
+			"Address": 620209,
+			"Length": 2272,
+			"Compressed": false,
+			"Type": "Graphics2BPP",
+			"Options": {
+				"width": 16,
+				"transparency": false,
+				"largeTiles": false
+			}
+		},
+		{
+			"Description": "LucasArts Foreground Tilemap",
+			"Filename": "Foreground",
+			"Category": "LucasArts",
+			"Address": 995072,
+			"Length": 2048,
+			"Compressed": false,
+			"Type": "Tilemap",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "LucasArts Background Tilemap",
+			"Filename": "Background",
+			"Category": "LucasArts",
+			"Address": 993024,
+			"Length": 2048,
+			"Compressed": false,
+			"Type": "Tilemap",
+			"Options": {
+				"width": 32,
+				"transparency": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "LucasArts Foreground Palette",
+			"Filename": "Foreground",
+			"Category": "LucasArts",
+			"Address": 126604,
+			"Length": 256,
+			"Compressed": false,
+			"Type": "Palette"
+		},
+		{
+			"Description": "LucasArts Background Palette",
+			"Filename": "Background",
+			"Category": "LucasArts",
+			"Address": 687787,
+			"Length": 16,
+			"Compressed": false,
+			"Type": "Palette"
+		}
+	]
+}

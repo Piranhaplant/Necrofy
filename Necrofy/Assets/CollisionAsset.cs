@@ -31,7 +31,9 @@ namespace Necrofy
             this.data = data;
         }
 
-        private CollisionAsset(CollisionNameInfo nameInfo, string filename) : base(nameInfo, filename) { }
+        private CollisionAsset(CollisionNameInfo nameInfo, string filename) : base(nameInfo) {
+            Reload(filename);
+        }
 
         protected override void Reload(string filename) {
             data = File.ReadAllBytes(filename);

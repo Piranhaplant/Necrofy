@@ -20,6 +20,9 @@ namespace Necrofy
         private static readonly float[] zoomLevels = new float[] { 0.25f, 0.33f, 0.5f, 0.75f, 1.0f, 2.0f, 4.0f, 8.0f, 16.0f };
 
         private StartupWindow startupWindow;
+        private PreferencesDialog preferencesDialog;
+        private RunSettingsDialog runSettingsDialog;
+        private AssetExtractorDialog assetExtractorDialog;
 
         private Project project;
 
@@ -94,7 +97,7 @@ namespace Necrofy
             viewSpriteGrid.Checked = Properties.Settings.Default.ShowSpriteGrid;
             viewTilemapGrid.Checked = Properties.Settings.Default.ShowTilemapGrid;
 
-            projectMenuItems = new List<ToolStripMenuItem>() { projectBuildProject, projectRunProject, projectSettings };
+            projectMenuItems = new List<ToolStripMenuItem>() { projectBuildProject, projectRunProject, projectSettings, projectExtractAssets };
             toolStripGrouper.HideAllSetItems();
             UpdateStatusText();
 
@@ -521,7 +524,15 @@ namespace Necrofy
         }
 
         private void preferencesToolStripMenuItem_Click(object sender, EventArgs e) {
-            new PreferencesDialog().Show();
+            if (preferencesDialog != null) {
+                preferencesDialog.Activate();
+            } else {
+                preferencesDialog = new PreferencesDialog();
+                preferencesDialog.FormClosed += (sender2, e2) => {
+                    preferencesDialog = null;
+                };
+                preferencesDialog.Show();
+            }
         }
 
         private void BuildProject(object sender, EventArgs e) {
@@ -598,12 +609,17 @@ namespace Necrofy
         }
 
         private void RunFromLevelSettings(object sender, EventArgs e) {
-            RunSettingsDialog dialog = new RunSettingsDialog(savedRunSettings, currentRunSettings);
-            dialog.FormClosed += (sender2, e2) => {
-                currentRunSettings = dialog.currentSettings;
-                SaveRunSettings();
-            };
-            dialog.Show();
+            if (runSettingsDialog != null) {
+                runSettingsDialog.Activate();
+            } else {
+                runSettingsDialog = new RunSettingsDialog(savedRunSettings, currentRunSettings);
+                runSettingsDialog.FormClosed += (sender2, e2) => {
+                    currentRunSettings = runSettingsDialog.currentSettings;
+                    SaveRunSettings();
+                    runSettingsDialog = null;
+                };
+                runSettingsDialog.Show();
+            }
         }
 
         private async void RecordDemo(object sender, EventArgs e) {
@@ -627,7 +643,19 @@ namespace Necrofy
                 project.WriteSettings();
             }
         }
-        
+
+        private void projectExtractAssets_Click(object sender, EventArgs e) {
+            if (assetExtractorDialog != null) {
+                assetExtractorDialog.Activate();
+            } else {
+                assetExtractorDialog = new AssetExtractorDialog(project);
+                assetExtractorDialog.FormClosed += (sender2, e2) => {
+                    assetExtractorDialog = null;
+                };
+                assetExtractorDialog.Show();
+            }
+        }
+
         private void ZoomOut(object sender, EventArgs e) {
             doZoom(-1);
         }

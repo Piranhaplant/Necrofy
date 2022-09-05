@@ -50,8 +50,9 @@ namespace Necrofy
             this.data = data;
         }
 
-        private GraphicsAsset(GraphicsNameInfo nameInfo, string filename) : base(nameInfo, filename) {
+        private GraphicsAsset(GraphicsNameInfo nameInfo, string filename) : base(nameInfo) {
             this.graphicsNameInfo = nameInfo;
+            Reload(filename);
         }
 
         public bool Is2BPP => graphicsNameInfo.type == Type.TwoBPP;
@@ -145,6 +146,14 @@ namespace Necrofy
 
             public override NameInfo GetNameInfoForName(string name, string group) {
                 return new GraphicsNameInfo(GetTilesetFolder(group), name);
+            }
+
+            public override NameInfo GetNameInfoForExtraction(ExtractionPreset preset) {
+                if (preset.Type == ExtractionPreset.AssetType.Graphics || preset.Type == ExtractionPreset.AssetType.Graphics2BPP) {
+                    Type graphicsType = preset.Type == ExtractionPreset.AssetType.Graphics ? Type.Normal : Type.TwoBPP;
+                    return new GraphicsNameInfo(preset.Category, preset.Filename, preset.Address, graphicsType, preset.Compressed);
+                }
+                return null;
             }
         }
 

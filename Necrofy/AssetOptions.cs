@@ -10,11 +10,6 @@ namespace Necrofy
 {
     public class AssetOptions
     {
-        private static readonly Dictionary<AssetCategory, Func<Options>> optionsTemplates = new Dictionary<AssetCategory, Func<Options>>() {
-            { AssetCategory.Graphics, () => new GraphicsOptions() },
-            { AssetCategory.Tilemap, () => new TilemapOptions() },
-        };
-
         public List<Entry> entries = new List<Entry>();
 
         private Entry GetEntry(AssetCategory category, string name) {
@@ -99,19 +94,59 @@ namespace Necrofy
 
         public class OptionJsonConverter : JsonConverter
         {
+            private static readonly Dictionary<AssetCategory, Func<Options>> optionsTemplates = new Dictionary<AssetCategory, Func<Options>>() {
+                { AssetCategory.Graphics, () => new GraphicsOptions() },
+                { AssetCategory.Tilemap, () => new TilemapOptions() },
+            };
+
             public override bool CanConvert(Type objectType) {
                 return typeof(Entry).IsAssignableFrom(objectType);
             }
 
             public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer) {
                 JObject jObject = JObject.Load(reader);
+                Entry target = new Entry();
                 if (optionsTemplates.TryGetValue((AssetCategory)(int)jObject["category"], out Func<Options> optionGetter)) {
-                    Entry target = new Entry();
                     target.options = optionGetter();
-                    serializer.Populate(jObject.CreateReader(), target);
-                    return target;
                 }
-                return null;
+                serializer.Populate(jObject.CreateReader(), target);
+                return target;
+            }
+
+            public override bool CanWrite {
+                get {
+                    return false;
+                }
+            }
+
+            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) {
+                throw new NotImplementedException();
+            }
+        }
+
+        public class AssetExtractionJsonConverter : JsonConverter
+        {
+            private static readonly Dictionary<ExtractionPreset.AssetType, Func<Options>> optionsTemplates = new Dictionary<ExtractionPreset.AssetType, Func<Options>>() {
+                { ExtractionPreset.AssetType.Graphics, () => new GraphicsOptions() },
+                { ExtractionPreset.AssetType.Graphics2BPP, () => new GraphicsOptions() },
+                { ExtractionPreset.AssetType.Tilemap, () => new TilemapOptions() },
+                { ExtractionPreset.AssetType.Palette, () => null },
+                { ExtractionPreset.AssetType.Binary, () => null },
+            };
+
+            public override bool CanConvert(Type objectType) {
+                return typeof(ExtractionPreset).IsAssignableFrom(objectType);
+            }
+
+            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer) {
+                JObject jObject = JObject.Load(reader);
+                ExtractionPreset.AssetType assetType = (ExtractionPreset.AssetType)Enum.Parse(typeof(ExtractionPreset.AssetType), (string)jObject["Type"]);
+                ExtractionPreset target = new ExtractionPreset();
+                if (jObject["Options"] != null && optionsTemplates.TryGetValue(assetType, out Func<Options> optionGetter)) {
+                    target.Options = optionGetter();
+                }
+                serializer.Populate(jObject.CreateReader(), target);
+                return target;
             }
 
             public override bool CanWrite {

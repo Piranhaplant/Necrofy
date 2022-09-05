@@ -35,9 +35,17 @@ namespace Necrofy
 
         public void LoadProject(Project project, AssetCategory category, string startingAssetName) {
             populator = new DropDownAssetTreePopulator(project.Assets, comboTree, category);
+
             if (project.Assets.Root.FindFolder(Path.GetDirectoryName(startingAssetName), out AssetTree.Folder folder)) {
                 ComboTreeNode folderNode = populator.FindByTag(comboTree.Nodes, folder);
                 if (folderNode != null && folderNode.Nodes.Count > 0) {
+                    string assetFileName = Path.GetFileName(startingAssetName);
+                    foreach (ComboTreeNode node in folderNode.Nodes) {
+                        if (assetFileName.StartsWith(node.Text)) {
+                            comboTree.SelectedNode = node;
+                            return;
+                        }
+                    }
                     comboTree.SelectedNode = folderNode.Nodes[0];
                 }
             }
@@ -55,8 +63,8 @@ namespace Necrofy
 
             protected override void SetImageList(ImageList imageList) => comboBox.Images = imageList;
 
-            protected override ComboTreeNode CreateChild(ComboTreeNodeCollection parent, string text, object tag, bool isFolder, int imageIndex) {
-                ComboTreeNode node = parent.Add(text);
+            protected override ComboTreeNode CreateChild(ComboTreeNodeCollection parent, int index, string text, object tag, bool isFolder, int imageIndex) {
+                ComboTreeNode node = new ComboTreeNode(text);
                 node.Name = text;
                 node.Tag = tag;
                 node.Selectable = !isFolder;
@@ -64,7 +72,12 @@ namespace Necrofy
                 if (isFolder) {
                     node.ExpandedImageIndex = imageIndex + 1;
                 }
+                parent.Insert(index, node);
                 return node;
+            }
+
+            protected override List<string> GetNodeTexts(ComboTreeNodeCollection parent) {
+                return parent.Select(n => n.Text).ToList();
             }
 
             public override ComboTreeNode FindByTag(ComboTreeNodeCollection collection, object tag) {

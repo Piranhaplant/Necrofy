@@ -98,6 +98,11 @@ namespace Necrofy
             Asset.AddAllDefaults(s, this, originalProjectVersion);
         }
 
+        /// <summary>Creates an empty ROMInfo to use for extracting single assets</summary>
+        public ROMInfo() {
+            Freespace = new Freespace(0x100000);
+        }
+
         private void ReadProperties(NStream s) {
             s.PushPosition();
             s.Seek(ROMPointers.SecretBonusCodePointers);

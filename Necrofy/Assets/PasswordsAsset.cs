@@ -26,7 +26,9 @@ namespace Necrofy
             this.data = data;
         }
 
-        private PasswordsAsset(PasswordsNameInfo nameInfo, string filename) : base(nameInfo, filename) { }
+        private PasswordsAsset(PasswordsNameInfo nameInfo, string filename) : base(nameInfo) {
+            Reload(filename);
+        }
 
         protected override void Reload(string filename) {
             data = JsonConvert.DeserializeObject<PasswordData>(File.ReadAllText(filename));

@@ -72,7 +72,6 @@ namespace Necrofy
             }
         }
 
-        // TODO: Preserve sorting when adding files/folders
         private void File_Created(object sender, FileSystemEventArgs e) {
             if (Root.FindFolder(Path.GetDirectoryName(e.Name), out Folder parentFolder)) {
                 if (parentFolder.Folders.Any(f => f.Name == Path.GetFileName(e.Name)) || parentFolder.Assets.Any(a => a.Name == Path.GetFileName(e.Name))) {

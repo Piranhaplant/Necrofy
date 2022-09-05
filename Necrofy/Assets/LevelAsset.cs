@@ -32,8 +32,9 @@ namespace Necrofy
             this.level = level;
         }
 
-        private LevelAsset(LevelNameInfo nameInfo, string filename) : base(nameInfo, filename) {
+        private LevelAsset(LevelNameInfo nameInfo, string filename) : base(nameInfo) {
             this.levelNameInfo = nameInfo;
+            Reload(filename);
         }
 
         public int LevelNumber => levelNameInfo.levelNum;

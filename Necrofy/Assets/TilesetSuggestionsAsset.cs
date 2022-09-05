@@ -22,7 +22,9 @@ namespace Necrofy
             return new TilesetSuggestionsCreator().FromProject(project, parsedName.Tileset);
         }
 
-        private TilesetSuggestionsAsset(TilesetSuggestionsNameInfo nameInfo, string filename) : base(nameInfo, filename) { }
+        private TilesetSuggestionsAsset(TilesetSuggestionsNameInfo nameInfo, string filename) : base(nameInfo) {
+            Reload(filename);
+        }
 
         protected override void Reload(string filename) {
             data = new TilesetSuggestions(File.ReadAllText(filename));

@@ -32,7 +32,9 @@ namespace Necrofy
             this.data = data;
         }
 
-        private PaletteAsset(PaletteNameInfo nameInfo, string filename) : base(nameInfo, filename) { }
+        private PaletteAsset(PaletteNameInfo nameInfo, string filename) : base(nameInfo) {
+            Reload(filename);
+        }
 
         protected override void Reload(string filename) {
             data = File.ReadAllBytes(filename);
@@ -112,7 +114,7 @@ namespace Necrofy
                     return new PaletteAsset(paletteNameInfo, new byte[0x100]);
                 } else {
                     trackFreespace = paletteNameInfo.Parts.pointer == null;
-                    return new PaletteAsset(paletteNameInfo, romStream.ReadBytes(0x100));
+                    return new PaletteAsset(paletteNameInfo, romStream.ReadBytes(size ?? 0x100));
                 }
             }
 
@@ -122,6 +124,13 @@ namespace Necrofy
                 } else {
                     return new PaletteNameInfo(GetTilesetFolder(group), name);
                 }
+            }
+
+            public override NameInfo GetNameInfoForExtraction(ExtractionPreset preset) {
+                if (preset.Type == ExtractionPreset.AssetType.Palette) {
+                    return new PaletteNameInfo(preset.Category, preset.Filename, preset.Address);
+                }
+                return null;
             }
         }
 

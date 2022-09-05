@@ -54,13 +54,17 @@ namespace Necrofy
 
             protected override void SetImageList(ImageList imageList) => treeView.ImageList = imageList;
 
-            protected override TreeNode CreateChild(TreeNodeCollection parent, string text, object tag, bool isFolder, int imageIndex) {
-                TreeNode node = parent.Add(text);
+            protected override TreeNode CreateChild(TreeNodeCollection parent, int index, string text, object tag, bool isFolder, int imageIndex) {
+                TreeNode node = parent.Insert(index, text);
                 node.Name = text;
                 node.Tag = tag;
                 node.ImageIndex = imageIndex;
                 node.SelectedImageIndex = imageIndex;
                 return node;
+            }
+
+            protected override List<string> GetNodeTexts(TreeNodeCollection parent) {
+                return parent.Cast<TreeNode>().Select(n => n.Text).ToList();
             }
 
             public override TreeNode FindByTag(TreeNodeCollection collection, object tag) {

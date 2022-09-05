@@ -64,16 +64,16 @@ namespace Necrofy
 
         private void PopulateTree(NC parent, AssetTree.Folder folder) {
             foreach (AssetTree.Folder subFolder in folder.Folders) {
-                PopulateFolder(parent, subFolder);
+                PopulateFolder(parent, subFolder, true);
             }
 
             foreach (AssetTree.AssetEntry entry in folder.Assets) {
-                PopulateAsset(parent, entry);
+                PopulateAsset(parent, entry, true);
             }
         }
 
-        private void PopulateFolder(NC parent, AssetTree.Folder subFolder) {
-            N child = CreateChild(parent, subFolder.Name, subFolder, true, FolderImageIndex);
+        private void PopulateFolder(NC parent, AssetTree.Folder subFolder, bool atEnd) {
+            N child = CreateChild(parent, subFolder.Name, subFolder, true, FolderImageIndex, atEnd);
 
             PopulateTree(GetChildren(child), subFolder);
             if (IsEmpty(child)) {
@@ -81,9 +81,9 @@ namespace Necrofy
             }
         }
 
-        private void PopulateAsset(NC parent, AssetTree.AssetEntry entry) {
+        private void PopulateAsset(NC parent, AssetTree.AssetEntry entry, bool atEnd) {
             if (IncludeAsset(entry)) {
-                N child = CreateChild(parent, entry.Asset.DisplayName, entry, false, GetImageIndex(entry.Asset.Category));
+                N child = CreateChild(parent, entry.Asset.DisplayName, entry, false, GetImageIndex(entry.Asset.Category), atEnd);
 
                 if (!entry.Asset.Editable) {
                     SetColor(child, SystemColors.GrayText);
@@ -91,6 +91,21 @@ namespace Necrofy
                     SetColor(child, SystemColors.Highlight);
                 }
             }
+        }
+
+        private N CreateChild(NC parent, string text, object tag, bool isFolder, int imageIndex, bool atEnd) {
+            int index;
+            if (atEnd) {
+                index = GetNodeTexts(parent).Count;
+            } else {
+                List<string> children = GetNodeTexts(parent);
+                for (index = 0; index < children.Count; index++) {
+                    if (NumericStringComparer.instance.Compare(text, children[index]) < 0) {
+                        break;
+                    }
+                }
+            }
+            return CreateChild(parent, index, text, tag, isFolder, imageIndex);
         }
 
         private void AssetChanged(object sender, AssetEventArgs e) {
@@ -101,7 +116,7 @@ namespace Necrofy
         }
 
         private void AssetAdded(object sender, AssetEventArgs e) {
-            if (IncludeAsset(e.Asset)) {
+            if (IncludeAsset(e.Asset) && FindByTag(root, e.Asset) == null) {
                 N parent = null;
                 AssetTree.Node node = e.Asset;
                 while (node.Parent.Parent != null) {
@@ -113,9 +128,9 @@ namespace Necrofy
                 }
                 NC collection = parent == null ? root : GetChildren(parent);
                 if (node is AssetTree.Folder folder) {
-                    PopulateFolder(collection, folder);
+                    PopulateFolder(collection, folder, false);
                 } else if (node is AssetTree.AssetEntry asset) {
-                    PopulateAsset(collection, asset);
+                    PopulateAsset(collection, asset, false);
                 }
             }
         }
@@ -146,7 +161,8 @@ namespace Necrofy
         }
 
         protected abstract void SetImageList(ImageList imageList);
-        protected abstract N CreateChild(NC parent, string text, object tag, bool isFolder, int imageIndex);
+        protected abstract N CreateChild(NC parent, int index, string text, object tag, bool isFolder, int imageIndex);
+        protected abstract List<string> GetNodeTexts(NC parent);
         protected abstract NC GetChildren(N node);
         protected abstract N GetParent(N node);
         protected abstract bool IsEmpty(N node);

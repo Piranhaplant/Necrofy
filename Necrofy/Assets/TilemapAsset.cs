@@ -32,7 +32,9 @@ namespace Necrofy
             this.data = data;
         }
 
-        private TilemapAsset(TilemapNameInfo nameInfo, string filename) : base(nameInfo, filename) { }
+        private TilemapAsset(TilemapNameInfo nameInfo, string filename) : base(nameInfo) {
+            Reload(filename);
+        }
 
         protected override void Reload(string filename) {
             data = File.ReadAllBytes(filename);
@@ -71,7 +73,7 @@ namespace Necrofy
             public override List<DefaultParams> GetDefaults() {
                 return new List<DefaultParams>() {
                     new DefaultParams(0xb5641, new TilemapNameInfo(LevelTitleFolder, DefaultName, 0xb5641), 0x1200, extractFromNecrofyROM: true, options: new AssetOptions.TilemapOptions(128, true, Hinting.Type.LevelTitle)),
-                    new DefaultParams(0xf5700, new TilemapNameInfo(TitleScreenFolder, DefaultName, 0xf5700), 0x800, extractFromNecrofyROM: true, options: new AssetOptions.TilemapOptions(32, true)),
+                    new DefaultParams(0xf5700, new TilemapNameInfo(TitleScreenFolder, DefaultName, 0xf5700), 0x780, extractFromNecrofyROM: true, options: new AssetOptions.TilemapOptions(32, true)),
 
                     new DefaultParams(0xd4000, new TilemapNameInfo(GetTilesetFolder(Castle), DefaultName, compressed: true), options: new AssetOptions.TilemapOptions(8, false, Hinting.Type.Tileset)),
                     new DefaultParams(0xd8000, new TilemapNameInfo(GetTilesetFolder(Grass), DefaultName, compressed: true), options: new AssetOptions.TilemapOptions(8, false, Hinting.Type.Tileset)),
@@ -105,6 +107,13 @@ namespace Necrofy
 
             public override NameInfo GetNameInfoForName(string name, string group) {
                 return new TilemapNameInfo(GetTilesetFolder(group), name, null, compressed: true);
+            }
+
+            public override NameInfo GetNameInfoForExtraction(ExtractionPreset preset) {
+                if (preset.Type == ExtractionPreset.AssetType.Tilemap) {
+                    return new TilemapNameInfo(preset.Category, preset.Filename, preset.Address, preset.Compressed);
+                }
+                return null;
             }
         }
 

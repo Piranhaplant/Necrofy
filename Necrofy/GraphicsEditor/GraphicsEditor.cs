@@ -269,7 +269,7 @@ namespace Necrofy
                 return;
             }
             Colors = new Color[colorsPerPalette * 8];
-            Array.Copy(palette.colors, Colors, Colors.Length);
+            Array.Copy(palette.colors, Colors, Math.Min(palette.colors.Length, Colors.Length));
             if (transparency) {
                 for (int i = 0; i < Colors.Length; i += colorsPerPalette) {
                     Colors[i] = Color.Transparent;
