@@ -24,6 +24,7 @@ namespace Necrofy
 
         private bool showGrid = false;
         public bool transparency { get; private set; }
+        public bool largeTiles { get; private set; }
         private Hinting.Type hintingType = Hinting.Type.None;
         private Hinting hinting;
 
@@ -83,6 +84,7 @@ namespace Necrofy
             if (options != null) {
                 tileWidth = options.width;
                 transparency = options.transparency;
+                largeTiles = options.largeTiles;
                 hintingType = options.hinting;
             }
         }
@@ -94,6 +96,7 @@ namespace Necrofy
         public override void Displayed() {
             base.Displayed();
             mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewTransparency).Checked = transparency;
+            mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewLargeTileMode).Checked = largeTiles;
             UpdateViewOptions();
             UpdateToolbar();
             UpdateSize(tileWidth); // Update the enabled state of the menu items
@@ -111,7 +114,7 @@ namespace Necrofy
         }
 
         private void SaveOptions() {
-            project.settings.AssetOptions.SetOptions(AssetCategory.Tilemap, loadedTilemap.tilemapName, new AssetOptions.TilemapOptions(tileWidth, transparency, hintingType));
+            project.settings.AssetOptions.SetOptions(AssetCategory.Tilemap, loadedTilemap.tilemapName, new AssetOptions.TilemapOptions(tileWidth, transparency, largeTiles, hintingType));
         }
 
         private void UpdateViewOptions() {
@@ -175,13 +178,15 @@ namespace Necrofy
             mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewIncreaseWidth).Enabled = tileWidth < maxWidth;
             mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.WidthLabel).Text = tileWidth.ToString();
 
+            TileSize = largeTiles ? 16 : 8;
+
             int tileHeight = tilemap.Length / tileWidth;
             if (tilemap.Length % tileWidth != 0) {
                 tileHeight += 1;
             }
             ResizeMap(0, 0, tileWidth, tileHeight);
 
-            TileSelection s = new TileSelection(tileWidth, tileHeight, scale: 8);
+            TileSelection s = new TileSelection(tileWidth, tileHeight, scale: TileSize);
             for (int i = 0; i < tilemap.Length; i++) {
                 GetTileLocation(i, out int x, out int y);
                 s.SetPoint(x, y, true);
@@ -223,20 +228,31 @@ namespace Necrofy
             for (int i = 0; i < tilemap.Length; i++) {
                 LoadedTilemap.Tile t = tilemap[i];
                 GetTileLocation(i, out int x, out int y);
-                if (t.tileNum < tiles.Length && clipRect.IntersectsWith(new RectangleF(x * 8, y * 8, 8, 8))) {
-                    SNESGraphics.DrawWithPlt(g, x * 8, y * 8, tiles[t.tileNum], Colors, t.palette * colorsPerPalette, colorsPerPalette, t.xFlip, t.yFlip);
+                if (t.tileNum < tiles.Length && clipRect.IntersectsWith(new RectangleF(x * TileSize, y * TileSize, TileSize, TileSize))) {
+                    RenderTile(g, t, x * TileSize, y * TileSize);
                 }
             }
 
             if (showGrid) {
                 using (Pen pen = new Pen(Color.FromArgb(150, Color.White), 1 / Zoom)) {
-                    DrawGrid(g, pen, clipRect, 8);
+                    DrawGrid(g, pen, clipRect, TileSize);
                 }
             }
 
             g.ResetClip();
 
             hinting.Render(g, clipRect, Zoom);
+        }
+
+        public void RenderTile(Graphics g, LoadedTilemap.Tile t, int x, int y) {
+            if (largeTiles) {
+                SNESGraphics.DrawWithPlt(g, x + (t.xFlip ? 8 : 0), y + (t.yFlip ? 8 : 0), tiles[t.tileNum + 0], Colors, t.palette * colorsPerPalette, colorsPerPalette, t.xFlip, t.yFlip);
+                SNESGraphics.DrawWithPlt(g, x + (t.xFlip ? 0 : 8), y + (t.yFlip ? 8 : 0), tiles[(t.tileNum + 1) % tiles.Length], Colors, t.palette * colorsPerPalette, colorsPerPalette, t.xFlip, t.yFlip);
+                SNESGraphics.DrawWithPlt(g, x + (t.xFlip ? 8 : 0), y + (t.yFlip ? 0 : 8), tiles[(t.tileNum + 16) % tiles.Length], Colors, t.palette * colorsPerPalette, colorsPerPalette, t.xFlip, t.yFlip);
+                SNESGraphics.DrawWithPlt(g, x + (t.xFlip ? 0 : 8), y + (t.yFlip ? 0 : 8), tiles[(t.tileNum + 17) % tiles.Length], Colors, t.palette * colorsPerPalette, colorsPerPalette, t.xFlip, t.yFlip);
+            } else {
+                SNESGraphics.DrawWithPlt(g, x, y, tiles[t.tileNum], Colors, t.palette * colorsPerPalette, colorsPerPalette, t.xFlip, t.yFlip);
+            }
         }
 
         protected override void PaintSelectionDrawRectangle(Graphics g, Rectangle r) {
@@ -363,6 +379,9 @@ namespace Necrofy
             if (item == ToolStripGrouper.ItemType.ViewTransparency && DockActive) {
                 transparency = mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewTransparency).Checked;
                 LoadPalette();
+            } else if (item == ToolStripGrouper.ItemType.ViewLargeTileMode && DockActive) {
+                largeTiles = mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewLargeTileMode).Checked;
+                UpdateSize(tileWidth);
             } else if (viewOptionsItems.Contains(item)) {
                 UpdateViewOptions();
                 if (DockVisible) {

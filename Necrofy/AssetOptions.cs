@@ -64,7 +64,7 @@ namespace Necrofy
 
         public class GraphicsOptions : Options
         {
-            public int width;
+            public int width = 16;
             public bool transparency;
             public bool largeTiles;
 
@@ -79,15 +79,17 @@ namespace Necrofy
 
         public class TilemapOptions : Options
         {
-            public int width;
+            public int width = 32;
             public bool transparency;
+            public bool largeTiles;
             public Hinting.Type hinting;
 
             public TilemapOptions() { }
 
-            public TilemapOptions(int width, bool transparency, Hinting.Type hinting = Hinting.Type.None) {
+            public TilemapOptions(int width, bool transparency, bool largeTiles, Hinting.Type hinting = Hinting.Type.None) {
                 this.width = width;
                 this.transparency = transparency;
+                this.largeTiles = largeTiles;
                 this.hinting = hinting;
             }
         }
@@ -130,8 +132,6 @@ namespace Necrofy
                 { ExtractionPreset.AssetType.Graphics, () => new GraphicsOptions() },
                 { ExtractionPreset.AssetType.Graphics2BPP, () => new GraphicsOptions() },
                 { ExtractionPreset.AssetType.Tilemap, () => new TilemapOptions() },
-                { ExtractionPreset.AssetType.Palette, () => null },
-                { ExtractionPreset.AssetType.Binary, () => null },
             };
 
             public override bool CanConvert(Type objectType) {

@@ -1447,7 +1447,7 @@
             // viewLargeTileMode
             // 
             this.viewLargeTileMode.CheckOnClick = true;
-            this.toolStripGrouper.SetItemSet(this.viewLargeTileMode, Necrofy.ToolStripGrouper.ItemSet.Graphics);
+            this.toolStripGrouper.SetItemSet(this.viewLargeTileMode, ((Necrofy.ToolStripGrouper.ItemSet)((Necrofy.ToolStripGrouper.ItemSet.Graphics | Necrofy.ToolStripGrouper.ItemSet.Tilemap))));
             this.toolStripGrouper.SetItemType(this.viewLargeTileMode, Necrofy.ToolStripGrouper.ItemType.ViewLargeTileMode);
             this.viewLargeTileMode.Name = "viewLargeTileMode";
             this.viewLargeTileMode.Size = new System.Drawing.Size(208, 22);

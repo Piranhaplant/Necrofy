@@ -95,14 +95,14 @@ namespace Necrofy
             protected override void RenderPaste(Graphics g, int pixelX, int pixelY, GraphicsPath path) {
                 if (editor.transparency) {
                     g.SetClip(path);
-                    SNESGraphics.DrawTransparencyGrid(g, new RectangleF(pixelX, pixelY, 8 * pasteTiles.GetWidth(), 8 * pasteTiles.GetHeight()), editor.Zoom);
+                    SNESGraphics.DrawTransparencyGrid(g, new RectangleF(pixelX, pixelY, editor.TileSize * pasteTiles.GetWidth(), editor.TileSize * pasteTiles.GetHeight()), editor.Zoom);
                     g.ResetClip();
                 }
                 for (int y = 0; y < pasteTiles.GetHeight(); y++) {
                     for (int x = 0; x < pasteTiles.GetWidth(); x++) {
                         if (pasteTiles[x, y] != null) {
                             LoadedTilemap.Tile tile = (LoadedTilemap.Tile)pasteTiles[x, y];
-                            SNESGraphics.DrawWithPlt(g, pixelX + x * 8, pixelY + y * 8, editor.tiles[tile.tileNum], editor.Colors, tile.palette * editor.colorsPerPalette, editor.colorsPerPalette, tile.xFlip, tile.yFlip);
+                            editor.RenderTile(g, tile, pixelX + x * editor.TileSize, pixelY + y * editor.TileSize);
                         }
                     }
                 }

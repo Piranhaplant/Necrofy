@@ -19,7 +19,16 @@ namespace Necrofy
         private TileSelection selection;
         private ScrollWrapper scrollWrapper;
 
-        public override int TileSize => tileSize;
+        public override int TileSize {
+            get {
+                return tileSize;
+            }
+            set {
+                tileSize = value;
+                selection.scale = tileSize;
+                UpdateScrollWrapper();
+            }
+        }
         public override TileSelection Selection => selection;
         public override ScrollWrapper ScrollWrapper => scrollWrapper;
 
@@ -318,7 +327,7 @@ namespace Necrofy
 
     abstract class MapEditor : EditorWindow
     {
-        public abstract int TileSize { get; }
+        public abstract int TileSize { get; set; }
         public abstract TileSelection Selection { get; }
         public abstract ScrollWrapper ScrollWrapper { get; }
         public abstract int MapPadding { get; set; }

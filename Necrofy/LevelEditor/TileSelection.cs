@@ -11,7 +11,7 @@ namespace Necrofy
     {
         public int width { get; private set; }
         public int height { get; private set; }
-        private readonly int scale;
+        public int scale { get; set; }
         private bool[,] points;
         private bool[,] curPoints;
         private bool useCurPoints = false;

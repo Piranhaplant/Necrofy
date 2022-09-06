@@ -25,6 +25,7 @@
 			"Options": {
 				"width": 32,
 				"transparency": true,
+				"largeTiles": false,
 				"hinting": 0
 			}
 		},
@@ -53,6 +54,7 @@
 			"Options": {
 				"width": 32,
 				"transparency": true,
+				"largeTiles": false,
 				"hinting": 0
 			}
 		},
@@ -67,6 +69,7 @@
 			"Options": {
 				"width": 32,
 				"transparency": true,
+				"largeTiles": false,
 				"hinting": 0
 			}
 		},
@@ -123,6 +126,7 @@
 			"Options": {
 				"width": 32,
 				"transparency": true,
+				"largeTiles": false,
 				"hinting": 0
 			}
 		},
@@ -137,6 +141,7 @@
 			"Options": {
 				"width": 13,
 				"transparency": true,
+				"largeTiles": false,
 				"hinting": 0
 			}
 		},
@@ -151,6 +156,7 @@
 			"Options": {
 				"width": 13,
 				"transparency": true,
+				"largeTiles": false,
 				"hinting": 0
 			}
 		},
@@ -165,6 +171,7 @@
 			"Options": {
 				"width": 32,
 				"transparency": false,
+				"largeTiles": false,
 				"hinting": 0
 			}
 		},
@@ -179,6 +186,7 @@
 			"Options": {
 				"width": 32,
 				"transparency": true,
+				"largeTiles": false,
 				"hinting": 0
 			}
 		},
@@ -230,6 +238,7 @@
 			"Options": {
 				"width": 32,
 				"transparency": true,
+				"largeTiles": false,
 				"hinting": 0
 			}
 		},
@@ -244,6 +253,7 @@
 			"Options": {
 				"width": 32,
 				"transparency": false,
+				"largeTiles": false,
 				"hinting": 0
 			}
 		},
@@ -264,6 +274,35 @@
 			"Length": 16,
 			"Compressed": false,
 			"Type": "Palette"
+		},
+		{
+			"Description": "Title Screen Spiral Graphics",
+			"Filename": "Spiral",
+			"Category": "Title Screen",
+			"Address": 709827,
+			"Length": 6112,
+			"Compressed": false,
+			"Type": "Graphics2BPP",
+			"Options": {
+				"width": 16,
+				"transparency": false,
+				"largeTiles": false
+			}
+		},
+		{
+			"Description": "Title Screen Spiral Tilemap",
+			"Filename": "Spiral",
+			"Category": "Title Screen",
+			"Address": 1003264,
+			"Length": 2048,
+			"Compressed": false,
+			"Type": "Tilemap",
+			"Options": {
+				"width": 32,
+				"transparency": false,
+				"largeTiles": true,
+				"hinting": 0
+			}
 		}
 	]
 }
