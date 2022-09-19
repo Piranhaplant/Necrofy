@@ -303,6 +303,77 @@
 				"largeTiles": true,
 				"hinting": 0
 			}
+		},
+		{
+			"Description": "Konami Screen Graphics",
+			"Filename": "Graphics",
+			"Category": "Konami",
+			"Address": 99736,
+			"Length": 0,
+			"Compressed": true,
+			"Type": "Graphics",
+			"Options": {
+				"width": 16,
+				"transparency": false,
+				"largeTiles": false
+			}
+		},
+		{
+			"Description": "Konami Screen Tilemap",
+			"Filename": "Tilemap",
+			"Category": "Konami",
+			"Address": 99086,
+			"Length": 0,
+			"Compressed": true,
+			"Type": "Tilemap",
+			"Options": {
+				"width": 32,
+				"transparency": false,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Konami Screen Beam Tilemap",
+			"Filename": "Beam Tilemap",
+			"Category": "Konami",
+			"Address": 98988,
+			"Length": 98,
+			"Compressed": false,
+			"Type": "Tilemap",
+			"Options": {
+				"width": 32,
+				"transparency": false,
+				"largeTiles": true,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Konami Screen Blue Palette",
+			"Filename": "Blue",
+			"Category": "Konami",
+			"Address": 102896,
+			"Length": 128,
+			"Compressed": false,
+			"Type": "Palette"
+		},
+		{
+			"Description": "Konami Screen Colored Palette",
+			"Filename": "Colored",
+			"Category": "Konami",
+			"Address": 103056,
+			"Length": 64,
+			"Compressed": false,
+			"Type": "Palette"
+		},
+		{
+			"Description": "Konami Screen Text Palette",
+			"Filename": "Text",
+			"Category": "Konami",
+			"Address": 103024,
+			"Length": 32,
+			"Compressed": false,
+			"Type": "Palette"
 		}
 	]
 }
