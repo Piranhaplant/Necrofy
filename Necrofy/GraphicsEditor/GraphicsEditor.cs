@@ -78,6 +78,9 @@ namespace Necrofy
 
         private void GraphicsEditor_Disposed(object sender, EventArgs e) {
             tiles.Dispose();
+            if (palette != null) {
+                palette.Updated -= Palette_Updated;
+            }
         }
 
         public override void Displayed() {

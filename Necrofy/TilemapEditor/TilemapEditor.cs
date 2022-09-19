@@ -91,6 +91,12 @@ namespace Necrofy
 
         private void TilemapEditor_Disposed(object sender, EventArgs e) {
             DisposeTiles();
+            if (palette != null) {
+                palette.Updated -= Palette_Updated;
+            }
+            if (graphics != null) {
+                graphics.Updated -= Graphics_Updated;
+            }
         }
 
         public override void Displayed() {

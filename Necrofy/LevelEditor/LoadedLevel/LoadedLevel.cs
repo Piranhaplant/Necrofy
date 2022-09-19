@@ -39,7 +39,10 @@ namespace Necrofy
         }
 
         private void DisposeTiles() {
-            tileset?.Dispose();
+            if (tileset != null) {
+                tileset.TilesChanged -= Tileset_TilesChanged;
+                tileset.Dispose();
+            }
         }
 
         private void DisposeSprites() {

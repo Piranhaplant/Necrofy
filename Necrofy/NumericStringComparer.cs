@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Necrofy
 {
-    class NumericStringComparer : IComparer<string>
+    public class NumericStringComparer : IComparer<string>
     {
         private static readonly char[] digits = new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 

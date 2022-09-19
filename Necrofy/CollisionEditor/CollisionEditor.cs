@@ -49,6 +49,9 @@ namespace Necrofy
 
         private void CollisionEditor_Disposed(object sender, EventArgs e) {
             DisposeTiles();
+            if (loadedTileset != null) {
+                loadedTileset.TilesChanged -= LoadedTileset_TilesChanged;
+            }
         }
 
         private void DisposeTiles() {

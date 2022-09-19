@@ -97,6 +97,7 @@ namespace Necrofy
 
         private void TitleEditor_Disposed(object sender, EventArgs e) {
             characters.Dispose();
+            characters.Updated -= Characters_Updated;
         }
         
         private void PageEditor1_Enter(object sender, EventArgs e) {
