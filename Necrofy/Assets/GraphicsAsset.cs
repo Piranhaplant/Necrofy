@@ -175,7 +175,7 @@ namespace Necrofy
             }
             
             public static GraphicsNameInfo FromPath(PathParts parts) {
-                if (!Extensions.ContainsKey(parts.fileExtension)) return null;
+                if (parts.fileExtension == null || !Extensions.ContainsKey(parts.fileExtension)) return null;
                 return new GraphicsNameInfo(parts);
             }
         }
