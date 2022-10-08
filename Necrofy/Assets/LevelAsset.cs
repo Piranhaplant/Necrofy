@@ -51,19 +51,24 @@ namespace Necrofy
             File.WriteAllText(filename, JsonConvert.SerializeObject(level, Formatting.Indented));
         }
 
-        public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
-            MovableData levelData = level.Build(romInfo);
-            int pointer = romInfo.Freespace.Claim(levelData.GetSize());
-            byte[] data = levelData.Build(pointer);
-
-            rom.Seek(pointer);
-            rom.Write(data, 0, data.Length);
-            rom.Seek(GetPointerPosition(levelNameInfo.levelNum));
-            rom.WritePointer(pointer);
-        }
+        private int buildPointer;
 
         public override void ReserveSpace(ROMInfo romInfo) {
             romInfo.Freespace.Reserve(GetPointerPosition(levelNameInfo.levelNum), 4);
+            // Claim the space for the level immediately.
+            // This ensures that the level data is inserted at the beginning of the ROM where RAM mirrors are available.
+            int dataSize = level.Build(null).GetSize();
+            buildPointer = romInfo.Freespace.Claim(dataSize);
+        }
+
+        public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
+            MovableData levelData = level.Build(romInfo);
+            byte[] data = levelData.Build(buildPointer);
+
+            rom.Seek(buildPointer);
+            rom.Write(data, 0, data.Length);
+            rom.Seek(GetPointerPosition(levelNameInfo.levelNum));
+            rom.WritePointer(buildPointer);
         }
         
         class LevelCreator : Creator

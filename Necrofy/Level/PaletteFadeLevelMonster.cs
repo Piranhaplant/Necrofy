@@ -42,8 +42,13 @@ namespace Necrofy
         public override void Build(MovableData data, ROMInfo rom) {
             data.data.AddPointer(type);
             MovableData paletteData = new MovableData();
-            paletteData.data.AddPointer(rom.GetAssetPointer(AssetCategory.Palette, bgPal));
-            paletteData.data.AddPointer(rom.GetAssetPointer(AssetCategory.Palette, spritePal));
+            if (rom == null) {
+                paletteData.data.AddPointer(0);
+                paletteData.data.AddPointer(0);
+            } else {
+                paletteData.data.AddPointer(rom.GetAssetPointer(AssetCategory.Palette, bgPal));
+                paletteData.data.AddPointer(rom.GetAssetPointer(AssetCategory.Palette, spritePal));
+            }
             data.AddPointer(MovableData.PointerSize.FourBytes, paletteData);
         }
     }

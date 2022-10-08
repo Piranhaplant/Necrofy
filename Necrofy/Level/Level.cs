@@ -179,11 +179,12 @@ namespace Necrofy
         }
 
         /// <summary>Builds the level for inserting into a ROM.</summary>
+        /// <param name="rom">The rom data, or null if this is being called to get the overall level data size</param>
         /// <returns>The level data</returns>
         public MovableData Build(ROMInfo rom) {
             MovableData data = new MovableData();
 
-            data.data.AddPointer(rom.GetAssetPointer(AssetCategory.Tilemap, tilesetTilemapName));
+            AddPointer(data, rom, AssetCategory.Tilemap, tilesetTilemapName);
 
             MovableData backgroundData = new MovableData();
             int width = this.width;
@@ -195,10 +196,10 @@ namespace Necrofy
             }
             data.AddPointer(MovableData.PointerSize.FourBytes, backgroundData);
 
-            data.data.AddPointer(rom.GetAssetPointer(AssetCategory.Collision, tilesetCollisionName));
-            data.data.AddPointer(rom.GetAssetPointer(AssetCategory.Graphics, tilesetGraphicsName));
-            data.data.AddPointer(rom.GetAssetPointer(AssetCategory.Palette, paletteName));
-            data.data.AddPointer(rom.GetAssetPointer(AssetCategory.Palette, spritePaletteName));
+            AddPointer(data, rom, AssetCategory.Collision, tilesetCollisionName);
+            AddPointer(data, rom, AssetCategory.Graphics, tilesetGraphicsName);
+            AddPointer(data, rom, AssetCategory.Palette, paletteName);
+            AddPointer(data, rom, AssetCategory.Palette, spritePaletteName);
             if (paletteAnimationPtr > 0) {
                 data.data.AddPointer(paletteAnimationPtr);
             } else {
@@ -240,6 +241,14 @@ namespace Necrofy
             data.data.AddInt16(0);
 
             return data;
+        }
+
+        private static void AddPointer(MovableData data, ROMInfo rom, AssetCategory category, string name) {
+            if (rom == null) {
+                data.data.AddPointer(0);
+            } else {
+                data.data.AddPointer(rom.GetAssetPointer(category, name));
+            }
         }
 
         private static void BuildAll<T>(List<T> objects, MovableData data, Action<T, MovableData> build) {
