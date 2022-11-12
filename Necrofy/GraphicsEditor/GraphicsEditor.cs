@@ -69,8 +69,12 @@ namespace Necrofy
             UpdateSize(tileWidth);
             Zoom = 4.0f;
             ScrollWrapper.ScrollToPoint(0, 0);
-            
-            paletteSelector.LoadProject(project, AssetCategory.Palette, graphics.graphicsName);
+
+            if (graphics.GraphicsType == GraphicsAsset.Type.Sprite) {
+                paletteSelector.LoadProject(project, AssetCategory.Palette, GraphicsAsset.SpriteGraphics);
+            } else {
+                paletteSelector.LoadProject(project, AssetCategory.Palette, graphics.graphicsName);
+            }
 
             undoManager = new UndoManager<GraphicsEditor>(mainWindow.UndoButton, mainWindow.RedoButton, this);
             return undoManager;

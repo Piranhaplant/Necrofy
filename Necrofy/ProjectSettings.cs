@@ -21,12 +21,6 @@ namespace Necrofy
         public int WinLevel { get; set; }
         /// <summary>The level after which the game will end and the player will be sent back to the main menu loop</summary>
         public int EndGameLevel { get; set; }
-        /// <summary>A pointer for where the custom sprite graphics start</summary>
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public int? ExtraSpriteGraphicsBasePointer { get; set; }
-        /// <summary>The location at which new custom sprite graphics will be inserted</summary>
-        [JsonProperty(NullValueHandling=NullValueHandling.Ignore)]
-        public int? ExtraSpriteGraphicsCurrentPointer { get; set; }
         /// <summary>List of the built-in patches that will be applied on build</summary>
         public List<Patch> EnabledPatches { get; set; } = new List<Patch>();
         /// <summary>Various per-asset settings</summary>

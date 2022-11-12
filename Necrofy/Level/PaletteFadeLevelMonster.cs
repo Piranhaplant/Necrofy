@@ -35,8 +35,13 @@ namespace Necrofy
         }
 
         public PaletteFadeLevelMonster(ROMInfo r, NStream s, string tileset) : base(Type) {
-            bgPal = PaletteAsset.GetAssetName(s, r, s.ReadPointer(), tileset);
-            spritePal = PaletteAsset.GetAssetName(s, r, s.ReadPointer());
+            int bgPalPointer = s.ReadPointer();
+            int spritePalPointer = s.ReadPointer();
+
+            s.TogglePauseBlock();
+            bgPal = PaletteAsset.GetAssetName(s, r, bgPalPointer, tileset);
+            spritePal = PaletteAsset.GetAssetName(s, r, spritePalPointer);
+            s.TogglePauseBlock();
         }
 
         public override void Build(MovableData data, ROMInfo rom) {

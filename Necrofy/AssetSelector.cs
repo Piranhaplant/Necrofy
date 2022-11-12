@@ -33,10 +33,10 @@ namespace Necrofy
             SelectedItemChanged?.Invoke(this, e);
         }
 
-        public void LoadProject(Project project, AssetCategory category, string startingAssetName) {
-            populator = new DropDownAssetTreePopulator(project.Assets, comboTree, category);
+        public void LoadProject(Project project, AssetCategory category, string startingAssetName, Func<AssetTree.AssetEntry, bool> filter = null) {
+            populator = new DropDownAssetTreePopulator(project.Assets, comboTree, category, filter);
 
-            if (project.Assets.Root.FindFolder(Path.GetDirectoryName(startingAssetName), out AssetTree.Folder folder)) {
+            if (!string.IsNullOrEmpty(startingAssetName) && project.Assets.Root.FindFolder(Path.GetDirectoryName(startingAssetName), out AssetTree.Folder folder)) {
                 ComboTreeNode folderNode = populator.FindByTag(comboTree.Nodes, folder);
                 if (folderNode != null && folderNode.Nodes.Count > 0) {
                     string assetFileName = Path.GetFileName(startingAssetName);
@@ -51,13 +51,19 @@ namespace Necrofy
             }
         }
 
+        public void Deselect() {
+            comboTree.SelectedNode = null;
+        }
+
         private class DropDownAssetTreePopulator : AssetTreePopulator<ComboTreeNodeCollection, ComboTreeNode> {
             private readonly AssetCategory category;
             private readonly ComboTreeBox comboBox;
+            private readonly Func<AssetTree.AssetEntry, bool> filter;
 
-            public DropDownAssetTreePopulator(AssetTree tree, ComboTreeBox comboBox, AssetCategory category) : base(tree, comboBox.Nodes) {
+            public DropDownAssetTreePopulator(AssetTree tree, ComboTreeBox comboBox, AssetCategory category, Func<AssetTree.AssetEntry, bool> filter) : base(tree, comboBox.Nodes) {
                 this.category = category;
                 this.comboBox = comboBox;
+                this.filter = filter ?? (a => true);
                 Load();
             }
 
@@ -108,7 +114,7 @@ namespace Necrofy
                 node.Text = text;
                 node.Name = text;
             }
-            protected override bool IncludeAsset(AssetTree.AssetEntry entry) => entry.Asset.Category == category;
+            protected override bool IncludeAsset(AssetTree.AssetEntry entry) => entry.Asset.Category == category && filter(entry);
         }
     }
 }

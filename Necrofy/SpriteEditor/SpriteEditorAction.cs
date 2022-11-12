@@ -391,4 +391,34 @@ namespace Necrofy
             }
         }
     }
+
+    class ChangeSpriteNameAction : UndoAction<SpriteEditor>
+    {
+        private readonly Sprite sprite;
+        private readonly string prevName;
+        private readonly string newName;
+
+        public ChangeSpriteNameAction(Sprite sprite, string newName) {
+            this.sprite = sprite;
+            prevName = sprite.name;
+            this.newName = newName;
+        }
+
+        protected override void Undo() {
+            sprite.name = prevName;
+        }
+
+        protected override void Redo() {
+            sprite.name = newName;
+        }
+
+        protected override void AfterAction() {
+            editor.SetCurrentSprite(sprite);
+            editor.RefreshPropertyBrowser();
+        }
+
+        public override string ToString() {
+            return "Change sprite name";
+        }
+    }
 }

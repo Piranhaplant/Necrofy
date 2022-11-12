@@ -24,7 +24,8 @@ namespace Necrofy
             ReadGraphics();
         }
 
-        public bool Is2BPP => asset.Is2BPP;
+        public GraphicsAsset.Type GraphicsType => asset.GraphicsType;
+        public bool Is2BPP => GraphicsType == GraphicsAsset.Type.TwoBPP;
 
         private void Asset_Updated(object sender, EventArgs e) {
             if (updating == 0) {
@@ -34,12 +35,12 @@ namespace Necrofy
         }
 
         private void ReadGraphics() {
-            linearGraphics = new LinearGraphics(asset.data, asset.Is2BPP);
+            linearGraphics = new LinearGraphics(asset.data, Is2BPP);
         }
 
         public void Save(Project project, GraphicsTileList tiles) {
             for (int i = 0; i < tiles.Count; i++) {
-                if (asset.Is2BPP) {
+                if (Is2BPP) {
                     SNESGraphics.BitmapToPlanar2BPP(tiles.GetTemporarily(i), asset.data, i * 0x10);
                 } else {
                     SNESGraphics.BitmapToPlanar(tiles.GetTemporarily(i), asset.data, i * 0x20);

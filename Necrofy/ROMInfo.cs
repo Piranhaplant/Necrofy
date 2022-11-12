@@ -12,8 +12,8 @@ namespace Necrofy
         /// <summary>A list of assets for the ROM</summary>
         public List<Asset> assets = new List<Asset>();
 
-        public Dictionary<AssetCategory, Dictionary<int, string>> assetNames = new Dictionary<AssetCategory, Dictionary<int, string>>();
-        public Dictionary<AssetCategory, Dictionary<string, int>> assetPointers = new Dictionary<AssetCategory, Dictionary<string, int>>();
+        private Dictionary<AssetCategory, Dictionary<int, string>> assetNames = new Dictionary<AssetCategory, Dictionary<int, string>>();
+        private Dictionary<AssetCategory, Dictionary<string, PointerAndSize>> assetPointers = new Dictionary<AssetCategory, Dictionary<string, PointerAndSize>>();
 
         /// <summary>The freespace that was found in the ROM</summary>
         public readonly Freespace Freespace;
@@ -30,14 +30,17 @@ namespace Necrofy
 
         private const string PropertiesHeader = "NFY";
         private const byte PropertiesVersion = 2;
-        /// <summary>The total number of bytes that will be used by custom sprite graphics. This is cleared once the space for them has been claimed.</summary>
+        /// <summary>The total number of bytes that will be used by custom sprite graphics</summary>
         public int ExtraSpriteGraphicsSize { get; set; }
         /// <summary>A pointer to the start of the custom sprite graphics</summary>
         public int ExtraSpriteGraphicsBasePointer { get; set; }
-        /// <summary>The current pointer that custom sprite graphics will be inserted at.</summary>
+        /// <summary>The current pointer that custom sprite graphics will be inserted at</summary>
         public int ExtraSpriteGraphicsCurrentPointer { get; set; }
         /// <summary>The starting index for custom sprite tiles</summary>
         public int ExtraSpriteGraphicsStartIndex { get; set; }
+        /// <summary>Size of the extra sprite graphics that needs to be inserted at the beginning of the extra graphics block.
+        /// This is used for projects that were created from a Necrofy ROM that already contained extra sprite graphics.</summary>
+        public int ExtraSpriteGraphicsFirstSize { get; set; }
 
         /// <summary>Loads the ROMInfo data from an already opened stream.</summary>
         /// <param name="s">A stream to a ROM file</param>
@@ -112,6 +115,8 @@ namespace Necrofy
                 if (version == 2) {
                     ExtraSpriteGraphicsBasePointer = s.ReadPointer();
                     ExtraSpriteGraphicsCurrentPointer = s.ReadPointer();
+                } else {
+                    throw new Exception("ROM was created with a newer version of Necrofy");
                 }
             }
 
@@ -136,12 +141,16 @@ namespace Necrofy
             assetNames[category].Add(pointer, name);
         }
 
-        public void AddAssetPointer(AssetCategory category, string name, int pointer) {
+        public void AddAssetPointer(AssetCategory category, string name, int pointer, int size) {
             if (!assetPointers.ContainsKey(category)) {
-                assetPointers.Add(category, new Dictionary<string, int>());
+                assetPointers.Add(category, new Dictionary<string, PointerAndSize>());
             }
-            assetPointers[category].Add(name, pointer);
-            exportedDefines.Add("ASSET_" + category.ToString() + "_" + FixDefineName(name), ROMPointers.PointerToHexString(pointer));
+            assetPointers[category].Add(name, new PointerAndSize(pointer, size));
+            AddExportedDefine("ASSET_" + category.ToString() + "_" + name, ROMPointers.PointerToHexString(pointer));
+        }
+
+        public void AddExportedDefine(string key, string value) {
+            exportedDefines[FixDefineName(key)] = value;
         }
 
         private static string FixDefineName(string s) {
@@ -165,7 +174,7 @@ namespace Necrofy
             return assetNames[category][pointer];
         }
 
-        public int GetAssetPointer(AssetCategory category, string name) {
+        public PointerAndSize GetAssetPointerAndSize(AssetCategory category, string name) {
             if (!assetPointers.ContainsKey(category)) {
                 throw new Exception("No asset found for category " + category + " with name " + name);
             }
@@ -175,29 +184,19 @@ namespace Necrofy
             return assetPointers[category][name];
         }
 
-        public void WriteToBuild(NStream s, ProjectSettings settings, BuildResults results) {
-            WriteProperties(s);
+        public int GetAssetPointer(AssetCategory category, string name) {
+            return GetAssetPointerAndSize(category, name).Pointer;
+        }
 
-            if (settings.ExtraSpriteGraphicsBasePointer != null) {
-                ExtraSpriteGraphicsBasePointer = (int)settings.ExtraSpriteGraphicsBasePointer;
-            }
-            if (settings.ExtraSpriteGraphicsCurrentPointer != null) {
-                ExtraSpriteGraphicsCurrentPointer = (int)settings.ExtraSpriteGraphicsCurrentPointer;
-            }
+        public int GetAssetSize(AssetCategory category, string name) {
+            return GetAssetPointerAndSize(category, name).Size;
+        }
+
+        public void WriteToBuild(NStream s, BuildResults results) {
+            WriteProperties(s);
 
             if (ExtraSpriteGraphicsStartIndex + (ExtraSpriteGraphicsCurrentPointer - ExtraSpriteGraphicsBasePointer + ExtraSpriteGraphicsSize) / 0x80 > 0x1000) {
                 results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, "", "Number of sprite tiles has exceeded the 0x1000 tile limit"));
-            }
-            // Check that all bytes that will be overwritten by custom sprite graphics are the same value (indicating unused data)
-            if (ExtraSpriteGraphicsCurrentPointer > 0 && ExtraSpriteGraphicsSize > 0) {
-                s.Seek(ExtraSpriteGraphicsCurrentPointer);
-                int startByte = s.ReadByte();
-                for (int i = 1; i < ExtraSpriteGraphicsSize; i++) {
-                    if (s.ReadByte() != startByte) {
-                        results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, "", "Added sprite graphics will overwrite existing data"));
-                        break;
-                    }
-                }
             }
         }
     }

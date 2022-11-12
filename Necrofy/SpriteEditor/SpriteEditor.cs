@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,6 +31,7 @@ namespace Necrofy
         private HashSet<Sprite> modifiedSprites = new HashSet<Sprite>();
 
         private Sprite currentSprite = null;
+        private WrappedSprite currentWrappedSprite = null;
         private bool showAxes;
         private bool showTileBorders;
         private bool showGrid;
@@ -48,7 +50,7 @@ namespace Necrofy
             
             this.loadedSprites = loadedSprites;
             loadedSprites.Updated += LoadedSprites_Updated;
-            Title = "Sprites";
+            Title = loadedSprites.spritesName;
 
             objectSelector = new ObjectSelector<WrappedSpriteTile>(this, maxX: MaxDimension, maxY: MaxDimension, minX: -MaxDimension, minY: -MaxDimension);
 
@@ -79,6 +81,30 @@ namespace Necrofy
 
         protected override UndoManager Setup() {
             Zoom = 2.0f;
+            graphicsSelector.LoadProject(project, AssetCategory.Graphics, "",
+                filter: asset => GraphicsAsset.GetGraphicsType(asset.Asset) == GraphicsAsset.Type.Sprite || asset.Asset.Name == GraphicsAsset.SpriteGraphics);
+
+            if (loadedSprites.GraphicsAssets.Count == 0) {
+                if (Path.GetDirectoryName(loadedSprites.spritesName) == Asset.SpritesFolder) {
+                    loadedSprites.AddGraphics(project, GraphicsAsset.SpriteGraphics);
+                }
+                if (project.Assets.Root.FindFolder(Path.GetDirectoryName(loadedSprites.spritesName), out AssetTree.Folder folder)) {
+                    foreach (AssetTree.AssetEntry asset in folder.Assets) {
+                        if (GraphicsAsset.GetGraphicsType(asset.Asset) == GraphicsAsset.Type.Sprite) {
+                            loadedSprites.AddGraphics(project, asset.Asset.Name);
+                        }
+                    }
+                }
+                if (loadedSprites.loadedGraphics.Count == 0) {
+                    loadedSprites.AddGraphics(project, GraphicsAsset.SpriteGraphics);
+                }
+                loadedSprites.LoadAllSprites();
+                browserContents.Refresh();
+            }
+            foreach (LoadedGraphics g in loadedSprites.loadedGraphics) {
+                graphicsList.Items.Add(g.graphicsName);
+            }
+
             undoManager = new UndoManager<SpriteEditor>(mainWindow.UndoButton, mainWindow.RedoButton, this);
             return undoManager;
         }
@@ -198,6 +224,7 @@ namespace Necrofy
             foreach (WrappedSpriteTile o in selectedObjects) {
                 o.ClearBrowsableProperties();
             }
+            currentWrappedSprite.ClearBrowsableProperties();
             if (value is string stringValue) {
                 stringValue = stringValue.Trim();
                 switch (e.ChangedItem.Label) {
@@ -216,6 +243,9 @@ namespace Necrofy
                         if (ushort.TryParse(stringValue, out ushort tileNum)) {
                             undoManager.Do(new ChangeSpriteTileNumAction(currentSprite, selectedObjects, tileNum));
                         }
+                        break;
+                    case WrappedSprite.NameProperty:
+                        undoManager.Do(new ChangeSpriteNameAction(currentSprite, stringValue == "" ? null : stringValue));
                         break;
                 }
             } else if (value is bool boolValue) {
@@ -241,8 +271,9 @@ namespace Necrofy
             currentSprite = s;
             objectSelector.SelectNone();
             UpdateSpritePreviews();
-            browserContents.SelectedIndex = Array.IndexOf(loadedSprites.Sprites, currentSprite);
-            PropertyBrowserObjects = new object[] { new WrappedSprite(s) };
+            browserContents.SelectedIndex = loadedSprites.Sprites.IndexOf(currentSprite);
+            currentWrappedSprite = new WrappedSprite(s);
+            PropertyBrowserObjects = new object[] { currentWrappedSprite };
             Repaint();
         }
         
@@ -276,7 +307,7 @@ namespace Necrofy
 
             using (Pen linePen = new Pen(Color.White, 1 / Zoom)) {
                 foreach (Sprite.Tile tile in currentSprite.tiles) {
-                    if (tile.tileNum < loadedSprites.tileImages.Length) {
+                    if (tile.tileNum < loadedSprites.tileImages.Count) {
                         SNESGraphics.DrawWithPlt(e.Graphics, tile.xOffset, tile.yOffset, loadedSprites.tileImages[tile.tileNum], loadedSprites.loadedPalette.colors, tile.palette * 0x10, 0x10, tile.xFlip, tile.yFlip);
                     } else {
                         e.Graphics.DrawLine(linePen, tile.xOffset, tile.yOffset, tile.xOffset + 16, tile.yOffset + 16);
@@ -329,7 +360,11 @@ namespace Necrofy
             if (!selectedObjects.SetEquals(objectSelector.GetSelectedObjects())) {
                 selectedObjects = new HashSet<WrappedSpriteTile>(objectSelector.GetSelectedObjects());
                 RaiseSelectionChanged();
-                PropertyBrowserObjects = selectedObjects.ToArray();
+                if (selectedObjects.Count == 0) {
+                    PropertyBrowserObjects = new object[] { currentWrappedSprite };
+                } else {
+                    PropertyBrowserObjects = selectedObjects.ToArray();
+                }
 
                 UpdateSelectedPalette();
                 if (selectedObjects.Count == 1) {
@@ -452,25 +487,6 @@ namespace Necrofy
         private void canvas_KeyDown(object sender, KeyEventArgs e) {
             objectSelector.KeyDown(e.KeyData);
             tilePicker.OnKeyDown(e.KeyCode);
-            if (e.KeyData == (Keys.Control | Keys.Alt | Keys.L)) {
-                //CopySpriteASMText(); // TODO: Remove
-            }
-        }
-
-        private void CopySpriteASMText() {
-            if (currentSprite == null) {
-                return;
-            }
-            StringBuilder s = new StringBuilder();
-            s.AppendLine($"db #{currentSprite.tiles.Count}");
-            for (int i = currentSprite.tiles.Count - 1; i >= 0; i--) {
-                Sprite.Tile tile = currentSprite.tiles[i];
-                s.AppendLine($"dw #{tile.xOffset}");
-                s.AppendLine($"dw #{tile.yOffset}");
-                s.AppendLine($"dw #${tile.GetProperties():X4}");
-                s.AppendLine($"dw #${tile.tileNum + 0xC03:X4}");
-            }
-            Clipboard.SetText(s.ToString());
         }
 
         public void AddTiles(Sprite s, List<WrappedSpriteTile> tiles, List<int> zIndexes = null) {
@@ -498,7 +514,7 @@ namespace Necrofy
 
         private void UpdateSpritePreviews() {
             foreach (Sprite s in modifiedSprites) {
-                int index = Array.IndexOf(loadedSprites.Sprites, s);
+                int index = loadedSprites.Sprites.IndexOf(s);
                 loadedSprites.LoadSprite(index);
             }
             modifiedSprites.Clear();
@@ -518,6 +534,26 @@ namespace Necrofy
                 undoManager.Do(new ChangeSpriteTilePaletteAction(currentSprite, selectedObjects, tilePicker.Palette));
                 canvas.Focus();
             }
+        }
+
+        private void graphicsHeaderPanel_MouseDown(object sender, MouseEventArgs e) {
+            if (graphicsListPanel.Visible) {
+                graphicsListPanel.Visible = false;
+                graphicsExpandLabel.Text = "▼";
+            } else {
+                graphicsListPanel.Visible = true;
+                graphicsExpandLabel.Text = "▲";
+            }
+        }
+
+        private void addGraphicsButton_Click(object sender, EventArgs e) {
+            string newGraphics = graphicsSelector.SelectedItem;
+            if (newGraphics != null && !loadedSprites.GraphicsAssets.Contains(newGraphics)) {
+                loadedSprites.AddGraphics(project, newGraphics);
+                graphicsList.Items.Add(newGraphics);
+                tilePicker.SetTiles(loadedSprites.tileImages, loadedSprites.loadedPalette.colors);
+            }
+            graphicsSelector.Deselect();
         }
     }
 }

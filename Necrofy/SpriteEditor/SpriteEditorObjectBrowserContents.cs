@@ -21,6 +21,9 @@ namespace Necrofy
 
         public override IEnumerable<ObjectBrowserObject> Objects {
             get {
+                if (sprites.images == null) {
+                    yield break;
+                }
                 foreach (Bitmap image in sprites.images) {
                     yield return new ObjectBrowserObject(image.Size);
                 }

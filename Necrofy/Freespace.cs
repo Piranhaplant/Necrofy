@@ -60,14 +60,17 @@ namespace Necrofy
         /// <summary>Claims a block of <paramref name="size"/> bytes from the freespace pool. If there aren't enough bytes, claims space at the end of the ROM.</summary>
         /// <param name="size">The number of bytes required</param>
         /// <returns>The address of the claimed space</returns>
-        public int Claim(int size) {
+        public int Claim(int size, int alignment = 1) {
             if (size > BankSize) {
                 throw new ArgumentException("size cannot be bigger than bankSize");
+            }
+            if (size == 0) {
+                return 0;
             }
             // Find the first block that will hold the required bytes
             FreeBlock foundBlock = null;
             foreach (FreeBlock b in blocks) {
-                if (b.Size >= size) {
+                if (Align(b.Start, alignment) + size <= b.End) {
                     foundBlock = b;
                     break;
                 }
@@ -79,17 +82,24 @@ namespace Necrofy
                 }
                 AddSize(romSize, BankSize);
                 romSize += BankSize;
-                return Claim(size);
+                return Claim(size, alignment);
             } else {
-                // Found a block, so make that block smaller and return its original start
-                int address = foundBlock.Start;
-                foundBlock.Subtract(size);
-                // And remove the block if there's no space left in it. Not necessary, but I think it's a probably a good idea
-                if (foundBlock.Size == 0) {
+                // Found a block, so make that block smaller and return the address of the claimed space
+                int address = Align(foundBlock.Start, alignment);
+                FreeBlock claimedBlock = new FreeBlock(address, address + size);
+                FreeBlock splitBlock = foundBlock.Subtract(claimedBlock);
+                if (splitBlock != null) {
+                    blocks.Add(splitBlock);
+                }
+                if (foundBlock.Size <= 0) {
                     blocks.Remove(foundBlock);
                 }
                 return address;
             }
+        }
+
+        private static int Align(int start, int alignment) {
+            return (start + alignment - 1) / alignment * alignment;
         }
 
         /// <summary>Reserves the specified block so that it can't be claimed.</summary>
@@ -176,12 +186,6 @@ namespace Necrofy
                 if (block.End > End) {
                     End = block.End;
                 }
-            }
-
-            /// <summary>Removes <paramref name="size"/> bytes from the beginning of this block. Assumes that this block is at least that big.</summary>
-            /// <param name="size">The number of bytes to remove</param>
-            public void Subtract(int size) {
-                Start += size;
             }
 
             /// <summary>Removes the specified block from this block. Assumes the blocks intersect.</summary>

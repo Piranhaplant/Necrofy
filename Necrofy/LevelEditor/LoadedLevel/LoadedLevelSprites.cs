@@ -10,8 +10,10 @@ namespace Necrofy
 {
     class LoadedLevelSprites : IDisposable
     {
+        private readonly Project project;
+
         private LoadedPalette loadedPalette;
-        private LoadedGraphics loadedGraphics;
+        private List<LoadedGraphics> loadedGraphics = new List<LoadedGraphics>();
         private SpritesAsset spritesAsset;
         private EditorAsset<SpriteDisplayList> spriteDisplayAsset;
 
@@ -27,19 +29,31 @@ namespace Necrofy
         public event EventHandler Updated;
 
         public LoadedLevelSprites(Project project, string spritePaletteName) {
+            this.project = project;
+
             loadedPalette = new LoadedPalette(project, spritePaletteName, transparent: true);
-            loadedGraphics = new LoadedGraphics(project, Asset.SpritesFolder + Asset.FolderSeparator + GraphicsAsset.DefaultName, GraphicsAsset.Type.Normal);
-            spritesAsset = SpritesAsset.FromProject(project, Asset.SpritesFolder);
+            spritesAsset = SpritesAsset.FromProject(project, Asset.SpritesFolder + Asset.FolderSeparator + SpritesAsset.DefaultFileName);
             spriteDisplayAsset = EditorAsset<SpriteDisplayList>.FromProject(project, "SpriteDisplay");
 
             loadedPalette.Updated += Asset_Updated;
-            loadedGraphics.Updated += Asset_Updated;
             spritesAsset.Updated += Asset_Updated;
 
             Load();
         }
 
         private void Load() {
+            foreach (LoadedGraphics g in loadedGraphics) {
+                g.Updated -= Asset_Updated;
+            }
+            loadedGraphics.Clear();
+
+            foreach (string assetName in spritesAsset.sprites.graphicsAssets) {
+                LoadGraphics(assetName);
+            }
+            if (loadedGraphics.Count == 0) {
+                LoadGraphics(GraphicsAsset.SpriteGraphics);
+            }
+
             sprites = new Dictionary<SpriteDisplay.Key.Type, Dictionary<int, LoadedSprite>>();
             foreach (SpriteDisplay.Key.Type keyType in Enum.GetValues(typeof(SpriteDisplay.Key.Type))) {
                 sprites[keyType] = new Dictionary<int, LoadedSprite>();
@@ -50,7 +64,7 @@ namespace Necrofy
             }
 
             Dictionary<int, Sprite> spritePointers = new Dictionary<int, Sprite>();
-            foreach (Sprite s in spritesAsset.sprites) {
+            foreach (Sprite s in spritesAsset.sprites.sprites) {
                 if (s.pointer != null) {
                     spritePointers[(int)s.pointer] = s;
                 }
@@ -58,7 +72,7 @@ namespace Necrofy
 
             foreach (ImageSpriteDisplay spriteDisplay in spriteDisplayAsset.data.imageSprites) {
                 if (spritePointers.ContainsKey(spriteDisplay.spritePointer)) {
-                    LoadedSprite s = new ImageLoadedSprite(spriteDisplay, spritePointers[spriteDisplay.spritePointer], loadedGraphics.linearGraphics, loadedPalette.colors);
+                    LoadedSprite s = new ImageLoadedSprite(spriteDisplay, spritePointers[spriteDisplay.spritePointer], loadedGraphics, loadedPalette.colors);
                     AddLoadedSprite(spriteDisplay, s);
                 }
             }
@@ -66,6 +80,12 @@ namespace Necrofy
                 LoadedSprite s = new TextLoadedSprite(spriteDisplay);
                 AddLoadedSprite(spriteDisplay, s);
             }
+        }
+
+        private void LoadGraphics(string graphicsName) {
+            LoadedGraphics g = new LoadedGraphics(project, graphicsName, LoadedSprites.GetGraphicsAssetType(graphicsName));
+            loadedGraphics.Add(g);
+            g.Updated += Asset_Updated;
         }
 
         public void Dispose() {
@@ -143,8 +163,8 @@ namespace Necrofy
             private readonly int anchorX;
             private readonly int anchorY;
 
-            public ImageLoadedSprite(ImageSpriteDisplay spriteDisplay, Sprite sprite, LoadedGraphics.LinearGraphics graphics, Color[] colors) : base(spriteDisplay) {
-                image = sprite.Render(graphics, colors, spriteDisplay.overridePalette, out anchorX, out anchorY);
+            public ImageLoadedSprite(ImageSpriteDisplay spriteDisplay, Sprite sprite, List<LoadedGraphics> loadedGraphics, Color[] colors) : base(spriteDisplay) {
+                image = sprite.Render(loadedGraphics, colors, spriteDisplay.overridePalette, out anchorX, out anchorY);
             }
 
             public override void Dispose() {

@@ -33,23 +33,25 @@ namespace Necrofy
         public void StartBlock() {
             readBlockStart = Position;
             readBlockEnd = readBlockStart + 1;
+            blockPaused = false;
         }
 
         /// <summary>Stops tracking the block of data read from and adds it to the given freespace</summary>
         /// <param name="freespace">The freespace to add the block to.</param>
         public void EndBlock(Freespace freespace) {
-            if (readBlockStart < 0)
+            if (readBlockStart < 0) {
                 throw new InvalidOperationException("StartBlock must be called before EndBlock");
+            }
             freespace.Add((int)readBlockStart, (int)readBlockEnd);
             readBlockStart = -1;
             readBlockEnd = -1;
-            blockPaused = false;
         }
 
         /// <summary>Pauses or unpauses block tracking</summary>
         public void TogglePauseBlock() {
-            if (readBlockStart < 0)
+            if (readBlockStart < 0) {
                 throw new InvalidOperationException("TogglePauseBlock called when not tracking a block");
+            }
             blockPaused = !blockPaused;
         }
 

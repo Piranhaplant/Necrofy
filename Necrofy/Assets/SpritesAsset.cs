@@ -9,19 +9,21 @@ namespace Necrofy
 {
     class SpritesAsset : Asset
     {
+        public const string DefaultFileName = "Sprites";
         private const AssetCategory AssetCat = AssetCategory.Sprites;
 
         static SpritesAsset() {
             AddCreator(new SpritesCreator());
         }
 
-        public Sprite[] sprites;
+        public SpriteFile sprites;
 
-        public static SpritesAsset FromProject(Project project, string folder) {
-            return new SpritesCreator().FromProject(project, folder);
+        public static SpritesAsset FromProject(Project project, string fullName) {
+            ParsedName parsedName = new ParsedName(fullName);
+            return new SpritesCreator().FromProject(project, parsedName.Folder, parsedName.FinalName);
         }
 
-        private SpritesAsset(SpritesNameInfo nameInfo, Sprite[] sprites) : base(nameInfo) {
+        private SpritesAsset(SpritesNameInfo nameInfo, SpriteFile sprites) : base(nameInfo) {
             this.sprites = sprites;
         }
 
@@ -30,7 +32,7 @@ namespace Necrofy
         }
 
         protected override void Reload(string filename) {
-            sprites = JsonConvert.DeserializeObject<Sprite[]>(File.ReadAllText(filename));
+            sprites = JsonConvert.DeserializeObject<SpriteFile>(File.ReadAllText(filename), new SpriteFile.Converter());
         }
 
         protected override void WriteFile(string filename) {
@@ -38,13 +40,13 @@ namespace Necrofy
         }
 
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
-            Sprite.WriteToROM(sprites, rom, romInfo.Freespace);
+            Sprite.WriteToROM(sprites, rom, romInfo);
         }
         
         class SpritesCreator : Creator
         {
-            public SpritesAsset FromProject(Project project, string folder) {
-                NameInfo nameInfo = new SpritesNameInfo(folder);
+            public SpritesAsset FromProject(Project project, string folder, string spritesName) {
+                NameInfo nameInfo = new SpritesNameInfo(folder, spritesName);
                 return project.GetCachedAsset(nameInfo, () => {
                     string filename = nameInfo.FindFilename(project.path);
                     return (SpritesAsset)FromFile(nameInfo, filename);
@@ -61,7 +63,7 @@ namespace Necrofy
 
             public override List<DefaultParams> GetDefaults() {
                 return new List<DefaultParams>() {
-                    new DefaultParams(0, new SpritesNameInfo(SpritesFolder), extractFromNecrofyROM: true),
+                    new DefaultParams(0, new SpritesNameInfo(SpritesFolder, DefaultFileName), extractFromNecrofyROM: true),
                 };
             }
 
@@ -70,27 +72,32 @@ namespace Necrofy
                 List<Sprite> sprites = new List<Sprite>();
                 Sprite.AddFromROM(sprites, romStream, ROMPointers.SpriteData1, romInfo);
                 Sprite.AddFromROM(sprites, romStream, ROMPointers.SpriteData2, romInfo);
-                return new SpritesAsset((SpritesNameInfo)nameInfo, sprites.ToArray());
+
+                List<string> graphicsAssets = new List<string>();
+                graphicsAssets.Add(GraphicsAsset.SpriteGraphics);
+                if (romInfo.ExtraSpriteGraphicsBasePointer > 0) {
+                    graphicsAssets.Add(SpritesFolder + FolderSeparator + GraphicsAsset.DefaultExtraSpriteGraphicsName);
+                }
+
+                return new SpritesAsset((SpritesNameInfo)nameInfo, new SpriteFile(sprites, graphicsAssets));
             }
         }
 
         class SpritesNameInfo : NameInfo
         {
-            private const string FileName = "Sprites";
             private const string Extension = "spr";
             
             private SpritesNameInfo(PathParts parts) : base(parts) { }
-            public SpritesNameInfo(string folder) : this(new PathParts(folder, FileName, Extension, null, false)) { }
+            public SpritesNameInfo(string folder, string name) : this(new PathParts(folder, name, Extension, null, false)) { }
             
             public override AssetCategory Category => AssetCat;
             
             public override bool Editable => true;
             public override EditorWindow GetEditor(Project project) {
-                return new SpriteEditor(new LoadedSprites(project, Parts.folder));
+                return new SpriteEditor(new LoadedSprites(project, Name));
             }
 
             public static SpritesNameInfo FromPath(PathParts parts) {
-                if (parts.name != FileName) return null;
                 if (parts.fileExtension != Extension) return null;
                 if (parts.pointer != null) return null;
                 if (parts.compressed) return null;

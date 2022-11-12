@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -47,6 +48,7 @@ namespace Necrofy
 
         public class Entry
         {
+            [JsonConverter(typeof(StringEnumConverter))]
             public AssetCategory category;
             public string name;
             public Options options;
@@ -82,6 +84,7 @@ namespace Necrofy
             public int width = 32;
             public bool transparency;
             public bool largeTiles;
+            [JsonConverter(typeof(StringEnumConverter))]
             public Hinting.Type hinting;
 
             public TilemapOptions() { }
@@ -100,6 +103,10 @@ namespace Necrofy
                 { AssetCategory.Graphics, () => new GraphicsOptions() },
                 { AssetCategory.Tilemap, () => new TilemapOptions() },
             };
+            private static readonly Dictionary<int, AssetCategory> legacyConversions = new Dictionary<int, AssetCategory>() {
+                { 5, AssetCategory.Graphics },
+                { 7, AssetCategory.Tilemap },
+            };
 
             public override bool CanConvert(Type objectType) {
                 return typeof(Entry).IsAssignableFrom(objectType);
@@ -108,10 +115,25 @@ namespace Necrofy
             public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer) {
                 JObject jObject = JObject.Load(reader);
                 Entry target = new Entry();
-                if (optionsTemplates.TryGetValue((AssetCategory)(int)jObject["category"], out Func<Options> optionGetter)) {
-                    target.options = optionGetter();
+                JToken categoryToken = jObject["category"];
+                AssetCategory category;
+
+                if (categoryToken.Type == JTokenType.Integer) {
+                    if (legacyConversions.TryGetValue((int)categoryToken, out category)) {
+                        target.options = optionsTemplates[category]();
+                    } else {
+                        throw new Exception("Unknown asset options type");
+                    }
+                } else {
+                    category = (AssetCategory)Enum.Parse(typeof(AssetCategory), (string)categoryToken);
+                    if (optionsTemplates.TryGetValue(category, out Func<Options> optionGetter)) {
+                        target.options = optionGetter();
+                    } else {
+                        throw new Exception("Unknown asset options type");
+                    }
                 }
                 serializer.Populate(jObject.CreateReader(), target);
+                target.category = category;
                 return target;
             }
 
@@ -144,6 +166,8 @@ namespace Necrofy
                 ExtractionPreset target = new ExtractionPreset();
                 if (jObject["Options"] != null && optionsTemplates.TryGetValue(assetType, out Func<Options> optionGetter)) {
                     target.Options = optionGetter();
+                } else {
+                    throw new Exception("Unknown asset extraction options type");
                 }
                 serializer.Populate(jObject.CreateReader(), target);
                 return target;

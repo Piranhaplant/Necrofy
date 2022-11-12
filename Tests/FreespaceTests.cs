@@ -79,26 +79,6 @@ namespace Tests
         }
 
         [TestMethod]
-        public void TestSubtractInteger() {
-            Freespace.FreeBlock baseBlock;
-
-            baseBlock = new Freespace.FreeBlock(10, 20);
-            baseBlock.Subtract(0);
-            Assert.AreEqual(10, baseBlock.Start);
-            Assert.AreEqual(20, baseBlock.End);
-
-            baseBlock = new Freespace.FreeBlock(10, 20);
-            baseBlock.Subtract(5);
-            Assert.AreEqual(15, baseBlock.Start);
-            Assert.AreEqual(20, baseBlock.End);
-
-            baseBlock = new Freespace.FreeBlock(10, 20);
-            baseBlock.Subtract(10);
-            Assert.AreEqual(20, baseBlock.Start);
-            Assert.AreEqual(20, baseBlock.End);
-        }
-
-        [TestMethod]
         public void TestSubtractBlock() {
             Freespace.FreeBlock baseBlock, result;
 
@@ -214,6 +194,31 @@ namespace Tests
             Assert.AreEqual(Freespace.BankSize, freespace.Claim(0x100));
             freespace.Sort();
             Assert.AreEqual("000010-000020 (000010)\r\n000048-000050 (000008)\r\n008100-010000 (007F00)\r\n", freespace.ToString());
+        }
+
+        [TestMethod]
+        public void TestClaimAlignment() {
+            Freespace freespace;
+
+            freespace = new Freespace(Freespace.BankSize);
+            freespace.Add(0x10, 0x20);
+            Assert.AreEqual("000010-000020 (000010)\r\n", freespace.ToString());
+            Assert.AreEqual(0x10, freespace.Claim(0x8, 0x8));
+            Assert.AreEqual("000018-000020 (000008)\r\n", freespace.ToString());
+
+            freespace = new Freespace(Freespace.BankSize);
+            freespace.Add(0x11, 0x21);
+            Assert.AreEqual("000011-000021 (000010)\r\n", freespace.ToString());
+            Assert.AreEqual(0x18, freespace.Claim(0x8, 0x8));
+            freespace.Sort();
+            Assert.AreEqual("000011-000018 (000007)\r\n000020-000021 (000001)\r\n", freespace.ToString());
+
+            freespace = new Freespace(Freespace.BankSize);
+            freespace.Add(0x11, 0x21);
+            freespace.Add(0x30, 0x40);
+            Assert.AreEqual(0x30, freespace.Claim(0x10, 0x10));
+            freespace.Sort();
+            Assert.AreEqual("000011-000021 (000010)\r\n", freespace.ToString());
         }
 
         [TestMethod]

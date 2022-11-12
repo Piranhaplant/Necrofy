@@ -12,7 +12,7 @@ namespace Necrofy
 {
     public partial class SpriteTilePicker : UserControl
     {
-        private Bitmap[] tiles = null;
+        private IReadOnlyList<Bitmap> tiles = null;
         private Color[] colors = null;
         private readonly ScrollWrapper scrollWrapper;
         private readonly RadioButton[] paletteButtons;
@@ -110,7 +110,7 @@ namespace Necrofy
             canvas.Invalidate();
         }
 
-        public void SetTiles(Bitmap[] tiles, Color[] colors, int zoom = 1) {
+        public void SetTiles(IReadOnlyList<Bitmap> tiles, Color[] colors, int zoom = 1) {
             this.tiles = tiles;
             this.colors = colors;
             this.zoom = zoom;
@@ -122,9 +122,9 @@ namespace Necrofy
             if (tiles == null) {
                 return;
             }
-            tileSize = tiles.Length > 0 ? tiles[0].Width : 1;
+            tileSize = tiles.Count > 0 ? tiles[0].Width : 1;
             tilesPerRow = canvas.Width / tileSize / zoom;
-            int height = (int)Math.Ceiling(tiles.Length / (double)tilesPerRow);
+            int height = (int)Math.Ceiling(tiles.Count / (double)tilesPerRow);
             scrollWrapper.SetClientSize(canvas.Width / zoom, Math.Max(canvas.Height / zoom, height * tileSize));
             scrollWrapper.Zoom = zoom;
             Repaint();
@@ -146,7 +146,7 @@ namespace Necrofy
             PointF topLeft = scrollWrapper.TransformPoint(PointF.Empty);
             PointF bottomRight = scrollWrapper.TransformPoint(new PointF(canvas.Width, canvas.Height));
 
-            for (int i = 0; i < tiles.Length; i++) {
+            for (int i = 0; i < tiles.Count; i++) {
                 int x = (i % tilesPerRow) * tileSize;
                 int y = (i / tilesPerRow) * tileSize;
                 if (y > topLeft.Y - tileSize && y < bottomRight.Y) {
@@ -166,7 +166,7 @@ namespace Necrofy
             }
             Point transformed = scrollWrapper.TransformPoint(e.Location);
             int tile = Math.Min(tilesPerRow - 1, transformed.X / tileSize) + (transformed.Y / tileSize) * tilesPerRow;
-            if (tile < tiles.Length && e.Button == MouseButtons.Left) {
+            if (tile < tiles.Count && e.Button == MouseButtons.Left) {
                 SelectedTile = tile;
                 Repaint();
             }

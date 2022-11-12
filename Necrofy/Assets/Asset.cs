@@ -18,11 +18,11 @@ namespace Necrofy
         Editor,
         Data,
         Passwords,
-        Sprites,
         Collision,
         Graphics,
         Palette,
         Tilemap,
+        Sprites,
         Level,
         Demo,
     }
@@ -80,7 +80,7 @@ namespace Necrofy
             }
             rom.Seek((int)pointer);
             rom.Write(data, 0, data.Length);
-            romInfo.AddAssetPointer(nameInfo.Category, nameInfo.Name, (int)pointer);
+            romInfo.AddAssetPointer(nameInfo.Category, nameInfo.Name, (int)pointer, data.Length);
         }
         protected void InsertCompressedByteArray(NStream rom, ROMInfo romInfo, byte[] data, string filename, int? pointer = null) {
             string compressedFilename = filename + ".nfyz";
@@ -93,7 +93,7 @@ namespace Necrofy
             }
             
             int newPointer = ZAMNCompress.Insert(rom, romInfo.Freespace, compressedData, pointer);
-            romInfo.AddAssetPointer(nameInfo.Category, nameInfo.Name, newPointer);
+            romInfo.AddAssetPointer(nameInfo.Category, nameInfo.Name, newPointer, compressedData.Length);
         }
 
         private static List<Creator> creators = new List<Creator>();

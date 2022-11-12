@@ -285,6 +285,7 @@
     <Compile Include="PaletteEditor\PaletteEditor.Designer.cs">
       <DependentUpon>PaletteEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="PointerAndSize.cs" />
     <Compile Include="PreferencesDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -333,6 +334,7 @@
     <Compile Include="SpriteEditor\SpriteTilePicker.Designer.cs">
       <DependentUpon>SpriteTilePicker.cs</DependentUpon>
     </Compile>
+    <Compile Include="SpriteFile.cs" />
     <Compile Include="StartupWindow.cs">
       <SubType>Form</SubType>
     </Compile>

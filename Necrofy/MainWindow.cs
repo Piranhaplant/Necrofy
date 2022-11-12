@@ -459,6 +459,7 @@ namespace Necrofy
                         } catch (Exception e) {
                             Console.WriteLine(e.Message);
                             Console.WriteLine(e.StackTrace);
+                            openEditors.RemoveWhere(ed => ed.AssetInfo == info);
                         }
                     }
                 }

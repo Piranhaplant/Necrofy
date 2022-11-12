@@ -16,6 +16,8 @@ namespace Necrofy
         }
 
         public const string DefaultName = "Graphics";
+        public const string DefaultExtraSpriteGraphicsName = "GraphicsExtra";
+        public static readonly string SpriteGraphics = SpritesFolder + FolderSeparator + DefaultName;
         public static readonly Dictionary<string, Type> Extensions = new Dictionary<string, Type>() {
             {"gfx", Type.Normal },
             {"gfxs", Type.Sprite },
@@ -55,7 +57,7 @@ namespace Necrofy
             Reload(filename);
         }
 
-        public bool Is2BPP => graphicsNameInfo.type == Type.TwoBPP;
+        public Type GraphicsType => graphicsNameInfo.type;
 
         protected override void Reload(string filename) {
             data = File.ReadAllBytes(filename);
@@ -70,19 +72,29 @@ namespace Necrofy
                 romInfo.ExtraSpriteGraphicsStartIndex = data.Length / 0x80;
             } else if (graphicsNameInfo.type == Type.Sprite) {
                 romInfo.ExtraSpriteGraphicsSize += data.Length;
+                romInfo.ExtraSpriteGraphicsBasePointer = 0; // Clear this value so it can be reset when the graphics are inserted
+                if (nameInfo.Parts.folder == SpritesFolder && nameInfo.Parts.name == DefaultExtraSpriteGraphicsName) {
+                    romInfo.ExtraSpriteGraphicsFirstSize = data.Length;
+                }
             }
         }
 
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
             if (graphicsNameInfo.type == Type.Sprite) {
                 if (romInfo.ExtraSpriteGraphicsBasePointer == 0) {
-                    romInfo.ExtraSpriteGraphicsBasePointer = romInfo.Freespace.Claim(romInfo.ExtraSpriteGraphicsSize);
-                }
-                if (romInfo.ExtraSpriteGraphicsCurrentPointer == 0) {
+                    // TODO: Extra sprite graphics could exceed one bank
+                    romInfo.ExtraSpriteGraphicsBasePointer = romInfo.Freespace.Claim(romInfo.ExtraSpriteGraphicsSize, alignment: 0x80);
                     romInfo.ExtraSpriteGraphicsCurrentPointer = romInfo.ExtraSpriteGraphicsBasePointer;
+                    if (romInfo.ExtraSpriteGraphicsFirstSize > 0) {
+                        romInfo.ExtraSpriteGraphicsCurrentPointer += romInfo.ExtraSpriteGraphicsFirstSize;
+                    }
                 }
-                InsertByteArray(rom, romInfo, data, romInfo.ExtraSpriteGraphicsCurrentPointer);
-                romInfo.ExtraSpriteGraphicsCurrentPointer += data.Length;
+                if (nameInfo.Parts.folder == SpritesFolder && nameInfo.Parts.name == DefaultExtraSpriteGraphicsName) {
+                    InsertByteArray(rom, romInfo, data, romInfo.ExtraSpriteGraphicsBasePointer);
+                } else {
+                    InsertByteArray(rom, romInfo, data, romInfo.ExtraSpriteGraphicsCurrentPointer);
+                    romInfo.ExtraSpriteGraphicsCurrentPointer += data.Length;
+                }
             } else if (nameInfo.Parts.compressed) {
                 InsertCompressedByteArray(rom, romInfo, data, nameInfo.GetFilename(project.path), nameInfo.Parts.pointer);
             } else {
@@ -121,6 +133,7 @@ namespace Necrofy
                     new DefaultParams(0xcc000, new GraphicsNameInfo(GetTilesetFolder(Mall), DefaultName), 0x4000),
 
                     new DefaultParams(0, new GraphicsNameInfo(ScratchPadFolder, DefaultName, skipped: true), extractFromNecrofyROM: true, versionAdded: new Version(2, 0), options: new AssetOptions.GraphicsOptions(32, false, false)),
+                    new DefaultParams(1, new GraphicsNameInfo(SpritesFolder, DefaultExtraSpriteGraphicsName, type: Type.Sprite), extractFromNecrofyROM: true, options: new AssetOptions.GraphicsOptions(16, true, true)),
                 };
             }
 
@@ -131,6 +144,16 @@ namespace Necrofy
                     // Special pointer used for scratch pad asset
                     trackFreespace = false;
                     return new GraphicsAsset(graphicsNameInfo, new byte[0x8000]);
+                } else if (romStream.Position == 1) {
+                    // Special pointer used for extra sprite graphics in a Necrofy ROM
+                    trackFreespace = false;
+                    if (romInfo.ExtraSpriteGraphicsBasePointer > 0) {
+                        romInfo.Freespace.Add(romInfo.ExtraSpriteGraphicsBasePointer, romInfo.ExtraSpriteGraphicsCurrentPointer);
+                        romStream.Seek(romInfo.ExtraSpriteGraphicsBasePointer);
+                        return new GraphicsAsset(graphicsNameInfo, romStream.ReadBytes(romInfo.ExtraSpriteGraphicsCurrentPointer - romInfo.ExtraSpriteGraphicsBasePointer));
+                    } else {
+                        return null;
+                    }
                 } else if (graphicsNameInfo.Parts.compressed) {
                     if (trackFreespace) {
                         romStream.PushPosition();
