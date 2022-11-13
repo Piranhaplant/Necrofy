@@ -43,7 +43,7 @@ namespace Necrofy
                     }
                 }
 
-                Clipboard.SetText(JsonConvert.SerializeObject(tiles));
+                Clipboard.SetText(JsonConvert.SerializeObject(new ClipboardContents(tiles)));
             }
 
             protected override void RenderPaste(Graphics g, int pixelX, int pixelY, GraphicsPath path) {
@@ -59,8 +59,12 @@ namespace Necrofy
             }
 
             protected override Size ReadPaste() {
-                pasteTiles = JsonConvert.DeserializeObject<ushort?[,]>(Clipboard.GetText());
-                return new Size(pasteTiles.GetWidth(), pasteTiles.GetHeight());
+                pasteTiles = JsonConvert.DeserializeObject<ClipboardContents>(Clipboard.GetText()).background;
+                if (pasteTiles == null) {
+                    return Size.Empty;
+                } else {
+                    return new Size(pasteTiles.GetWidth(), pasteTiles.GetHeight());
+                }
             }
 
             protected override bool PointInPaste(int x, int y) {
@@ -73,6 +77,15 @@ namespace Necrofy
 
             protected override void ClearPasteData() {
                 pasteTiles = null;
+            }
+        }
+
+        private class ClipboardContents
+        {
+            public readonly ushort?[,] background;
+
+            public ClipboardContents(ushort?[,] background) {
+                this.background = background;
             }
         }
     }

@@ -68,11 +68,15 @@ namespace Necrofy
                     }
                 }
 
-                Clipboard.SetText(JsonConvert.SerializeObject(new PasteData(tiles)));
+                Clipboard.SetText(JsonConvert.SerializeObject(new ClipboardContents(tiles)));
             }
 
             protected override Size ReadPaste() {
-                ushort?[,] tilemap = JsonConvert.DeserializeObject<PasteData>(Clipboard.GetText()).tilemap;
+                ushort?[,] tilemap = JsonConvert.DeserializeObject<ClipboardContents>(Clipboard.GetText()).tilemap;
+                if (tilemap == null) {
+                    return Size.Empty;
+                }
+
                 pasteTiles = new LoadedTilemap.Tile?[tilemap.GetWidth(), tilemap.GetHeight()];
                 for (int y = 0; y < tilemap.GetHeight(); y++) {
                     for (int x = 0; x < tilemap.GetWidth(); x++) {
@@ -118,11 +122,11 @@ namespace Necrofy
             }
         }
 
-        private class PasteData
+        private class ClipboardContents
         {
-            public ushort?[,] tilemap;
+            public readonly ushort?[,] tilemap;
 
-            public PasteData(ushort?[,] tilemap) {
+            public ClipboardContents(ushort?[,] tilemap) {
                 this.tilemap = tilemap;
             }
         }

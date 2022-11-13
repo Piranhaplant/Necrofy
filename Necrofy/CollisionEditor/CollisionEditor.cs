@@ -45,6 +45,8 @@ namespace Necrofy
 
             this.loadedCollision = loadedCollision;
             collisions = (ushort[])loadedCollision.tiles.Clone();
+
+            Status = "Select an 8x8 graphics tile to edit its collision. Select a tileset tile from the objects panel to preview collision.";
         }
 
         private void CollisionEditor_Disposed(object sender, EventArgs e) {

@@ -92,7 +92,7 @@ namespace Necrofy
                     colors[x - selectionMin.X, y - selectionMin.Y] = SNESGraphics.RGBToSNES(colorSelector.Colors[colorSelector.PointToIndex(new Point(x, y))]);
                 }
             }
-            clipboardData.SetText(JsonConvert.SerializeObject(colors));
+            clipboardData.SetText(JsonConvert.SerializeObject(new ClipboardContents(colors)));
 
             using (Bitmap image = new Bitmap(colors.GetWidth() * ClipboardImageSquareSize, colors.GetHeight() * ClipboardImageSquareSize))
             using (Graphics g = Graphics.FromImage(image)) {
@@ -111,7 +111,10 @@ namespace Necrofy
         public override void Paste() {
             try {
                 if (Clipboard.ContainsText()) {
-                    ushort[,] snesColors = JsonConvert.DeserializeObject<ushort[,]>(Clipboard.GetText());
+                    ushort[,] snesColors = JsonConvert.DeserializeObject<ClipboardContents>(Clipboard.GetText()).colors;
+                    if (snesColors == null) {
+                        return;
+                    }
                     Color[,] colors = new Color[snesColors.GetWidth(), snesColors.GetHeight()];
                     for (int y = 0; y < colors.GetHeight(); y++) {
                         for (int x = 0; x < colors.GetWidth(); x++) {
@@ -218,6 +221,15 @@ namespace Necrofy
         private void colorSelector_Leave(object sender, EventArgs e) {
             colorSelectorFocused = false;
             RaiseSelectionChanged();
+        }
+
+        private class ClipboardContents
+        {
+            public readonly ushort[,] colors;
+
+            public ClipboardContents(ushort[,] colors) {
+                this.colors = colors;
+            }
         }
     }
 }

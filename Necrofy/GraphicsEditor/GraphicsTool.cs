@@ -84,7 +84,7 @@ namespace Necrofy
 
                 DataObject clipboardData = new DataObject();
                 clipboardData.SetImage(image);
-                clipboardData.SetText(JsonConvert.SerializeObject(rawData));
+                clipboardData.SetText(JsonConvert.SerializeObject(new ClipboardContents(rawData)));
                 using (MemoryStream s = new MemoryStream()) {
                     image.Save(s, ImageFormat.Png);
                     clipboardData.SetData(PNGClipboardFormat, false, s);
@@ -97,7 +97,10 @@ namespace Necrofy
             protected override Size ReadPaste() {
                 transparent = editor.transparency;
                 if (Clipboard.ContainsText()) {
-                    pasteData = JsonConvert.DeserializeObject<sbyte[,]>(Clipboard.GetText());
+                    pasteData = JsonConvert.DeserializeObject<ClipboardContents>(Clipboard.GetText()).graphics;
+                    if (pasteData == null) {
+                        return Size.Empty;
+                    }
                 } else if (Clipboard.ContainsData(PNGClipboardFormat)) {
                     using (MemoryStream s = Clipboard.GetData("PNG") as MemoryStream)
                     using (Bitmap image = new Bitmap(s)) {
@@ -194,6 +197,15 @@ namespace Necrofy
 
             public override void Delete() {
                 editor.undoManager.Do(new DeleteGraphicsAction());
+            }
+        }
+
+        private class ClipboardContents
+        {
+            public readonly sbyte[,] graphics;
+
+            public ClipboardContents(sbyte[,] graphics) {
+                this.graphics = graphics;
             }
         }
     }
