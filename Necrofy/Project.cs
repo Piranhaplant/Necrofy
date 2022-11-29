@@ -222,21 +222,18 @@ namespace Necrofy
                     info.Freespace.Fill(s, FreespaceFillByte);
                 }
 
-                info.AddExportedDefine("win_level", settings.WinLevel.ToString());
-                info.AddExportedDefine("end_game_level", settings.EndGameLevel.ToString());
-                info.AddExportedDefine("extra_sprite_graphics_base", ROMPointers.PointerToHexString(info.ExtraSpriteGraphicsBasePointer));
-                info.AddExportedDefine("extra_sprite_graphics_start_index", info.ExtraSpriteGraphicsStartIndex.ToString());
-
-                foreach (KeyValuePair<string, string> define in info.exportedDefines) {
-                    Console.WriteLine("!" + define.Key + "=" + define.Value);
-                }
+                info.AddGlobalDefine("win_level", settings.WinLevel.ToString());
+                info.AddGlobalDefine("end_game_level", settings.EndGameLevel.ToString());
+                info.AddGlobalDefine("extra_sprite_graphics_base", ROMPointers.PointerToHexString(info.ExtraSpriteGraphicsBasePointer));
+                info.AddGlobalDefine("extra_sprite_graphics_start_index", info.ExtraSpriteGraphicsStartIndex.ToString());
+                info.LogDefines();
 
                 foreach (ProjectSettings.Patch patch in settings.EnabledPatches) {
-                    ApplyInternalPatch(outputROM, patch.Name, results, info.exportedDefines);
+                    ApplyInternalPatch(outputROM, patch.Name, results, info.globalDefines);
                 }
 
                 foreach (string filename in Directory.GetFiles(path, "*.asm", SearchOption.AllDirectories)) {
-                    ApplyPatch(outputROM, filename, results, info.exportedDefines);
+                    ApplyPatch(outputROM, filename, results, info.globalDefines, info.GetFolderDefines(Path.GetDirectoryName(GetRelativePath(filename))));
                 }
             } catch (Exception ex) {
                 results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, "", ex.Message, ex.StackTrace));
@@ -276,7 +273,7 @@ namespace Necrofy
             return RunWithPatch(recordDemoFilename, RecordDemoPatchName, defines);
         }
 
-        private BuildAndRunResults RunWithPatch(string newROMFilename, string internalPatch, Dictionary<string, string> defines) {
+        private BuildAndRunResults RunWithPatch(string newROMFilename, string internalPatch, params Dictionary<string, string>[] defines) {
             // TODO: Don't build if not necessary
             BuildResults results = Build();
             if (results.Success) {
@@ -330,14 +327,14 @@ namespace Necrofy
             }
         }
 
-        private static void ApplyInternalPatch(string rom, string patch, BuildResults results, Dictionary<string, string> defines = null) {
+        private static void ApplyInternalPatch(string rom, string patch, BuildResults results, params Dictionary<string, string>[] defines) {
             ApplyPatch(rom, Path.Combine(internalPatchesPath, patch), results, defines);
         }
 
-        private static void ApplyPatch(string rom, string patch, BuildResults results, Dictionary<string, string> defines = null) {
+        private static void ApplyPatch(string rom, string patch, BuildResults results, params Dictionary<string, string>[] defines) {
             string args = "";
-            if (defines != null) {
-                foreach (KeyValuePair<string, string> define in defines) {
+            foreach (Dictionary <string, string> dict in defines) {
+                foreach (KeyValuePair<string, string> define in dict) {
                     args += string.Format("\"-D{0}={1}\" ", define.Key, define.Value);
                 }
             }

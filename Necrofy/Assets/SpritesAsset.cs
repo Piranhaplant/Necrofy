@@ -40,7 +40,7 @@ namespace Necrofy
         }
 
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
-            Sprite.WriteToROM(sprites, rom, romInfo);
+            Sprite.WriteToROM(sprites, rom, romInfo, nameInfo.Parts.folder);
         }
         
         class SpritesCreator : Creator

@@ -189,7 +189,7 @@ namespace Necrofy
             return false;
         }
 
-        public static void WriteToROM(SpriteFile sprites, Stream romStream, ROMInfo romInfo) {
+        public static void WriteToROM(SpriteFile sprites, Stream romStream, ROMInfo romInfo, string folder) {
             List<PointerAndSize> graphics = sprites.graphicsAssets.Select(asset => romInfo.GetAssetPointerAndSize(AssetCategory.Graphics, asset)).ToList();
             int spriteGraphicsPointer = romInfo.GetAssetPointer(AssetCategory.Graphics, GraphicsAsset.SpriteGraphics);
 
@@ -213,7 +213,7 @@ namespace Necrofy
                 }
 
                 if (s.name != null) {
-                    romInfo.AddExportedDefine("Sprite_" + s.name, ROMPointers.PointerToHexString((int)romStream.Position));
+                    romInfo.AddFolderDefine(folder, "Sprite_" + s.name, ROMPointers.PointerToHexString((int)romStream.Position));
                 }
 
                 if (s.tiles.Count > origTileCount) {

@@ -23,8 +23,10 @@ namespace Necrofy
         public int WinLevel { get; private set; }
         /// <summary>The level after which the game will end and the player will be sent back to the main menu loop</summary>
         public int EndGameLevel { get; private set; }
-        /// <summary>Definitions that will be available to patches</summary>
-        public readonly Dictionary<string, string> exportedDefines = new Dictionary<string, string>();
+        /// <summary>Definitions that will be available to all patches</summary>
+        public readonly Dictionary<string, string> globalDefines = new Dictionary<string, string>();
+        /// <summary>Definitions that will be available to patches in a specific folder </summary>
+        public readonly Dictionary<string, Dictionary<string, string>> folderDefines = new Dictionary<string, Dictionary<string, string>>();
         /// <summary>Various per-asset settings</summary>
         public readonly AssetOptions assetOptions = new AssetOptions();
 
@@ -146,11 +148,19 @@ namespace Necrofy
                 assetPointers.Add(category, new Dictionary<string, PointerAndSize>());
             }
             assetPointers[category].Add(name, new PointerAndSize(pointer, size));
-            AddExportedDefine("ASSET_" + category.ToString() + "_" + name, ROMPointers.PointerToHexString(pointer));
+            Asset.ParsedName parsedName = new Asset.ParsedName(name);
+            AddFolderDefine(parsedName.Folder, category.ToString() + "_" + parsedName.FinalName, ROMPointers.PointerToHexString(pointer));
         }
 
-        public void AddExportedDefine(string key, string value) {
-            exportedDefines[FixDefineName(key)] = value;
+        public void AddGlobalDefine(string key, string value) {
+            globalDefines[FixDefineName(key)] = value;
+        }
+
+        public void AddFolderDefine(string folder, string key, string value) {
+            if (!folderDefines.ContainsKey(folder)) {
+                folderDefines[folder] = new Dictionary<string, string>();
+            }
+            folderDefines[folder][FixDefineName(key)] = value;
         }
 
         private static string FixDefineName(string s) {
@@ -162,6 +172,25 @@ namespace Necrofy
                 }
             }
             return builder.ToString();
+        }
+
+        public Dictionary<string, string> GetFolderDefines(string folder) {
+            if (folderDefines.TryGetValue(folder, out Dictionary<string, string> defines)) {
+                return defines;
+            }
+            return new Dictionary<string, string>();
+        }
+
+        public void LogDefines() {
+            foreach (KeyValuePair<string, string> define in globalDefines) {
+                Console.WriteLine("!" + define.Key + "=" + define.Value);
+            }
+            foreach (KeyValuePair<string, Dictionary<string, string>> folder in folderDefines) {
+                Console.WriteLine(folder.Key);
+                foreach (KeyValuePair<string, string> define in folder.Value) {
+                    Console.WriteLine("    !" + define.Key + "=" + define.Value);
+                }
+            }
         }
 
         public string GetAssetName(AssetCategory category, int pointer) {
