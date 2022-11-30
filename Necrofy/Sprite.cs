@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,7 @@ namespace Necrofy
 
         public class Tile
         {
+            public int graphicsIndex;
             public ushort tileNum;
             public short xOffset;
             public short yOffset;
@@ -56,7 +58,7 @@ namespace Necrofy
             return new Rectangle(minX, minY, maxX - minX, maxY - minY);
         }
 
-        public Bitmap Render(List<LoadedGraphics> graphics, Color[] colors, int? overridePalette, out int anchorX, out int anchorY) {
+        public Bitmap Render(List<Graphics> graphics, Color[] colors, int? overridePalette, out int anchorX, out int anchorY) {
             Rectangle bounds = GetBounds();
 
             Bitmap image;
@@ -69,14 +71,14 @@ namespace Necrofy
             anchorX = -bounds.X;
             anchorY = -bounds.Y;
 
-            int totalGraphicsLength = graphics.Sum(g => g.linearGraphics.Length) / 4;
+            List<int> totalGraphicsLengths = graphics.Select(l => l.loadedGraphics.Sum(g => g.linearGraphics.Length) / 4).ToList();
 
             foreach (Tile t in tiles) {
-                if (t.tileNum < totalGraphicsLength) {
+                if (t.graphicsIndex < graphics.Count && t.tileNum < totalGraphicsLengths[t.graphicsIndex]) {
                     int palette = overridePalette ?? t.palette;
 
-                    GetGraphicsAndTileNum(t.tileNum, graphics, out int curTile, out int graphicsNum);
-                    LoadedGraphics.LinearGraphics curGraphics = graphics[graphicsNum].linearGraphics;
+                    GetGraphicsAndTileNum(t.tileNum, graphics[t.graphicsIndex], out int curTile, out int graphicsNum);
+                    LoadedGraphics.LinearGraphics curGraphics = graphics[t.graphicsIndex].loadedGraphics[graphicsNum].linearGraphics;
 
                     SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 8 : 0), anchorY + t.yOffset + 1 + (t.yFlip ? 8 : 0), curGraphics[curTile * 4 + 0], colors, palette * 0x10, t.xFlip, t.yFlip);
                     SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 0 : 8), anchorY + t.yOffset + 1 + (t.yFlip ? 8 : 0), curGraphics[curTile * 4 + 1], colors, palette * 0x10, t.xFlip, t.yFlip);
@@ -88,46 +90,10 @@ namespace Necrofy
             return image;
         }
 
-        public static SpriteFile RemoveUnusedGraphics(List<Sprite> sprites, List<string> graphicsAssets, List<LoadedGraphics> loadedGraphics) {
-            bool[] graphicsUsed = new bool[graphicsAssets.Count];
-            foreach (Sprite s in sprites) {
-                foreach (Tile t in s.tiles) {
-                    GetGraphicsAndTileNum(t.tileNum, loadedGraphics, out int tileNum, out int graphicsNum);
-                    graphicsUsed[graphicsNum] = true;
-                }
-            }
-
-            List<Sprite> newSprites = sprites.JsonClone();
-            int curTileNum = 0;
-            for (int i = 0; i < loadedGraphics.Count; i++) {
-                if (!graphicsUsed[i]) {
-                    ushort curGraphicsLength = (ushort)(loadedGraphics[i].linearGraphics.Length / 4);
-                    foreach (Sprite s in newSprites) {
-                        foreach (Tile t in s.tiles) {
-                            if (t.tileNum > curTileNum) {
-                                t.tileNum -= curGraphicsLength;
-                            }
-                        }
-                    }
-                } else {
-                    curTileNum += loadedGraphics[i].linearGraphics.Length / 4;
-                }
-            }
-
-            List<string> newGraphicsAssets = new List<string>(graphicsAssets);
-            for (int i = loadedGraphics.Count - 1; i >= 0; i--) {
-                if (!graphicsUsed[i]) {
-                    newGraphicsAssets.RemoveAt(i);
-                }
-            }
-
-            return new SpriteFile(newSprites, newGraphicsAssets);
-        }
-
-        private static void GetGraphicsAndTileNum(int fullTileNum, List<LoadedGraphics> graphics, out int tileNum, out int graphicsNum) {
+        private static void GetGraphicsAndTileNum(int fullTileNum, Graphics graphics, out int tileNum, out int graphicsNum) {
             graphicsNum = 0;
             tileNum = fullTileNum;
-            foreach (LoadedGraphics g in graphics) {
+            foreach (LoadedGraphics g in graphics.loadedGraphics) {
                 if (tileNum < g.linearGraphics.Length / 4) {
                     break;
                 }
@@ -190,8 +156,7 @@ namespace Necrofy
         }
 
         public static void WriteToROM(SpriteFile sprites, Stream romStream, ROMInfo romInfo, string folder) {
-            List<PointerAndSize> graphics = sprites.graphicsAssets.Select(asset => romInfo.GetAssetPointerAndSize(AssetCategory.Graphics, asset)).ToList();
-            int spriteGraphicsPointer = romInfo.GetAssetPointer(AssetCategory.Graphics, GraphicsAsset.SpriteGraphics);
+            List<PointerAndSize> graphics = sprites.graphicsAssets.Select(asset => romInfo.GetAssetPointerAndSize(AssetCategory.Graphics, folder + Asset.FolderSeparator + asset)).ToList();
 
             int customSpritePointer = romInfo.Freespace.Claim(sprites.sprites.Where(s => s.pointer == null).Sum(s => BytesForTiles(s.tiles.Count)));
 
@@ -237,7 +202,7 @@ namespace Necrofy
                     romStream.WriteInt16((ushort)t.xOffset);
                     romStream.WriteInt16((ushort)t.yOffset);
                     romStream.WriteInt16(t.GetProperties());
-                    romStream.WriteInt16(GetActualTileNum(t.tileNum, graphics, spriteGraphicsPointer, romInfo.ExtraSpriteGraphicsBasePointer, romInfo.ExtraSpriteGraphicsStartIndex));
+                    romStream.WriteInt16(GetActualTileNum(t.graphicsIndex, t.tileNum, graphics, romInfo.ExtraSpriteGraphicsBasePointer, romInfo.ExtraSpriteGraphicsStartIndex));
                 }
                 // If there's extra space, fill it with 0s
                 for (int tileIndex = s.tiles.Count; tileIndex < origTileCount; tileIndex++) {
@@ -250,21 +215,60 @@ namespace Necrofy
             return tileCount * 8 + 1;
         }
 
-        private static ushort GetActualTileNum(ushort tileNum, List<PointerAndSize> graphics, int spriteGraphicsPointer, int extraGraphicsPointer, int extraGraphicsStartNum) {
-            int curTileNum = 0;
-            foreach (PointerAndSize g in graphics) {
-                int tileCount = g.Size / 0x80;
-                if (tileNum < curTileNum + tileCount) {
-                    if (g.Pointer == spriteGraphicsPointer) {
-                        return (ushort)(tileNum - curTileNum);
-                    } else {
-                        int tileOffset = (g.Pointer - extraGraphicsPointer) / 0x80;
-                        return (ushort)(tileNum - curTileNum + tileOffset + extraGraphicsStartNum);
+        private static ushort GetActualTileNum(int graphicsIndex, ushort tileNum, List<PointerAndSize> graphics, int extraGraphicsPointer, int extraGraphicsStartNum) {
+            if (graphicsIndex == 0) {
+                return tileNum;
+            }
+            return (ushort)((graphics[graphicsIndex - 1].Pointer - extraGraphicsPointer) / 0x80 + tileNum + extraGraphicsStartNum);
+        }
+
+        public class Graphics
+        {
+            public string name;
+            public List<LoadedGraphics> loadedGraphics = new List<LoadedGraphics>();
+            public List<Bitmap> images = new List<Bitmap>();
+
+            public Graphics(Project project, params string[] assets) {
+                name = new Asset.ParsedName(assets[0]).FinalName;
+                foreach (string asset in assets) {
+                    try {
+                        loadedGraphics.Add(new LoadedGraphics(project, asset, GetGraphicsAssetType(asset)));
+                    } catch (AssetNotFoundException e) {
+                        Console.WriteLine(e.Message);
+                        Console.WriteLine(e.StackTrace);
                     }
                 }
-                curTileNum += tileCount;
             }
-            return tileNum;
+
+            private static GraphicsAsset.Type GetGraphicsAssetType(string name) {
+                return name == GraphicsAsset.SpriteGraphics ? GraphicsAsset.Type.Normal : GraphicsAsset.Type.Sprite;
+            }
+
+            public void LoadTiles() {
+                Dispose();
+
+                foreach (LoadedGraphics g in loadedGraphics) {
+                    for (int i = 0; i < g.linearGraphics.Length / 4; i++) {
+                        Bitmap b = new Bitmap(16, 16, PixelFormat.Format8bppIndexed);
+                        BitmapData data = b.LockBits(new Rectangle(Point.Empty, b.Size), ImageLockMode.WriteOnly, b.PixelFormat);
+
+                        SNESGraphics.DrawTile(data, 0, 0, new LoadedTilemap.Tile(i * 4 + 0, 0, false, false, false), g.linearGraphics);
+                        SNESGraphics.DrawTile(data, 8, 0, new LoadedTilemap.Tile(i * 4 + 1, 0, false, false, false), g.linearGraphics);
+                        SNESGraphics.DrawTile(data, 0, 8, new LoadedTilemap.Tile(i * 4 + 2, 0, false, false, false), g.linearGraphics);
+                        SNESGraphics.DrawTile(data, 8, 8, new LoadedTilemap.Tile(i * 4 + 3, 0, false, false, false), g.linearGraphics);
+
+                        b.UnlockBits(data);
+                        images.Add(b);
+                    }
+                }
+            }
+
+            public void Dispose() {
+                foreach (Bitmap image in images) {
+                    image.Dispose();
+                }
+                images.Clear();
+            }
         }
     }
 }

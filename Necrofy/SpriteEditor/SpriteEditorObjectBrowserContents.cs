@@ -21,17 +21,17 @@ namespace Necrofy
 
         public override IEnumerable<ObjectBrowserObject> Objects {
             get {
-                if (sprites.images == null) {
+                if (sprites.spriteImages == null) {
                     yield break;
                 }
-                foreach (Bitmap image in sprites.images) {
+                foreach (Bitmap image in sprites.spriteImages) {
                     yield return new ObjectBrowserObject(image.Size);
                 }
             }
         }
 
         public override void PaintObject(int i, Graphics g, int x, int y) {
-            g.DrawImage(sprites.images[i], x, y);
+            g.DrawImage(sprites.spriteImages[i], x, y);
         }
     }
 }

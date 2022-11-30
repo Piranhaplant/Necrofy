@@ -13,7 +13,7 @@ namespace Necrofy
         private readonly Project project;
 
         private LoadedPalette loadedPalette;
-        private List<LoadedGraphics> loadedGraphics = new List<LoadedGraphics>();
+        private List<Sprite.Graphics> graphics = new List<Sprite.Graphics>();
         private SpritesAsset spritesAsset;
         private EditorAsset<SpriteDisplayList> spriteDisplayAsset;
 
@@ -42,16 +42,17 @@ namespace Necrofy
         }
 
         private void Load() {
-            foreach (LoadedGraphics g in loadedGraphics) {
-                g.Updated -= Asset_Updated;
+            foreach (Sprite.Graphics g in graphics) {
+                g.Dispose();
+                foreach (LoadedGraphics lg in g.loadedGraphics) {
+                    lg.Updated -= Asset_Updated;
+                }
             }
-            loadedGraphics.Clear();
+            graphics.Clear();
 
-            foreach (string assetName in spritesAsset.sprites.graphicsAssets) {
-                LoadGraphics(assetName);
-            }
-            if (loadedGraphics.Count == 0) {
-                LoadGraphics(GraphicsAsset.SpriteGraphics);
+            AddGraphics(new Sprite.Graphics(project, GraphicsAsset.SpriteGraphics, GraphicsAsset.ExtraSpriteGraphics));
+            foreach (string graphicsAsset in spritesAsset.sprites.graphicsAssets) {
+                AddGraphics(new Sprite.Graphics(project, Asset.SpritesFolder + Asset.FolderSeparator + graphicsAsset));
             }
 
             sprites = new Dictionary<SpriteDisplay.Key.Type, Dictionary<int, LoadedSprite>>();
@@ -72,7 +73,7 @@ namespace Necrofy
 
             foreach (ImageSpriteDisplay spriteDisplay in spriteDisplayAsset.data.imageSprites) {
                 if (spritePointers.ContainsKey(spriteDisplay.spritePointer)) {
-                    LoadedSprite s = new ImageLoadedSprite(spriteDisplay, spritePointers[spriteDisplay.spritePointer], loadedGraphics, loadedPalette.colors);
+                    LoadedSprite s = new ImageLoadedSprite(spriteDisplay, spritePointers[spriteDisplay.spritePointer], graphics, loadedPalette.colors);
                     AddLoadedSprite(spriteDisplay, s);
                 }
             }
@@ -82,10 +83,11 @@ namespace Necrofy
             }
         }
 
-        private void LoadGraphics(string graphicsName) {
-            LoadedGraphics g = new LoadedGraphics(project, graphicsName, LoadedSprites.GetGraphicsAssetType(graphicsName));
-            loadedGraphics.Add(g);
-            g.Updated += Asset_Updated;
+        private void AddGraphics(Sprite.Graphics g) {
+            graphics.Add(g);
+            foreach (LoadedGraphics lg in g.loadedGraphics) {
+                lg.Updated += Asset_Updated;
+            }
         }
 
         public void Dispose() {
@@ -163,8 +165,8 @@ namespace Necrofy
             private readonly int anchorX;
             private readonly int anchorY;
 
-            public ImageLoadedSprite(ImageSpriteDisplay spriteDisplay, Sprite sprite, List<LoadedGraphics> loadedGraphics, Color[] colors) : base(spriteDisplay) {
-                image = sprite.Render(loadedGraphics, colors, spriteDisplay.overridePalette, out anchorX, out anchorY);
+            public ImageLoadedSprite(ImageSpriteDisplay spriteDisplay, Sprite sprite, List<Sprite.Graphics> graphics, Color[] colors) : base(spriteDisplay) {
+                image = sprite.Render(graphics, colors, spriteDisplay.overridePalette, out anchorX, out anchorY);
             }
 
             public override void Dispose() {

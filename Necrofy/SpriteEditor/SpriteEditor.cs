@@ -63,7 +63,13 @@ namespace Necrofy
             browserContents.SelectedIndexChanged += BrowserContents_SelectedIndexChanged;
             BrowserContents = browserContents;
 
-            tilePicker.SetTiles(loadedSprites.tileImages, loadedSprites.loadedPalette.colors);
+            if (loadedSprites.spritesName == Asset.SpritesFolder + Asset.FolderSeparator + SpritesAsset.DefaultFileName) {
+                showAllGraphics.Checked = true;
+                graphicsPanel.Visible = false;
+            } else {
+                showAllGraphics.Checked = loadedSprites.Sprites.Any(s => s.tiles.Any(t => t.graphicsIndex == 0));
+            }
+            UpdateTilePicker();
 
             UpdateStatus();
         }
@@ -71,7 +77,18 @@ namespace Necrofy
         private void LoadedSprites_Updated(object sender, EventArgs e) {
             Repaint();
             browserContents.Repaint();
-            tilePicker.SetTiles(loadedSprites.tileImages, loadedSprites.loadedPalette.colors);
+            UpdateTilePicker();
+        }
+
+        private void UpdateTilePicker() {
+            List<Bitmap> images = new List<Bitmap>();
+            if (showAllGraphics.Checked) {
+                images.AddRange(loadedSprites.graphics[0].images);
+            }
+            for (int i = 1; i < loadedSprites.graphics.Count; i++) {
+                images.AddRange(loadedSprites.graphics[i].images);
+            }
+            tilePicker.SetTiles(images, loadedSprites.loadedPalette.colors);
             tilePicker.Repaint();
         }
 
@@ -81,30 +98,6 @@ namespace Necrofy
 
         protected override UndoManager Setup() {
             Zoom = 2.0f;
-            graphicsSelector.LoadProject(project, AssetCategory.Graphics, "",
-                filter: asset => GraphicsAsset.GetGraphicsType(asset.Asset) == GraphicsAsset.Type.Sprite || asset.Asset.Name == GraphicsAsset.SpriteGraphics);
-
-            if (loadedSprites.GraphicsAssets.Count == 0) {
-                if (Path.GetDirectoryName(loadedSprites.spritesName) == Asset.SpritesFolder) {
-                    loadedSprites.AddGraphics(project, GraphicsAsset.SpriteGraphics);
-                }
-                if (project.Assets.Root.FindFolder(Path.GetDirectoryName(loadedSprites.spritesName), out AssetTree.Folder folder)) {
-                    foreach (AssetTree.AssetEntry asset in folder.Assets) {
-                        if (GraphicsAsset.GetGraphicsType(asset.Asset) == GraphicsAsset.Type.Sprite) {
-                            loadedSprites.AddGraphics(project, asset.Asset.Name);
-                        }
-                    }
-                }
-                if (loadedSprites.loadedGraphics.Count == 0) {
-                    loadedSprites.AddGraphics(project, GraphicsAsset.SpriteGraphics);
-                }
-                loadedSprites.LoadAllSprites();
-                browserContents.Refresh();
-            }
-            foreach (LoadedGraphics g in loadedSprites.loadedGraphics) {
-                graphicsList.Items.Add(g.graphicsName);
-            }
-
             undoManager = new UndoManager<SpriteEditor>(mainWindow.UndoButton, mainWindow.RedoButton, this);
             return undoManager;
         }
@@ -239,9 +232,14 @@ namespace Necrofy
                             undoManager.Do(new ChangeSpriteTilePaletteAction(currentSprite, selectedObjects, palette));
                         }
                         break;
+                    case WrappedSpriteTile.GraphicsIndexProperty:
+                        if (int.TryParse(stringValue, out int graphicsIndex) && graphicsIndex >= 0) {
+                            undoManager.Do(new SetSpriteGraphicsIndexAction(currentSprite, selectedObjects, graphicsIndex));
+                        }
+                        break;
                     case WrappedSpriteTile.TileNumProperty:
                         if (ushort.TryParse(stringValue, out ushort tileNum)) {
-                            undoManager.Do(new ChangeSpriteTileNumAction(currentSprite, selectedObjects, tileNum));
+                            undoManager.Do(new SetSpriteTileNumAction(currentSprite, selectedObjects, tileNum));
                         }
                         break;
                     case WrappedSprite.NameProperty:
@@ -307,8 +305,8 @@ namespace Necrofy
 
             using (Pen linePen = new Pen(Color.White, 1 / Zoom)) {
                 foreach (Sprite.Tile tile in currentSprite.tiles) {
-                    if (tile.tileNum < loadedSprites.tileImages.Count) {
-                        SNESGraphics.DrawWithPlt(e.Graphics, tile.xOffset, tile.yOffset, loadedSprites.tileImages[tile.tileNum], loadedSprites.loadedPalette.colors, tile.palette * 0x10, 0x10, tile.xFlip, tile.yFlip);
+                    if (tile.graphicsIndex < loadedSprites.graphics.Count && tile.tileNum < loadedSprites.graphics[tile.graphicsIndex].images.Count) {
+                        SNESGraphics.DrawWithPlt(e.Graphics, tile.xOffset, tile.yOffset, loadedSprites.graphics[tile.graphicsIndex].images[tile.tileNum], loadedSprites.loadedPalette.colors, tile.palette * 0x10, 0x10, tile.xFlip, tile.yFlip);
                     } else {
                         e.Graphics.DrawLine(linePen, tile.xOffset, tile.yOffset, tile.xOffset + 16, tile.yOffset + 16);
                         e.Graphics.DrawLine(linePen, tile.xOffset + 16, tile.yOffset, tile.xOffset, tile.yOffset + 16);
@@ -368,7 +366,17 @@ namespace Necrofy
 
                 UpdateSelectedPalette();
                 if (selectedObjects.Count == 1) {
-                    UpdateUI(() => tilePicker.SelectedTile = selectedObjects.First().tile.tileNum);
+                    UpdateUI(() => {
+                        Sprite.Tile tile = selectedObjects.First().tile;
+                        int tilePickerNum = 0;
+                        for (int i = 0; i < tile.graphicsIndex; i++) {
+                            tilePickerNum += loadedSprites.graphics[i].images.Count;
+                        }
+                        if (!showAllGraphics.Checked) {
+                            tilePickerNum -= loadedSprites.graphics[0].images.Count;
+                        }
+                        tilePicker.SelectedTile = tilePickerNum + tile.tileNum;
+                    });
                 }
                 UpdateToolbar();
             }
@@ -437,7 +445,17 @@ namespace Necrofy
             if (updatingUI == 0) {
                 prevChangeTileAction2 = prevChangeTileAction1;
                 if (tilePicker.SelectedTile >= 0 && selectedObjects.Count > 0) {
-                    prevChangeTileAction1 = new ChangeSpriteTileNumAction(currentSprite, selectedObjects, (ushort)tilePicker.SelectedTile);
+
+                    int graphicsIndex;
+                    int tileNum = tilePicker.SelectedTile;
+                    for (graphicsIndex = (showAllGraphics.Checked ? 0 : 1); graphicsIndex < loadedSprites.graphics.Count; graphicsIndex++) {
+                        if (tileNum < loadedSprites.graphics[graphicsIndex].images.Count) {
+                            break;
+                        }
+                        tileNum -= loadedSprites.graphics[graphicsIndex].images.Count;
+                    }
+
+                    prevChangeTileAction1 = new ChangeSpriteTileNumAction(currentSprite, selectedObjects, graphicsIndex, (ushort)tileNum);
                     undoManager.Do(prevChangeTileAction1);
                 } else {
                     prevChangeTileAction1 = null;
@@ -536,24 +554,11 @@ namespace Necrofy
             }
         }
 
-        private void graphicsHeaderPanel_MouseDown(object sender, MouseEventArgs e) {
-            if (graphicsListPanel.Visible) {
-                graphicsListPanel.Visible = false;
-                graphicsExpandLabel.Text = "▼";
-            } else {
-                graphicsListPanel.Visible = true;
-                graphicsExpandLabel.Text = "▲";
+        private void showAllGraphics_CheckedChanged(object sender, EventArgs e) {
+            UpdateTilePicker();
+            if (tilePicker.SelectedTile >= 0) {
+                tilePicker.SelectedTile = tilePicker.SelectedTile + loadedSprites.graphics[0].images.Count * (showAllGraphics.Checked ? 1 : -1);
             }
-        }
-
-        private void addGraphicsButton_Click(object sender, EventArgs e) {
-            string newGraphics = graphicsSelector.SelectedItem;
-            if (newGraphics != null && !loadedSprites.GraphicsAssets.Contains(newGraphics)) {
-                loadedSprites.AddGraphics(project, newGraphics);
-                graphicsList.Items.Add(newGraphics);
-                tilePicker.SetTiles(loadedSprites.tileImages, loadedSprites.loadedPalette.colors);
-            }
-            graphicsSelector.Deselect();
         }
     }
 }

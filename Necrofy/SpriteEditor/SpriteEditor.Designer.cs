@@ -30,19 +30,13 @@
             this.canvas = new Necrofy.Canvas();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tilePicker = new Necrofy.SpriteTilePicker();
-            this.graphicsListPanel = new System.Windows.Forms.Panel();
-            this.graphicsList = new System.Windows.Forms.ListBox();
-            this.graphicsSelector = new Necrofy.AssetSelector();
-            this.addGraphicsButton = new System.Windows.Forms.Button();
-            this.graphicsHeaderPanel = new System.Windows.Forms.Panel();
-            this.graphicsExpandLabel = new System.Windows.Forms.Label();
-            this.graphicsLabel = new System.Windows.Forms.Label();
+            this.graphicsPanel = new System.Windows.Forms.Panel();
+            this.showAllGraphics = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.graphicsListPanel.SuspendLayout();
-            this.graphicsHeaderPanel.SuspendLayout();
+            this.graphicsPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // vscroll
@@ -95,8 +89,7 @@
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.tilePicker);
-            this.splitContainer1.Panel1.Controls.Add(this.graphicsListPanel);
-            this.splitContainer1.Panel1.Controls.Add(this.graphicsHeaderPanel);
+            this.splitContainer1.Panel1.Controls.Add(this.graphicsPanel);
             this.splitContainer1.Panel1MinSize = 273;
             // 
             // splitContainer1.Panel2
@@ -115,88 +108,37 @@
             this.tilePicker.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tilePicker.FlipX = false;
             this.tilePicker.FlipY = false;
-            this.tilePicker.Location = new System.Drawing.Point(0, 122);
+            this.tilePicker.Location = new System.Drawing.Point(0, 32);
             this.tilePicker.Name = "tilePicker";
             this.tilePicker.Palette = 0;
             this.tilePicker.SelectedTile = -1;
-            this.tilePicker.Size = new System.Drawing.Size(273, 779);
+            this.tilePicker.Size = new System.Drawing.Size(273, 869);
             this.tilePicker.TabIndex = 7;
             this.tilePicker.SelectedTileChanged += new Necrofy.SpriteTilePicker.SelectedTileChangedDelegate(this.tilePicker_SelectedTileChanged);
             this.tilePicker.TileDoubleClicked += new Necrofy.SpriteTilePicker.TileDoubleClickedDelegate(this.tilePicker_TileDoubleClicked);
             this.tilePicker.PaletteChanged += new Necrofy.SpriteTilePicker.PaletteChangedDelegate(this.tilePicker_PaletteChanged);
             // 
-            // graphicsListPanel
+            // graphicsPanel
             // 
-            this.graphicsListPanel.Controls.Add(this.graphicsList);
-            this.graphicsListPanel.Controls.Add(this.graphicsSelector);
-            this.graphicsListPanel.Controls.Add(this.addGraphicsButton);
-            this.graphicsListPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.graphicsListPanel.Location = new System.Drawing.Point(0, 32);
-            this.graphicsListPanel.Name = "graphicsListPanel";
-            this.graphicsListPanel.Size = new System.Drawing.Size(273, 90);
-            this.graphicsListPanel.TabIndex = 6;
-            this.graphicsListPanel.Visible = false;
+            this.graphicsPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.graphicsPanel.Controls.Add(this.showAllGraphics);
+            this.graphicsPanel.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.graphicsPanel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.graphicsPanel.Location = new System.Drawing.Point(0, 0);
+            this.graphicsPanel.Name = "graphicsPanel";
+            this.graphicsPanel.Size = new System.Drawing.Size(273, 32);
+            this.graphicsPanel.TabIndex = 0;
             // 
-            // graphicsList
+            // showAllGraphics
             // 
-            this.graphicsList.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.graphicsList.FormattingEnabled = true;
-            this.graphicsList.Location = new System.Drawing.Point(0, 21);
-            this.graphicsList.Name = "graphicsList";
-            this.graphicsList.SelectionMode = System.Windows.Forms.SelectionMode.None;
-            this.graphicsList.Size = new System.Drawing.Size(273, 69);
-            this.graphicsList.TabIndex = 2;
-            // 
-            // graphicsSelector
-            // 
-            this.graphicsSelector.Location = new System.Drawing.Point(0, 0);
-            this.graphicsSelector.Name = "graphicsSelector";
-            this.graphicsSelector.Size = new System.Drawing.Size(252, 21);
-            this.graphicsSelector.TabIndex = 0;
-            // 
-            // addGraphicsButton
-            // 
-            this.addGraphicsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            this.addGraphicsButton.Image = global::Necrofy.Properties.Resources.plus;
-            this.addGraphicsButton.Location = new System.Drawing.Point(251, -1);
-            this.addGraphicsButton.Name = "addGraphicsButton";
-            this.addGraphicsButton.Size = new System.Drawing.Size(23, 23);
-            this.addGraphicsButton.TabIndex = 1;
-            this.addGraphicsButton.UseVisualStyleBackColor = true;
-            this.addGraphicsButton.Click += new System.EventHandler(this.addGraphicsButton_Click);
-            // 
-            // graphicsHeaderPanel
-            // 
-            this.graphicsHeaderPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.graphicsHeaderPanel.Controls.Add(this.graphicsExpandLabel);
-            this.graphicsHeaderPanel.Controls.Add(this.graphicsLabel);
-            this.graphicsHeaderPanel.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.graphicsHeaderPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.graphicsHeaderPanel.Location = new System.Drawing.Point(0, 0);
-            this.graphicsHeaderPanel.Name = "graphicsHeaderPanel";
-            this.graphicsHeaderPanel.Size = new System.Drawing.Size(273, 32);
-            this.graphicsHeaderPanel.TabIndex = 0;
-            this.graphicsHeaderPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.graphicsHeaderPanel_MouseDown);
-            // 
-            // graphicsExpandLabel
-            // 
-            this.graphicsExpandLabel.AutoSize = true;
-            this.graphicsExpandLabel.Location = new System.Drawing.Point(247, 9);
-            this.graphicsExpandLabel.Name = "graphicsExpandLabel";
-            this.graphicsExpandLabel.Size = new System.Drawing.Size(16, 13);
-            this.graphicsExpandLabel.TabIndex = 1;
-            this.graphicsExpandLabel.Text = "▼";
-            this.graphicsExpandLabel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.graphicsHeaderPanel_MouseDown);
-            // 
-            // graphicsLabel
-            // 
-            this.graphicsLabel.AutoSize = true;
-            this.graphicsLabel.Location = new System.Drawing.Point(12, 9);
-            this.graphicsLabel.Name = "graphicsLabel";
-            this.graphicsLabel.Size = new System.Drawing.Size(49, 13);
-            this.graphicsLabel.TabIndex = 0;
-            this.graphicsLabel.Text = "Graphics";
-            this.graphicsLabel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.graphicsHeaderPanel_MouseDown);
+            this.showAllGraphics.AutoSize = true;
+            this.showAllGraphics.Location = new System.Drawing.Point(5, 7);
+            this.showAllGraphics.Name = "showAllGraphics";
+            this.showAllGraphics.Size = new System.Drawing.Size(112, 17);
+            this.showAllGraphics.TabIndex = 0;
+            this.showAllGraphics.Text = "Show All Graphics";
+            this.showAllGraphics.UseVisualStyleBackColor = true;
+            this.showAllGraphics.CheckedChanged += new System.EventHandler(this.showAllGraphics_CheckedChanged);
             // 
             // SpriteEditor
             // 
@@ -211,9 +153,8 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.graphicsListPanel.ResumeLayout(false);
-            this.graphicsHeaderPanel.ResumeLayout(false);
-            this.graphicsHeaderPanel.PerformLayout();
+            this.graphicsPanel.ResumeLayout(false);
+            this.graphicsPanel.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -225,12 +166,7 @@
         private Canvas canvas;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private SpriteTilePicker tilePicker;
-        private System.Windows.Forms.Panel graphicsListPanel;
-        private System.Windows.Forms.Button addGraphicsButton;
-        private AssetSelector graphicsSelector;
-        private System.Windows.Forms.Panel graphicsHeaderPanel;
-        private System.Windows.Forms.Label graphicsLabel;
-        private System.Windows.Forms.ListBox graphicsList;
-        private System.Windows.Forms.Label graphicsExpandLabel;
+        private System.Windows.Forms.Panel graphicsPanel;
+        private System.Windows.Forms.CheckBox showAllGraphics;
     }
 }

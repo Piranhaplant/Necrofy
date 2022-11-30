@@ -12,13 +12,11 @@ namespace Necrofy
     {
         private readonly SpritesAsset spritesAsset;
         public readonly string spritesName;
-        public readonly List<LoadedGraphics> loadedGraphics = new List<LoadedGraphics>();
         public readonly LoadedPalette loadedPalette;
 
         public List<Sprite> Sprites { get; private set; }
-        public List<string> GraphicsAssets { get; private set; } = new List<string>();
-        public Bitmap[] images = new Bitmap[] { };
-        public List<Bitmap> tileImages = new List<Bitmap>();
+        public Bitmap[] spriteImages = new Bitmap[] { };
+        public List<Sprite.Graphics> graphics = new List<Sprite.Graphics>();
 
         public event EventHandler Updated;
 
@@ -30,11 +28,48 @@ namespace Necrofy
             loadedPalette.Updated += Asset_Updated;
 
             Sprites = spritesAsset.sprites.sprites.JsonClone();
-            foreach (string graphicsAsset in spritesAsset.sprites.graphicsAssets) {
-                AddGraphics(project, graphicsAsset);
+            string parentFolder = new Asset.ParsedName(spritesName).Folder;
+
+            List<string> previousGraphicsAssets = spritesAsset.sprites.graphicsAssets;
+            List<string> newGraphicsAssets = new List<string>();
+            if (project.Assets.Root.FindFolder(parentFolder, out AssetTree.Folder folder)) {
+                foreach (AssetTree.AssetEntry asset in folder.Assets) {
+                    if (GraphicsAsset.GetGraphicsType(asset.Asset) == GraphicsAsset.Type.Sprite && asset.Asset.Name != GraphicsAsset.ExtraSpriteGraphics) {
+                        newGraphicsAssets.Add(asset.Asset.Parts.name);
+                    }
+                }
+                newGraphicsAssets.Sort(NumericStringComparer.instance);
             }
-            if (GraphicsAssets.Count > 0) {
-                LoadAllSprites();
+            ReorderGraphics(Sprites, previousGraphicsAssets, newGraphicsAssets);
+
+            AddGraphics(new Sprite.Graphics(project, GraphicsAsset.SpriteGraphics, GraphicsAsset.ExtraSpriteGraphics));
+            foreach (string graphicsAsset in newGraphicsAssets) {
+                AddGraphics(new Sprite.Graphics(project, parentFolder + Asset.FolderSeparator + graphicsAsset));
+            }
+
+            LoadAllGraphics();
+            LoadAllSprites();
+        }
+
+        private static void ReorderGraphics(List<Sprite> sprites, List<string> previousGraphicsAssets, List<string> newGraphicsAssets) {
+            int[] mapping = new int[previousGraphicsAssets.Count + 1];
+            mapping[0] = 0;
+
+            for (int i = 0; i < previousGraphicsAssets.Count; i++) {
+                int index = newGraphicsAssets.IndexOf(previousGraphicsAssets[i]);
+                if (index >= 0) {
+                    mapping[i + 1] = index + 1;
+                } else {
+                    mapping[i + 1] = i + 1;
+                }
+            }
+
+            foreach (Sprite sprite in sprites) {
+                foreach (Sprite.Tile tile in sprite.tiles) {
+                    if (tile.graphicsIndex < mapping.Length) {
+                        tile.graphicsIndex = mapping[tile.graphicsIndex];
+                    }
+                }
             }
         }
 
@@ -45,62 +80,41 @@ namespace Necrofy
             Updated?.Invoke(sender, e);
         }
 
-        public void AddGraphics(Project project, string graphicsAsset) {
-            GraphicsAssets.Add(graphicsAsset);
-            LoadedGraphics graphics = new LoadedGraphics(project, graphicsAsset, GetGraphicsAssetType(graphicsAsset));
-            loadedGraphics.Add(graphics);
-            graphics.Updated += Asset_Updated;
-            Load(graphics);
-        }
-
-        public static GraphicsAsset.Type GetGraphicsAssetType(string name) {
-            return name == GraphicsAsset.SpriteGraphics ? GraphicsAsset.Type.Normal : GraphicsAsset.Type.Sprite;
-        }
-
-        private void LoadAllGraphics() {
-            tileImages.Clear();
-            foreach (LoadedGraphics graphics in loadedGraphics) {
-                Load(graphics);
+        private void AddGraphics(Sprite.Graphics g) {
+            graphics.Add(g);
+            foreach (LoadedGraphics lg in g.loadedGraphics) {
+                lg.Updated += Asset_Updated;
             }
         }
 
-        private void Load(LoadedGraphics graphics) {
-            for (int i = 0; i < graphics.linearGraphics.Length / 4; i++) {
-                Bitmap b = new Bitmap(16, 16, PixelFormat.Format8bppIndexed);
-                BitmapData data = b.LockBits(new Rectangle(Point.Empty, b.Size), ImageLockMode.WriteOnly, b.PixelFormat);
-
-                SNESGraphics.DrawTile(data, 0, 0, new LoadedTilemap.Tile(i * 4 + 0, 0, false, false, false), graphics.linearGraphics);
-                SNESGraphics.DrawTile(data, 8, 0, new LoadedTilemap.Tile(i * 4 + 1, 0, false, false, false), graphics.linearGraphics);
-                SNESGraphics.DrawTile(data, 0, 8, new LoadedTilemap.Tile(i * 4 + 2, 0, false, false, false), graphics.linearGraphics);
-                SNESGraphics.DrawTile(data, 8, 8, new LoadedTilemap.Tile(i * 4 + 3, 0, false, false, false), graphics.linearGraphics);
-
-                b.UnlockBits(data);
-                tileImages.Add(b);
+        private void LoadAllGraphics() {
+            foreach (Sprite.Graphics g in graphics) {
+                g.LoadTiles();
             }
         }
 
         public void LoadAllSprites() {
-            images = new Bitmap[Sprites.Count];
-            for (int i = 0; i < images.Length; i++) {
+            spriteImages = new Bitmap[Sprites.Count];
+            for (int i = 0; i < spriteImages.Length; i++) {
                 LoadSprite(i);
             }
         }
 
         public void LoadSprite(int i) {
-            images[i] = Sprites[i].Render(loadedGraphics, loadedPalette.colors, null, out int anchorX, out int anchorY);
+            spriteImages[i] = Sprites[i].Render(graphics, loadedPalette.colors, null, out int anchorX, out int anchorY);
         }
 
         public void Save(Project project) {
-            spritesAsset.sprites = Sprite.RemoveUnusedGraphics(Sprites, GraphicsAssets, loadedGraphics);
+            spritesAsset.sprites = new SpriteFile(Sprites.JsonClone(), graphics.Skip(1).Select(g => g.name).ToList());
             spritesAsset.Save(project);
         }
 
         public void Dispose() {
-            foreach (Bitmap image in images) {
+            foreach (Bitmap image in spriteImages) {
                 image.Dispose();
             }
-            foreach (Bitmap image in tileImages) {
-                image.Dispose();
+            foreach (Sprite.Graphics g in graphics) {
+                g.Dispose();
             }
         }
     }

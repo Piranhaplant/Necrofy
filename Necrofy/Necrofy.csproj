@@ -114,6 +114,7 @@
     </Compile>
     <Compile Include="AssetExtraction\ExtractionFile.cs" />
     <Compile Include="AssetExtraction\ExtractionPreset.cs" />
+    <Compile Include="AssetNotFoundException.cs" />
     <Compile Include="AssetOptions.cs" />
     <Compile Include="AssetSelector.cs">
       <SubType>Component</SubType>

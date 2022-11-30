@@ -73,13 +73,7 @@ namespace Necrofy
                 Sprite.AddFromROM(sprites, romStream, ROMPointers.SpriteData1, romInfo);
                 Sprite.AddFromROM(sprites, romStream, ROMPointers.SpriteData2, romInfo);
 
-                List<string> graphicsAssets = new List<string>();
-                graphicsAssets.Add(GraphicsAsset.SpriteGraphics);
-                if (romInfo.ExtraSpriteGraphicsBasePointer > 0) {
-                    graphicsAssets.Add(SpritesFolder + FolderSeparator + GraphicsAsset.DefaultExtraSpriteGraphicsName);
-                }
-
-                return new SpritesAsset((SpritesNameInfo)nameInfo, new SpriteFile(sprites, graphicsAssets));
+                return new SpritesAsset((SpritesNameInfo)nameInfo, new SpriteFile(sprites));
             }
         }
 

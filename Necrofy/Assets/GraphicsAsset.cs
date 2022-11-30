@@ -16,8 +16,9 @@ namespace Necrofy
         }
 
         public const string DefaultName = "Graphics";
-        public const string DefaultExtraSpriteGraphicsName = "GraphicsExtra";
+        public const string ExtraSpriteGraphicsName = "GraphicsExtra";
         public static readonly string SpriteGraphics = SpritesFolder + FolderSeparator + DefaultName;
+        public static readonly string ExtraSpriteGraphics = SpritesFolder + FolderSeparator + ExtraSpriteGraphicsName;
         public static readonly Dictionary<string, Type> Extensions = new Dictionary<string, Type>() {
             {"gfx", Type.Normal },
             {"gfxs", Type.Sprite },
@@ -73,7 +74,7 @@ namespace Necrofy
             } else if (graphicsNameInfo.type == Type.Sprite) {
                 romInfo.ExtraSpriteGraphicsSize += data.Length;
                 romInfo.ExtraSpriteGraphicsBasePointer = 0; // Clear this value so it can be reset when the graphics are inserted
-                if (nameInfo.Parts.folder == SpritesFolder && nameInfo.Parts.name == DefaultExtraSpriteGraphicsName) {
+                if (nameInfo.Name == ExtraSpriteGraphics) {
                     romInfo.ExtraSpriteGraphicsFirstSize = data.Length;
                 }
             }
@@ -89,7 +90,7 @@ namespace Necrofy
                         romInfo.ExtraSpriteGraphicsCurrentPointer += romInfo.ExtraSpriteGraphicsFirstSize;
                     }
                 }
-                if (nameInfo.Parts.folder == SpritesFolder && nameInfo.Parts.name == DefaultExtraSpriteGraphicsName) {
+                if (nameInfo.Name == ExtraSpriteGraphics) {
                     InsertByteArray(rom, romInfo, data, romInfo.ExtraSpriteGraphicsBasePointer);
                 } else {
                     InsertByteArray(rom, romInfo, data, romInfo.ExtraSpriteGraphicsCurrentPointer);
@@ -133,7 +134,7 @@ namespace Necrofy
                     new DefaultParams(0xcc000, new GraphicsNameInfo(GetTilesetFolder(Mall), DefaultName), 0x4000),
 
                     new DefaultParams(0, new GraphicsNameInfo(ScratchPadFolder, DefaultName, skipped: true), extractFromNecrofyROM: true, versionAdded: new Version(2, 0), options: new AssetOptions.GraphicsOptions(32, false, false)),
-                    new DefaultParams(1, new GraphicsNameInfo(SpritesFolder, DefaultExtraSpriteGraphicsName, type: Type.Sprite), extractFromNecrofyROM: true, options: new AssetOptions.GraphicsOptions(16, true, true)),
+                    new DefaultParams(1, new GraphicsNameInfo(SpritesFolder, ExtraSpriteGraphicsName, type: Type.Sprite), extractFromNecrofyROM: true, options: new AssetOptions.GraphicsOptions(16, true, true)),
                 };
             }
 

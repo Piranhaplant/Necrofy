@@ -13,7 +13,8 @@ namespace Necrofy
         public const string XProperty = "X";
         public const string YProperty = "Y";
         public const string PaletteProperty = "Palette";
-        public const string TileNumProperty = "TileNum";
+        public const string GraphicsIndexProperty = "Graphics Index";
+        public const string TileNumProperty = "Tile Num";
         public const string XFlipProperty = "Flip Horizontal";
         public const string YFlipProperty = "Flip Vertical";
 
@@ -37,6 +38,7 @@ namespace Necrofy
         private string browsableX = null;
         private string browsableY = null;
         private string browsablePalette = null;
+        private string browsableGraphicsIndex = null;
         private string browsableTileNum = null;
         private bool? browsableXFlip = null;
         private bool? browsableYFlip = null;
@@ -44,6 +46,7 @@ namespace Necrofy
             browsableX = null;
             browsableY = null;
             browsablePalette = null;
+            browsableGraphicsIndex = null;
             browsableTileNum = null;
             browsableXFlip = null;
             browsableYFlip = null;
@@ -54,6 +57,8 @@ namespace Necrofy
         public string BrowsableY { get => browsableY ?? tile.yOffset.ToString(); set => browsableY = value; }
         [DisplayName(PaletteProperty)]
         public string BrowsablePalette { get => browsablePalette ?? tile.palette.ToString(); set => browsablePalette = value; }
+        [DisplayName(GraphicsIndexProperty)]
+        public string BrowsableGraphicsIndex { get => browsableGraphicsIndex ?? tile.graphicsIndex.ToString(); set => browsableGraphicsIndex = value; }
         [DisplayName(TileNumProperty)]
         public string BrowsableTileNum { get => browsableTileNum ?? tile.tileNum.ToString(); set => browsableTileNum = value; }
         [DisplayName(XFlipProperty)]

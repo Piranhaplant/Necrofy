@@ -145,32 +145,39 @@ namespace Necrofy
 
     class ChangeSpriteTileNumAction : SpriteEditorAction
     {
-        private ushort newType;
-        private readonly List<ushort> prevType = new List<ushort>();
+        private int newGraphicsIndex;
+        private ushort newTileNum;
+        private readonly List<int> prevGraphicsIndex = new List<int>();
+        private readonly List<ushort> prevTileNum = new List<ushort>();
 
-        public ChangeSpriteTileNumAction(Sprite sprite, IEnumerable<WrappedSpriteTile> objs, ushort newType) : base(sprite, objs) {
-            this.newType = newType;
+        public ChangeSpriteTileNumAction(Sprite sprite, IEnumerable<WrappedSpriteTile> objs, int newGraphicsIndex, ushort newTileNum) : base(sprite, objs) {
+            this.newGraphicsIndex = newGraphicsIndex;
+            this.newTileNum = newTileNum;
             foreach (WrappedSpriteTile obj in base.objs) {
-                prevType.Add(obj.tile.tileNum);
+                prevGraphicsIndex.Add(obj.tile.graphicsIndex);
+                prevTileNum.Add(obj.tile.tileNum);
             }
         }
 
         protected override void Undo() {
             for (int i = 0; i < objs.Count; i++) {
-                objs[i].tile.tileNum = prevType[i];
+                objs[i].tile.graphicsIndex = prevGraphicsIndex[i];
+                objs[i].tile.tileNum = prevTileNum[i];
             }
         }
 
         protected override void Redo() {
             for (int i = 0; i < objs.Count; i++) {
-                objs[i].tile.tileNum = newType;
+                objs[i].tile.graphicsIndex = newGraphicsIndex;
+                objs[i].tile.tileNum = newTileNum;
             }
         }
 
         public override bool Merge(UndoAction<SpriteEditor> action) {
             if (action is ChangeSpriteTileNumAction changeSpriteTileNumAction) {
                 if (changeSpriteTileNumAction.objs.SequenceEqual(objs)) {
-                    newType = changeSpriteTileNumAction.newType;
+                    newGraphicsIndex = changeSpriteTileNumAction.newGraphicsIndex;
+                    newTileNum = changeSpriteTileNumAction.newTileNum;
                     return true;
                 }
             }
@@ -180,7 +187,8 @@ namespace Necrofy
         public override bool Unmerge(UndoAction<SpriteEditor> action) {
             if (action is ChangeSpriteTileNumAction changeSpriteTileNumAction) {
                 if (changeSpriteTileNumAction.objs.SequenceEqual(objs)) {
-                    newType = changeSpriteTileNumAction.prevType[0];
+                    newGraphicsIndex = changeSpriteTileNumAction.prevGraphicsIndex[0];
+                    newTileNum = changeSpriteTileNumAction.prevTileNum[0];
                     return true;
                 }
             }
@@ -388,6 +396,72 @@ namespace Necrofy
                 return "Set tile Y flip";
             } else {
                 return "Set " + objs.Count.ToString() + " tiles Y flip";
+            }
+        }
+    }
+
+    class SetSpriteGraphicsIndexAction : SpriteEditorAction
+    {
+        private readonly List<int> prevValues = new List<int>();
+        private readonly int newValue;
+
+        public SetSpriteGraphicsIndexAction(Sprite sprite, IEnumerable<WrappedSpriteTile> objs, int value) : base(sprite, objs) {
+            newValue = value;
+            foreach (WrappedSpriteTile obj in objs) {
+                prevValues.Add(obj.tile.graphicsIndex);
+            }
+        }
+
+        protected override void Undo() {
+            for (int i = 0; i < objs.Count; i++) {
+                objs[i].tile.graphicsIndex = prevValues[i];
+            }
+        }
+
+        protected override void Redo() {
+            for (int i = 0; i < objs.Count; i++) {
+                objs[i].tile.graphicsIndex = newValue;
+            }
+        }
+
+        public override string ToString() {
+            if (objs.Count == 1) {
+                return "Set tile graphics index";
+            } else {
+                return "Set " + objs.Count.ToString() + " tiles graphics index";
+            }
+        }
+    }
+
+    class SetSpriteTileNumAction : SpriteEditorAction
+    {
+        private readonly List<ushort> prevValues = new List<ushort>();
+        private readonly ushort newValue;
+
+        public SetSpriteTileNumAction(Sprite sprite, IEnumerable<WrappedSpriteTile> objs, ushort value) : base(sprite, objs) {
+            newValue = value;
+            foreach (WrappedSpriteTile obj in objs) {
+                prevValues.Add(obj.tile.tileNum);
+            }
+        }
+
+        protected override void Undo() {
+            for (int i = 0; i < objs.Count; i++) {
+                objs[i].tile.tileNum = prevValues[i];
+            }
+        }
+
+        protected override void Redo() {
+            for (int i = 0; i < objs.Count; i++) {
+                objs[i].tile.tileNum = newValue;
+            }
+        }
+
+        public override string ToString() {
+            if (objs.Count == 1) {
+                return "Set tile number";
+            } else {
+                return "Set " + objs.Count.ToString() + " tile numbers";
             }
         }
     }

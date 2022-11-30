@@ -338,7 +338,7 @@ namespace Necrofy
                         return file;
                     }
                 }
-                throw new IOException("Could not find asset " + Parts.folder + FolderSeparator + Parts.name);
+                throw new AssetNotFoundException("Could not find asset " + Parts.folder + FolderSeparator + Parts.name);
             }
             
             /// <summary>Different parts of an asset path that are used to convert to and from filenames</summary>
