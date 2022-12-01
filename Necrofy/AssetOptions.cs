@@ -166,8 +166,6 @@ namespace Necrofy
                 ExtractionPreset target = new ExtractionPreset();
                 if (jObject["Options"] != null && optionsTemplates.TryGetValue(assetType, out Func<Options> optionGetter)) {
                     target.Options = optionGetter();
-                } else {
-                    throw new Exception("Unknown asset extraction options type");
                 }
                 serializer.Populate(jObject.CreateReader(), target);
                 return target;
