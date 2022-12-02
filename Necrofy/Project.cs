@@ -313,16 +313,21 @@ namespace Necrofy
         }
 
         private static void AddEndOfBankFreespace(Stream s, Freespace freespace, byte searchByte) {
-            for (int bankEndPos = Freespace.BankSize - 1; bankEndPos < s.Length; bankEndPos += Freespace.BankSize) {
-                s.Seek(bankEndPos);
-                int length = 0;
-                while (s.ReadByte() == searchByte && length < Freespace.BankSize) {
-                    length++;
-                    s.Seek(-2, SeekOrigin.Current);
+            byte[] bank = new byte[Freespace.BankSize];
+            s.Seek(0);
+            for (int bankNum = 0; (bankNum + 1) * Freespace.BankSize <= s.Length; bankNum++) {
+                s.Read(bank, 0, bank.Length);
+
+                int i = bank.Length;
+                while (i > 0 && bank[i - 1] == searchByte) {
+                    i--;
                 }
-                // Leave 2 bytes in case they were part of the end of some data
-                if (length >= 2) {
-                    freespace.AddSize((int)s.Position + 2, length - 2);
+
+                if (i == 0) {
+                    freespace.Add(bankNum * Freespace.BankSize, (bankNum + 1) * Freespace.BankSize);
+                } else if (i < bank.Length - 2) {
+                    // Leave 2 bytes in case they were part of the end of some data
+                    freespace.Add(bankNum * Freespace.BankSize + i + 2, (bankNum + 1) * Freespace.BankSize);
                 }
             }
         }
