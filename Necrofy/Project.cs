@@ -213,13 +213,14 @@ namespace Necrofy
 
                     info.WriteToBuild(s, results);
 
-                    // Round size up to the nearest bank
-                    s.SetLength((long)Math.Ceiling(s.Length / (double)Freespace.BankSize) * Freespace.BankSize);
+                    // Round size up to the nearest whole megabyte
+                    s.SetLength(((s.Length - 1) / 0x100000 + 1) * 0x100000);
+                    info.Freespace.ExpandSize((int)s.Length);
+                    info.Freespace.Fill(s, FreespaceFillByte);
+
                     byte sizeValue = (byte)(Math.Ceiling(Math.Log(s.Length, 2)) - 10);
                     s.Seek(ROMPointers.ROMSize);
                     s.WriteByte(sizeValue);
-
-                    info.Freespace.Fill(s, FreespaceFillByte);
                 }
 
                 info.AddGlobalDefine("win_level", settings.WinLevel.ToString());
@@ -235,6 +236,7 @@ namespace Necrofy
                 foreach (string filename in Directory.GetFiles(path, "*.asm", SearchOption.AllDirectories)) {
                     ApplyPatch(outputROM, filename, results, info.globalDefines, info.GetFolderDefines(Path.GetDirectoryName(GetRelativePath(filename))));
                 }
+
             } catch (Exception ex) {
                 results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, "", ex.Message, ex.StackTrace));
             }

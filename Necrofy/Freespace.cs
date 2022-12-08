@@ -23,6 +23,17 @@ namespace Necrofy
             this.romSize = romSize;
         }
 
+        /// <summary>Sets the ROM size to a larger value.</summary>
+        /// <param name="newSize">The new ROM size</param>
+        public void ExpandSize(int newSize) {
+            if (newSize < romSize) {
+                throw new Exception("newSize must be greater than current size");
+            }
+            int oldSize = romSize;
+            romSize = newSize;
+            Add(oldSize, romSize);
+        }
+
         /// <summary>Adds a block of freespace with the specified start and end locations.</summary>
         /// <param name="start">The inclusive start of the block</param>
         /// <param name="end">The exclusive end of the block</param>
