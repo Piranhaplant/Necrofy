@@ -602,7 +602,7 @@ namespace Necrofy
             if (results == null) {
                 return;
             }
-            if (!results.Success) {
+            if (results.HasWarnOrAbove) {
                 ShowDockContent(BuildResultsWindow);
                 BuildResultsWindow.UnAutoHide();
             }

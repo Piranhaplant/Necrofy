@@ -190,7 +190,7 @@ namespace Necrofy
                         try {
                             Asset asset = Asset.FromFile(this, relativeFilename);
                             if (asset == null) {
-                                if (!ignoredFileExtensions.Contains(Path.GetExtension(filename))) {
+                                if (!ignoredFileExtensions.Contains(Path.GetExtension(filename)) && !relativeFilename.StartsWith(buildDirectoryName + Path.DirectorySeparatorChar)) {
                                     results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.WARNING, relativeFilename, "Unknown asset"));
                                 }
                             } else if (asset.IsSkipped) {

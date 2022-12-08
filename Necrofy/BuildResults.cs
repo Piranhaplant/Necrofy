@@ -12,6 +12,7 @@ namespace Necrofy
 
         public IReadOnlyList<Entry> Entries => entries;
         public bool Success => !entries.Any(e => e.level == Entry.Level.ERROR);
+        public bool HasWarnOrAbove => entries.Any(e => e.level == Entry.Level.WARNING || e.level == Entry.Level.ERROR);
 
         public void AddEntry(Entry entry) {
             entries.Add(entry);
