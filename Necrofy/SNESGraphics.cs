@@ -101,7 +101,7 @@ namespace Necrofy
             bitmap.UnlockBits(data);
         }
 
-        public static void DrawTile(Bitmap bmp, int x, int y, byte[,] linearGraphics, Color[] palette, int palIndex, bool xFlip, bool yFlip) {
+        public static void DrawTile(BitmapData bmp, int x, int y, byte[,] linearGraphics, int palIndex, bool xFlip, bool yFlip) {
             int xStep = 1;
             int yStep = 1;
             if (xFlip) {
@@ -115,9 +115,9 @@ namespace Necrofy
             }
             for (int iy = 0; iy <= 7; iy++) {
                 for (int ix = 0; ix <= 7; ix++) {
-                    Color c = palette[palIndex + linearGraphics[ix, iy]];
-                    if (c.A > 0) {
-                        bmp.SetPixel(x, y, c);
+                    int palOffset = linearGraphics[ix, iy];
+                    if (palOffset > 0) {
+                        Marshal.WriteByte(bmp.Scan0, y * bmp.Stride + x, (byte)(palIndex + palOffset));
                     }
                     x += xStep;
                 }

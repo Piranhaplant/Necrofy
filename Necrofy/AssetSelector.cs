@@ -36,17 +36,26 @@ namespace Necrofy
         public void LoadProject(Project project, AssetCategory category, string startingAssetName, Func<AssetTree.AssetEntry, bool> filter = null) {
             populator = new DropDownAssetTreePopulator(project.Assets, comboTree, category, filter);
 
-            if (!string.IsNullOrEmpty(startingAssetName) && project.Assets.Root.FindFolder(Path.GetDirectoryName(startingAssetName), out AssetTree.Folder folder)) {
-                ComboTreeNode folderNode = populator.FindByTag(comboTree.Nodes, folder);
-                if (folderNode != null && folderNode.Nodes.Count > 0) {
-                    string assetFileName = Path.GetFileName(startingAssetName);
-                    foreach (ComboTreeNode node in folderNode.Nodes) {
-                        if (assetFileName.StartsWith(node.Text)) {
-                            comboTree.SelectedNode = node;
-                            return;
-                        }
+            if (!string.IsNullOrEmpty(startingAssetName)) {
+                if (project.Assets.Root.FindAsset(startingAssetName, out AssetTree.AssetEntry entry)) {
+                    ComboTreeNode assetNode = populator.FindByTag(comboTree.Nodes, entry);
+                    if (assetNode != null) {
+                        comboTree.SelectedNode = assetNode;
+                        return;
                     }
-                    comboTree.SelectedNode = folderNode.Nodes[0];
+                }
+                if (project.Assets.Root.FindFolder(Path.GetDirectoryName(startingAssetName), out AssetTree.Folder folder)) {
+                    ComboTreeNode folderNode = populator.FindByTag(comboTree.Nodes, folder);
+                    if (folderNode != null && folderNode.Nodes.Count > 0) {
+                        string assetFileName = Path.GetFileName(startingAssetName);
+                        foreach (ComboTreeNode node in folderNode.Nodes) {
+                            if (assetFileName.StartsWith(node.Text)) {
+                                comboTree.SelectedNode = node;
+                                return;
+                            }
+                        }
+                        comboTree.SelectedNode = folderNode.Nodes[0];
+                    }
                 }
             }
         }

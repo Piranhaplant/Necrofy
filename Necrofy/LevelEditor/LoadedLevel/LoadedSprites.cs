@@ -12,7 +12,7 @@ namespace Necrofy
     {
         private readonly SpritesAsset spritesAsset;
         public readonly string spritesName;
-        public readonly LoadedPalette loadedPalette;
+        public LoadedPalette loadedPalette;
 
         public List<Sprite> Sprites { get; private set; }
         public Bitmap[] spriteImages = new Bitmap[] { };
@@ -23,10 +23,8 @@ namespace Necrofy
         public LoadedSprites(Project project, string spritesName) {
             this.spritesName = spritesName;
             spritesAsset = SpritesAsset.FromProject(project, spritesName);
-            loadedPalette = new LoadedPalette(project, Asset.SpritesFolder + Asset.FolderSeparator + PaletteAsset.DefaultSpritePaletteName, transparent: true);
-
-            loadedPalette.Updated += Asset_Updated;
-
+            SetPalette(project, Asset.SpritesFolder + Asset.FolderSeparator + PaletteAsset.DefaultSpritePaletteName);
+            
             Sprites = spritesAsset.sprites.sprites.JsonClone();
             string parentFolder = new Asset.ParsedName(spritesName).Folder;
 
@@ -70,6 +68,17 @@ namespace Necrofy
                         tile.graphicsIndex = mapping[tile.graphicsIndex];
                     }
                 }
+            }
+        }
+
+        public void SetPalette(Project project, string paletteName) {
+            if (loadedPalette != null) {
+                loadedPalette.Updated -= Asset_Updated;
+            }
+            loadedPalette = new LoadedPalette(project, paletteName, transparent: true);
+            loadedPalette.Updated += Asset_Updated;
+            foreach (Bitmap image in spriteImages) {
+                SNESGraphics.FillPalette(image, loadedPalette.colors);
             }
         }
 

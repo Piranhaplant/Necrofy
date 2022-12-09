@@ -98,6 +98,7 @@ namespace Necrofy
 
         protected override UndoManager Setup() {
             Zoom = 2.0f;
+            paletteSelector.LoadProject(project, AssetCategory.Palette, loadedSprites.loadedPalette.paletteName);
             undoManager = new UndoManager<SpriteEditor>(mainWindow.UndoButton, mainWindow.RedoButton, this);
             return undoManager;
         }
@@ -559,6 +560,13 @@ namespace Necrofy
             if (tilePicker.SelectedTile >= 0) {
                 tilePicker.SelectedTile = tilePicker.SelectedTile + loadedSprites.graphics[0].images.Count * (showAllGraphics.Checked ? 1 : -1);
             }
+        }
+
+        private void paletteSelector_SelectedItemChanged(object sender, EventArgs e) {
+            loadedSprites.SetPalette(project, paletteSelector.SelectedItem);
+            Repaint();
+            UpdateTilePicker();
+            browserContents.Refresh();
         }
     }
 }

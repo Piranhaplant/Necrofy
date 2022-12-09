@@ -32,6 +32,7 @@
             this.tilePicker = new Necrofy.SpriteTilePicker();
             this.graphicsPanel = new System.Windows.Forms.Panel();
             this.showAllGraphics = new System.Windows.Forms.CheckBox();
+            this.paletteSelector = new Necrofy.AssetSelector();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -90,6 +91,7 @@
             // 
             this.splitContainer1.Panel1.Controls.Add(this.tilePicker);
             this.splitContainer1.Panel1.Controls.Add(this.graphicsPanel);
+            this.splitContainer1.Panel1.Controls.Add(this.paletteSelector);
             this.splitContainer1.Panel1MinSize = 273;
             // 
             // splitContainer1.Panel2
@@ -108,11 +110,11 @@
             this.tilePicker.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tilePicker.FlipX = false;
             this.tilePicker.FlipY = false;
-            this.tilePicker.Location = new System.Drawing.Point(0, 32);
+            this.tilePicker.Location = new System.Drawing.Point(0, 53);
             this.tilePicker.Name = "tilePicker";
             this.tilePicker.Palette = 0;
             this.tilePicker.SelectedTile = -1;
-            this.tilePicker.Size = new System.Drawing.Size(273, 869);
+            this.tilePicker.Size = new System.Drawing.Size(273, 848);
             this.tilePicker.TabIndex = 7;
             this.tilePicker.SelectedTileChanged += new Necrofy.SpriteTilePicker.SelectedTileChangedDelegate(this.tilePicker_SelectedTileChanged);
             this.tilePicker.TileDoubleClicked += new Necrofy.SpriteTilePicker.TileDoubleClickedDelegate(this.tilePicker_TileDoubleClicked);
@@ -122,9 +124,8 @@
             // 
             this.graphicsPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.graphicsPanel.Controls.Add(this.showAllGraphics);
-            this.graphicsPanel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.graphicsPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.graphicsPanel.Location = new System.Drawing.Point(0, 0);
+            this.graphicsPanel.Location = new System.Drawing.Point(0, 21);
             this.graphicsPanel.Name = "graphicsPanel";
             this.graphicsPanel.Size = new System.Drawing.Size(273, 32);
             this.graphicsPanel.TabIndex = 0;
@@ -139,6 +140,15 @@
             this.showAllGraphics.Text = "Show All Graphics";
             this.showAllGraphics.UseVisualStyleBackColor = true;
             this.showAllGraphics.CheckedChanged += new System.EventHandler(this.showAllGraphics_CheckedChanged);
+            // 
+            // paletteSelector
+            // 
+            this.paletteSelector.Dock = System.Windows.Forms.DockStyle.Top;
+            this.paletteSelector.Location = new System.Drawing.Point(0, 0);
+            this.paletteSelector.Name = "paletteSelector";
+            this.paletteSelector.Size = new System.Drawing.Size(273, 21);
+            this.paletteSelector.TabIndex = 7;
+            this.paletteSelector.SelectedItemChanged += new System.EventHandler(this.paletteSelector_SelectedItemChanged);
             // 
             // SpriteEditor
             // 
@@ -168,5 +178,6 @@
         private SpriteTilePicker tilePicker;
         private System.Windows.Forms.Panel graphicsPanel;
         private System.Windows.Forms.CheckBox showAllGraphics;
+        private AssetSelector paletteSelector;
     }
 }

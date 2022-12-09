@@ -63,10 +63,12 @@ namespace Necrofy
 
             Bitmap image;
             if (bounds.Width > 0) {
-                image = new Bitmap(bounds.Width, bounds.Height);
+                image = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format8bppIndexed);
             } else {
-                image = new Bitmap(1, 1);
+                image = new Bitmap(1, 1, PixelFormat.Format8bppIndexed);
             }
+            SNESGraphics.FillPalette(image, colors);
+            BitmapData bitmapData = image.LockBits(new Rectangle(Point.Empty, image.Size), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
 
             anchorX = -bounds.X;
             anchorY = -bounds.Y;
@@ -80,13 +82,14 @@ namespace Necrofy
                     GetGraphicsAndTileNum(t.tileNum, graphics[t.graphicsIndex], out int curTile, out int graphicsNum);
                     LoadedGraphics.LinearGraphics curGraphics = graphics[t.graphicsIndex].loadedGraphics[graphicsNum].linearGraphics;
 
-                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 8 : 0), anchorY + t.yOffset + 1 + (t.yFlip ? 8 : 0), curGraphics[curTile * 4 + 0], colors, palette * 0x10, t.xFlip, t.yFlip);
-                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 0 : 8), anchorY + t.yOffset + 1 + (t.yFlip ? 8 : 0), curGraphics[curTile * 4 + 1], colors, palette * 0x10, t.xFlip, t.yFlip);
-                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 8 : 0), anchorY + t.yOffset + 1 + (t.yFlip ? 0 : 8), curGraphics[curTile * 4 + 2], colors, palette * 0x10, t.xFlip, t.yFlip);
-                    SNESGraphics.DrawTile(image, anchorX + t.xOffset + (t.xFlip ? 0 : 8), anchorY + t.yOffset + 1 + (t.yFlip ? 0 : 8), curGraphics[curTile * 4 + 3], colors, palette * 0x10, t.xFlip, t.yFlip);
+                    SNESGraphics.DrawTile(bitmapData, anchorX + t.xOffset + (t.xFlip ? 8 : 0), anchorY + t.yOffset + 1 + (t.yFlip ? 8 : 0), curGraphics[curTile * 4 + 0], palette * 0x10, t.xFlip, t.yFlip);
+                    SNESGraphics.DrawTile(bitmapData, anchorX + t.xOffset + (t.xFlip ? 0 : 8), anchorY + t.yOffset + 1 + (t.yFlip ? 8 : 0), curGraphics[curTile * 4 + 1], palette * 0x10, t.xFlip, t.yFlip);
+                    SNESGraphics.DrawTile(bitmapData, anchorX + t.xOffset + (t.xFlip ? 8 : 0), anchorY + t.yOffset + 1 + (t.yFlip ? 0 : 8), curGraphics[curTile * 4 + 2], palette * 0x10, t.xFlip, t.yFlip);
+                    SNESGraphics.DrawTile(bitmapData, anchorX + t.xOffset + (t.xFlip ? 0 : 8), anchorY + t.yOffset + 1 + (t.yFlip ? 0 : 8), curGraphics[curTile * 4 + 3], palette * 0x10, t.xFlip, t.yFlip);
                 }
             }
 
+            image.UnlockBits(bitmapData);
             return image;
         }
 
