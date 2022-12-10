@@ -30,4 +30,5 @@ Libraries used:
   asar https://github.com/RPGHacker/asar
   Json.NET https://www.newtonsoft.com/json
   DockPanel Suite http://dockpanelsuite.com/
+  Drop-Down Controls https://github.com/BradSmith1985/DropDownControls
 ______________________________________________________________________

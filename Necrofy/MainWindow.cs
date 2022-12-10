@@ -16,7 +16,7 @@ namespace Necrofy
 {
     partial class MainWindow : Form
     {
-        private static readonly string DefaultStatusText = Application.ProductName + " " + Application.ProductVersion;
+        public static readonly string DefaultStatusText = Application.ProductName + " " + Application.ProductVersion;
         private static readonly float[] zoomLevels = new float[] { 0.25f, 0.33f, 0.5f, 0.75f, 1.0f, 2.0f, 4.0f, 8.0f, 16.0f };
 
         private StartupWindow startupWindow;
@@ -701,14 +701,7 @@ namespace Necrofy
         }
 
         private void helpAbout_Click(object sender, EventArgs e) {
-            MessageBox.Show(DefaultStatusText + Environment.NewLine + Environment.NewLine +
-               "Credits:" + Environment.NewLine +
-               "Programming: Piranhaplant" + Environment.NewLine +
-               "Tileset suggest lists: Droter/Piranhaplant" + Environment.NewLine +
-               "Icons: Fugue Icons https://p.yusukekamiyamane.com/" + Environment.NewLine +
-               "asar https://github.com/RPGHacker/asar" + Environment.NewLine +
-               "Json.NET https://www.newtonsoft.com/json" + Environment.NewLine +
-               "DockPanel Suite http://dockpanelsuite.com/", "About");
+            new AboutDialog().ShowDialog();
         }
 
         private void toolStripGrouper_ItemClick(object sender, ToolStripGrouper.ItemEventArgs e) {

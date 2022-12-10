@@ -106,6 +106,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AboutDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AboutDialog.Designer.cs">
+      <DependentUpon>AboutDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="AssetExtraction\AssetExtractorDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -475,6 +481,9 @@
     <Compile Include="Version.cs" />
     <Compile Include="Win32.cs" />
     <Compile Include="ZAMNCompress.cs" />
+    <EmbeddedResource Include="AboutDialog.resx">
+      <DependentUpon>AboutDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="AssetExtraction\AssetExtractorDialog.resx">
       <DependentUpon>AssetExtractorDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -733,6 +742,7 @@
     <None Include="Icons\cross-script.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\logo.png" />
     <None Include="Resources\crosshairs.png" />
     <None Include="Resources\colorArrow.png" />
     <None Include="Resources\spectrum.png" />
