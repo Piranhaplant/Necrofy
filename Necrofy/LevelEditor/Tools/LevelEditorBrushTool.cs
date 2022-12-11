@@ -22,10 +22,6 @@ namespace Necrofy
                 Status = "Click to paint tiles. Hold Ctrl to select a tile type from the level.";
             }
 
-            public override void MouseDown(MapMouseEventArgs e) {
-                base.MouseDown(e);
-            }
-
             public override void MouseUp(MapMouseEventArgs e) {
                 editor.undoManager.ForceNoMerge();
             }

@@ -294,6 +294,7 @@ namespace Necrofy
             if (colorSelector.SelectionExists) {
                 selectedPalette = colorSelector.SelectionStart.Y;
                 Repaint();
+                Info2 = $"Paint color: ({SelectedColor}, {selectedPalette})";
             }
         }
         

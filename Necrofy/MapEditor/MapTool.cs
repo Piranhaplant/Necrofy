@@ -21,10 +21,20 @@ namespace Necrofy
         protected void AddSubTool(MapTool tool) {
             subTools.Add(tool);
             tool.StatusChanged += SubTool_StatusChanged;
+            tool.Info1Changed += SubTool_Info1Changed;
+            tool.Info2Changed += SubTool_Info2Changed;
         }
 
         private void SubTool_StatusChanged(object sender, EventArgs e) {
             StatusChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void SubTool_Info1Changed(object sender, EventArgs e) {
+            Info1Changed?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void SubTool_Info2Changed(object sender, EventArgs e) {
+            Info2Changed?.Invoke(this, EventArgs.Empty);
         }
 
         private void RunOnSubTool(Action<MapTool> action) {
@@ -68,6 +78,9 @@ namespace Necrofy
         public virtual void MouseMove(MapMouseEventArgs e) {
             RunOnSubTool(t => t.MouseMove(e));
         }
+        public virtual void MouseLeave() {
+            RunOnSubTool(t => t.MouseLeave());
+        }
         public virtual void KeyDown(KeyEventArgs e) {
             RunOnSubTool(t => t.KeyDown(e));
         }
@@ -102,21 +115,49 @@ namespace Necrofy
             }
         }
 
+        private string GetSubToolValue(Func<MapTool, string> getter, string baseValue) {
+            foreach (MapTool subTool in subTools) {
+                string subValue = getter(subTool);
+                if (!string.IsNullOrEmpty(subValue)) {
+                    return subValue;
+                }
+            }
+            return baseValue;
+        }
+
         public event EventHandler StatusChanged;
         private string status = "";
         public string Status {
             get {
-                foreach (MapTool subTool in subTools) {
-                    string subStatus = subTool.Status;
-                    if (!string.IsNullOrEmpty(subStatus)) {
-                        return subStatus;
-                    }
-                }
-                return status;
+                return GetSubToolValue(t => t.Status, status);
             }
             protected set {
                 status = value;
                 StatusChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public event EventHandler Info1Changed;
+        private string info1 = "";
+        public string Info1 {
+            get {
+                return GetSubToolValue(t => t.Info1, info1);
+            }
+            protected set {
+                info1 = value;
+                Info1Changed?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public event EventHandler Info2Changed;
+        private string info2 = "";
+        public string Info2 {
+            get {
+                return GetSubToolValue(t => t.Info2, info2);
+            }
+            protected set {
+                info2 = value;
+                Info2Changed?.Invoke(this, EventArgs.Empty);
             }
         }
     }

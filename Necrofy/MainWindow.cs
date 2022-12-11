@@ -100,6 +100,8 @@ namespace Necrofy
             projectMenuItems = new List<ToolStripMenuItem>() { projectBuildProject, projectRunProject, projectSettings, projectExtractAssets };
             toolStripGrouper.HideAllSetItems();
             UpdateStatusText();
+            UpdateInfo1();
+            UpdateInfo2();
 
             if (Environment.GetCommandLineArgs().Length == 2) {
                 OpenProject(Environment.GetCommandLineArgs()[1]);
@@ -241,6 +243,8 @@ namespace Necrofy
             editor.SelectionChanged += Editor_SelectionChanged;
             editor.TextChanged += Editor_TextChanged;
             editor.StatusChanged += Editor_StatusChanged;
+            editor.Info1Changed += Editor_Info1Changed;
+            editor.Info2Changed += Editor_Info2Changed;
         }
 
         public bool EditorVisible(EditorWindow editor) {
@@ -291,6 +295,18 @@ namespace Necrofy
             }
         }
 
+        private void Editor_Info1Changed(object sender, EventArgs e) {
+            if (sender == activeEditor) {
+                UpdateInfo1();
+            }
+        }
+
+        private void Editor_Info2Changed(object sender, EventArgs e) {
+            if (sender == activeEditor) {
+                UpdateInfo2();
+            }
+        }
+
         private void dockPanel_ContentRemoved(object sender, DockContentEventArgs e) {
             if (e.Content is EditorWindow editor) {
                 openEditors.Remove(editor);
@@ -325,6 +341,8 @@ namespace Necrofy
             projectRecordDemo.Enabled = activeEditor?.LevelNumber != null;
             fileClose.Enabled = activeEditor != null;
             UpdateStatusText();
+            UpdateInfo1();
+            UpdateInfo2();
             UpdateZoom();
         }
 
@@ -337,6 +355,16 @@ namespace Necrofy
 
         private void UpdateStatusText() {
             statusLabel.Text = activeEditor?.Status ?? DefaultStatusText;
+        }
+
+        private void UpdateInfo1() {
+            infoLabel1.Text = activeEditor?.Info1 ?? "";
+            infoLabel1.Visible = !string.IsNullOrEmpty(activeEditor?.Info1);
+        }
+
+        private void UpdateInfo2() {
+            infoLabel2.Text = activeEditor?.Info2 ?? "";
+            infoLabel2.Visible = !string.IsNullOrEmpty(activeEditor?.Info2);
         }
 
         private void UpdateZoom() {

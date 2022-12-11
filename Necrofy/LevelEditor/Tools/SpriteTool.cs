@@ -134,6 +134,7 @@ namespace Necrofy
         }
 
         public override void MouseMove(MapMouseEventArgs e) {
+            Info1 = GetInfoText(e);
             if (!e.MouseIsDown) {
                 isResizingMonsterArea = false;
                 isChangingMonsterDelay = false;

@@ -27,6 +27,24 @@ namespace Necrofy
         public override bool CanDelete => true;
         public override bool HasSelection => true;
 
+        public override void MouseMove(MapMouseEventArgs e) {
+            base.MouseMove(e);
+            string info = $"Cursor: ({e.X}, {e.Y})";
+            int tile = editor.GetPixelTileNum(e.X, e.Y);
+            if (tile >= 0) {
+                if (editor.tileSize == 2) {
+                    tile /= 4;
+                }
+                info += $" tile 0x{tile:X}";
+            }
+            Info1 = info;
+        }
+
+        public override void MouseLeave() {
+            base.MouseLeave();
+            Info1 = "Cursor: N/A";
+        }
+
         private class PasteTool : MapPasteTool
         {
             private const string PNGClipboardFormat = "PNG";

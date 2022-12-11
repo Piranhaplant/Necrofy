@@ -147,6 +147,8 @@ namespace Necrofy
                     checkboxes[i].Checked = (tileCollision & (1 << i)) > 0;
                 }
                 uiUpdate--;
+
+                Info1 = $"Editing tile: 0x{tilePicker.SelectedTile:X}";
             }
         }
 

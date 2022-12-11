@@ -42,6 +42,16 @@ namespace Necrofy
 
         public bool CanFlip => editor.SelectionExists || pasteTool.IsPasting;
 
+        public override void MouseMove(MapMouseEventArgs e) {
+            base.MouseMove(e);
+            Info1 = $"Cursor: ({e.TileX}, {e.TileY})";
+        }
+
+        public override void MouseLeave() {
+            base.MouseLeave();
+            Info1 = "Cursor: N/A";
+        }
+
         private class PasteTool : MapPasteTool
         {
             private readonly TilemapEditor editor;

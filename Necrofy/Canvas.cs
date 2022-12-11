@@ -6,6 +6,8 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Necrofy
 {
@@ -24,6 +26,7 @@ namespace Necrofy
             base.MouseMove += Canvas_MouseMove;
             base.MouseUp += Canvas_MouseUp;
             base.MouseLeave += Canvas_MouseLeave;
+            base.Disposed += Canvas_Disposed;
         }
 
         private void Canvas_MouseDown(object sender, MouseEventArgs e) {
@@ -53,6 +56,32 @@ namespace Necrofy
 
         public void GenerateMouseMove() {
             MouseMove?.Invoke(this, new MouseEventArgs(MouseButtons, 0, prevMousePosition.X, prevMousePosition.Y, 0));
+        }
+
+        private CancellationTokenSource repaintCancel = new CancellationTokenSource();
+        private bool timerRunning = false;
+        private bool repaintQueued = false;
+
+        public void Repaint() {
+            repaintQueued = true;
+            if (!timerRunning) {
+                timerRunning = true;
+                RepaintTimer(repaintCancel.Token);
+            }
+        }
+
+        private async void RepaintTimer(CancellationToken cancellation) {
+            while (!cancellation.IsCancellationRequested) {
+                await Task.Delay(5);
+                if (repaintQueued) {
+                    Refresh();
+                    repaintQueued = false;
+                }
+            }
+        }
+
+        private void Canvas_Disposed(object sender, EventArgs e) {
+            repaintCancel.Cancel();
         }
     }
 }

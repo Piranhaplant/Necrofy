@@ -59,6 +59,32 @@ namespace Necrofy
             }
         }
 
+        private string info1 = "";
+        public string Info1 {
+            get {
+                return info1;
+            }
+            protected set {
+                if (value != info1) {
+                    info1 = value;
+                    Info1Changed?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+
+        private string info2 = "";
+        public string Info2 {
+            get {
+                return info2;
+            }
+            protected set {
+                if (value != info2) {
+                    info2 = value;
+                    Info2Changed?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+
         public bool DockVisible {
             get {
                 return mainWindow.EditorVisible(this);
@@ -76,7 +102,9 @@ namespace Necrofy
         public event EventHandler DirtyChanged;
         public event EventHandler SelectionChanged;
         public event EventHandler StatusChanged;
-        
+        public event EventHandler Info1Changed;
+        public event EventHandler Info2Changed;
+
         protected MainWindow mainWindow { get; private set; }
         protected Project project { get; private set; }
         private UndoManager undoManager;

@@ -160,6 +160,14 @@ namespace Necrofy
             UpdateSelectedColor();
             undoManager?.ForceNoMerge();
             RaiseSelectionChanged();
+
+            Point start = colorSelector.SelectionStart;
+            Point end = colorSelector.SelectionEnd;
+            string info = $"Selected: ({Math.Min(start.X, end.X)}, {Math.Min(start.Y, end.Y)})";
+            if (end != start) {
+                info += $" - ({Math.Max(start.X, end.X)}, {Math.Max(start.Y, end.Y)})";
+            }
+            Info1 = info;
         }
 
         private void ColorEditor_ColorChanged(object sender, EventArgs e) {

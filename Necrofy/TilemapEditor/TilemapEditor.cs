@@ -203,7 +203,7 @@ namespace Necrofy
         
         public int GetLocationTileIndex(int tileX, int tileY) {
             int tileNum = tileY * tileWidth + tileX;
-            if (tileX < 0 || tileX >= tileWidth || tileX < 0 || tileNum >= tilemap.Length) {
+            if (tileX < 0 || tileX >= tileWidth || tileY < 0 || tileNum >= tilemap.Length) {
                 tileNum = -1;
             }
             return tileNum;
@@ -408,6 +408,7 @@ namespace Necrofy
         
         private void tilePicker_SelectedTileChanged(object sender, EventArgs e) {
             SelectedTileChanged();
+            Info2 = $"Paint tile: 0x{tilePicker.SelectedTile:X}";
         }
 
         private void tilePicker_PaletteChanged(object sender, EventArgs e) {

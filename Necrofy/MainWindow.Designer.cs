@@ -212,6 +212,8 @@
             this.buildStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripGrouper = new Necrofy.ToolStripGrouper(this.components);
             this.toolBarMenuLinker = new Necrofy.ToolBarMenuLinker(this.components);
+            this.infoLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.infoLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -1999,6 +2001,8 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.statusLabel,
+            this.infoLabel2,
+            this.infoLabel1,
             this.buildStatusLabel});
             this.statusStrip1.Location = new System.Drawing.Point(0, 649);
             this.statusStrip1.Name = "statusStrip1";
@@ -2009,7 +2013,7 @@
             // statusLabel
             // 
             this.statusLabel.Name = "statusLabel";
-            this.statusLabel.Size = new System.Drawing.Size(1116, 17);
+            this.statusLabel.Size = new System.Drawing.Size(764, 17);
             this.statusLabel.Spring = true;
             this.statusLabel.Text = "status";
             this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -2026,6 +2030,24 @@
             // 
             this.toolStripGrouper.ItemClick += new System.EventHandler<Necrofy.ToolStripGrouper.ItemEventArgs>(this.toolStripGrouper_ItemClick);
             this.toolStripGrouper.ItemCheckedChanged += new System.EventHandler<Necrofy.ToolStripGrouper.ItemEventArgs>(this.toolStripGrouper_ItemCheckedChanged);
+            // 
+            // infoLabel1
+            // 
+            this.infoLabel1.AutoSize = false;
+            this.infoLabel1.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
+            this.infoLabel1.Name = "infoLabel1";
+            this.infoLabel1.Size = new System.Drawing.Size(180, 17);
+            this.infoLabel1.Text = "Cursor: (50, 100)";
+            this.infoLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // infoLabel2
+            // 
+            this.infoLabel2.AutoSize = false;
+            this.infoLabel2.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
+            this.infoLabel2.Name = "infoLabel2";
+            this.infoLabel2.Size = new System.Drawing.Size(120, 17);
+            this.infoLabel2.Text = "Info 2";
+            this.infoLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // MainWindow
             // 
@@ -2240,6 +2262,8 @@
         private System.Windows.Forms.ToolStripMenuItem viewHintingTileset;
         private System.Windows.Forms.ToolStripLabel widthLabel;
         private System.Windows.Forms.ToolStripMenuItem projectExtractAssets;
+        private System.Windows.Forms.ToolStripStatusLabel infoLabel2;
+        private System.Windows.Forms.ToolStripStatusLabel infoLabel1;
     }
 }
 

@@ -67,6 +67,7 @@ namespace Necrofy
             canvas.MouseDown += Canvas_MouseDown;
             canvas.MouseUp += Canvas_MouseUp;
             canvas.MouseMove += Canvas_MouseMove;
+            canvas.MouseLeave += Canvas_MouseLeave;
             canvas.PreviewKeyDown += Canvas_PreviewKeyDown;
             canvas.KeyDown += Canvas_KeyDown;
             canvas.KeyUp += Canvas_KeyUp;
@@ -81,7 +82,6 @@ namespace Necrofy
             scrollWrapper.Scrolled += ScrollWrapper_Scrolled;
 
             ZoomChanged();
-            RepaintTimer(selectionPenCancel.Token);
             UpdateSelectionPen(selectionPenCancel.Token);
         }
 
@@ -95,11 +95,25 @@ namespace Necrofy
         public void SetupTool(T t, ToolStripGrouper.ItemType itemType, Keys shortcutKeys) {
             toolManager.SetupTool(t, itemType, shortcutKeys);
             t.StatusChanged += Tool_StatusChanged;
+            t.Info1Changed += Tool_Info1Changed;
+            t.Info2Changed += Tool_Info2Changed;
         }
 
         private void Tool_StatusChanged(object sender, EventArgs e) {
             if (ReferenceEquals(sender, CurrentTool)) {
                 Status = CurrentTool.Status;
+            }
+        }
+
+        private void Tool_Info1Changed(object sender, EventArgs e) {
+            if (ReferenceEquals(sender, CurrentTool)) {
+                Info1 = CurrentTool.Info1;
+            }
+        }
+
+        private void Tool_Info2Changed(object sender, EventArgs e) {
+            if (ReferenceEquals(sender, CurrentTool)) {
+                Info2 = CurrentTool.Info2;
             }
         }
 
@@ -194,7 +208,11 @@ namespace Necrofy
                 toolManager.currentTool.MouseMove(args);
             }
         }
-        
+
+        private void Canvas_MouseLeave(object sender, EventArgs e) {
+            toolManager.currentTool.MouseLeave();
+        }
+
         private bool TransformMouseArgs(MouseEventArgs e, out MapMouseEventArgs ret) {
             if (e.Button == MouseButtons.Left || !canvas.IsMouseDown) {
                 Point transformed = scrollWrapper.TransformPoint(e.Location);
@@ -256,22 +274,11 @@ namespace Necrofy
             canvas.Cursor = cursor;
         }
 
-        private CancellationTokenSource selectionPenCancel = new CancellationTokenSource();
-        private bool repaintQueued = false;
-
         public override void Repaint() {
-            repaintQueued = true;
+            canvas.Repaint();
         }
 
-        private async void RepaintTimer(CancellationToken cancellation) {
-            while (!cancellation.IsCancellationRequested) {
-                await Task.Delay(5);
-                if (repaintQueued) {
-                    canvas.Refresh();
-                    repaintQueued = false;
-                }
-            }
-        }
+        private CancellationTokenSource selectionPenCancel = new CancellationTokenSource();
 
         private async void UpdateSelectionPen(CancellationToken cancellation) {
             while (!cancellation.IsCancellationRequested) {

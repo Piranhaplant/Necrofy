@@ -38,5 +38,19 @@ namespace Necrofy
             Tiles,
             Sprites,
         }
+
+        public override void MouseMove(MapMouseEventArgs e) {
+            base.MouseMove(e);
+            Info1 = GetInfoText(e);
+        }
+
+        protected static string GetInfoText(MapMouseEventArgs e) {
+            return $"Cursor: ({e.X}, {e.Y}) tile ({e.TileX}, {e.TileY})";
+        }
+
+        public override void MouseLeave() {
+            base.MouseLeave();
+            Info1 = "Cursor: N/A";
+        }
     }
 }

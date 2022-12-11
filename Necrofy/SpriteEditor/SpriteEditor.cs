@@ -260,7 +260,7 @@ namespace Necrofy
         }
 
         public void Repaint() {
-            canvas.Invalidate();
+            canvas.Repaint();
         }
 
         public void SetCurrentSprite(Sprite s) {
@@ -488,12 +488,21 @@ namespace Necrofy
         private void canvas_MouseMove(object sender, MouseEventArgs e) {
             Point transformed = scrollWrapper.TransformPoint(e.Location);
             objectSelector.MouseMove(transformed.X, transformed.Y);
+            if (currentSprite != null) {
+                Info1 = $"Cursor: ({transformed.X}, {transformed.Y})";
+            }
         }
 
         private void canvas_MouseUp(object sender, MouseEventArgs e) {
             if (e.Button == MouseButtons.Left) {
                 objectSelector.MouseUp();
                 UpdateStatus();
+            }
+        }
+
+        private void canvas_MouseLeave(object sender, EventArgs e) {
+            if (currentSprite != null) {
+                Info1 = "Cursor: N/A";
             }
         }
 
