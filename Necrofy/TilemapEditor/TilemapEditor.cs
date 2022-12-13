@@ -157,6 +157,8 @@ namespace Necrofy
             SetupTool(new TilemapBrushTool(this), ToolStripGrouper.ItemType.TilemapPaintBrush, Keys.P);
             SetupTool(new TilemapSelectTool(this), ToolStripGrouper.ItemType.TilemapRectangleSelect, Keys.R);
             SetupTool(new TilemapPencilSelectTool(this), ToolStripGrouper.ItemType.TilemapPencilSelect, Keys.C);
+            SetupTool(new TilemapSelectByTileTool(this), ToolStripGrouper.ItemType.TilemapSelectByTile, Keys.T);
+            SetupTool(new TilemapSelectByPropertiesTool(this), ToolStripGrouper.ItemType.TilemapSelectByProperties, Keys.L);
             Selection.Changed += Selection_Changed;
 
             UpdateSize(tileWidth);

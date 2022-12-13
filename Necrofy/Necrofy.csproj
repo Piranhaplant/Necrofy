@@ -365,6 +365,8 @@
     </Compile>
     <Compile Include="TilemapEditor\TilemapEditorAction.cs" />
     <Compile Include="TilemapEditor\TilemapPencilSelectTool.cs" />
+    <Compile Include="TilemapEditor\TilemapSelectByPropertiesTool.cs" />
+    <Compile Include="TilemapEditor\TilemapSelectByTileTool.cs" />
     <Compile Include="TilemapEditor\TilemapSelectTool.cs" />
     <Compile Include="TilemapEditor\TilemapTool.cs" />
     <Compile Include="ToolBarMenuLinker.cs">
@@ -766,6 +768,7 @@
     </None>
     <None Include="Icons\fill-090.png" />
     <None Include="Icons\color-swatch.png" />
+    <None Include="Icons\color-swatch-lock.png" />
     <Content Include="ProjectFiles\Patches\FootballPlayerWaterFix.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

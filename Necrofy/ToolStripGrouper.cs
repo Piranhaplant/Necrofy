@@ -302,6 +302,9 @@ namespace Necrofy
             TilemapPaintBrush,
             TilemapRectangleSelect,
             TilemapPencilSelect,
+            TilemapSelectByTile,
+            TilemapSelectByProperties,
+
             ViewHintingNone,
             ViewHintingLevelTitle,
             ViewHintingTileset,
