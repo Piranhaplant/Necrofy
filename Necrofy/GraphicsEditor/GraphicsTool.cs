@@ -45,6 +45,34 @@ namespace Necrofy
             Info1 = "Cursor: N/A";
         }
 
+        protected delegate bool GetPixelDelegate(int x, int y, out byte pixel);
+        protected static void ReadPixelData(GraphicsEditor editor, Action<GetPixelDelegate> action) {
+            Dictionary<int, BitmapData> loadedTiles = new Dictionary<int, BitmapData>();
+            bool GetPixel(int x, int y, out byte pixel) {
+                int tileNum = editor.GetPixelTileNum(x, y);
+                if (tileNum < 0) {
+                    pixel = 0;
+                    return false;
+                }
+                BitmapData tileData;
+                if (!loadedTiles.ContainsKey(tileNum)) {
+                    Bitmap tile = editor.tiles.GetTemporarily(tileNum);
+                    tileData = tile.LockBits(new Rectangle(Point.Empty, tile.Size), ImageLockMode.ReadOnly, tile.PixelFormat);
+                    loadedTiles[tileNum] = tileData;
+                } else {
+                    tileData = loadedTiles[tileNum];
+                }
+                pixel = Marshal.ReadByte(tileData.Scan0, (y % 8) * tileData.Stride + (x % 8));
+                return true;
+            }
+
+            action(GetPixel);
+
+            foreach (KeyValuePair<int, BitmapData> pair in loadedTiles) {
+                editor.tiles.GetTemporarily(pair.Key).UnlockBits(pair.Value);
+            }
+        }
+
         private class PasteTool : MapPasteTool
         {
             private const string PNGClipboardFormat = "PNG";
@@ -62,43 +90,23 @@ namespace Necrofy
             public override void Copy() {
                 Rectangle bounds = editor.Selection.GetSelectedAreaBounds();
 
-                Dictionary<int, BitmapData> loadedTiles = new Dictionary<int, BitmapData>();
-                bool GetPixel(int x, int y, out byte pixel) {
-                    int tileNum = editor.GetPixelTileNum(x, y);
-                    if (tileNum < 0) {
-                        pixel = 0;
-                        return false;
-                    }
-                    BitmapData tileData;
-                    if (!loadedTiles.ContainsKey(tileNum)) {
-                        Bitmap tile = editor.tiles.GetTemporarily(tileNum);
-                        tileData = tile.LockBits(new Rectangle(Point.Empty, tile.Size), ImageLockMode.ReadOnly, tile.PixelFormat);
-                        loadedTiles[tileNum] = tileData;
-                    } else {
-                        tileData = loadedTiles[tileNum];
-                    }
-                    pixel = Marshal.ReadByte(tileData.Scan0, (y % 8) * tileData.Stride + (x % 8));
-                    return true;
-                }
-
                 Bitmap image = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format32bppArgb);
                 sbyte[,] rawData = new sbyte[bounds.Width, bounds.Height];
                 BitmapData bitmapData = image.LockBits(new Rectangle(Point.Empty, image.Size), ImageLockMode.WriteOnly, image.PixelFormat);
-                for (int y = 0; y < image.Height; y++) {
-                    for (int x = 0; x < image.Width; x++) {
-                        if (editor.Selection.GetPoint(x + bounds.X, y + bounds.Y) && GetPixel(x + bounds.X, y + bounds.Y, out byte pixel)) {
-                            Marshal.WriteInt32(bitmapData.Scan0, y * bitmapData.Stride + x * 4, editor.Colors[editor.selectedPalette * editor.colorsPerPalette + pixel].ToArgb());
-                            rawData[x, y] = (sbyte)pixel;
-                        } else {
-                            rawData[x, y] = -1;
+
+                ReadPixelData(editor, getPixel => {
+                    for (int y = 0; y < image.Height; y++) {
+                        for (int x = 0; x < image.Width; x++) {
+                            if (editor.Selection.GetPoint(x + bounds.X, y + bounds.Y) && getPixel(x + bounds.X, y + bounds.Y, out byte pixel)) {
+                                Marshal.WriteInt32(bitmapData.Scan0, y * bitmapData.Stride + x * 4, editor.Colors[editor.selectedPalette * editor.colorsPerPalette + pixel].ToArgb());
+                                rawData[x, y] = (sbyte)pixel;
+                            } else {
+                                rawData[x, y] = -1;
+                            }
                         }
                     }
-                }
+                });
                 image.UnlockBits(bitmapData);
-
-                foreach (KeyValuePair<int, BitmapData> pair in loadedTiles) {
-                    editor.tiles.GetTemporarily(pair.Key).UnlockBits(pair.Value);
-                }
 
                 DataObject clipboardData = new DataObject();
                 clipboardData.SetImage(image);

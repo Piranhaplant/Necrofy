@@ -297,6 +297,7 @@ namespace Necrofy
             GraphicsPaintbrush,
             GraphicsRectangleSelect,
             GraphicsBucketFill,
+            GraphicsSelectByColor,
 
             TilemapPaintBrush,
             TilemapRectangleSelect,

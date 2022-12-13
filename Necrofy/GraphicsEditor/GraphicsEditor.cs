@@ -64,6 +64,7 @@ namespace Necrofy
             SetupMapEditor(canvas, hScroll, vScroll);
             SetupTool(new GraphicsBrushTool(this), ToolStripGrouper.ItemType.GraphicsPaintbrush, Keys.P);
             SetupTool(new GraphicsSelectTool(this), ToolStripGrouper.ItemType.GraphicsRectangleSelect, Keys.R);
+            SetupTool(new GraphicsSelectByColorTool(this), ToolStripGrouper.ItemType.GraphicsSelectByColor, Keys.C);
             SetupTool(new BucketFillTool(this), ToolStripGrouper.ItemType.GraphicsBucketFill, Keys.B);
 
             UpdateSize(tileWidth);

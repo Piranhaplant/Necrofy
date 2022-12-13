@@ -180,6 +180,7 @@
     <Compile Include="GraphicsEditor\GraphicsEditor.Designer.cs">
       <DependentUpon>GraphicsEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="GraphicsEditor\GraphicsSelectByColorTool.cs" />
     <Compile Include="GraphicsEditor\GraphicsTileList.cs" />
     <Compile Include="GraphicsEditor\GraphicsTool.cs" />
     <Compile Include="GraphicsEditor\GraphicsSelectTool.cs" />
@@ -764,6 +765,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Icons\fill-090.png" />
+    <None Include="Icons\color-swatch.png" />
     <Content Include="ProjectFiles\Patches\FootballPlayerWaterFix.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
