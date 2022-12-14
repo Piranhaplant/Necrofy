@@ -24,6 +24,10 @@ namespace Necrofy
         // Used to ignore mouse events when pasting and when finishing a paste
         private bool ignoreMouse = false;
 
+        protected virtual int GetSnapAmount() {
+            return 1;
+        }
+
         public MapPasteTool(MapEditor mapEditor) : base(mapEditor) { }
         
         public override sealed void Paint(Graphics g) {
@@ -52,8 +56,8 @@ namespace Necrofy
                     CommitPaste();
                     ignoreMouse = true;
                 }
-                prevX = e.X;
-                prevY = e.Y;
+                prevX = pasteX;
+                prevY = pasteY;
             } else {
                 PassToNextTool();
             }
@@ -62,11 +66,12 @@ namespace Necrofy
         public override sealed void MouseMove(MapMouseEventArgs e) {
             if (IsPasting) {
                 if (e.MouseIsDown && !ignoreMouse) {
-                    pasteX = e.X - pasteDragX;
-                    pasteY = e.Y - pasteDragY;
-                    TranslatePath(e.X - prevX, e.Y - prevY);
-                    prevX = e.X;
-                    prevY = e.Y;
+                    int snap = Control.ModifierKeys.HasFlag(Keys.Shift) ? GetSnapAmount() : 1;
+                    pasteX = (e.X - pasteDragX) / snap * snap;
+                    pasteY = (e.Y - pasteDragY) / snap * snap;
+                    TranslatePath(pasteX - prevX, pasteY - prevY);
+                    prevX = pasteX;
+                    prevY = pasteY;
                     mapEditor.Repaint();
                 } else {
                     mapEditor.SetCursor(pasteTilesPath.IsVisible(e.X, e.Y) ? Cursors.SizeAll : Cursors.Default);

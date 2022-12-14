@@ -87,6 +87,10 @@ namespace Necrofy
                 this.editor = editor;
             }
 
+            protected override int GetSnapAmount() {
+                return editor.tileSize * 8;
+            }
+
             public override void Copy() {
                 Rectangle bounds = editor.Selection.GetSelectedAreaBounds();
 
