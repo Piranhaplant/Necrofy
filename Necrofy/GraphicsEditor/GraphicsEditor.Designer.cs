@@ -76,8 +76,10 @@
             this.colorSelector.SelectionEnd = new System.Drawing.Point(-1, -1);
             this.colorSelector.SelectionStart = new System.Drawing.Point(-1, -1);
             this.colorSelector.Size = new System.Drawing.Size(256, 429);
+            this.colorSelector.SquaresPerRow = 16;
             this.colorSelector.TabIndex = 3;
             this.colorSelector.SelectionChanged += new System.EventHandler(this.colorSelector_SelectionChanged);
+            this.colorSelector.Enter += colorSelector_Enter;
             // 
             // paletteSelector
             // 
@@ -99,6 +101,7 @@
             this.canvas.Name = "canvas";
             this.canvas.Size = new System.Drawing.Size(527, 433);
             this.canvas.TabIndex = 0;
+            this.canvas.KeyDown += new System.Windows.Forms.KeyEventHandler(this.canvas_KeyDown);
             // 
             // GraphicsEditor
             // 

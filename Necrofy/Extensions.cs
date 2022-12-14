@@ -13,6 +13,11 @@ namespace Necrofy
 {
     static class Extensions
     {
+        public static readonly Dictionary<Keys, int> PaletteKeys = new Dictionary<Keys, int>() {
+            { Keys.D0, 0 }, { Keys.D1, 1 }, { Keys.D2, 2 }, { Keys.D3, 3 }, { Keys.D4, 4 }, { Keys.D5, 5 }, { Keys.D6, 6 },{ Keys.D7, 7 },
+            { Keys.NumPad0, 0 }, { Keys.NumPad1, 1 }, { Keys.NumPad2, 2 }, { Keys.NumPad3, 3 }, { Keys.NumPad4, 4 }, { Keys.NumPad5, 5 }, { Keys.NumPad6, 6 }, { Keys.NumPad7, 7 }
+        };
+
         public static int GetWidth<T>(this T[,] array) {
             return array.GetLength(0);
         }

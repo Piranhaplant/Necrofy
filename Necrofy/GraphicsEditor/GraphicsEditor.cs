@@ -302,5 +302,25 @@ namespace Necrofy
         protected override void ToolChanged(GraphicsTool currentTool) {
             // Nothing to do
         }
+
+        private void colorSelector_Enter(object sender, EventArgs e) {
+            canvas.Select();
+        }
+
+        private void canvas_KeyDown(object sender, KeyEventArgs e) {
+            if (Extensions.PaletteKeys.TryGetValue(e.KeyCode, out int palette)) {
+                SetCurrentPalette(palette);
+            } else if (e.KeyCode == Keys.OemOpenBrackets) {
+                SetCurrentPalette(colorSelector.SelectionStart.Y - 1);
+            } else if (e.KeyCode == Keys.OemCloseBrackets) {
+                SetCurrentPalette(colorSelector.SelectionStart.Y + 1);
+            }
+        }
+
+        private void SetCurrentPalette(int palette) {
+            if (palette >= 0 && palette < colorSelector.Colors.Length / colorSelector.SquaresPerRow) {
+                colorSelector.SelectionStart = new Point(colorSelector.SelectionStart.X, palette);
+            }
+        }
     }
 }

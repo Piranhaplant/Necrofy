@@ -194,13 +194,8 @@ namespace Necrofy
             }
         }
 
-        private static readonly Dictionary<Keys, int> paletteKeys = new Dictionary<Keys, int>() {
-            { Keys.D0, 0 }, { Keys.D1, 1 }, { Keys.D2, 2 }, { Keys.D3, 3 }, { Keys.D4, 4 }, { Keys.D5, 5 }, { Keys.D6, 6 },{ Keys.D7, 7 },
-            { Keys.NumPad0, 0 }, { Keys.NumPad1, 1 }, { Keys.NumPad2, 2 }, { Keys.NumPad3, 3 }, { Keys.NumPad4, 4 }, { Keys.NumPad5, 5 }, { Keys.NumPad6, 6 }, { Keys.NumPad7, 7 }
-        };
-
         public bool OnKeyDown(Keys keyCode) {
-            if (paletteKeys.TryGetValue(keyCode, out int palette)) {
+            if (Extensions.PaletteKeys.TryGetValue(keyCode, out int palette)) {
                 Palette = palette;
                 return true;
             }
