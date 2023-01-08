@@ -66,6 +66,7 @@ namespace Necrofy
         public event EventHandler Updated;
         /// <summary>Gets whether the asset should be skipped when building a ROM</summary>
         public bool IsSkipped => nameInfo.Parts.skipped;
+        public string Filename => nameInfo.GetFilename("");
         /// <summary>Reserves any space that will be needed by this asset before inserting into a ROM.</summary>
         /// <param name="romInfo">The ROM info</param>
         public virtual void ReserveSpace(ROMInfo romInfo) { }

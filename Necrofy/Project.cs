@@ -208,7 +208,11 @@ namespace Necrofy
                         asset.ReserveSpace(info);
                     }
                     foreach (Asset asset in info.assets) {
-                        asset.Insert(s, info, this);
+                        try {
+                            asset.Insert(s, info, this);
+                        } catch (Exception ex) {
+                            results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, asset.Filename, ex.Message, ex.StackTrace));
+                        }
                     }
 
                     info.WriteToBuild(s, results);
