@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace Necrofy
 {
@@ -16,6 +17,7 @@ namespace Necrofy
         private Color[] colors = null;
         private readonly ScrollWrapper scrollWrapper;
         private readonly RadioButton[] paletteButtons;
+        private Pen dashPen;
 
         private int zoom;
         private int tileSize;
@@ -100,20 +102,28 @@ namespace Necrofy
 
         public SpriteTilePicker() {
             InitializeComponent();
+            Disposed += SpriteTilePicker_Disposed;
             paletteButtons = new RadioButton[] { palette0Button, palette1Button, palette2Button, palette3Button, palette4Button, palette5Button, palette6Button, palette7Button };
 
             scrollWrapper = new ScrollWrapper(canvas, hScrollBar, vScrollBar, autoSize: false);
             scrollWrapper.Scrolled += ScrollWrapper_Scrolled;
+            UpdateSelectionPen(selectionPenCancel.Token);
+        }
+
+        private void SpriteTilePicker_Disposed(object sender, EventArgs e) {
+            selectionPenCancel.Cancel();
+            dashPen.Dispose();
         }
 
         public void Repaint() {
-            canvas.Invalidate();
+            canvas.Repaint();
         }
 
         public void SetTiles(IReadOnlyList<Bitmap> tiles, Color[] colors, int zoom = 1) {
             this.tiles = tiles;
             this.colors = colors;
             this.zoom = zoom;
+            dashPen = Extensions.CreateDashPen(Color.Black, zoom);
             UpdateSize();
             scrollWrapper.ScrollToPoint(0, 0);
         }
@@ -155,7 +165,9 @@ namespace Necrofy
             }
             if (SelectedTile >= 0) {
                 using (Pen p = new Pen(Color.White, 1 / zoom)) {
-                    e.Graphics.DrawRectangle(p, (SelectedTile % tilesPerRow) * tileSize, (SelectedTile / tilesPerRow) * tileSize, tileSize, tileSize);
+                    Rectangle r = new Rectangle((SelectedTile % tilesPerRow) * tileSize, (SelectedTile / tilesPerRow) * tileSize, tileSize, tileSize);
+                    e.Graphics.DrawRectangle(p, r);
+                    e.Graphics.DrawRectangle(dashPen, r);
                 }
             }
         }
@@ -200,6 +212,18 @@ namespace Necrofy
                 return true;
             }
             return false;
+        }
+
+        private CancellationTokenSource selectionPenCancel = new CancellationTokenSource();
+
+        private async void UpdateSelectionPen(CancellationToken cancellation) {
+            while (!cancellation.IsCancellationRequested) {
+                if (SelectedTile >= 0 && dashPen != null) {
+                    dashPen.DashOffset = (dashPen.DashOffset + 1) % 256;
+                    Repaint();
+                }
+                await Task.Delay(100);
+            }
         }
     }
 }
