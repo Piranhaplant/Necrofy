@@ -53,15 +53,19 @@ namespace Necrofy
 
         public override bool Merge(UndoAction<TilemapEditor> action) {
             if (action is TilemapEditorAction tilemapEditorAction && action.GetType() == this.GetType()) {
-                foreach (KeyValuePair<int, LoadedTilemap.Tile> newTile in tilemapEditorAction.newTiles) {
-                    if (!oldTiles.ContainsKey(newTile.Key)) {
-                        oldTiles[newTile.Key] = tilemapEditorAction.oldTiles[newTile.Key];
-                    }
-                    newTiles[newTile.Key] = newTile.Value;
-                }
+                DoMerge(tilemapEditorAction);
                 return true;
             }
             return false;
+        }
+
+        protected void DoMerge(TilemapEditorAction tilemapEditorAction) {
+            foreach (KeyValuePair<int, LoadedTilemap.Tile> newTile in tilemapEditorAction.newTiles) {
+                if (!oldTiles.ContainsKey(newTile.Key)) {
+                    oldTiles[newTile.Key] = tilemapEditorAction.oldTiles[newTile.Key];
+                }
+                newTiles[newTile.Key] = newTile.Value;
+            }
         }
     }
 
@@ -147,7 +151,17 @@ namespace Necrofy
             }
             cancel = oldTiles.Count == 0;
         }
-        
+
+        public override bool Merge(UndoAction<TilemapEditor> action) {
+            if (action is FillTilemapSelectionAction fillTilemapSelectionAction) {
+                if (fillTilemapSelectionAction.oldTiles.Keys.SequenceEqual(oldTiles.Keys)) {
+                    DoMerge(fillTilemapSelectionAction);
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public override string ToString() {
             return "Fill selection";
         }
@@ -155,6 +169,8 @@ namespace Necrofy
 
     class DeleteTilemapAction : TilemapEditorAction
     {
+        private string text = "Delete tiles";
+
         public override void SetEditor(TilemapEditor editor) {
             base.SetEditor(editor);
             for (int y = 0; y < editor.Selection.height; y++) {
@@ -167,8 +183,17 @@ namespace Necrofy
             cancel = oldTiles.Count == 0;
         }
 
+        public override bool Merge(UndoAction<TilemapEditor> action) {
+            if (action is PasteTilemapAction pasteTilemapAction) {
+                DoMerge(pasteTilemapAction);
+                text = "Move selection";
+                return true;
+            }
+            return false;
+        }
+
         public override string ToString() {
-            return "Delete tiles";
+            return text;
         }
     }
 
@@ -192,6 +217,10 @@ namespace Necrofy
                 }
             });
             cancel = oldTiles.Count == 0;
+        }
+
+        public override bool Merge(UndoAction<TilemapEditor> action) {
+            return false;
         }
 
         public override string ToString() {

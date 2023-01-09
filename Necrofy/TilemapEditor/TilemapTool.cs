@@ -26,12 +26,12 @@ namespace Necrofy
         public override bool CanDelete => true;
         public override bool HasSelection => true;
 
-        public override void Delete() {
-            editor.undoManager.Do(new DeleteTilemapAction());
+        public virtual void TileChanged() { }
+
+        public void FloatSelection() {
+            pasteTool.FloatSelection();
         }
 
-        public virtual void TileChanged() { }
-        
         public void Flip(bool horizontal) {
             if (pasteTool.IsPasting) {
                 pasteTool.Flip(horizontal);
@@ -52,7 +52,7 @@ namespace Necrofy
             Info1 = "Cursor: N/A";
         }
 
-        private class PasteTool : MapPasteTool
+        private class PasteTool : MapPasteTool<ClipboardContents>
         {
             private readonly TilemapEditor editor;
             private LoadedTilemap.Tile?[,] pasteTiles;
@@ -66,7 +66,7 @@ namespace Necrofy
                 editor.UpdateToolbar();
             }
 
-            public override void Copy() {
+            protected override ClipboardContents GetCopyData() {
                 Rectangle bounds = editor.Selection.GetSelectedAreaBounds();
 
                 ushort?[,] tiles = new ushort?[bounds.Width, bounds.Height];
@@ -78,11 +78,11 @@ namespace Necrofy
                     }
                 }
 
-                Clipboard.SetText(JsonConvert.SerializeObject(new ClipboardContents(tiles)));
+                return new ClipboardContents(tiles);
             }
 
-            protected override Size ReadPaste() {
-                ushort?[,] tilemap = JsonConvert.DeserializeObject<ClipboardContents>(Clipboard.GetText()).tilemap;
+            protected override Size ReadPaste(ClipboardContents data) {
+                ushort?[,] tilemap = data.tilemap;
                 if (tilemap == null) {
                     return Size.Empty;
                 }
@@ -129,6 +129,10 @@ namespace Necrofy
 
             protected override void FlipSelectionData(bool horizontalFlip) {
                 pasteTiles.Flip(horizontalFlip, 0, 0, pasteTiles.GetWidth(), pasteTiles.GetHeight(), t => LoadedTilemap.Tile.Flip(t, horizontalFlip));
+            }
+
+            public override void Delete() {
+                editor.undoManager.Do(new DeleteTilemapAction());
             }
         }
 

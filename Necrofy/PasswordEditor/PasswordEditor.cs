@@ -19,7 +19,7 @@ namespace Necrofy
 
         private readonly PasswordsAsset asset;
         private readonly PasswordData data;
-        private UndoManager<PasswordEditor> undoManager;
+        private new UndoManager<PasswordEditor> undoManager;
         
         private string cellPreviousValue;
 

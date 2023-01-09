@@ -27,7 +27,7 @@ namespace Necrofy
         private readonly ObjectSelector<WrappedSpriteTile> objectSelector;
 
         public readonly ScrollWrapper scrollWrapper;
-        public UndoManager<SpriteEditor> undoManager;
+        public new UndoManager<SpriteEditor> undoManager;
         private HashSet<Sprite> modifiedSprites = new HashSet<Sprite>();
 
         private Sprite currentSprite = null;

@@ -280,6 +280,7 @@ namespace Necrofy
 
                 editSelectAll.Enabled = activeEditor?.HasSelection ?? false;
                 editSelectNone.Enabled = activeEditor?.HasSelection ?? false;
+                editMoveSelection.Enabled = activeEditor?.CanCopy ?? false;
             }
         }
 

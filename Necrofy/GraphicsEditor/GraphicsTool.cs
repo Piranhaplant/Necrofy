@@ -16,16 +16,22 @@ namespace Necrofy
     abstract class GraphicsTool : MapTool
     {
         protected readonly GraphicsEditor editor;
+        private readonly PasteTool pasteTool;
 
         public GraphicsTool(GraphicsEditor editor) : base(editor) {
             this.editor = editor;
-            AddSubTool(new PasteTool(editor));
+            pasteTool = new PasteTool(editor);
+            AddSubTool(pasteTool);
         }
 
         public override bool CanCopy => mapEditor.SelectionExists;
         public override bool CanPaste => true;
         public override bool CanDelete => true;
         public override bool HasSelection => true;
+
+        public void FloatSelection() {
+            pasteTool.FloatSelection();
+        }
 
         public override void MouseMove(MapMouseEventArgs e) {
             base.MouseMove(e);
@@ -73,7 +79,7 @@ namespace Necrofy
             }
         }
 
-        private class PasteTool : MapPasteTool
+        private class PasteTool : MapPasteTool<ClipboardContents>
         {
             private const string PNGClipboardFormat = "PNG";
 
@@ -91,7 +97,13 @@ namespace Necrofy
                 return editor.tileSize * 8;
             }
 
-            public override void Copy() {
+            protected override ClipboardContents GetCopyData() {
+                GetCopyData(out ClipboardContents clipboardContents, out Bitmap image);
+                image.Dispose();
+                return clipboardContents;
+            }
+
+            private void GetCopyData(out ClipboardContents clipboardContents, out Bitmap outImage) {
                 Rectangle bounds = editor.Selection.GetSelectedAreaBounds();
 
                 Bitmap image = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format32bppArgb);
@@ -112,9 +124,16 @@ namespace Necrofy
                 });
                 image.UnlockBits(bitmapData);
 
+                clipboardContents = new ClipboardContents(rawData);
+                outImage = image;
+            }
+
+            public override void Copy() {
+                GetCopyData(out ClipboardContents clipboardContents, out Bitmap image);
+
                 DataObject clipboardData = new DataObject();
                 clipboardData.SetImage(image);
-                clipboardData.SetText(JsonConvert.SerializeObject(new ClipboardContents(rawData)));
+                clipboardData.SetText(JsonConvert.SerializeObject(clipboardContents));
                 using (MemoryStream s = new MemoryStream()) {
                     image.Save(s, ImageFormat.Png);
                     clipboardData.SetData(PNGClipboardFormat, false, s);
@@ -124,23 +143,33 @@ namespace Necrofy
                 image.Dispose();
             }
 
+            protected override Size ReadPaste(ClipboardContents data) {
+                pasteData = data.graphics;
+                if (pasteData == null) {
+                    return Size.Empty;
+                }
+                return CreatePasteImage();
+            }
+
             protected override Size ReadPaste() {
-                transparent = editor.transparency;
                 if (Clipboard.ContainsText()) {
-                    pasteData = JsonConvert.DeserializeObject<ClipboardContents>(Clipboard.GetText()).graphics;
-                    if (pasteData == null) {
-                        return Size.Empty;
-                    }
+                    return ReadPaste(JsonConvert.DeserializeObject<ClipboardContents>(Clipboard.GetText()));
                 } else if (Clipboard.ContainsData(PNGClipboardFormat)) {
-                    using (MemoryStream s = Clipboard.GetData("PNG") as MemoryStream)
+                    using (MemoryStream s = Clipboard.GetData(PNGClipboardFormat) as MemoryStream)
                     using (Bitmap image = new Bitmap(s)) {
                         pasteData = ImageToData(image);
                     }
+                    return CreatePasteImage();
                 } else if (Clipboard.ContainsImage()) {
                     pasteData = ImageToData(Clipboard.GetImage());
+                    return CreatePasteImage();
                 } else {
                     return Size.Empty;
                 }
+            }
+
+            private Size CreatePasteImage() {
+                transparent = editor.transparency;
 
                 pasteImage = new Bitmap(pasteData.GetWidth(), pasteData.GetHeight(), PixelFormat.Format8bppIndexed);
                 BitmapData bitmapData = pasteImage.LockBits(new Rectangle(Point.Empty, pasteImage.Size), ImageLockMode.WriteOnly, pasteImage.PixelFormat);

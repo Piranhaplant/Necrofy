@@ -304,10 +304,12 @@ namespace Necrofy
 
         public override void Paste() {
             CurrentTool.Paste();
+            undoManager.ForceNoMerge();
         }
 
         public override void Delete() {
             CurrentTool.Delete();
+            undoManager.ForceNoMerge();
         }
 
         public override void SelectAll() {

@@ -26,7 +26,7 @@ namespace Necrofy
         private CollisionPreset presets;
 
         private TilesetObjectBrowserContents objectBrowserContents;
-        private UndoManager<CollisionEditor> undoManager;
+        private new UndoManager<CollisionEditor> undoManager;
 
         public event EventHandler TilesetChanged;
 

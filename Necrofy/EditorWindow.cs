@@ -107,7 +107,7 @@ namespace Necrofy
 
         protected MainWindow mainWindow { get; private set; }
         protected Project project { get; private set; }
-        private UndoManager undoManager;
+        protected UndoManager undoManager { get; private set; }
         private bool prevDirty = false;
 
         private bool saveOnClose = true;

@@ -38,6 +38,7 @@ namespace Necrofy
                 undoActions.Push(action);
             } else {
                 action.Dispose();
+                undoActions.RefreshTopItem();
             }
             if (undoActions.Count <= savePos) {
                 savePos = -1;
@@ -189,6 +190,12 @@ namespace Necrofy
                     }
                 }
                 UpdateEnabled();
+            }
+
+            public void RefreshTopItem() {
+                if (actions.Count > 0) {
+                    button.DropDownItems[0].Text = actions.Peek().ToString();
+                }
             }
 
             private void UpdateEnabled() {

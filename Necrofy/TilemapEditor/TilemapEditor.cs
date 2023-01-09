@@ -17,7 +17,7 @@ namespace Necrofy
         private readonly LoadedTilemap loadedTilemap;
         public LoadedTilemap.Tile[] tilemap;
 
-        public UndoManager<TilemapEditor> undoManager { get; private set; }
+        public new UndoManager<TilemapEditor> undoManager { get; private set; }
 
         private int tileWidth = 32;
         private Region tileRegion;
@@ -174,7 +174,6 @@ namespace Necrofy
         }
 
         private void Selection_Changed(object sender, EventArgs e) {
-            undoManager?.ForceNoMerge();
             UpdateToolbar();
         }
 
@@ -371,6 +370,8 @@ namespace Necrofy
                 CurrentTool?.Flip(true);
             } else if (item == ToolStripGrouper.ItemType.FlipVertically) {
                 CurrentTool?.Flip(false);
+            } else if (item == ToolStripGrouper.ItemType.EditMoveSelection) {
+                CurrentTool.FloatSelection();
             } else if (hintingItems.ContainsValue(item)) {
                 hintingType = hintingItems.Where(pair => pair.Value == item).Select(pair => pair.Key).FirstOrDefault();
                 UpdateHinting();

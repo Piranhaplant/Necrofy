@@ -55,7 +55,9 @@ namespace Necrofy
         }
 
         public void GenerateMouseMove() {
-            MouseMove?.Invoke(this, new MouseEventArgs(MouseButtons, 0, prevMousePosition.X, prevMousePosition.Y, 0));
+            if (prevMousePosition.X != int.MinValue) {
+                MouseMove?.Invoke(this, new MouseEventArgs(MouseButtons, 0, prevMousePosition.X, prevMousePosition.Y, 0));
+            }
         }
 
         private CancellationTokenSource repaintCancel = new CancellationTokenSource();

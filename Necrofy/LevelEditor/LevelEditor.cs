@@ -22,7 +22,7 @@ namespace Necrofy
         public readonly TilesetObjectBrowserContents tilesetObjectBrowserContents;
         public readonly SpriteObjectBrowserContents spriteObjectBrowserContents;
         
-        public UndoManager<LevelEditor> undoManager { get; private set; }
+        public new UndoManager<LevelEditor> undoManager { get; private set; }
 
         public static readonly SolidBrush selectionFillBrush = new SolidBrush(Color.FromArgb(96, 0, 0, 0));
         public static readonly SolidBrush eraserFillBrush = new SolidBrush(Color.FromArgb(128, 255, 255, 255));

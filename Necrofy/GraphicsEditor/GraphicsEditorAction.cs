@@ -41,19 +41,23 @@ namespace Necrofy
 
         public override bool Merge(UndoAction<GraphicsEditor> action) {
             if (action is GraphicsEditorAction graphicsEditorAction && action.GetType() == this.GetType()) {
-                foreach (int tileNum in graphicsEditorAction.newTiles.Keys) {
-                    if (!oldTiles.ContainsKey(tileNum)) {
-                        oldTiles[tileNum] = graphicsEditorAction.oldTiles[tileNum];
-                        editor.tiles.Use(oldTiles[tileNum]);
-                    } else {
-                        editor.tiles.DoneUsing(newTiles[tileNum]);
-                    }
-                    newTiles[tileNum] = graphicsEditorAction.newTiles[tileNum];
-                    editor.tiles.Use(newTiles[tileNum]);
-                }
+                DoMerge(graphicsEditorAction);
                 return true;
             }
             return false;
+        }
+
+        protected void DoMerge(GraphicsEditorAction graphicsEditorAction) {
+            foreach (int tileNum in graphicsEditorAction.newTiles.Keys) {
+                if (!oldTiles.ContainsKey(tileNum)) {
+                    oldTiles[tileNum] = graphicsEditorAction.oldTiles[tileNum];
+                    editor.tiles.Use(oldTiles[tileNum]);
+                } else {
+                    editor.tiles.DoneUsing(newTiles[tileNum]);
+                }
+                newTiles[tileNum] = graphicsEditorAction.newTiles[tileNum];
+                editor.tiles.Use(newTiles[tileNum]);
+            }
         }
 
         protected delegate void SetPixelDelegate(int x, int y, byte color);
@@ -131,6 +135,8 @@ namespace Necrofy
 
     class DeleteGraphicsAction : GraphicsEditorAction
     {
+        private string text = "Delete";
+
         public override void SetEditor(GraphicsEditor editor) {
             base.SetEditor(editor);
             ModifyTiles((setPixel, getPixel) => {
@@ -145,11 +151,16 @@ namespace Necrofy
         }
 
         public override bool Merge(UndoAction<GraphicsEditor> action) {
+            if (action is PasteGraphicsAction pasteGraphicsAction) {
+                DoMerge(pasteGraphicsAction);
+                text = "Move selection";
+                return true;
+            }
             return false;
         }
 
         public override string ToString() {
-            return "Delete";
+            return text;
         }
     }
 

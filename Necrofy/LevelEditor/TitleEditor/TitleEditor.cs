@@ -19,7 +19,7 @@ namespace Necrofy
         private readonly LoadedLevelTitleCharacters characters;
 
         private LevelTitleObjectBrowserContents levelTitleContents;
-        public UndoManager<TitleEditor> undoManager;
+        public new UndoManager<TitleEditor> undoManager;
 
         public override ToolStripGrouper.ItemSet ToolStripItemSet => ToolStripGrouper.ItemSet.LevelTitle;
         private static readonly ToolStripGrouper.ItemType[] wordSelectedItems = new ToolStripGrouper.ItemType[] {

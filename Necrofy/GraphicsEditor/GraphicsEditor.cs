@@ -21,7 +21,7 @@ namespace Necrofy
         public readonly GraphicsTileList tiles = new GraphicsTileList();
         public int colorsPerPalette { get; private set; }
 
-        public UndoManager<GraphicsEditor> undoManager { get; private set; }
+        public new UndoManager<GraphicsEditor> undoManager { get; private set; }
 
         private int tileWidth = 16;
         private bool largeTileMode = false;
@@ -233,6 +233,8 @@ namespace Necrofy
                 UpdateSize(tileWidth - 2);
             } else if (item == ToolStripGrouper.ItemType.ViewIncreaseWidth) {
                 UpdateSize(tileWidth + 2);
+            } else if (item == ToolStripGrouper.ItemType.EditMoveSelection) {
+                CurrentTool.FloatSelection();
             }
         }
 

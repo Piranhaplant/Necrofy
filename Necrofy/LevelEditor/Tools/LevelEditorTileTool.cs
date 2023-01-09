@@ -22,7 +22,7 @@ namespace Necrofy
         public override bool CanDelete => false;
         public override bool HasSelection => true;
 
-        private class PasteTool : MapPasteTool
+        private class PasteTool : MapPasteTool<ClipboardContents>
         {
             private readonly LevelEditor editor;
             private ushort?[,] pasteTiles;
@@ -31,7 +31,7 @@ namespace Necrofy
                 this.editor = editor;
             }
 
-            public override void Copy() {
+            protected override ClipboardContents GetCopyData() {
                 Rectangle bounds = editor.Selection.GetSelectedAreaBounds();
 
                 ushort?[,] tiles = new ushort?[bounds.Width, bounds.Height];
@@ -43,7 +43,7 @@ namespace Necrofy
                     }
                 }
 
-                Clipboard.SetText(JsonConvert.SerializeObject(new ClipboardContents(tiles)));
+                return new ClipboardContents(tiles);
             }
 
             protected override void RenderPaste(Graphics g, int pixelX, int pixelY, GraphicsPath path) {
@@ -58,8 +58,8 @@ namespace Necrofy
                 g.FillPath(LevelEditor.selectionFillBrush, path);
             }
 
-            protected override Size ReadPaste() {
-                pasteTiles = JsonConvert.DeserializeObject<ClipboardContents>(Clipboard.GetText()).background;
+            protected override Size ReadPaste(ClipboardContents data) {
+                pasteTiles = data.background;
                 if (pasteTiles == null) {
                     return Size.Empty;
                 } else {

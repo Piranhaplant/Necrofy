@@ -243,6 +243,7 @@ namespace Necrofy
         {
             None,
 
+            EditMoveSelection,
             ViewGrid,
             ViewSolidTilesOnly,
             ViewTilePriority,

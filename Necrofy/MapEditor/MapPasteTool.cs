@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -9,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Necrofy
 {
-    abstract class MapPasteTool : MapTool
+    abstract class MapPasteTool<T> : MapTool
     {
         public bool IsPasting => pasteSize != Size.Empty;
         private Size pasteSize = Size.Empty;
@@ -113,42 +114,69 @@ namespace Necrofy
                 CommitPaste();
             }
         }
-        
+
+        public override void Copy() {
+            Clipboard.SetText(JsonConvert.SerializeObject(GetCopyData()));
+        }
+
         public override void Paste() {
             if (IsPasting) {
                 CommitPaste();
             }
             try {
-                pasteSize = ReadPaste();
-                if (pasteSize == Size.Empty) {
-                    return;
-                }
-
-                TileSelection selection = new TileSelection(pasteSize.Width, pasteSize.Height, scale: mapEditor.TileSize);
-                selection.SetAllPoints(PointInPaste);
-                pasteTilesPath = selection.GetGraphicsPath();
-
-                if (pasteTilesPath == null) {
-                    pasteSize = Size.Empty;
-                    return;
-                }
-
-                ignoreMouse = true;
+                BeginPaste(ReadPaste());
 
                 Point center = mapEditor.ScrollWrapper.GetViewCenter();
                 pasteX = RoundToTile(center.X - pasteSize.Width * mapEditor.TileSize / 2) * mapEditor.TileSize;
                 pasteY = RoundToTile(center.Y - pasteSize.Height * mapEditor.TileSize / 2) * mapEditor.TileSize;
                 TranslatePath(pasteX, pasteY);
-
-                mapEditor.Selection.Clear();
-                mapEditor.GenerateMouseMove(); // To update the cursor
             } catch (Exception e) {
                 Console.WriteLine(e.StackTrace);
             }
         }
 
-        protected abstract Size ReadPaste();
+        private void BeginPaste(Size size) {
+            pasteSize = size;
+            if (pasteSize == Size.Empty) {
+                return;
+            }
+
+            TileSelection selection = new TileSelection(pasteSize.Width, pasteSize.Height, scale: mapEditor.TileSize);
+            selection.SetAllPoints(PointInPaste);
+            pasteTilesPath = selection.GetGraphicsPath();
+
+            if (pasteTilesPath == null) {
+                pasteSize = Size.Empty;
+                return;
+            }
+
+            ignoreMouse = true;
+
+            mapEditor.Selection.Clear();
+            mapEditor.GenerateMouseMove(); // To update the cursor
+        }
+
+        protected abstract T GetCopyData();
+        protected virtual Size ReadPaste() {
+            T data = JsonConvert.DeserializeObject<T>(Clipboard.GetText());
+            return ReadPaste(data);
+        }
+        protected abstract Size ReadPaste(T data);
         protected abstract bool PointInPaste(int x, int y);
+
+        public void FloatSelection() {
+            if (IsPasting) {
+                return;
+            }
+            T data = GetCopyData();
+            Point p = mapEditor.Selection.GetSelectedAreaBounds().Location;
+            Delete();
+            BeginPaste(ReadPaste(data));
+
+            pasteX = p.X * mapEditor.TileSize;
+            pasteY = p.Y * mapEditor.TileSize;
+            TranslatePath(pasteX, pasteY);
+        }
 
         public override void SelectAll() {
             mapEditor.Selection.SetAllPoints((x, y) => true);
