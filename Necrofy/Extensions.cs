@@ -118,15 +118,5 @@ namespace Necrofy
             }
             return reversed;
         }
-
-        public static Pen CreateDashPen(Color color, float zoom) {
-            Pen dashPen = new Pen(color, 1 / zoom);
-            if (zoom >= 1.0f) {
-                dashPen.DashPattern = new float[] { 4 / zoom, 4 / zoom };
-            } else {
-                dashPen.DashPattern = new float[] { 4, 4 };
-            }
-            return dashPen;
-        }
     }
 }

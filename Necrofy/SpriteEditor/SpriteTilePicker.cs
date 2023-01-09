@@ -123,7 +123,7 @@ namespace Necrofy
             this.tiles = tiles;
             this.colors = colors;
             this.zoom = zoom;
-            dashPen = Extensions.CreateDashPen(Color.Black, zoom);
+            dashPen = new Pen(Color.White, 1 / zoom);
             UpdateSize();
             scrollWrapper.ScrollToPoint(0, 0);
         }
@@ -219,10 +219,14 @@ namespace Necrofy
         private async void UpdateSelectionPen(CancellationToken cancellation) {
             while (!cancellation.IsCancellationRequested) {
                 if (SelectedTile >= 0 && dashPen != null) {
-                    dashPen.DashOffset = (dashPen.DashOffset + 1) % 256;
+                    if (dashPen.Color == Color.White) {
+                        dashPen.Color = Color.Black;
+                    } else {
+                        dashPen.Color = Color.White;
+                    }
                     Repaint();
                 }
-                await Task.Delay(100);
+                await Task.Delay(500);
             }
         }
     }

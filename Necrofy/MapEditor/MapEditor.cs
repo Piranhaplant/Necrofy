@@ -146,7 +146,13 @@ namespace Necrofy
         }
 
         public override Pen CreateSelectionBorderDashPen() {
-            return Extensions.CreateDashPen(Color.Black, Zoom);
+            Pen dashPen = new Pen(Color.Black, 1 / Zoom);
+            if (Zoom >= 1.0f) {
+                dashPen.DashPattern = new float[] { 4 / Zoom, 4 / Zoom };
+            } else {
+                dashPen.DashPattern = new float[] { 4, 4 };
+            }
+            return dashPen;
         }
 
         public override void Displayed() {
