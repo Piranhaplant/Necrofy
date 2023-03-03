@@ -24,6 +24,12 @@ namespace Necrofy
         private int tilesPerRow;
 
         private int displayPalette = 0;
+        public int DisplayPalette {
+            get {
+                return displayPalette;
+            }
+        }
+
         private int palette = 0;
         public int Palette {
             get {

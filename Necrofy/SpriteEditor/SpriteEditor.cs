@@ -421,9 +421,11 @@ namespace Necrofy
 
         private WrappedSpriteTile GetCreationObject(int x, int y) {
             if (currentSprite != null && tilePicker.SelectedTile >= 0) {
+                GetTilePickerTile(out int graphicsIndex, out int tileNum);
                 return new WrappedSpriteTile(new Sprite.Tile {
-                    palette = tilePicker.Palette,
-                    tileNum = (ushort)tilePicker.SelectedTile,
+                    palette = tilePicker.DisplayPalette,
+                    graphicsIndex = graphicsIndex,
+                    tileNum = (ushort)tileNum,
                     xOffset = (short)(x - 8),
                     yOffset = (short)(y - 8),
                     xFlip = false,
@@ -446,21 +448,22 @@ namespace Necrofy
             if (updatingUI == 0) {
                 prevChangeTileAction2 = prevChangeTileAction1;
                 if (tilePicker.SelectedTile >= 0 && selectedObjects.Count > 0) {
-
-                    int graphicsIndex;
-                    int tileNum = tilePicker.SelectedTile;
-                    for (graphicsIndex = (showAllGraphics.Checked ? 0 : 1); graphicsIndex < loadedSprites.graphics.Count; graphicsIndex++) {
-                        if (tileNum < loadedSprites.graphics[graphicsIndex].images.Count) {
-                            break;
-                        }
-                        tileNum -= loadedSprites.graphics[graphicsIndex].images.Count;
-                    }
-
+                    GetTilePickerTile(out int graphicsIndex, out int tileNum);
                     prevChangeTileAction1 = new ChangeSpriteTileNumAction(currentSprite, selectedObjects, graphicsIndex, (ushort)tileNum);
                     undoManager.Do(prevChangeTileAction1);
                 } else {
                     prevChangeTileAction1 = null;
                 }
+            }
+        }
+
+        private void GetTilePickerTile(out int graphicsIndex, out int tileNum) {
+            tileNum = tilePicker.SelectedTile;
+            for (graphicsIndex = (showAllGraphics.Checked ? 0 : 1); graphicsIndex < loadedSprites.graphics.Count; graphicsIndex++) {
+                if (tileNum < loadedSprites.graphics[graphicsIndex].images.Count) {
+                    break;
+                }
+                tileNum -= loadedSprites.graphics[graphicsIndex].images.Count;
             }
         }
 
