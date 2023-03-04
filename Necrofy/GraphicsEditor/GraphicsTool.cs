@@ -26,7 +26,7 @@ namespace Necrofy
 
         public override bool CanCopy => mapEditor.SelectionExists;
         public override bool CanPaste => true;
-        public override bool CanDelete => true;
+        public override bool CanDelete => mapEditor.SelectionExists;
         public override bool HasSelection => true;
 
         public void FloatSelection() {
