@@ -408,7 +408,11 @@ namespace Necrofy
             tilePicker.FlipY = flipY.Checked;
             SelectedTileChanged();
         }
-        
+
+        private void priority_CheckedChanged(object sender, EventArgs e) {
+            SelectedTileChanged();
+        }
+
         private void tilePicker_SelectedTileChanged(object sender, EventArgs e) {
             SelectedTileChanged();
             Info2 = $"Paint tile: 0x{tilePicker.SelectedTile:X}";

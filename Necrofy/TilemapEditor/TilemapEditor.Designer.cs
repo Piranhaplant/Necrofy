@@ -129,9 +129,10 @@
             this.priority.Location = new System.Drawing.Point(112, 3);
             this.priority.Name = "priority";
             this.priority.Size = new System.Drawing.Size(22, 22);
-            this.priority.TabIndex = 12;
+            this.priority.TabIndex = 6;
             this.toolTip1.SetToolTip(this.priority, "Priority (p)");
             this.priority.UseVisualStyleBackColor = true;
+            this.priority.CheckedChanged += new System.EventHandler(this.priority_CheckedChanged);
             // 
             // lockPriority
             // 
@@ -144,9 +145,10 @@
             this.lockPriority.Location = new System.Drawing.Point(245, 3);
             this.lockPriority.Name = "lockPriority";
             this.lockPriority.Size = new System.Drawing.Size(22, 22);
-            this.lockPriority.TabIndex = 11;
+            this.lockPriority.TabIndex = 10;
             this.toolTip1.SetToolTip(this.lockPriority, "Lock Priority (r)");
             this.lockPriority.UseVisualStyleBackColor = true;
+            this.lockPriority.CheckedChanged += new System.EventHandler(this.lock_CheckedChanged);
             // 
             // lockFlip
             // 
@@ -157,7 +159,7 @@
             this.lockFlip.Location = new System.Drawing.Point(222, 3);
             this.lockFlip.Name = "lockFlip";
             this.lockFlip.Size = new System.Drawing.Size(22, 22);
-            this.lockFlip.TabIndex = 10;
+            this.lockFlip.TabIndex = 9;
             this.toolTip1.SetToolTip(this.lockFlip, "Lock Flip (e)");
             this.lockFlip.UseVisualStyleBackColor = true;
             this.lockFlip.CheckedChanged += new System.EventHandler(this.lock_CheckedChanged);
@@ -171,7 +173,7 @@
             this.lockPalette.Location = new System.Drawing.Point(199, 3);
             this.lockPalette.Name = "lockPalette";
             this.lockPalette.Size = new System.Drawing.Size(22, 22);
-            this.lockPalette.TabIndex = 9;
+            this.lockPalette.TabIndex = 8;
             this.toolTip1.SetToolTip(this.lockPalette, "Lock Palette (w)");
             this.lockPalette.UseVisualStyleBackColor = true;
             this.lockPalette.CheckedChanged += new System.EventHandler(this.lock_CheckedChanged);
@@ -185,7 +187,7 @@
             this.lockTileNum.Location = new System.Drawing.Point(176, 3);
             this.lockTileNum.Name = "lockTileNum";
             this.lockTileNum.Size = new System.Drawing.Size(22, 22);
-            this.lockTileNum.TabIndex = 8;
+            this.lockTileNum.TabIndex = 7;
             this.toolTip1.SetToolTip(this.lockTileNum, "Lock Tile Number (q)");
             this.lockTileNum.UseVisualStyleBackColor = true;
             this.lockTileNum.CheckedChanged += new System.EventHandler(this.lock_CheckedChanged);
