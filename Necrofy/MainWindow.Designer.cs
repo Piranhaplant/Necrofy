@@ -120,10 +120,10 @@
             this.editCopy = new System.Windows.Forms.ToolStripMenuItem();
             this.editPaste = new System.Windows.Forms.ToolStripMenuItem();
             this.editDelete = new System.Windows.Forms.ToolStripMenuItem();
+            this.editMoveSelection = new System.Windows.Forms.ToolStripMenuItem();
             this.editSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.editSelectAll = new System.Windows.Forms.ToolStripMenuItem();
             this.editSelectNone = new System.Windows.Forms.ToolStripMenuItem();
-            this.editMoveSelection = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator18 = new System.Windows.Forms.ToolStripSeparator();
             this.preferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.projectMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -221,6 +221,7 @@
             this.buildStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripGrouper = new Necrofy.ToolStripGrouper(this.components);
             this.toolBarMenuLinker = new Necrofy.ToolBarMenuLinker(this.components);
+            this.moveSelectionButton = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -255,6 +256,7 @@
             this.cutButton,
             this.copyButton,
             this.pasteButton,
+            this.moveSelectionButton,
             this.toolStripSeparator2,
             this.undoButton,
             this.redoButton,
@@ -924,7 +926,7 @@
             this.toolStripGrouper.SetItemSet(this.tilemapPaintbrushButton, Necrofy.ToolStripGrouper.ItemSet.Tilemap);
             this.toolStripGrouper.SetItemType(this.tilemapPaintbrushButton, Necrofy.ToolStripGrouper.ItemType.TilemapPaintBrush);
             this.tilemapPaintbrushButton.Name = "tilemapPaintbrushButton";
-            this.tilemapPaintbrushButton.Size = new System.Drawing.Size(23, 22);
+            this.tilemapPaintbrushButton.Size = new System.Drawing.Size(23, 20);
             this.tilemapPaintbrushButton.Text = "Paintbrush";
             // 
             // tilemapRectangleSelectButton
@@ -1103,10 +1105,10 @@
             this.editCopy,
             this.editPaste,
             this.editDelete,
+            this.editMoveSelection,
             this.editSeparator2,
             this.editSelectAll,
             this.editSelectNone,
-            this.editMoveSelection,
             this.toolStripSeparator18,
             this.preferencesToolStripMenuItem});
             this.editMenu.Name = "editMenu";
@@ -1120,7 +1122,7 @@
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.editUndo, this.undoButton);
             this.editUndo.Name = "editUndo";
             this.editUndo.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-            this.editUndo.Size = new System.Drawing.Size(228, 22);
+            this.editUndo.Size = new System.Drawing.Size(211, 22);
             this.editUndo.Text = "&Undo";
             this.editUndo.Click += new System.EventHandler(this.Undo);
             // 
@@ -1131,14 +1133,14 @@
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.editRedo, this.redoButton);
             this.editRedo.Name = "editRedo";
             this.editRedo.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
-            this.editRedo.Size = new System.Drawing.Size(228, 22);
+            this.editRedo.Size = new System.Drawing.Size(211, 22);
             this.editRedo.Text = "&Redo";
             this.editRedo.Click += new System.EventHandler(this.Redo);
             // 
             // editSeparator1
             // 
             this.editSeparator1.Name = "editSeparator1";
-            this.editSeparator1.Size = new System.Drawing.Size(225, 6);
+            this.editSeparator1.Size = new System.Drawing.Size(208, 6);
             // 
             // editCut
             // 
@@ -1147,7 +1149,7 @@
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.editCut, this.cutButton);
             this.editCut.Name = "editCut";
             this.editCut.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
-            this.editCut.Size = new System.Drawing.Size(228, 22);
+            this.editCut.Size = new System.Drawing.Size(211, 22);
             this.editCut.Text = "Cu&t";
             this.editCut.Click += new System.EventHandler(this.Cut);
             // 
@@ -1158,7 +1160,7 @@
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.editCopy, this.copyButton);
             this.editCopy.Name = "editCopy";
             this.editCopy.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this.editCopy.Size = new System.Drawing.Size(228, 22);
+            this.editCopy.Size = new System.Drawing.Size(211, 22);
             this.editCopy.Text = "&Copy";
             this.editCopy.Click += new System.EventHandler(this.Copy);
             // 
@@ -1169,7 +1171,7 @@
             this.toolBarMenuLinker.SetLinkedToolBarItem(this.editPaste, this.pasteButton);
             this.editPaste.Name = "editPaste";
             this.editPaste.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-            this.editPaste.Size = new System.Drawing.Size(228, 22);
+            this.editPaste.Size = new System.Drawing.Size(211, 22);
             this.editPaste.Text = "&Paste";
             this.editPaste.Click += new System.EventHandler(this.Paste);
             // 
@@ -1180,21 +1182,33 @@
             this.editDelete.Name = "editDelete";
             this.editDelete.ShortcutKeyDisplayString = "";
             this.editDelete.ShortcutKeys = System.Windows.Forms.Keys.Delete;
-            this.editDelete.Size = new System.Drawing.Size(228, 22);
+            this.editDelete.Size = new System.Drawing.Size(211, 22);
             this.editDelete.Text = "&Delete";
             this.editDelete.Click += new System.EventHandler(this.Delete);
+            // 
+            // editMoveSelection
+            // 
+            this.editMoveSelection.Enabled = false;
+            this.editMoveSelection.Image = global::Necrofy.Properties.Resources.arrow_move;
+            this.toolStripGrouper.SetItemSet(this.editMoveSelection, ((Necrofy.ToolStripGrouper.ItemSet)((Necrofy.ToolStripGrouper.ItemSet.Graphics | Necrofy.ToolStripGrouper.ItemSet.Tilemap))));
+            this.toolStripGrouper.SetItemType(this.editMoveSelection, Necrofy.ToolStripGrouper.ItemType.EditMoveSelection);
+            this.toolBarMenuLinker.SetLinkedToolBarItem(this.editMoveSelection, this.moveSelectionButton);
+            this.editMoveSelection.Name = "editMoveSelection";
+            this.editMoveSelection.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.M)));
+            this.editMoveSelection.Size = new System.Drawing.Size(211, 22);
+            this.editMoveSelection.Text = "&Move Selection";
             // 
             // editSeparator2
             // 
             this.editSeparator2.Name = "editSeparator2";
-            this.editSeparator2.Size = new System.Drawing.Size(225, 6);
+            this.editSeparator2.Size = new System.Drawing.Size(208, 6);
             // 
             // editSelectAll
             // 
             this.editSelectAll.Enabled = false;
             this.editSelectAll.Name = "editSelectAll";
             this.editSelectAll.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
-            this.editSelectAll.Size = new System.Drawing.Size(228, 22);
+            this.editSelectAll.Size = new System.Drawing.Size(211, 22);
             this.editSelectAll.Text = "Select &All";
             this.editSelectAll.Click += new System.EventHandler(this.SelectAll);
             // 
@@ -1204,30 +1218,19 @@
             this.editSelectNone.Name = "editSelectNone";
             this.editSelectNone.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.A)));
-            this.editSelectNone.Size = new System.Drawing.Size(228, 22);
+            this.editSelectNone.Size = new System.Drawing.Size(211, 22);
             this.editSelectNone.Text = "Select &None";
             this.editSelectNone.Click += new System.EventHandler(this.SelectNone);
-            // 
-            // editMoveSelection
-            // 
-            this.editMoveSelection.Enabled = false;
-            this.toolStripGrouper.SetItemSet(this.editMoveSelection, ((Necrofy.ToolStripGrouper.ItemSet)((Necrofy.ToolStripGrouper.ItemSet.Graphics | Necrofy.ToolStripGrouper.ItemSet.Tilemap))));
-            this.toolStripGrouper.SetItemType(this.editMoveSelection, Necrofy.ToolStripGrouper.ItemType.EditMoveSelection);
-            this.editMoveSelection.Name = "editMoveSelection";
-            this.editMoveSelection.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
-            | System.Windows.Forms.Keys.V)));
-            this.editMoveSelection.Size = new System.Drawing.Size(228, 22);
-            this.editMoveSelection.Text = "Move Selection";
             // 
             // toolStripSeparator18
             // 
             this.toolStripSeparator18.Name = "toolStripSeparator18";
-            this.toolStripSeparator18.Size = new System.Drawing.Size(225, 6);
+            this.toolStripSeparator18.Size = new System.Drawing.Size(208, 6);
             // 
             // preferencesToolStripMenuItem
             // 
             this.preferencesToolStripMenuItem.Name = "preferencesToolStripMenuItem";
-            this.preferencesToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
+            this.preferencesToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
             this.preferencesToolStripMenuItem.Text = "Preferences...";
             this.preferencesToolStripMenuItem.Click += new System.EventHandler(this.preferencesToolStripMenuItem_Click);
             // 
@@ -2140,6 +2143,18 @@
             this.toolStripGrouper.ItemClick += new System.EventHandler<Necrofy.ToolStripGrouper.ItemEventArgs>(this.toolStripGrouper_ItemClick);
             this.toolStripGrouper.ItemCheckedChanged += new System.EventHandler<Necrofy.ToolStripGrouper.ItemEventArgs>(this.toolStripGrouper_ItemCheckedChanged);
             // 
+            // moveSelectionButton
+            // 
+            this.moveSelectionButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.moveSelectionButton.Enabled = false;
+            this.moveSelectionButton.Image = global::Necrofy.Properties.Resources.arrow_move;
+            this.moveSelectionButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripGrouper.SetItemSet(this.moveSelectionButton, ((Necrofy.ToolStripGrouper.ItemSet)((Necrofy.ToolStripGrouper.ItemSet.Graphics | Necrofy.ToolStripGrouper.ItemSet.Tilemap))));
+            this.toolStripGrouper.SetItemType(this.moveSelectionButton, Necrofy.ToolStripGrouper.ItemType.EditMoveSelection);
+            this.moveSelectionButton.Name = "moveSelectionButton";
+            this.moveSelectionButton.Size = new System.Drawing.Size(23, 22);
+            this.moveSelectionButton.Text = "Move Selection";
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2362,6 +2377,7 @@
         private System.Windows.Forms.ToolStripMenuItem toolsTilemapSelectByTile;
         private System.Windows.Forms.ToolStripMenuItem toolsTilemapSelectByProperties;
         private System.Windows.Forms.ToolStripMenuItem editMoveSelection;
+        private System.Windows.Forms.ToolStripButton moveSelectionButton;
     }
 }
 

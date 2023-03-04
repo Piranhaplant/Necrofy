@@ -121,6 +121,9 @@
   <data name="clipboard-paste" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\clipboard-paste.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="color-swatch-lock" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\color-swatch-lock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -346,7 +349,7 @@
   <data name="victim" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\victim.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="color-swatch-lock" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\color-swatch-lock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="arrow-move" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\arrow-move.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

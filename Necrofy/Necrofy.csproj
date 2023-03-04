@@ -769,6 +769,7 @@
     <None Include="Icons\fill-090.png" />
     <None Include="Icons\color-swatch.png" />
     <None Include="Icons\color-swatch-lock.png" />
+    <None Include="Icons\arrow-move.png" />
     <Content Include="ProjectFiles\Patches\FootballPlayerWaterFix.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

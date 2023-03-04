@@ -133,6 +133,16 @@ namespace Necrofy.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap arrow_move {
+            get {
+                object obj = ResourceManager.GetObject("arrow-move", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap arrow_return {
             get {
                 object obj = ResourceManager.GetObject("arrow-return", resourceCulture);
