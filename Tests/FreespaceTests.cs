@@ -222,6 +222,25 @@ namespace Tests
         }
 
         [TestMethod]
+        public void TestClaimLargerThanBank() {
+            Freespace freespace;
+
+            freespace = new Freespace(0x8000);
+            freespace.Add(0, 0x8000);
+            Assert.AreEqual(0x8000, freespace.Claim(0xC000));
+            freespace.Sort();
+            Assert.AreEqual("000000-008000 (008000)\r\n014000-018000 (004000)\r\n", freespace.ToString());
+            Assert.AreEqual(0x18000, freespace.RomSize);
+
+            freespace = new Freespace(0x8000);
+            freespace.Add(0, 0x8000);
+            Assert.AreEqual(0x8000, freespace.Claim(0x10000));
+            freespace.Sort();
+            Assert.AreEqual("000000-008000 (008000)\r\n", freespace.ToString());
+            Assert.AreEqual(0x18000, freespace.RomSize);
+        }
+
+        [TestMethod]
         public void TestReserve() {
             Freespace freespace;
 

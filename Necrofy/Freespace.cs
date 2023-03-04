@@ -15,6 +15,7 @@ namespace Necrofy
         private List<FreeBlock> blocks;
         // If there isn't enough freespace in the ROM, the data will be put at the end, so we need to know how big the ROM is.
         private int romSize;
+        public int RomSize { get { return romSize; } }
 
         /// <summary>Creates a new empty Freespace for a ROM with the given size.</summary>
         /// <param name="romSize">The size of the ROM</param>
@@ -73,7 +74,15 @@ namespace Necrofy
         /// <returns>The address of the claimed space</returns>
         public int Claim(int size, int alignment = 1) {
             if (size > BankSize) {
-                throw new ArgumentException("size cannot be bigger than bankSize");
+                // Add space at the end of the ROM for chunks larger than a single bank (used for custom sprite graphics)
+                if (romSize + size >= BankSize * 0x80) {
+                    throw new Exception("Data has exceeded maximum ROM size");
+                }
+                int address = romSize;
+                int newRomSize = Align(romSize + size, BankSize);
+                Add(romSize + size, newRomSize);
+                romSize = newRomSize;
+                return address;
             }
             if (size == 0) {
                 return 0;
