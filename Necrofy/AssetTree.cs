@@ -123,7 +123,7 @@ namespace Necrofy
             File_Created(sender, e);
         }
 
-        public class Node
+        public abstract class Node
         {
             public string Name { get; private set; }
             public Folder Parent { get; private set; }

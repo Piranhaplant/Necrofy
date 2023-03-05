@@ -137,17 +137,11 @@ namespace Necrofy
         }
         
         public void AddAssetName(AssetCategory category, int pointer, string name) {
-            if (!assetNames.ContainsKey(category)) {
-                assetNames.Add(category, new Dictionary<int, string>());
-            }
-            assetNames[category].Add(pointer, name);
+            assetNames.Add(category, pointer, name);
         }
 
         public void AddAssetPointer(AssetCategory category, string name, int pointer, int size) {
-            if (!assetPointers.ContainsKey(category)) {
-                assetPointers.Add(category, new Dictionary<string, PointerAndSize>());
-            }
-            assetPointers[category].Add(name, new PointerAndSize(pointer, size));
+            assetPointers.Add(category, name, new PointerAndSize(pointer, size));
             Asset.ParsedName parsedName = new Asset.ParsedName(name);
             AddFolderDefine(parsedName.Folder, category.ToString() + "_" + parsedName.FinalName, ROMPointers.PointerToHexString(pointer));
         }
@@ -157,10 +151,7 @@ namespace Necrofy
         }
 
         public void AddFolderDefine(string folder, string key, string value) {
-            if (!folderDefines.ContainsKey(folder)) {
-                folderDefines[folder] = new Dictionary<string, string>();
-            }
-            folderDefines[folder][FixDefineName(key)] = value;
+            folderDefines.Add(folder, FixDefineName(key), value);
         }
 
         private static string FixDefineName(string s) {

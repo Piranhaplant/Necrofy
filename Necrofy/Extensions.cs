@@ -118,5 +118,12 @@ namespace Necrofy
             }
             return reversed;
         }
+
+        public static void Add<K1, K2, V>(this Dictionary<K1, Dictionary<K2, V>> dict, K1 k1, K2 k2, V v) {
+            if (!dict.ContainsKey(k1)) {
+                dict[k1] = new Dictionary<K2, V>();
+            }
+            dict[k1].Add(k2, v);
+        }
     }
 }
