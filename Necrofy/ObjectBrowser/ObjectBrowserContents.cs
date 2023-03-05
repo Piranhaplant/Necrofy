@@ -47,6 +47,8 @@ namespace Necrofy
         }
 
         public int ScrollPosition { get; set; }
+        public virtual bool SupportsListMode => false;
+        public bool ListMode { get; set; }
     }
 
     public class ObjectsChangedEventArgs : EventArgs

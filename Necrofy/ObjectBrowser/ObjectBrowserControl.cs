@@ -44,6 +44,20 @@ namespace Necrofy
                 }
             }
         }
+
+        public bool SupportsListMode => contents?.SupportsListMode ?? false;
+
+        public bool ListMode {
+            get {
+                return contents?.ListMode ?? false;
+            }
+            set {
+                if (contents != null && value != contents.ListMode) {
+                    contents.ListMode = value;
+                    LayoutObjects();
+                }
+            }
+        }
         
         private void Contents_ObjectsChanged(object sender, ObjectsChangedEventArgs e) {
             if (e.LayoutChanged) {
@@ -90,12 +104,12 @@ namespace Necrofy
             objects.AddRange(contents.Objects);
             foreach (ObjectBrowserObject obj in objects) {
                 int width = obj.Size.Width;
-                if (x + width + padding * 2 > canvas.Width && itemPlaced) {
+                if ((x + width + padding * 2 > canvas.Width || contents.ListMode) && itemPlaced) {
                     x = 0;
                     y += rowHeight + padding * 2;
                     rowHeight = 0;
                 }
-                obj.DisplayBounds = new Rectangle(x, y, width + padding * 2, obj.Size.Height + padding * 2);
+                obj.DisplayBounds = new Rectangle(x, y, contents.ListMode ? canvas.Width - 1 : width + padding * 2, obj.Size.Height + padding * 2);
                 x += width + padding * 2;
                 rowHeight = Math.Max(rowHeight, obj.Size.Height);
                 itemPlaced = true;
