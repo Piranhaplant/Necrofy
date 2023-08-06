@@ -240,6 +240,7 @@ namespace Necrofy
                 foreach (string filename in Directory.GetFiles(path, "*.asm", SearchOption.AllDirectories)) {
                     ApplyPatch(outputROM, filename, results, info.globalDefines, info.GetFolderDefines(Path.GetDirectoryName(GetRelativePath(filename))));
                 }
+                results.symbols.WriteBSNES(outputROM);
 
             } catch (Exception ex) {
                 results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, "", ex.Message, ex.StackTrace));
@@ -291,6 +292,7 @@ namespace Necrofy
                     results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, "", ex.Message, ex.StackTrace));
                 }
                 if (results.Success) {
+                    results.symbols.WriteBSNES(runROM);
                     return new BuildAndRunResults(results, RunEmulator(runROM));
                 }
             }
@@ -349,7 +351,10 @@ namespace Necrofy
                     args += string.Format("\"-D{0}={1}\" ", define.Key, define.Value);
                 }
             }
+            string symPath = Path.ChangeExtension(patch, "sym");
+            args += $"--symbols=wla --symbols-path=\"{symPath}\" ";
             args += string.Format("\"{0}\" \"{1}\"", patch, rom);
+            Console.WriteLine(args);
 
             ProcessStartInfo processInfo = new ProcessStartInfo(Path.Combine("Tools", "asar.exe")) {
                 Arguments = args,
@@ -363,6 +368,13 @@ namespace Necrofy
                 p.WaitForExit();
                 if (p.ExitCode != 0) {
                     results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, patch, p.StandardError.ReadToEnd()));
+                } else {
+                    try {
+                        results.symbols.AddWLASymbols(symPath);
+                        File.Delete(symPath);
+                    } catch (Exception ex) {
+                        results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.WARNING, patch, ex.Message, ex.StackTrace));
+                    }
                 }
             } catch (Exception ex) {
                 results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, patch, ex.Message, ex.StackTrace));

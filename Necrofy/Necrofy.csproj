@@ -349,6 +349,7 @@
     <Compile Include="StartupWindow.Designer.cs">
       <DependentUpon>StartupWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Symbols.cs" />
     <Compile Include="TextDisplayForm.cs">
       <SubType>Form</SubType>
     </Compile>

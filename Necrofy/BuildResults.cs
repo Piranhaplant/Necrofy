@@ -9,6 +9,7 @@ namespace Necrofy
     public class BuildResults
     {
         private List<Entry> entries = new List<Entry>();
+        public readonly Symbols symbols = new Symbols();
 
         public IReadOnlyList<Entry> Entries => entries;
         public bool Success => !entries.Any(e => e.level == Entry.Level.ERROR);
