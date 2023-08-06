@@ -201,8 +201,13 @@ namespace Necrofy
             DateTime newWriteTime = File.GetLastWriteTime(filename);
             if (newWriteTime > lastWriteTime) {
                 lastWriteTime = newWriteTime;
-                Reload(filename);
-                Updated?.Invoke(this, EventArgs.Empty);
+                try {
+                    Reload(filename);
+                    Updated?.Invoke(this, EventArgs.Empty);
+                } catch (Exception ex) {
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.StackTrace);
+                }
             }
         }
         protected abstract void Reload(string filename);
