@@ -74,9 +74,23 @@ INC $8A
 LDY #$0002
 RTS
 
+enable_hdma:
+; Fix setting the HDMA enable byte with the accumulator set to 16-bit, thus clearing the FastROM enable flag
+SEP #$20
+LDA $136E
+STA $420C
+REP #$20
+CLC
+RTL
+
 warnpc $80B547
 
 
+
+org $82DC45
+LDA.w #enable_hdma
+LDY.w #enable_hdma>>16
+JML $8083AE
 
 org $80B9EC
 find_vram_tile_index:
