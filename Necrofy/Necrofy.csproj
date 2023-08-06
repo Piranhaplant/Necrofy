@@ -773,6 +773,9 @@
     <None Include="Icons\color-swatch.png" />
     <None Include="Icons\color-swatch-lock.png" />
     <None Include="Icons\arrow-move.png" />
+    <Content Include="ProjectFiles\Patches\Debug.asm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="ProjectFiles\Patches\FootballPlayerWaterFix.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
