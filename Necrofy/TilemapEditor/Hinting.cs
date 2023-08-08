@@ -44,22 +44,20 @@ namespace Necrofy
         private const float RowHeight = 6 * 8;
 
         public override void Render(Graphics g, RectangleF visibleBounds, float zoom) {
-            using (Pen p = new Pen(Color.White, 2 / zoom)) {
-                RectangleF wholeArea = new RectangleF(0, 0, RowWidth, RowHeight * 3);
-                wholeArea.Intersect(visibleBounds);
-                MapEditor.DrawGrid(g, p, wholeArea, RowWidth, RowHeight);
+            using (Pen p = new Pen(Color.White, 3 / zoom)) {
+                MapEditor.DrawGrid(g, p, visibleBounds, RowWidth, RowHeight);
 
                 RectangleF row1 = new RectangleF(0, 0, RowWidth, RowHeight);
                 row1.Intersect(visibleBounds);
-                MapEditor.DrawGrid(g, p, row1, 3 * 8, row1.Height);
+                MapEditor.DrawGrid(g, p, row1, 3 * 8, RowHeight);
 
                 RectangleF row2 = new RectangleF(0, RowHeight, RowWidth, RowHeight);
                 row2.Intersect(visibleBounds);
-                MapEditor.DrawGrid(g, p, row2, 2 * 8, row2.Height);
+                MapEditor.DrawGrid(g, p, row2, 2 * 8, RowHeight);
 
                 RectangleF row3 = new RectangleF(0, RowHeight * 2, RowWidth, RowHeight);
                 row3.Intersect(visibleBounds);
-                MapEditor.DrawGrid(g, p, row3, 6 * 8, row3.Height);
+                MapEditor.DrawGrid(g, p, row3, 6 * 8, RowHeight);
             }
         }
     }
