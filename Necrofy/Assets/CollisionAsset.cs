@@ -49,8 +49,8 @@ namespace Necrofy
         
         class CollisionCreator : Creator
         {
-            public CollisionAsset FromProject(Project project, string folder, string CollisionName) {
-                NameInfo nameInfo = new CollisionNameInfo(folder, CollisionName);
+            public CollisionAsset FromProject(Project project, string folder, string collisionName) {
+                NameInfo nameInfo = new CollisionNameInfo(folder, collisionName);
                 return project.GetCachedAsset(nameInfo, () => {
                     string filename = nameInfo.FindFilename(project.path);
                     return (CollisionAsset)FromFile(nameInfo, filename);

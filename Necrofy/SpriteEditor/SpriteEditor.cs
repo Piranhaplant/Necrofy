@@ -369,14 +369,18 @@ namespace Necrofy
                 if (selectedObjects.Count == 1) {
                     UpdateUI(() => {
                         Sprite.Tile tile = selectedObjects.First().tile;
-                        int tilePickerNum = 0;
-                        for (int i = 0; i < tile.graphicsIndex; i++) {
-                            tilePickerNum += loadedSprites.graphics[i].images.Count;
+                        if (tile.graphicsIndex < loadedSprites.graphics.Count) {
+                            int tilePickerNum = 0;
+                            for (int i = 0; i < tile.graphicsIndex; i++) {
+                                tilePickerNum += loadedSprites.graphics[i].images.Count;
+                            }
+                            if (!showAllGraphics.Checked) {
+                                tilePickerNum -= loadedSprites.graphics[0].images.Count;
+                            }
+                            tilePicker.SelectedTile = tilePickerNum + tile.tileNum;
+                        } else {
+                            tilePicker.SelectedTile = -1;
                         }
-                        if (!showAllGraphics.Checked) {
-                            tilePickerNum -= loadedSprites.graphics[0].images.Count;
-                        }
-                        tilePicker.SelectedTile = tilePickerNum + tile.tileNum;
                     });
                 }
                 UpdateToolbar();
