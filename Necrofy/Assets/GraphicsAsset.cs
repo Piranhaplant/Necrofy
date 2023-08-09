@@ -183,7 +183,7 @@ namespace Necrofy
 
         class GraphicsNameInfo : NameInfo
         {
-            public readonly Type type;
+            public Type type { get; private set; }
 
             private GraphicsNameInfo(PathParts parts) : base(parts) {
                 type = Extensions[parts.fileExtension];
@@ -194,10 +194,15 @@ namespace Necrofy
             public override AssetCategory Category => AssetCat;
             
             public override bool Editable => true;
+            public override bool CanRename => true;
             public override EditorWindow GetEditor(Project project) {
                 return new GraphicsEditor(new LoadedGraphics(project, Name, type), project);
             }
-            
+
+            protected override void RenamedTo(NameInfo newNameInfo) {
+                type = ((GraphicsNameInfo)newNameInfo).type;
+            }
+
             public static GraphicsNameInfo FromPath(PathParts parts) {
                 if (parts.fileExtension == null || !Extensions.ContainsKey(parts.fileExtension)) return null;
                 return new GraphicsNameInfo(parts);

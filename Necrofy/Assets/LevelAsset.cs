@@ -107,8 +107,8 @@ namespace Necrofy
 
         class LevelNameInfo : NameInfo
         {
-            public readonly int levelNum;
-            private readonly Func<LevelNameInfo, string> displayNameGetter;
+            public int levelNum { get; private set; }
+            private Func<LevelNameInfo, string> displayNameGetter;
             private string displayName = null;
 
             private LevelNameInfo(PathParts parts, int levelNum, Func<LevelNameInfo, string> displayNameGetter) : base(parts) {
@@ -135,6 +135,12 @@ namespace Necrofy
 
             public override void Refresh() {
                 displayName = displayNameGetter(this);
+            }
+
+            protected override void RenamedTo(NameInfo newNameInfo) {
+                LevelNameInfo levelNameInfo = (LevelNameInfo)newNameInfo;
+                levelNum = levelNameInfo.levelNum;
+                displayNameGetter = levelNameInfo.displayNameGetter;
             }
 
             public static LevelNameInfo FromPath(PathParts parts, Func<LevelNameInfo, string> displayNameGetter) {

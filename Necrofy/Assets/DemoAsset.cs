@@ -112,7 +112,7 @@ namespace Necrofy
             private const string Extension = "json";
             private const string FilenamePrefix = "demo";
 
-            public readonly int slot;
+            public int slot { get; private set; }
 
             private DemoNameInfo(PathParts parts, int slot) : base(parts) {
                 this.slot = slot;
@@ -121,7 +121,11 @@ namespace Necrofy
 
             public override string DisplayName => "Demo " + slot.ToString();
             public override AssetCategory Category => AssetCat;
-            
+
+            protected override void RenamedTo(NameInfo newNameInfo) {
+                slot = ((DemoNameInfo)newNameInfo).slot;
+            }
+
             public static DemoNameInfo FromPath(PathParts parts) {
                 if (parts.folder != Folder) return null;
                 if (parts.fileExtension != Extension) return null;

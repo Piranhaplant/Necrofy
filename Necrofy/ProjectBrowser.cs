@@ -63,8 +63,8 @@ namespace Necrofy
                 return node;
             }
 
-            protected override List<string> GetNodeTexts(TreeNodeCollection parent) {
-                return parent.Cast<TreeNode>().Select(n => n.Text).ToList();
+            protected override List<AssetTree.Node> GetAssetTreeNodes(TreeNodeCollection parent) {
+                return parent.Cast<TreeNode>().Select(n => n.Tag as AssetTree.Node).ToList();
             }
 
             public override TreeNode FindByTag(TreeNodeCollection collection, object tag) {
@@ -84,11 +84,13 @@ namespace Necrofy
             protected override TreeNode GetParent(TreeNode node) => node.Parent;
             protected override bool IsEmpty(TreeNode node) => node.Nodes.Count == 0;
             protected override void Remove(TreeNode node) => node.Remove();
+            protected override void Add(TreeNodeCollection parent, TreeNode node, int index) => parent.Insert(index, node);
             protected override void SetColor(TreeNode node, Color color) => node.ForeColor = color;
             protected override void SetText(TreeNode node, string text) {
                 node.Text = text;
                 node.Name = text;
             }
+            protected override TreeNode SelectedNode { get => treeView.SelectedNode; set => treeView.SelectedNode = value; }
         }
         
         private void LoadFolderStates(TreeNodeCollection parent, List<ProjectUserSettings.FolderState> folderStates) {
@@ -124,21 +126,34 @@ namespace Necrofy
         }
 
         private void tree_BeforeExpand(object sender, TreeViewCancelEventArgs e) {
-            e.Node.ImageIndex += 1;
-            e.Node.SelectedImageIndex += 1;
+            e.Node.ImageIndex = TreeViewAssetTreePopulator.FolderOpenImageIndex;
+            e.Node.SelectedImageIndex = TreeViewAssetTreePopulator.FolderOpenImageIndex;
         }
 
         private void tree_BeforeCollapse(object sender, TreeViewCancelEventArgs e) {
-            e.Node.ImageIndex -= 1;
-            e.Node.SelectedImageIndex -= 1;
+            e.Node.ImageIndex = TreeViewAssetTreePopulator.FolderImageIndex;
+            e.Node.SelectedImageIndex = TreeViewAssetTreePopulator.FolderImageIndex;
         }
 
         private void tree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e) {
             tree.SelectedNode = e.Node;
-            if (e.Button == MouseButtons.Right && e.Node.Tag is AssetTree.AssetEntry entry) {
-                contextOpen.Enabled = entry.Asset.Editable;
+            if (e.Button == MouseButtons.Right && e.Node.Tag is AssetTree.Node node) {
+                contextOpen.Visible = node is AssetTree.AssetEntry;
+                contextOpen.Enabled = node is AssetTree.AssetEntry entry && entry.Asset.Editable;
+                contextRename.Enabled = CanRename(node);
                 contextMenu.Show(Cursor.Position);
             }
+        }
+
+        private HashSet<string> reservedFolders = new HashSet<string>() { Asset.SpritesFolder, Asset.LevelTitleFolder, LevelAsset.Folder, Asset.TilesetFolder };
+
+        private bool CanRename(AssetTree.Node node) {
+            if (node is AssetTree.Folder folder) {
+                return !(folder.Parent.Parent == null && reservedFolders.Contains(folder.Name));
+            } else if (node is AssetTree.AssetEntry asset) {
+                return asset.Asset.CanRename && !(asset.Parent.Parent != null && asset.Parent.Parent.Parent == null && reservedFolders.Contains(asset.Parent.Name));
+            }
+            return false;
         }
 
         private void tree_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e) {
@@ -166,6 +181,25 @@ namespace Necrofy
                 }
 #endif
             }
+        }
+
+        private void contextRename_Click(object sender, EventArgs e) {
+            tree.LabelEdit = true;
+            tree.SelectedNode.BeginEdit();
+        }
+
+        private void tree_BeforeLabelEdit(object sender, NodeLabelEditEventArgs e) {
+            e.Node.Text = Path.GetFileNameWithoutExtension(((AssetTree.Node)e.Node.Tag).Name);
+        }
+
+        private void tree_AfterLabelEdit(object sender, NodeLabelEditEventArgs e) {
+            try {
+                project.Assets.Rename((AssetTree.Node)e.Node.Tag, e.Label);
+            } catch (Exception ex) {
+                Console.WriteLine(ex.StackTrace);
+                MessageBox.Show($"Error renaming file: {Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            tree.LabelEdit = false;
         }
     }
 }

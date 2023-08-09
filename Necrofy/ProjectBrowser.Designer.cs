@@ -30,6 +30,7 @@
             this.treeImages = new System.Windows.Forms.ImageList(this.components);
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.contextOpen = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextRename = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -43,6 +44,8 @@
             this.tree.SelectedImageIndex = 0;
             this.tree.Size = new System.Drawing.Size(284, 262);
             this.tree.TabIndex = 0;
+            this.tree.BeforeLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.tree_BeforeLabelEdit);
+            this.tree.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.tree_AfterLabelEdit);
             this.tree.BeforeCollapse += new System.Windows.Forms.TreeViewCancelEventHandler(this.tree_BeforeCollapse);
             this.tree.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.tree_BeforeExpand);
             this.tree.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.tree_NodeMouseClick);
@@ -57,17 +60,26 @@
             // contextMenu
             // 
             this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.contextOpen});
+            this.contextOpen,
+            this.contextRename});
             this.contextMenu.Name = "treeMenu";
-            this.contextMenu.Size = new System.Drawing.Size(104, 26);
+            this.contextMenu.Size = new System.Drawing.Size(118, 48);
             // 
             // contextOpen
             // 
             this.contextOpen.Image = global::Necrofy.Properties.Resources.folder_horizontal_open;
             this.contextOpen.Name = "contextOpen";
-            this.contextOpen.Size = new System.Drawing.Size(103, 22);
+            this.contextOpen.Size = new System.Drawing.Size(117, 22);
             this.contextOpen.Text = "Open";
             this.contextOpen.Click += new System.EventHandler(this.contextOpen_Click);
+            // 
+            // contextRename
+            // 
+            this.contextRename.Image = global::Necrofy.Properties.Resources.blue_document_rename;
+            this.contextRename.Name = "contextRename";
+            this.contextRename.Size = new System.Drawing.Size(117, 22);
+            this.contextRename.Text = "Rename";
+            this.contextRename.Click += new System.EventHandler(this.contextRename_Click);
             // 
             // ProjectBrowser
             // 
@@ -93,5 +105,6 @@
         private System.Windows.Forms.ImageList treeImages;
         private System.Windows.Forms.ContextMenuStrip contextMenu;
         private System.Windows.Forms.ToolStripMenuItem contextOpen;
+        private System.Windows.Forms.ToolStripMenuItem contextRename;
     }
 }

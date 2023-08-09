@@ -14,9 +14,9 @@ namespace Necrofy
     /// <typeparam name="N">The type of the nodes</typeparam>
     abstract class AssetTreePopulator<NC, N> where N : class
     {
-        private const int DocumentImageIndex = 0;
-        private const int FolderImageIndex = 1;
-        private const int FolderOpenImageIndex = 2;
+        public const int DocumentImageIndex = 0;
+        public const int FolderImageIndex = 1;
+        public const int FolderOpenImageIndex = 2;
 
         private static readonly Dictionary<AssetCategory, Bitmap> displayImages = new Dictionary<AssetCategory, Bitmap> {
             { AssetCategory.Collision, Resources.block },
@@ -36,7 +36,6 @@ namespace Necrofy
 
         private readonly ImageList treeImages = new ImageList();
         private readonly Dictionary<AssetCategory, int> displayImageIndexes = new Dictionary<AssetCategory, int>();
-        private readonly Dictionary<AssetCategory, Icon> displayIcons = new Dictionary<AssetCategory, Icon>();
 
         public AssetTreePopulator(AssetTree tree, NC root) {
             this.tree = tree;
@@ -53,27 +52,29 @@ namespace Necrofy
             tree.AssetChanged += AssetChanged;
             tree.AssetAdded += AssetAdded;
             tree.AssetRemoved += AssetRemoved;
+            tree.NodeRenamed += NodeRenamed;
         }
 
         public void Dispose() {
             tree.AssetChanged -= AssetChanged;
             tree.AssetAdded -= AssetAdded;
             tree.AssetRemoved -= AssetRemoved;
+            tree.NodeRenamed -= NodeRenamed;
             treeImages.Dispose();
         }
 
         private void PopulateTree(NC parent, AssetTree.Folder folder) {
-            foreach (AssetTree.Folder subFolder in folder.Folders) {
+            foreach (AssetTree.Folder subFolder in folder.Folders.OrderBy(n => n, AssetTree.NodeComparer.instance)) {
                 PopulateFolder(parent, subFolder, true);
             }
 
-            foreach (AssetTree.AssetEntry entry in folder.Assets) {
+            foreach (AssetTree.AssetEntry entry in folder.Assets.OrderBy(n => n, AssetTree.NodeComparer.instance)) {
                 PopulateAsset(parent, entry, true);
             }
         }
 
         private void PopulateFolder(NC parent, AssetTree.Folder subFolder, bool atEnd) {
-            N child = CreateChild(parent, subFolder.Name, subFolder, true, FolderImageIndex, atEnd);
+            N child = CreateChild(parent, subFolder, subFolder, true, FolderImageIndex, atEnd);
 
             PopulateTree(GetChildren(child), subFolder);
             if (IsEmpty(child)) {
@@ -83,7 +84,7 @@ namespace Necrofy
 
         private void PopulateAsset(NC parent, AssetTree.AssetEntry entry, bool atEnd) {
             if (IncludeAsset(entry)) {
-                N child = CreateChild(parent, entry.Asset.DisplayName, entry, false, GetImageIndex(entry.Asset.Category), atEnd);
+                N child = CreateChild(parent, entry, entry, false, GetImageIndex(entry.Asset.Category), atEnd);
 
                 if (!entry.Asset.Editable) {
                     SetColor(child, SystemColors.GrayText);
@@ -93,19 +94,26 @@ namespace Necrofy
             }
         }
 
-        private N CreateChild(NC parent, string text, object tag, bool isFolder, int imageIndex, bool atEnd) {
+        private N CreateChild(NC parent, AssetTree.Node assetTreeNode, object tag, bool isFolder, int imageIndex, bool atEnd) {
             int index;
             if (atEnd) {
-                index = GetNodeTexts(parent).Count;
+                index = GetAssetTreeNodes(parent).Count;
             } else {
-                List<string> children = GetNodeTexts(parent);
-                for (index = 0; index < children.Count; index++) {
-                    if (NumericStringComparer.instance.Compare(text, children[index]) < 0) {
-                        break;
-                    }
+                index = GetInsertionPoint(parent, assetTreeNode);
+            }
+            return CreateChild(parent, index, assetTreeNode.DisplayName, tag, isFolder, imageIndex);
+        }
+
+        private int GetInsertionPoint(NC parent, AssetTree.Node assetTreeNode) {
+            List<AssetTree.Node> children = GetAssetTreeNodes(parent);
+
+            int index;
+            for (index = 0; index < children.Count; index++) {
+                if (AssetTree.NodeComparer.instance.Compare(assetTreeNode, children[index]) < 0) {
+                    break;
                 }
             }
-            return CreateChild(parent, index, text, tag, isFolder, imageIndex);
+            return index;
         }
 
         private void AssetChanged(object sender, AssetEventArgs e) {
@@ -139,6 +147,21 @@ namespace Necrofy
             RemoveNode(FindByTag(root, e.Asset));
         }
 
+        private void NodeRenamed(object sender, NodeEventArgs e) {
+            N node = FindByTag(root, e.Node);
+            if (node != null) {
+                N selectedNode = SelectedNode;
+
+                Remove(node);
+                N parentNode = FindByTag(root, e.Node.Parent);
+                NC collection = parentNode == null ? root : GetChildren(parentNode);
+                Add(collection, node, GetInsertionPoint(collection, e.Node));
+                SetText(node, e.Node.DisplayName);
+
+                SelectedNode = selectedNode;
+            }
+        }
+
         private void RemoveNode(N node) {
             if (node != null) {
                 N parent = GetParent(node);
@@ -162,14 +185,16 @@ namespace Necrofy
 
         protected abstract void SetImageList(ImageList imageList);
         protected abstract N CreateChild(NC parent, int index, string text, object tag, bool isFolder, int imageIndex);
-        protected abstract List<string> GetNodeTexts(NC parent);
+        protected abstract List<AssetTree.Node> GetAssetTreeNodes(NC parent);
         protected abstract NC GetChildren(N node);
         protected abstract N GetParent(N node);
         protected abstract bool IsEmpty(N node);
         protected abstract void Remove(N node);
+        protected abstract void Add(NC parent, N node, int index);
         protected abstract void SetColor(N node, Color color);
         public abstract N FindByTag(NC collection, object tag);
         protected abstract void SetText(N node, string text);
+        protected abstract N SelectedNode { get; set; }
         protected virtual bool IncludeAsset(AssetTree.AssetEntry entry) {
             return true;
         }

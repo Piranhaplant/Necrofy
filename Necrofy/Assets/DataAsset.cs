@@ -103,7 +103,9 @@ namespace Necrofy
             public DataNameInfo(string folder, string name, int? pointer, bool compressed = false) : this(new PathParts(folder, name, Extension, pointer, compressed)) { }
             
             public override AssetCategory Category => AssetCat;
-            
+
+            public override bool CanRename => true;
+
             public static DataNameInfo FromPath(PathParts parts) {
                 if (parts.fileExtension != Extension) return null;
                 return new DataNameInfo(parts);

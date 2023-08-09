@@ -20,6 +20,7 @@ namespace Necrofy
         public event EventHandler<AssetEventArgs> AssetChanged;
         public event EventHandler<AssetEventArgs> AssetAdded;
         public event EventHandler<AssetEventArgs> AssetRemoved;
+        public event EventHandler<NodeEventArgs> NodeRenamed;
 
         public AssetTree(Project project, ISynchronizeInvoke synchronizingObject) {
             this.project = project;
@@ -40,15 +41,11 @@ namespace Necrofy
         private Folder ReadAssets(string folder, Folder parent) {
             Folder f = new Folder(Path.GetFileName(folder), parent);
 
-            string[] dirs = Directory.GetDirectories(folder);
-            Array.Sort(dirs, NumericStringComparer.instance);
-            foreach (string dir in dirs) {
+            foreach (string dir in Directory.GetDirectories(folder)) {
                 f.Folders.Add(ReadAssets(dir, f));
             }
 
-            string[] files = Directory.GetFiles(folder);
-            Array.Sort(files, NumericStringComparer.instance);
-            foreach (string file in files) {
+            foreach (string file in Directory.GetFiles(folder)) {
                 ReadAsset(file, f);
             }
 
@@ -65,7 +62,14 @@ namespace Necrofy
             return null;
         }
 
+        public void Rename(Node node, string newName) {
+            string oldFilename = node.GetFilename(project.path);
+            string newFilename = Path.Combine(Path.GetDirectoryName(oldFilename), newName + Path.GetExtension(oldFilename));
+            File.Move(oldFilename, newFilename);
+        }
+
         private void File_Changed(object sender, FileSystemEventArgs e) {
+            Console.WriteLine($"File changed: {e.Name}");
             if (Root.FindAsset(e.Name, out AssetEntry asset)) {
                 asset.Asset.Refresh();
                 AssetChanged?.Invoke(this, new AssetEventArgs(asset));
@@ -73,6 +77,10 @@ namespace Necrofy
         }
 
         private void File_Created(object sender, FileSystemEventArgs e) {
+            Console.WriteLine($"File created: {e.Name}");
+            File_Created(e);
+        }
+        private void File_Created(FileSystemEventArgs e) {
             if (Root.FindFolder(Path.GetDirectoryName(e.Name), out Folder parentFolder)) {
                 if (parentFolder.Folders.Any(f => f.Name == Path.GetFileName(e.Name)) || parentFolder.Assets.Any(a => a.Name == Path.GetFileName(e.Name))) {
                     return;
@@ -100,6 +108,10 @@ namespace Necrofy
         }
 
         private void File_Deleted(object sender, FileSystemEventArgs e) {
+            Console.WriteLine($"File deleted: {e.Name}");
+            File_Deleted(e);
+        }
+        private void File_Deleted(FileSystemEventArgs e) {
             if (Root.FindFolder(e.Name, out Folder folder)) {
                 folder.Parent.Folders.Remove(folder);
                 FolderRemoved(folder);
@@ -119,19 +131,71 @@ namespace Necrofy
         }
 
         private void File_Renamed(object sender, RenamedEventArgs e) {
-            File_Deleted(sender, new FileSystemEventArgs(e.ChangeType, project.path, e.OldName));
-            File_Created(sender, e);
+            Console.WriteLine($"File renamed: {e.OldName} -> {e.Name}");
+            if (Root.FindFolder(Path.GetDirectoryName(e.OldName), out Folder oldParent) && Root.FindFolder(Path.GetDirectoryName(e.Name), out Folder newParent)) {
+                if (Root.FindAsset(e.OldName, out AssetEntry asset)) {
+                    if (asset.Asset.Rename(project, e.Name)) {
+                        asset.Move(oldParent, newParent, Path.GetFileName(e.Name));
+                        NodeRenamed?.Invoke(this, new NodeEventArgs(asset));
+                        return;
+                    }
+                } else if (Root.FindFolder(e.OldName, out Folder folder)) {
+                    List<FailedRename> failures = new List<FailedRename>();
+                    RenameFolder(folder, e.Name, failures);
+                    foreach (FailedRename failure in failures) {
+                        File_Deleted(new FileSystemEventArgs(WatcherChangeTypes.Deleted, project.path, failure.OldName));
+                    }
+                    folder.Move(oldParent, newParent, Path.GetFileName(e.Name));
+                    foreach (FailedRename failure in failures) {
+                        File_Created(new FileSystemEventArgs(WatcherChangeTypes.Created, project.path, failure.NewName));
+                    }
+                    NodeRenamed?.Invoke(this, new NodeEventArgs(folder));
+                    return;
+                }
+            }
+            File_Deleted(new FileSystemEventArgs(e.ChangeType, project.path, e.OldName));
+            File_Created(e);
+        }
+
+        private void RenameFolder(Folder folder, string newName, List<FailedRename> failures) {
+            foreach (Folder child in folder.Folders) {
+                RenameFolder(child, Path.Combine(newName, child.Name), failures);
+            }
+            foreach (AssetEntry asset in folder.Assets) {
+                string newAssetName = Path.Combine(newName, asset.Name);
+                if (!asset.Asset.Rename(project, newAssetName)) {
+                    failures.Add(new FailedRename(asset.GetFilename(""), newAssetName));
+                }
+            }
+        }
+
+        class FailedRename
+        {
+            public string OldName { get; private set; }
+            public string NewName { get; private set; }
+            public FailedRename(string oldName, string newName) {
+                OldName = oldName;
+                NewName = newName;
+            }
         }
 
         public abstract class Node
         {
             public string Name { get; private set; }
             public Folder Parent { get; private set; }
+            public abstract string DisplayName { get; }
 
             public Node(string name, Folder parent) {
                 Name = name;
                 Parent = parent;
             }
+
+            public virtual void Move(Folder oldParent, Folder newParent, string newName) {
+                Parent = newParent;
+                Name = newName;
+            }
+
+            public abstract string GetFilename(string rootPath);
         }
 
         public class Folder : Node
@@ -139,7 +203,23 @@ namespace Necrofy
             public List<Folder> Folders { get; private set; } = new List<Folder>();
             public List<AssetEntry> Assets { get; private set; } = new List<AssetEntry>();
 
+            public override string DisplayName => Name;
+
             public Folder(string name, Folder parent) : base(name, parent) { }
+
+            public override void Move(Folder oldParent, Folder newParent, string newName) {
+                base.Move(oldParent, newParent, newName);
+                oldParent.Folders.Remove(this);
+                newParent.Folders.Add(this);
+            }
+
+            public override string GetFilename(string rootPath) {
+                if (Parent == null) {
+                    return rootPath;
+                } else {
+                    return Path.Combine(Parent.GetFilename(rootPath), Name);
+                }
+            }
 
             public bool FindFolder(string path, out Folder folder) {
                 folder = this;
@@ -180,9 +260,53 @@ namespace Necrofy
         {
             public Asset.NameInfo Asset { get; private set; }
 
+            public override string DisplayName => Asset.DisplayName;
+
             public AssetEntry(Asset.NameInfo asset, string name, Folder parent) : base(name, parent) {
                 Asset = asset;
             }
+
+            public override void Move(Folder oldParent, Folder newParent, string newName) {
+                base.Move(oldParent, newParent, newName);
+                oldParent.Assets.Remove(this);
+                newParent.Assets.Add(this);
+            }
+
+            public override string GetFilename(string rootPath) {
+                return Path.Combine(Parent.GetFilename(rootPath), Name);
+            }
+        }
+
+        public class NodeComparer : Comparer<Node>
+        {
+            public static readonly NodeComparer instance = new NodeComparer();
+
+            public override int Compare(Node x, Node y) {
+                if (x is Folder && y is AssetEntry) {
+                    return -1;
+                } else if (x is AssetEntry && y is Folder) {
+                    return 1;
+                } else if (x is Folder) {
+                    return NumericStringComparer.instance.Compare(x.Name, y.Name);
+                } else {
+                    AssetEntry xAsset = x as AssetEntry;
+                    AssetEntry yAsset = y as AssetEntry;
+                    if (xAsset.Asset.DisplayName == yAsset.Asset.DisplayName) {
+                        return xAsset.Asset.Category.CompareTo(yAsset.Asset.Category);
+                    } else {
+                        return NumericStringComparer.instance.Compare(xAsset.DisplayName, yAsset.DisplayName);
+                    }
+                }
+            }
+        }
+    }
+
+    class NodeEventArgs : EventArgs
+    {
+        public AssetTree.Node Node { get; private set; }
+
+        public NodeEventArgs(AssetTree.Node node) {
+            Node = node;
         }
     }
 

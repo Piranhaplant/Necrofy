@@ -144,6 +144,7 @@ namespace Necrofy
             public override AssetCategory Category => AssetCat;
             
             public override bool Editable => true;
+            public override bool CanRename => true;
             public override EditorWindow GetEditor(Project project) {
                 return new PaletteEditor(new LoadedPalette(project, Name));
             }

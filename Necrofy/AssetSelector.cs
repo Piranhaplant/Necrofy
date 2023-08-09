@@ -91,8 +91,8 @@ namespace Necrofy
                 return node;
             }
 
-            protected override List<string> GetNodeTexts(ComboTreeNodeCollection parent) {
-                return parent.Select(n => n.Text).ToList();
+            protected override List<AssetTree.Node> GetAssetTreeNodes(ComboTreeNodeCollection parent) {
+                return parent.Select(n => n.Tag as AssetTree.Node).ToList();
             }
 
             public override ComboTreeNode FindByTag(ComboTreeNodeCollection collection, object tag) {
@@ -118,11 +118,13 @@ namespace Necrofy
                     node.Parent.Nodes.Remove(node);
                 }
             }
+            protected override void Add(ComboTreeNodeCollection parent, ComboTreeNode node, int index) => parent.Insert(index, node);
             protected override void SetColor(ComboTreeNode node, Color color) => node.ForeColor = color;
             protected override void SetText(ComboTreeNode node, string text) {
                 node.Text = text;
                 node.Name = text;
             }
+            protected override ComboTreeNode SelectedNode { get => comboBox.SelectedNode; set => comboBox.SelectedNode = value; }
             protected override bool IncludeAsset(AssetTree.AssetEntry entry) => entry.Asset.Category == category && filter(entry);
         }
     }

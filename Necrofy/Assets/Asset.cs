@@ -240,6 +240,10 @@ namespace Necrofy
             public abstract AssetCategory Category { get; }
 
             protected NameInfo(PathParts parts) {
+                SetParts(parts);
+            }
+
+            private void SetParts(PathParts parts) {
                 Parts = parts;
                 if (parts.folder == "") {
                     Name = parts.name;
@@ -251,6 +255,7 @@ namespace Necrofy
             
             /// <summary>Gets whether the asset has an editor for it</summary>
             public virtual bool Editable => false;
+            public virtual bool CanRename => false;
 
             /// <summary>Gets the component that will be used to edit the asset</summary>
             /// <param name="project">The project</param>
@@ -261,6 +266,24 @@ namespace Necrofy
 
             /// <summary>Called when the file contents located at this name have changed</summary>
             public virtual void Refresh() { }
+
+            /// <summary>Attempts to rename the NameInfo to the given name</summary>
+            /// <param name="project">The project</param>
+            /// <param name="newRelativePath">The new filename of the asset, relative to the project</param>
+            /// <returns>Whether the rename succeeded</returns>
+            public bool Rename(Project project, string newRelativePath) {
+                NameInfo newInfo = Asset.GetInfo(project, newRelativePath);
+                if (newInfo.GetType().Equals(this.GetType())) {
+                    SetParts(newInfo.Parts);
+                    RenamedTo(newInfo);
+                    return true;
+                }
+                return false;
+            }
+
+            /// <summary>Called to copy properties from the given NameInfo after renaming</summary>
+            /// <param name="newNameInfo">The updated NameInfo. Guaranteed to be the same type as this instance</param>
+            protected virtual void RenamedTo(NameInfo newNameInfo) { }
 
             public override bool Equals(object obj) {
                 if (obj is NameInfo nameInfo) {
