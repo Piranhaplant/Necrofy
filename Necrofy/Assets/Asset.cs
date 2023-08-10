@@ -6,6 +6,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Drawing;
 using System.Runtime.CompilerServices;
+using static Necrofy.Asset.NameInfo;
 
 namespace Necrofy
 {
@@ -212,6 +213,20 @@ namespace Necrofy
         }
         protected abstract void Reload(string filename);
 
+        /// <summary>Renames references to assets found in other assets</summary>
+        /// <param name="results">Results containing the list of renamed assets</param>
+        public static void RenameAssetReferences(Project project, RenameResults results) {
+            foreach (string filename in Directory.GetFiles(project.path, "*", SearchOption.AllDirectories)) {
+                NameInfo.PathParts pathParts = NameInfo.ParsePath(project.GetRelativePath(filename));
+                foreach (Creator creator in creators) {
+                    NameInfo nameInfo = creator.GetNameInfo(pathParts, project);
+                    if (nameInfo != null) {
+                        creator.RenameReferences(nameInfo, project, results);
+                    }
+                }
+            }
+        }
+
         protected static string GetTilesetFolder(string tileset) {
             return TilesetFolder + FolderSeparator + tileset;
         }
@@ -269,15 +284,17 @@ namespace Necrofy
 
             /// <summary>Attempts to rename the NameInfo to the given name</summary>
             /// <param name="project">The project</param>
-            /// <param name="newRelativePath">The new filename of the asset, relative to the project</param>
+            /// <param name="newRelativeFilename">The new filename of the asset, relative to the project</param>
             /// <returns>Whether the rename succeeded</returns>
-            public bool Rename(Project project, string newRelativePath) {
-                NameInfo newInfo = Asset.GetInfo(project, newRelativePath);
-                if (newInfo.GetType().Equals(this.GetType())) {
+            public bool Rename(Project project, string newRelativeFilename, RenameResults results) {
+                NameInfo newInfo = Asset.GetInfo(project, newRelativeFilename);
+                if (newInfo != null && newInfo.GetType().Equals(this.GetType())) {
+                    results.renamedAssets.Add(Category, Name, newInfo.Name);
                     SetParts(newInfo.Parts);
                     RenamedTo(newInfo);
                     return true;
                 }
+                results.failedRenames.Add(GetFilename(""), newRelativeFilename);
                 return false;
             }
 
@@ -329,12 +346,12 @@ namespace Necrofy
             }
 
             /// <summary>Gets the filename for the asset, optionally creating any intermediate directories if they don't exist</summary>
-            public string GetFilename(string projectDir, bool createDirectories = false) {
+            public string GetFilename(string projectDir, bool createDirectories = false, string replacementName = null) {
                 string directory = Path.Combine(projectDir, Path.Combine(Parts.folder.Split(FolderSeparator)));
                 if (createDirectories && !Directory.Exists(directory)) {
                     Directory.CreateDirectory(directory);
                 }
-                string filename = Parts.name;
+                string filename = replacementName ?? Parts.name;
                 if (Parts.skipped) {
                     filename += SkipFileExtension;
                 }
@@ -414,6 +431,34 @@ namespace Necrofy
             }
         }
 
+        /// <summary>Holds information about a rename operation</summary>
+        public class RenameResults
+        {
+            /// <summary>The assets for each category that were successfully renamed. Maps from old name to new name</summary>
+            public Dictionary<AssetCategory, Dictionary<string, string>> renamedAssets = new Dictionary<AssetCategory, Dictionary<string, string>>();
+            /// <summary>The assets that failed to rename. Maps from old relative filename to new relative filename</summary>
+            public Dictionary<string, string> failedRenames = new Dictionary<string, string>();
+
+            public bool RenamedCategory(params AssetCategory[] categories) {
+                foreach (AssetCategory category in categories) {
+                    if (renamedAssets.ContainsKey(category)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            public string UpdateReference(string name, AssetCategory category, ref bool updated) {
+                if (renamedAssets.TryGetValue(category, out Dictionary<string, string> renames)) {
+                    if (renames.TryGetValue(name, out string newName)) {
+                        updated = true;
+                        return newName;
+                    }
+                }
+                return name;
+            }
+        }
+
         public class ParsedName
         {
             public string Tileset { get; private set; }
@@ -464,6 +509,11 @@ namespace Necrofy
             /// <param name="preset">The extraction preset</param>
             /// <returns>The NameInfo, or null if not supported by this asset creator</returns>
             public virtual NameInfo GetNameInfoForExtraction(ExtractionPreset preset) { return null; }
+            /// <summary>Update any referenced assets if they are found in the rename results</summary>
+            /// <param name="nameInfo">The asset to update</param>
+            /// <param name="filename">The project</param>
+            /// <param name="results">The rename results</param>
+            public virtual void RenameReferences(NameInfo nameInfo, Project project, RenameResults results) { }
         }
         
         /// <summary>Information about an asset that exists in a clean ROM</summary>

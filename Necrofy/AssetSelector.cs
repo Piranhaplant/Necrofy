@@ -78,7 +78,7 @@ namespace Necrofy
 
             protected override void SetImageList(ImageList imageList) => comboBox.Images = imageList;
 
-            protected override ComboTreeNode CreateChild(ComboTreeNodeCollection parent, int index, string text, object tag, bool isFolder, int imageIndex) {
+            protected override ComboTreeNode CreateChild(string text, object tag, bool isFolder, int imageIndex) {
                 ComboTreeNode node = new ComboTreeNode(text);
                 node.Name = text;
                 node.Tag = tag;
@@ -87,7 +87,6 @@ namespace Necrofy
                 if (isFolder) {
                     node.ExpandedImageIndex = imageIndex + 1;
                 }
-                parent.Insert(index, node);
                 return node;
             }
 
@@ -118,7 +117,7 @@ namespace Necrofy
                     node.Parent.Nodes.Remove(node);
                 }
             }
-            protected override void Add(ComboTreeNodeCollection parent, ComboTreeNode node, int index) => parent.Insert(index, node);
+            protected override void Insert(ComboTreeNodeCollection parent, ComboTreeNode node, int index) => parent.Insert(index, node);
             protected override void SetColor(ComboTreeNode node, Color color) => node.ForeColor = color;
             protected override void SetText(ComboTreeNode node, string text) {
                 node.Text = text;

@@ -64,8 +64,13 @@ namespace Necrofy
 
         public void Rename(Node node, string newName) {
             string oldFilename = node.GetFilename(project.path);
-            string newFilename = Path.Combine(Path.GetDirectoryName(oldFilename), newName + Path.GetExtension(oldFilename));
-            File.Move(oldFilename, newFilename);
+            if (node is Folder) {
+                string newFilename = Path.Combine(Path.GetDirectoryName(oldFilename), newName);
+                Directory.Move(oldFilename, newFilename);
+            } else if (node is AssetEntry asset) {
+                string newFilename = asset.Asset.GetFilename(project.path, replacementName: newName);
+                File.Move(oldFilename, newFilename);
+            }
         }
 
         private void File_Changed(object sender, FileSystemEventArgs e) {
@@ -132,24 +137,28 @@ namespace Necrofy
 
         private void File_Renamed(object sender, RenamedEventArgs e) {
             Console.WriteLine($"File renamed: {e.OldName} -> {e.Name}");
-            if (Root.FindFolder(Path.GetDirectoryName(e.OldName), out Folder oldParent) && Root.FindFolder(Path.GetDirectoryName(e.Name), out Folder newParent)) {
+            Asset.RenameResults results = new Asset.RenameResults();
+            Node renamedNode = null;
+
+            if (Root.FindFolder(Path.GetDirectoryName(e.Name), out Folder newParent)) {
                 if (Root.FindAsset(e.OldName, out AssetEntry asset)) {
-                    if (asset.Asset.Rename(project, e.Name)) {
-                        asset.Move(oldParent, newParent, Path.GetFileName(e.Name));
-                        NodeRenamed?.Invoke(this, new NodeEventArgs(asset));
-                        return;
+                    if (asset.Asset.Rename(project, e.Name, results)) {
+                        renamedNode = asset;
                     }
                 } else if (Root.FindFolder(e.OldName, out Folder folder)) {
-                    List<FailedRename> failures = new List<FailedRename>();
-                    RenameFolder(folder, e.Name, failures);
-                    foreach (FailedRename failure in failures) {
-                        File_Deleted(new FileSystemEventArgs(WatcherChangeTypes.Deleted, project.path, failure.OldName));
+                    RenameFolder(folder, e.Name, results);
+                    renamedNode = folder;
+                }
+                if (renamedNode != null) {
+                    foreach (KeyValuePair<string, string> failure in results.failedRenames) {
+                        File_Deleted(new FileSystemEventArgs(WatcherChangeTypes.Deleted, project.path, failure.Key));
                     }
-                    folder.Move(oldParent, newParent, Path.GetFileName(e.Name));
-                    foreach (FailedRename failure in failures) {
-                        File_Created(new FileSystemEventArgs(WatcherChangeTypes.Created, project.path, failure.NewName));
+                    renamedNode.Move(newParent, Path.GetFileName(e.Name));
+                    foreach (KeyValuePair<string, string> failure in results.failedRenames) {
+                        File_Created(new FileSystemEventArgs(WatcherChangeTypes.Created, project.path, failure.Value));
                     }
-                    NodeRenamed?.Invoke(this, new NodeEventArgs(folder));
+                    NodeRenamed?.Invoke(this, new NodeEventArgs(renamedNode));
+                    Asset.RenameAssetReferences(project, results);
                     return;
                 }
             }
@@ -157,25 +166,13 @@ namespace Necrofy
             File_Created(e);
         }
 
-        private void RenameFolder(Folder folder, string newName, List<FailedRename> failures) {
+        private void RenameFolder(Folder folder, string newName, Asset.RenameResults results) {
             foreach (Folder child in folder.Folders) {
-                RenameFolder(child, Path.Combine(newName, child.Name), failures);
+                RenameFolder(child, Path.Combine(newName, child.Name), results);
             }
             foreach (AssetEntry asset in folder.Assets) {
                 string newAssetName = Path.Combine(newName, asset.Name);
-                if (!asset.Asset.Rename(project, newAssetName)) {
-                    failures.Add(new FailedRename(asset.GetFilename(""), newAssetName));
-                }
-            }
-        }
-
-        class FailedRename
-        {
-            public string OldName { get; private set; }
-            public string NewName { get; private set; }
-            public FailedRename(string oldName, string newName) {
-                OldName = oldName;
-                NewName = newName;
+                asset.Asset.Rename(project, newAssetName, results);
             }
         }
 
@@ -190,7 +187,7 @@ namespace Necrofy
                 Parent = parent;
             }
 
-            public virtual void Move(Folder oldParent, Folder newParent, string newName) {
+            public virtual void Move(Folder newParent, string newName) {
                 Parent = newParent;
                 Name = newName;
             }
@@ -207,10 +204,10 @@ namespace Necrofy
 
             public Folder(string name, Folder parent) : base(name, parent) { }
 
-            public override void Move(Folder oldParent, Folder newParent, string newName) {
-                base.Move(oldParent, newParent, newName);
-                oldParent.Folders.Remove(this);
+            public override void Move(Folder newParent, string newName) {
+                Parent.Folders.Remove(this);
                 newParent.Folders.Add(this);
+                base.Move(newParent, newName);
             }
 
             public override string GetFilename(string rootPath) {
@@ -266,10 +263,10 @@ namespace Necrofy
                 Asset = asset;
             }
 
-            public override void Move(Folder oldParent, Folder newParent, string newName) {
-                base.Move(oldParent, newParent, newName);
-                oldParent.Assets.Remove(this);
+            public override void Move(Folder newParent, string newName) {
+                Parent.Assets.Remove(this);
                 newParent.Assets.Add(this);
+                base.Move(newParent, newName);
             }
 
             public override string GetFilename(string rootPath) {

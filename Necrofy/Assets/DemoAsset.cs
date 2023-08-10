@@ -10,6 +10,8 @@ namespace Necrofy
 {
     class DemoAsset : Asset
     {
+        public const string Folder = "Demos";
+
         private const AssetCategory AssetCat = AssetCategory.Demo;
 
         static DemoAsset() {
@@ -108,7 +110,6 @@ namespace Necrofy
 
         class DemoNameInfo : NameInfo
         {
-            private const string Folder = "Demos";
             private const string Extension = "json";
             private const string FilenamePrefix = "demo";
 

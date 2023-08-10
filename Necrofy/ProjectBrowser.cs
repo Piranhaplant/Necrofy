@@ -54,8 +54,8 @@ namespace Necrofy
 
             protected override void SetImageList(ImageList imageList) => treeView.ImageList = imageList;
 
-            protected override TreeNode CreateChild(TreeNodeCollection parent, int index, string text, object tag, bool isFolder, int imageIndex) {
-                TreeNode node = parent.Insert(index, text);
+            protected override TreeNode CreateChild(string text, object tag, bool isFolder, int imageIndex) {
+                TreeNode node = new TreeNode(text);
                 node.Name = text;
                 node.Tag = tag;
                 node.ImageIndex = imageIndex;
@@ -84,7 +84,7 @@ namespace Necrofy
             protected override TreeNode GetParent(TreeNode node) => node.Parent;
             protected override bool IsEmpty(TreeNode node) => node.Nodes.Count == 0;
             protected override void Remove(TreeNode node) => node.Remove();
-            protected override void Add(TreeNodeCollection parent, TreeNode node, int index) => parent.Insert(index, node);
+            protected override void Insert(TreeNodeCollection parent, TreeNode node, int index) => parent.Insert(index, node);
             protected override void SetColor(TreeNode node, Color color) => node.ForeColor = color;
             protected override void SetText(TreeNode node, string text) {
                 node.Text = text;
@@ -145,7 +145,7 @@ namespace Necrofy
             }
         }
 
-        private HashSet<string> reservedFolders = new HashSet<string>() { Asset.SpritesFolder, Asset.LevelTitleFolder, LevelAsset.Folder, Asset.TilesetFolder };
+        private HashSet<string> reservedFolders = new HashSet<string>() { Asset.SpritesFolder, Asset.LevelTitleFolder, Asset.TilesetFolder, Asset.MiscFolder, LevelAsset.Folder, DemoAsset.Folder };
 
         private bool CanRename(AssetTree.Node node) {
             if (node is AssetTree.Folder folder) {
@@ -188,16 +188,17 @@ namespace Necrofy
             tree.SelectedNode.BeginEdit();
         }
 
-        private void tree_BeforeLabelEdit(object sender, NodeLabelEditEventArgs e) {
-            e.Node.Text = Path.GetFileNameWithoutExtension(((AssetTree.Node)e.Node.Tag).Name);
-        }
-
         private void tree_AfterLabelEdit(object sender, NodeLabelEditEventArgs e) {
-            try {
-                project.Assets.Rename((AssetTree.Node)e.Node.Tag, e.Label);
-            } catch (Exception ex) {
-                Console.WriteLine(ex.StackTrace);
-                MessageBox.Show($"Error renaming file: {Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (e.Label == null || e.Label.Length == 0) {
+                e.CancelEdit = true;
+            } else {
+                try {
+                    project.Assets.Rename((AssetTree.Node)e.Node.Tag, e.Label);
+                } catch (Exception ex) {
+                    e.CancelEdit = true;
+                    Console.WriteLine(ex.StackTrace);
+                    MessageBox.Show($"Error renaming file: {Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             tree.LabelEdit = false;
         }

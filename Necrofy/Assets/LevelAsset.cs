@@ -87,6 +87,28 @@ namespace Necrofy
                 return new LevelAsset((LevelNameInfo)nameInfo, filename);
             }
 
+            public override void RenameReferences(NameInfo nameInfo, Project project, RenameResults results) {
+                if (results.RenamedCategory(AssetCategory.Palette, AssetCategory.Graphics, AssetCategory.Tilemap, AssetCategory.Collision)) {
+                    LevelAsset asset = (LevelAsset)FromFile(nameInfo, nameInfo.GetFilename(project.path));
+                    bool updated = false;
+                    asset.level.tilesetTilemapName = results.UpdateReference(asset.level.tilesetTilemapName, AssetCategory.Tilemap, ref updated);
+                    asset.level.tilesetCollisionName = results.UpdateReference(asset.level.tilesetCollisionName, AssetCategory.Collision, ref updated);
+                    asset.level.tilesetGraphicsName = results.UpdateReference(asset.level.tilesetGraphicsName, AssetCategory.Graphics, ref updated);
+                    asset.level.paletteName = results.UpdateReference(asset.level.paletteName, AssetCategory.Palette, ref updated);
+                    asset.level.spritePaletteName = results.UpdateReference(asset.level.spritePaletteName, AssetCategory.Palette, ref updated);
+                    foreach (LevelMonster m in asset.level.levelMonsters) {
+                        if (m is PaletteFadeLevelMonster fade) {
+                            fade.bgPal = results.UpdateReference(fade.bgPal, AssetCategory.Palette, ref updated);
+                            fade.spritePal = results.UpdateReference(fade.spritePal, AssetCategory.Palette, ref updated);
+                        }
+                    }
+                    if (updated) {
+                        Console.WriteLine($"Renamed references in level {nameInfo.Name}");
+                        asset.Save(project);
+                    }
+                }
+            }
+
             private string GetDisplayName(LevelNameInfo nameInfo, Project project) {
                 try {
                     using (FileStream fs = new FileStream(nameInfo.GetFilename(project.path), FileMode.Open, FileAccess.Read, FileShare.Read))

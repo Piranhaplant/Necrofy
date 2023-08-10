@@ -101,7 +101,9 @@ namespace Necrofy
             } else {
                 index = GetInsertionPoint(parent, assetTreeNode);
             }
-            return CreateChild(parent, index, assetTreeNode.DisplayName, tag, isFolder, imageIndex);
+            N child = CreateChild(assetTreeNode.DisplayName, tag, isFolder, imageIndex);
+            Insert(parent, child, index);
+            return child;
         }
 
         private int GetInsertionPoint(NC parent, AssetTree.Node assetTreeNode) {
@@ -155,7 +157,7 @@ namespace Necrofy
                 Remove(node);
                 N parentNode = FindByTag(root, e.Node.Parent);
                 NC collection = parentNode == null ? root : GetChildren(parentNode);
-                Add(collection, node, GetInsertionPoint(collection, e.Node));
+                Insert(collection, node, GetInsertionPoint(collection, e.Node));
                 SetText(node, e.Node.DisplayName);
 
                 SelectedNode = selectedNode;
@@ -184,13 +186,13 @@ namespace Necrofy
         }
 
         protected abstract void SetImageList(ImageList imageList);
-        protected abstract N CreateChild(NC parent, int index, string text, object tag, bool isFolder, int imageIndex);
+        protected abstract N CreateChild(string text, object tag, bool isFolder, int imageIndex);
         protected abstract List<AssetTree.Node> GetAssetTreeNodes(NC parent);
         protected abstract NC GetChildren(N node);
         protected abstract N GetParent(N node);
         protected abstract bool IsEmpty(N node);
         protected abstract void Remove(N node);
-        protected abstract void Add(NC parent, N node, int index);
+        protected abstract void Insert(NC parent, N node, int index);
         protected abstract void SetColor(N node, Color color);
         public abstract N FindByTag(NC collection, object tag);
         protected abstract void SetText(N node, string text);
