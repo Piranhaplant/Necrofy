@@ -112,6 +112,7 @@ namespace Necrofy
         private void ReadAssets(ISynchronizeInvoke synchronizingObject) {
             Assets = new AssetTree(this, synchronizingObject);
             Assets.AssetChanged += Assets_AssetChanged;
+            Assets.RenameCompleted += Assets_RenameCompleted;
         }
 
         private void Assets_AssetChanged(object sender, AssetEventArgs e) {
@@ -147,6 +148,19 @@ namespace Necrofy
                     assetCache[nameInfo.Category][nameInfo.Name] = new WeakReference<Asset>(asset);
                 }
                 return asset;
+            }
+        }
+
+        private void Assets_RenameCompleted(object sender, RenameCompletedEventArgs e) {
+            foreach (KeyValuePair<AssetCategory, Dictionary<string, string>> category in e.Results.renamedAssets) {
+                if (assetCache.TryGetValue(category.Key, out Dictionary<string, WeakReference<Asset>> cache)) {
+                    foreach (KeyValuePair<string, string> names in category.Value) {
+                        if (cache.TryGetValue(names.Key, out WeakReference<Asset> asset)) {
+                            cache.Remove(names.Key);
+                            cache.Add(names.Value, asset);
+                        }
+                    }
+                }
             }
         }
 
