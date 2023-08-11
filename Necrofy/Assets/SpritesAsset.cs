@@ -42,6 +42,25 @@ namespace Necrofy
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
             Sprite.WriteToROM(sprites, rom, romInfo, nameInfo.Parts.folder);
         }
+
+        public static bool RenameReferences(NameInfo nameInfo, RenameResults results, Func<List<string>> graphicsListGetter) {
+            bool updated = false;
+            if (!results.isFolder && results.RenamedCategory(AssetCategory.Graphics)) {
+                KeyValuePair<string, string> names = results.renamedAssets[AssetCategory.Graphics].First();
+                NameInfo.PathParts oldName = NameInfo.ParsePath(names.Key);
+                NameInfo.PathParts newName = NameInfo.ParsePath(names.Value);
+                if (oldName.folder == nameInfo.Parts.folder && newName.folder == nameInfo.Parts.folder) {
+                    List<string> graphics = graphicsListGetter();
+                    for (int i = 0; i < graphics.Count; i++) {
+                        if (graphics[i] == oldName.name) {
+                            graphics[i] = newName.name;
+                            updated = true;
+                        }
+                    }
+                }
+            }
+            return updated;
+        }
         
         class SpritesCreator : Creator
         {
@@ -74,6 +93,17 @@ namespace Necrofy
                 Sprite.AddFromROM(sprites, romStream, ROMPointers.SpriteData2, romInfo);
 
                 return new SpritesAsset((SpritesNameInfo)nameInfo, new SpriteFile(sprites));
+            }
+
+            public override void RenameReferences(NameInfo nameInfo, Project project, RenameResults results) {
+                SpritesAsset asset = null;
+                bool updated = SpritesAsset.RenameReferences(nameInfo, results, () => {
+                    asset = (SpritesAsset)FromFile(nameInfo, nameInfo.GetFilename(project.path));
+                    return asset.sprites.graphicsAssets;
+                });
+                if (updated && asset != null) {
+                    asset.Save(project);
+                }
             }
         }
 

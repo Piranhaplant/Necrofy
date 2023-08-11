@@ -217,6 +217,7 @@ namespace Necrofy
         public virtual ToolStripGrouper.ItemSet ToolStripItemSet => ToolStripGrouper.ItemSet.None;
         public virtual void ToolStripItemClicked(ToolStripGrouper.ItemType item) { }
         public virtual void ToolStripItemCheckedChanged(ToolStripGrouper.ItemType item) { }
+        public virtual void RenameAssetReferences(Asset.RenameResults results) { }
 
         public virtual bool CanCopy => false;
         public virtual bool CanPaste => false;

@@ -70,6 +70,22 @@ namespace Necrofy
             rom.Seek(GetPointerPosition(levelNameInfo.levelNum));
             rom.WritePointer(buildPointer);
         }
+
+        public static bool RenameReferences(Level level, RenameResults results) {
+            bool updated = false;
+            level.tilesetTilemapName = results.UpdateReference(level.tilesetTilemapName, AssetCategory.Tilemap, ref updated);
+            level.tilesetCollisionName = results.UpdateReference(level.tilesetCollisionName, AssetCategory.Collision, ref updated);
+            level.tilesetGraphicsName = results.UpdateReference(level.tilesetGraphicsName, AssetCategory.Graphics, ref updated);
+            level.paletteName = results.UpdateReference(level.paletteName, AssetCategory.Palette, ref updated);
+            level.spritePaletteName = results.UpdateReference(level.spritePaletteName, AssetCategory.Palette, ref updated);
+            foreach (LevelMonster m in level.levelMonsters) {
+                if (m is PaletteFadeLevelMonster fade) {
+                    fade.bgPal = results.UpdateReference(fade.bgPal, AssetCategory.Palette, ref updated);
+                    fade.spritePal = results.UpdateReference(fade.spritePal, AssetCategory.Palette, ref updated);
+                }
+            }
+            return updated;
+        }
         
         class LevelCreator : Creator
         {
@@ -90,19 +106,7 @@ namespace Necrofy
             public override void RenameReferences(NameInfo nameInfo, Project project, RenameResults results) {
                 if (results.RenamedCategory(AssetCategory.Palette, AssetCategory.Graphics, AssetCategory.Tilemap, AssetCategory.Collision)) {
                     LevelAsset asset = (LevelAsset)FromFile(nameInfo, nameInfo.GetFilename(project.path));
-                    bool updated = false;
-                    asset.level.tilesetTilemapName = results.UpdateReference(asset.level.tilesetTilemapName, AssetCategory.Tilemap, ref updated);
-                    asset.level.tilesetCollisionName = results.UpdateReference(asset.level.tilesetCollisionName, AssetCategory.Collision, ref updated);
-                    asset.level.tilesetGraphicsName = results.UpdateReference(asset.level.tilesetGraphicsName, AssetCategory.Graphics, ref updated);
-                    asset.level.paletteName = results.UpdateReference(asset.level.paletteName, AssetCategory.Palette, ref updated);
-                    asset.level.spritePaletteName = results.UpdateReference(asset.level.spritePaletteName, AssetCategory.Palette, ref updated);
-                    foreach (LevelMonster m in asset.level.levelMonsters) {
-                        if (m is PaletteFadeLevelMonster fade) {
-                            fade.bgPal = results.UpdateReference(fade.bgPal, AssetCategory.Palette, ref updated);
-                            fade.spritePal = results.UpdateReference(fade.spritePal, AssetCategory.Palette, ref updated);
-                        }
-                    }
-                    if (updated) {
+                    if (LevelAsset.RenameReferences(asset.level, results)) {
                         Console.WriteLine($"Renamed references in level {nameInfo.Name}");
                         asset.Save(project);
                     }

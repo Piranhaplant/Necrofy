@@ -21,6 +21,7 @@ namespace Necrofy
         public event EventHandler<AssetEventArgs> AssetAdded;
         public event EventHandler<AssetEventArgs> AssetRemoved;
         public event EventHandler<NodeEventArgs> NodeRenamed;
+        public event EventHandler<RenameCompletedEventArgs> RenameCompleted;
 
         public AssetTree(Project project, ISynchronizeInvoke synchronizingObject) {
             this.project = project;
@@ -137,10 +138,10 @@ namespace Necrofy
 
         private void File_Renamed(object sender, RenamedEventArgs e) {
             Console.WriteLine($"File renamed: {e.OldName} -> {e.Name}");
-            Asset.RenameResults results = new Asset.RenameResults();
             Node renamedNode = null;
 
             if (Root.FindFolder(Path.GetDirectoryName(e.Name), out Folder newParent)) {
+                Asset.RenameResults results = new Asset.RenameResults();
                 if (Root.FindAsset(e.OldName, out AssetEntry asset)) {
                     if (asset.Asset.Rename(project, e.Name, results)) {
                         renamedNode = asset;
@@ -159,6 +160,7 @@ namespace Necrofy
                     }
                     NodeRenamed?.Invoke(this, new NodeEventArgs(renamedNode));
                     Asset.RenameAssetReferences(project, results);
+                    RenameCompleted?.Invoke(this, new RenameCompletedEventArgs(results));
                     return;
                 }
             }
@@ -167,6 +169,7 @@ namespace Necrofy
         }
 
         private void RenameFolder(Folder folder, string newName, Asset.RenameResults results) {
+            results.isFolder = true;
             foreach (Folder child in folder.Folders) {
                 RenameFolder(child, Path.Combine(newName, child.Name), results);
             }
@@ -313,6 +316,15 @@ namespace Necrofy
 
         public AssetEventArgs(AssetTree.AssetEntry asset) {
             Asset = asset;
+        }
+    }
+
+    class RenameCompletedEventArgs : EventArgs
+    {
+        public Asset.RenameResults Results { get; private set; }
+
+        public RenameCompletedEventArgs(Asset.RenameResults results) {
+            Results = results;
         }
     }
 }

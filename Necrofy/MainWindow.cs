@@ -478,6 +478,7 @@ namespace Necrofy
             Properties.Settings.Default.Save();
 
             ProjectBrowser.OpenProject(project);
+            project.Assets.RenameCompleted += RenameCompleted;
 
             if (project.userSettings.OpenFiles != null) {
                 foreach (string filename in project.userSettings.OpenFiles) {
@@ -496,6 +497,16 @@ namespace Necrofy
 
             foreach (ToolStripMenuItem item in projectMenuItems) {
                 item.Enabled = true;
+            }
+        }
+
+        private void RenameCompleted(object sender, RenameCompletedEventArgs e) {
+            if (e.Results.referenceUpdateErrors.Count > 0) {
+                MessageBox.Show($"Error updating the following assets: {Environment.NewLine}{string.Join(Environment.NewLine, e.Results.referenceUpdateErrors)}",
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            foreach (EditorWindow editor in openEditors) {
+                editor.RenameAssetReferences(e.Results);
             }
         }
 

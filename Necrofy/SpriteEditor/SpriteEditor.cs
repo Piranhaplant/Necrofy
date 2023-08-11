@@ -126,6 +126,14 @@ namespace Necrofy
             UpdateSpritePreviews();
         }
 
+        public override void RenameAssetReferences(Asset.RenameResults results) {
+            List<string> graphicsAssets = loadedSprites.graphics.Select(g => g.name).ToList();
+            SpritesAsset.RenameReferences(AssetInfo, results, () => graphicsAssets);
+            for (int i = 0; i < graphicsAssets.Count; i++) {
+                loadedSprites.graphics[i].name = graphicsAssets[i];
+            }
+        }
+
         public override bool CanCopy => selectedObjects.Count > 0;
         public override bool CanPaste => true;
         public override bool CanDelete => selectedObjects.Count > 0;

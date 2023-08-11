@@ -221,7 +221,13 @@ namespace Necrofy
                 foreach (Creator creator in creators) {
                     NameInfo nameInfo = creator.GetNameInfo(pathParts, project);
                     if (nameInfo != null) {
-                        creator.RenameReferences(nameInfo, project, results);
+                        try {
+                            creator.RenameReferences(nameInfo, project, results);
+                        } catch (Exception ex) {
+                            Console.WriteLine(ex.Message);
+                            Console.WriteLine(ex.StackTrace);
+                            results.referenceUpdateErrors.Add($"{project.GetRelativePath(filename)}: {ex.Message}");
+                        }
                     }
                 }
             }
@@ -317,7 +323,7 @@ namespace Necrofy
             public static PathParts ParsePath(string path) {
                 PathParts pathParts = new PathParts();
 
-                string[] parts = path.Split(Path.DirectorySeparatorChar);
+                string[] parts = path.Split(Path.DirectorySeparatorChar, FolderSeparator);
                 pathParts.folder = string.Join(FolderSeparator.ToString(), parts, 0, parts.Length - 1);
 
                 string fileName = parts[parts.Length - 1];
@@ -435,9 +441,13 @@ namespace Necrofy
         public class RenameResults
         {
             /// <summary>The assets for each category that were successfully renamed. Maps from old name to new name</summary>
-            public Dictionary<AssetCategory, Dictionary<string, string>> renamedAssets = new Dictionary<AssetCategory, Dictionary<string, string>>();
+            public readonly Dictionary<AssetCategory, Dictionary<string, string>> renamedAssets = new Dictionary<AssetCategory, Dictionary<string, string>>();
             /// <summary>The assets that failed to rename. Maps from old relative filename to new relative filename</summary>
-            public Dictionary<string, string> failedRenames = new Dictionary<string, string>();
+            public readonly Dictionary<string, string> failedRenames = new Dictionary<string, string>();
+            /// <summary>List of error messages that occurred when updating references</summary>
+            public readonly List<string> referenceUpdateErrors = new List<string>();
+            /// <summary>Whether these results are from renaming a single file or a whole folder</summary>
+            public bool isFolder = false;
 
             public bool RenamedCategory(params AssetCategory[] categories) {
                 foreach (AssetCategory category in categories) {

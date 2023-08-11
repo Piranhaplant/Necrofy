@@ -136,6 +136,10 @@ namespace Necrofy
             level.Save(project);
         }
 
+        public override void RenameAssetReferences(Asset.RenameResults results) {
+            LevelAsset.RenameReferences(level.Level, results);
+        }
+
         public override int? LevelNumber => level.LevelNumber;
         
         public void NonTileSelectionChanged() {
