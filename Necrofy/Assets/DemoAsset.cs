@@ -67,7 +67,7 @@ namespace Necrofy
         
         class DemoCreator : Creator
         {
-            public override NameInfo GetNameInfo(NameInfo.PathParts pathParts, Project project) {
+            public override NameInfo GetNameInfo(PathParts pathParts, Project project) {
                 return DemoNameInfo.FromPath(pathParts);
             }
 
@@ -77,11 +77,15 @@ namespace Necrofy
 
             public override List<DefaultParams> GetDefaults() {
                 return new List<DefaultParams>() {
-                    new DefaultParams(0, new DemoNameInfo(0), extractFromNecrofyROM: true, versionAdded: new Version(2, 0)),
-                    new DefaultParams(1, new DemoNameInfo(1), extractFromNecrofyROM: true, versionAdded: new Version(2, 0)),
-                    new DefaultParams(2, new DemoNameInfo(2), extractFromNecrofyROM: true, versionAdded: new Version(2, 0)),
-                    new DefaultParams(3, new DemoNameInfo(3), extractFromNecrofyROM: true, versionAdded: new Version(2, 0)),
+                    new DefaultParams(0, new DemoNameInfo(0), extractFromNecrofyROM: true, versionAdded: new Version(2, 0), reserved: true),
+                    new DefaultParams(1, new DemoNameInfo(1), extractFromNecrofyROM: true, versionAdded: new Version(2, 0), reserved: true),
+                    new DefaultParams(2, new DemoNameInfo(2), extractFromNecrofyROM: true, versionAdded: new Version(2, 0), reserved: true),
+                    new DefaultParams(3, new DemoNameInfo(3), extractFromNecrofyROM: true, versionAdded: new Version(2, 0), reserved: true),
                 };
+            }
+
+            public override List<string> GetReservedFolders() {
+                return new List<string>() { Folder };
             }
 
             public override Asset FromRom(NameInfo nameInfo, NStream romStream, ROMInfo romInfo, int? size, out bool trackFreespace) {

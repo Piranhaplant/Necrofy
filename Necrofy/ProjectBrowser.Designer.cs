@@ -31,6 +31,11 @@
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.contextOpen = new System.Windows.Forms.ToolStripMenuItem();
             this.contextRename = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.contextCut = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextCopy = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextPaste = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextDelete = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -60,9 +65,14 @@
             // 
             this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.contextOpen,
-            this.contextRename});
+            this.contextRename,
+            this.contextSeparator1,
+            this.contextCut,
+            this.contextCopy,
+            this.contextPaste,
+            this.contextDelete});
             this.contextMenu.Name = "treeMenu";
-            this.contextMenu.Size = new System.Drawing.Size(118, 48);
+            this.contextMenu.Size = new System.Drawing.Size(118, 142);
             // 
             // contextOpen
             // 
@@ -79,6 +89,43 @@
             this.contextRename.Size = new System.Drawing.Size(117, 22);
             this.contextRename.Text = "Rename";
             this.contextRename.Click += new System.EventHandler(this.contextRename_Click);
+            // 
+            // contextSeparator1
+            // 
+            this.contextSeparator1.Name = "contextSeparator1";
+            this.contextSeparator1.Size = new System.Drawing.Size(114, 6);
+            // 
+            // contextCut
+            // 
+            this.contextCut.Image = global::Necrofy.Properties.Resources.scissors;
+            this.contextCut.Name = "contextCut";
+            this.contextCut.Size = new System.Drawing.Size(117, 22);
+            this.contextCut.Text = "Cut";
+            this.contextCut.Click += new System.EventHandler(this.contextCut_Click);
+            // 
+            // contextCopy
+            // 
+            this.contextCopy.Image = global::Necrofy.Properties.Resources.document_copy;
+            this.contextCopy.Name = "contextCopy";
+            this.contextCopy.Size = new System.Drawing.Size(117, 22);
+            this.contextCopy.Text = "Copy";
+            this.contextCopy.Click += new System.EventHandler(this.contextCopy_Click);
+            // 
+            // contextPaste
+            // 
+            this.contextPaste.Image = global::Necrofy.Properties.Resources.clipboard_paste;
+            this.contextPaste.Name = "contextPaste";
+            this.contextPaste.Size = new System.Drawing.Size(117, 22);
+            this.contextPaste.Text = "Paste";
+            this.contextPaste.Click += new System.EventHandler(this.contextPaste_Click);
+            // 
+            // contextDelete
+            // 
+            this.contextDelete.Image = global::Necrofy.Properties.Resources.cross_script;
+            this.contextDelete.Name = "contextDelete";
+            this.contextDelete.Size = new System.Drawing.Size(117, 22);
+            this.contextDelete.Text = "Delete";
+            this.contextDelete.Click += new System.EventHandler(this.contextDelete_Click);
             // 
             // ProjectBrowser
             // 
@@ -105,5 +152,10 @@
         private System.Windows.Forms.ContextMenuStrip contextMenu;
         private System.Windows.Forms.ToolStripMenuItem contextOpen;
         private System.Windows.Forms.ToolStripMenuItem contextRename;
+        private System.Windows.Forms.ToolStripSeparator contextSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem contextCut;
+        private System.Windows.Forms.ToolStripMenuItem contextCopy;
+        private System.Windows.Forms.ToolStripMenuItem contextPaste;
+        private System.Windows.Forms.ToolStripMenuItem contextDelete;
     }
 }

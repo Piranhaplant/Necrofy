@@ -45,7 +45,7 @@ namespace Necrofy
                 return new EditorAsset<T>((EditorNameInfo)nameInfo, filename, converters);
             }
 
-            public override NameInfo GetNameInfo(NameInfo.PathParts pathParts, Project project) {
+            public override NameInfo GetNameInfo(PathParts pathParts, Project project) {
                 throw new NotImplementedException();
             }
 

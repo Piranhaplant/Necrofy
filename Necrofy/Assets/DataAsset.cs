@@ -57,7 +57,7 @@ namespace Necrofy
                 });
             }
 
-            public override NameInfo GetNameInfo(NameInfo.PathParts pathParts, Project project) {
+            public override NameInfo GetNameInfo(PathParts pathParts, Project project) {
                 return DataNameInfo.FromPath(pathParts);
             }
 
@@ -67,7 +67,7 @@ namespace Necrofy
 
             public override List<DefaultParams> GetDefaults() {
                 return new List<DefaultParams>() {
-                    new DefaultParams(0x12f37, new DataNameInfo(LevelTitleFolder, LevelTitleCharacterMapName, 0x12f37), 0xbc, extractFromNecrofyROM: true),
+                    new DefaultParams(0x12f37, new DataNameInfo(LevelTitleFolder, LevelTitleCharacterMapName, 0x12f37), 0xbc, extractFromNecrofyROM: true, reserved: true),
                 };
             }
 

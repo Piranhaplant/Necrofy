@@ -140,18 +140,22 @@ namespace Necrofy
             if (e.Button == MouseButtons.Right && e.Node.Tag is AssetTree.Node node) {
                 contextOpen.Visible = node is AssetTree.AssetEntry;
                 contextOpen.Enabled = node is AssetTree.AssetEntry entry && entry.Asset.Editable;
-                contextRename.Enabled = CanRename(node);
+
+                bool modifiable = !IsReserved(node);
+                contextRename.Enabled = modifiable;
+                contextCut.Enabled = modifiable;
+                contextCopy.Enabled = modifiable;
+                contextDelete.Enabled = modifiable;
+
                 contextMenu.Show(Cursor.Position);
             }
         }
 
-        private HashSet<string> reservedFolders = new HashSet<string>() { Asset.SpritesFolder, Asset.LevelTitleFolder, Asset.TilesetFolder, Asset.MiscFolder, LevelAsset.Folder, DemoAsset.Folder };
-
-        private bool CanRename(AssetTree.Node node) {
+        private bool IsReserved(AssetTree.Node node) {
             if (node is AssetTree.Folder folder) {
-                return !(folder.Parent.Parent == null && reservedFolders.Contains(folder.Name));
+                return Asset.IsFolderReserved(folder.GetFilename("").Replace(Path.DirectorySeparatorChar, Asset.FolderSeparator));
             } else if (node is AssetTree.AssetEntry asset) {
-                return asset.Asset.CanRename && !(asset.Parent.Parent != null && asset.Parent.Parent.Parent == null && reservedFolders.Contains(asset.Parent.Name));
+                return Asset.IsAssetReserved(asset.Asset);
             }
             return false;
         }
@@ -201,6 +205,35 @@ namespace Necrofy
                 }
             }
             tree.LabelEdit = false;
+        }
+
+        private void contextCut_Click(object sender, EventArgs e) {
+            project.Assets.Cut((AssetTree.Node)tree.SelectedNode.Tag);
+        }
+
+        private void contextCopy_Click(object sender, EventArgs e) {
+            project.Assets.Copy((AssetTree.Node)tree.SelectedNode.Tag);
+        }
+
+        private void contextPaste_Click(object sender, EventArgs e) {
+            try {
+                project.Assets.Paste((AssetTree.Node)tree.SelectedNode.Tag);
+            } catch (Exception ex) {
+                Console.WriteLine(ex.StackTrace);
+                MessageBox.Show($"Error pasting: {Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void contextDelete_Click(object sender, EventArgs e) {
+            AssetTree.Node node = (AssetTree.Node)tree.SelectedNode.Tag;
+            if (MessageBox.Show($"Are you sure you want to permanently delete {node.Name}? This cannot be undone.", "Delete?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+                try {
+                    project.Assets.Delete(node);
+                } catch (Exception ex) {
+                    Console.WriteLine(ex.StackTrace);
+                    MessageBox.Show($"Error deleting: {Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
     }
 }

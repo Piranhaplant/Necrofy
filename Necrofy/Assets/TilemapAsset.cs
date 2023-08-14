@@ -62,7 +62,7 @@ namespace Necrofy
                 });
             }
 
-            public override NameInfo GetNameInfo(NameInfo.PathParts pathParts, Project project) {
+            public override NameInfo GetNameInfo(PathParts pathParts, Project project) {
                 return TilemapNameInfo.FromPath(pathParts);
             }
 
@@ -72,7 +72,7 @@ namespace Necrofy
 
             public override List<DefaultParams> GetDefaults() {
                 return new List<DefaultParams>() {
-                    new DefaultParams(0xb5641, new TilemapNameInfo(LevelTitleFolder, DefaultName, 0xb5641), 0x1200, extractFromNecrofyROM: true, options: new AssetOptions.TilemapOptions(128, true, false, Hinting.Type.LevelTitle)),
+                    new DefaultParams(0xb5641, new TilemapNameInfo(LevelTitleFolder, DefaultName, 0xb5641), 0x1200, extractFromNecrofyROM: true, options: new AssetOptions.TilemapOptions(128, true, false, Hinting.Type.LevelTitle), reserved: true),
                     new DefaultParams(0xf5700, new TilemapNameInfo(TitleScreenFolder, DefaultName, 0xf5700), 0x780, extractFromNecrofyROM: true, options: new AssetOptions.TilemapOptions(32, true, false)),
 
                     new DefaultParams(0xd4000, new TilemapNameInfo(GetTilesetFolder(Castle), DefaultName, compressed: true), options: new AssetOptions.TilemapOptions(8, false, false, Hinting.Type.Tileset)),

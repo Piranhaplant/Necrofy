@@ -56,7 +56,7 @@ namespace Necrofy
                 });
             }
 
-            public override NameInfo GetNameInfo(NameInfo.PathParts pathParts, Project project) {
+            public override NameInfo GetNameInfo(PathParts pathParts, Project project) {
                 return PasswordsNameInfo.FromPath(pathParts);
             }
 
@@ -66,7 +66,7 @@ namespace Necrofy
 
             public override List<DefaultParams> GetDefaults() {
                 return new List<DefaultParams>() {
-                    new DefaultParams(ROMPointers.PasswordData, new PasswordsNameInfo(), extractFromNecrofyROM: true),
+                    new DefaultParams(ROMPointers.PasswordData, new PasswordsNameInfo(), extractFromNecrofyROM: true, reserved: true),
                 };
             }
 

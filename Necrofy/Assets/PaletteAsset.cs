@@ -64,7 +64,7 @@ namespace Necrofy
                 });
             }
 
-            public override NameInfo GetNameInfo(NameInfo.PathParts pathParts, Project project) {
+            public override NameInfo GetNameInfo(PathParts pathParts, Project project) {
                 return PaletteNameInfo.FromPath(pathParts);
             }
 
@@ -74,8 +74,8 @@ namespace Necrofy
 
             public override List<DefaultParams> GetDefaults() {
                 return new List<DefaultParams>() {
-                    new DefaultParams(0xf0f76, new PaletteNameInfo(SpritesFolder, DefaultSpritePaletteName, 0xf0f76), extractFromNecrofyROM: true),
-                    new DefaultParams(0x1f08c, new PaletteNameInfo(LevelTitleFolder, DefaultName, 0x1f08c), extractFromNecrofyROM: true),
+                    new DefaultParams(0xf0f76, new PaletteNameInfo(SpritesFolder, DefaultSpritePaletteName, 0xf0f76), extractFromNecrofyROM: true, reserved: true),
+                    new DefaultParams(0x1f08c, new PaletteNameInfo(LevelTitleFolder, DefaultName, 0x1f08c), extractFromNecrofyROM: true, reserved: true),
                     new DefaultParams(0x1f28c, new PaletteNameInfo(TitleScreenFolder, DefaultName, 0x1f28c), extractFromNecrofyROM: true),
 
                     new DefaultParams(0xf0e76, new PaletteNameInfo(GetTilesetFolder(Grass), "Normal", 0xf0e76), extractFromNecrofyROM: true),

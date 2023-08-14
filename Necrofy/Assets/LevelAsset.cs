@@ -95,12 +95,16 @@ namespace Necrofy
                 return (LevelAsset)FromFile(nameInfo, filename);
             }
 
-            public override NameInfo GetNameInfo(NameInfo.PathParts pathParts, Project project) {
+            public override NameInfo GetNameInfo(PathParts pathParts, Project project) {
                 return LevelNameInfo.FromPath(pathParts, n => GetDisplayName(n, project));
             }
 
             public override Asset FromFile(NameInfo nameInfo, string filename) {
                 return new LevelAsset((LevelNameInfo)nameInfo, filename);
+            }
+
+            public override List<string> GetReservedFolders() {
+                return new List<string>() { Folder };
             }
 
             public override void RenameReferences(NameInfo nameInfo, Project project, RenameResults results) {

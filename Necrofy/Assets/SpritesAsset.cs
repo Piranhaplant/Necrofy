@@ -47,8 +47,8 @@ namespace Necrofy
             bool updated = false;
             if (!results.isFolder && results.RenamedCategory(AssetCategory.Graphics)) {
                 KeyValuePair<string, string> names = results.renamedAssets[AssetCategory.Graphics].First();
-                NameInfo.PathParts oldName = NameInfo.ParsePath(names.Key);
-                NameInfo.PathParts newName = NameInfo.ParsePath(names.Value);
+                PathParts oldName = PathParts.Parse(names.Key);
+                PathParts newName = PathParts.Parse(names.Value);
                 if (oldName.folder == nameInfo.Parts.folder && newName.folder == nameInfo.Parts.folder) {
                     List<string> graphics = graphicsListGetter();
                     for (int i = 0; i < graphics.Count; i++) {
@@ -72,7 +72,7 @@ namespace Necrofy
                 });
             }
 
-            public override NameInfo GetNameInfo(NameInfo.PathParts pathParts, Project project) {
+            public override NameInfo GetNameInfo(PathParts pathParts, Project project) {
                 return SpritesNameInfo.FromPath(pathParts);
             }
 
@@ -82,7 +82,7 @@ namespace Necrofy
 
             public override List<DefaultParams> GetDefaults() {
                 return new List<DefaultParams>() {
-                    new DefaultParams(0, new SpritesNameInfo(SpritesFolder, DefaultFileName), extractFromNecrofyROM: true),
+                    new DefaultParams(0, new SpritesNameInfo(SpritesFolder, DefaultFileName), extractFromNecrofyROM: true, reserved: true),
                 };
             }
 

@@ -6,7 +6,6 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Drawing;
 using System.Runtime.CompilerServices;
-using static Necrofy.Asset.NameInfo;
 
 namespace Necrofy
 {
@@ -109,7 +108,7 @@ namespace Necrofy
         /// <param name="filename">The filename of the asset within the project</param>
         /// <returns>The asset, or null if no asset could be created from the file</returns>
         public static Asset FromFile(Project project, string filename) {
-            NameInfo.PathParts pathParts = NameInfo.ParsePath(filename);
+            PathParts pathParts = PathParts.Parse(filename);
             foreach (Creator creator in creators) {
                 NameInfo nameInfo = creator.GetNameInfo(pathParts, project);
                 if (nameInfo != null) {
@@ -119,7 +118,7 @@ namespace Necrofy
             return null;
         }
         public static NameInfo GetInfo(Project project, string filename) {
-            NameInfo.PathParts pathParts = NameInfo.ParsePath(filename);
+            PathParts pathParts = PathParts.Parse(filename);
             foreach (Creator creator in creators) {
                 NameInfo nameInfo = creator.GetNameInfo(pathParts, project);
                 if (nameInfo != null) {
@@ -217,7 +216,7 @@ namespace Necrofy
         /// <param name="results">Results containing the list of renamed assets</param>
         public static void RenameAssetReferences(Project project, RenameResults results) {
             foreach (string filename in Directory.GetFiles(project.path, "*", SearchOption.AllDirectories)) {
-                NameInfo.PathParts pathParts = NameInfo.ParsePath(project.GetRelativePath(filename));
+                PathParts pathParts = PathParts.Parse(project.GetRelativePath(filename));
                 foreach (Creator creator in creators) {
                     NameInfo nameInfo = creator.GetNameInfo(pathParts, project);
                     if (nameInfo != null) {
@@ -231,6 +230,40 @@ namespace Necrofy
                     }
                 }
             }
+        }
+
+        private static HashSet<NameInfo> reservedAssets = null;
+        /// <summary>Gets whether the given asset is reserved (can't be renamed or deleted)</summary>
+        /// <param name="nameInfo">The asset</param>
+        /// <returns>Whether the asset is reserved</returns>
+        public static bool IsAssetReserved(NameInfo nameInfo) {
+            if (reservedAssets == null) {
+                reservedAssets = new HashSet<NameInfo>();
+                foreach (Creator creator in creators) {
+                    foreach (DefaultParams defaults in creator.GetDefaults()) {
+                        if (defaults.reserved) {
+                            reservedAssets.Add(defaults.nameInfo);
+                        }
+                    }
+                }
+            }
+            return reservedAssets.Contains(nameInfo);
+        }
+
+        private static HashSet<string> reservedFolders = null;
+        /// <summary>Gets whether the given folder is reserved (can't be renamed or deleted)</summary>
+        /// <param name="folder">The folder, with Asset path separators</param>
+        /// <returns>Whether the folder is reserved</returns>
+        public static bool IsFolderReserved(string folder) {
+            if (reservedFolders == null) {
+                reservedFolders = new HashSet<string>() { LevelTitleFolder, SpritesFolder, TilesetFolder, MiscFolder };
+                foreach (Creator creator in creators) {
+                    foreach (string f in creator.GetReservedFolders()) {
+                        reservedFolders.Add(f);
+                    }
+                }
+            }
+            return reservedFolders.Contains(folder);
         }
 
         protected static string GetTilesetFolder(string tileset) {
@@ -252,7 +285,7 @@ namespace Necrofy
         public abstract class NameInfo
         {
             /// <summary>Condences the NameInfo down to a single string that will be used to reference the asset</summary>
-            public string Name { get; private set;  }
+            public string Name { get; private set; }
             public ParsedName ParsedName { get; private set; }
             public PathParts Parts { get; private set; }
             /// <summary>The name that will be displayed to the user in the project browser</summary>
@@ -273,7 +306,7 @@ namespace Necrofy
                 }
                 ParsedName = new ParsedName(Name);
             }
-            
+
             /// <summary>Gets whether the asset has an editor for it</summary>
             public virtual bool Editable => false;
             public virtual bool CanRename => false;
@@ -319,8 +352,37 @@ namespace Necrofy
                 return Parts.GetHashCode();
             }
 
+            public string GetFilename(string projectDir, bool createDirectories = false, string replacementName = null) {
+                return Parts.GetFilename(projectDir, createDirectories, replacementName);
+            }
+
+            public string FindFilename(string projectDir) {
+                return Parts.FindFilename(projectDir);
+            }
+        }
+
+        /// <summary>Different parts of an asset path that are used to convert to and from filenames</summary>
+        public class PathParts
+        {
+            public string folder;
+            public string name;
+            public string fileExtension;
+            public int? pointer;
+            public bool compressed;
+            public bool skipped;
+
+            public PathParts() { }
+            public PathParts(string folder, string name, string fileExtension, int? pointer, bool compressed, bool skipped = false) {
+                this.folder = folder;
+                this.name = name;
+                this.fileExtension = fileExtension;
+                this.pointer = pointer;
+                this.compressed = compressed;
+                this.skipped = skipped;
+            }
+
             /// <summary>Parses the individual parts out of an asset path</summary>
-            public static PathParts ParsePath(string path) {
+            public static PathParts Parse(string path) {
                 PathParts pathParts = new PathParts();
 
                 string[] parts = path.Split(Path.DirectorySeparatorChar, FolderSeparator);
@@ -353,87 +415,66 @@ namespace Necrofy
 
             /// <summary>Gets the filename for the asset, optionally creating any intermediate directories if they don't exist</summary>
             public string GetFilename(string projectDir, bool createDirectories = false, string replacementName = null) {
-                string directory = Path.Combine(projectDir, Path.Combine(Parts.folder.Split(FolderSeparator)));
+                string directory = Path.Combine(projectDir, string.Join(Path.DirectorySeparatorChar.ToString(), folder.Split(FolderSeparator)));
                 if (createDirectories && !Directory.Exists(directory)) {
                     Directory.CreateDirectory(directory);
                 }
-                string filename = replacementName ?? Parts.name;
-                if (Parts.skipped) {
+                string filename = replacementName ?? name;
+                if (skipped) {
                     filename += SkipFileExtension;
                 }
-                if (Parts.pointer != null) {
-                    filename += "@" + Parts.pointer.Value.ToString("X6");
+                if (pointer != null) {
+                    filename += "@" + pointer.Value.ToString("X6");
                 }
-                if (Parts.compressed) {
+                if (compressed) {
                     filename += "#";
                 }
-                if (Parts.fileExtension != null) {
-                    filename += "." + Parts.fileExtension;
+                if (fileExtension != null) {
+                    filename += "." + fileExtension;
                 }
                 return Path.Combine(directory, filename);
             }
 
             /// <summary>Finds the name of an existing file that matches this name with any pointer.</summary>
             public string FindFilename(string projectDir) {
-                string directory = Path.Combine(projectDir, Path.Combine(Parts.folder.Split(FolderSeparator)));
-                string regex = "^" + Regex.Escape(Parts.name) + "(" + Regex.Escape(SkipFileExtension) + ")?(@[0-9A-Fa-f]{6})?(#)?";
-                if (Parts.fileExtension != null) {
-                    regex += Regex.Escape("." + Parts.fileExtension);
+                string directory = Path.Combine(projectDir, Path.Combine(folder.Split(FolderSeparator)));
+                string regex = "^" + Regex.Escape(name) + "(" + Regex.Escape(SkipFileExtension) + ")?(@[0-9A-Fa-f]{6})?(#)?";
+                if (fileExtension != null) {
+                    regex += Regex.Escape("." + fileExtension);
                 }
                 regex += "$";
                 foreach (string file in Directory.GetFiles(directory)) {
                     Match m = Regex.Match(Path.GetFileName(file), regex);
                     if (m.Success) {
-                        Parts.pointer = m.Groups[2].Length == 0 ? null : (int?)Convert.ToInt32(m.Groups[2].Value.Substring(1), 16);
-                        Parts.compressed = m.Groups[3].Length > 0;
-                        Parts.skipped = m.Groups[1].Length > 0;
+                        pointer = m.Groups[2].Length == 0 ? null : (int?)Convert.ToInt32(m.Groups[2].Value.Substring(1), 16);
+                        compressed = m.Groups[3].Length > 0;
+                        skipped = m.Groups[1].Length > 0;
                         return file;
                     }
                 }
-                throw new AssetNotFoundException("Could not find asset " + Parts.folder + FolderSeparator + Parts.name);
+                throw new AssetNotFoundException("Could not find asset " + folder + FolderSeparator + name);
             }
-            
-            /// <summary>Different parts of an asset path that are used to convert to and from filenames</summary>
-            public class PathParts
-            {
-                public string folder;
-                public string name;
-                public string fileExtension;
-                public int? pointer;
-                public bool compressed;
-                public bool skipped;
 
-                public PathParts() { }
-                public PathParts(string folder, string name, string fileExtension, int? pointer, bool compressed, bool skipped = false) {
-                    this.folder = folder;
-                    this.name = name;
-                    this.fileExtension = fileExtension;
-                    this.pointer = pointer;
-                    this.compressed = compressed;
-                    this.skipped = skipped;
-                }
+            public override bool Equals(object obj) {
+                var parts = obj as PathParts;
+                return parts != null &&
+                        folder == parts.folder &&
+                        name == parts.name &&
+                        fileExtension == parts.fileExtension &&
+                        EqualityComparer<int?>.Default.Equals(pointer, parts.pointer) &&
+                        compressed == parts.compressed &&
+                        skipped == parts.skipped;
+            }
 
-                public override bool Equals(object obj) {
-                    var parts = obj as PathParts;
-                    return parts != null &&
-                           folder == parts.folder &&
-                           name == parts.name &&
-                           fileExtension == parts.fileExtension &&
-                           EqualityComparer<int?>.Default.Equals(pointer, parts.pointer) &&
-                           compressed == parts.compressed &&
-                           skipped == parts.skipped;
-                }
-
-                public override int GetHashCode() {
-                    var hashCode = 1762610141;
-                    hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(folder);
-                    hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(name);
-                    hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(fileExtension);
-                    hashCode = hashCode * -1521134295 + EqualityComparer<int?>.Default.GetHashCode(pointer);
-                    hashCode = hashCode * -1521134295 + compressed.GetHashCode();
-                    hashCode = hashCode * -1521134295 + skipped.GetHashCode();
-                    return hashCode;
-                }
+            public override int GetHashCode() {
+                var hashCode = 1762610141;
+                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(folder);
+                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(name);
+                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(fileExtension);
+                hashCode = hashCode * -1521134295 + EqualityComparer<int?>.Default.GetHashCode(pointer);
+                hashCode = hashCode * -1521134295 + compressed.GetHashCode();
+                hashCode = hashCode * -1521134295 + skipped.GetHashCode();
+                return hashCode;
             }
         }
 
@@ -493,7 +534,7 @@ namespace Necrofy
             /// <summary>Gets the NameInfo of an asset created from the given path</summary>
             /// <param name="pathParts">The path parts</param>
             /// <param name="project">The project</param>
-            public abstract NameInfo GetNameInfo(NameInfo.PathParts pathParts, Project project);
+            public abstract NameInfo GetNameInfo(PathParts pathParts, Project project);
             /// <summary>Creates a new asset from the given file</summary>
             /// <param name="nameInfo">The name of the asset. This will be the object returned from GetNameInfo</param>
             /// <param name="filename">The full filename of the asset</param>
@@ -504,6 +545,8 @@ namespace Necrofy
 
             /// <summary>Gets a list of assets that exist in a clean ROM for the asset type</summary>
             public virtual List<DefaultParams> GetDefaults() { return new List<DefaultParams>(); }
+            /// <summary>Gets a list of folders that can't be renamed or deleted. Uses Asset path separator</summary>
+            public virtual List<string> GetReservedFolders() { return new List<string>(); }
             /// <summary>Creates an asset from the given ROM</summary>
             /// <param name="nameInfo">The NameInfo for the asset. This will be the value from either GetDefaults or GetNameInfoForName</param>
             /// <param name="romStream">The rom stream, positioned at the start of the asset</param>
@@ -521,7 +564,7 @@ namespace Necrofy
             public virtual NameInfo GetNameInfoForExtraction(ExtractionPreset preset) { return null; }
             /// <summary>Update any referenced assets if they are found in the rename results</summary>
             /// <param name="nameInfo">The asset to update</param>
-            /// <param name="filename">The project</param>
+            /// <param name="project">The project</param>
             /// <param name="results">The rename results</param>
             public virtual void RenameReferences(NameInfo nameInfo, Project project, RenameResults results) { }
         }
@@ -535,8 +578,9 @@ namespace Necrofy
             public readonly bool extractFromNecrofyROM;
             public readonly Version versionAdded;
             public readonly AssetOptions.Options options;
+            public readonly bool reserved;
 
-            public DefaultParams(int pointer, NameInfo nameInfo, int? size = null, bool extractFromNecrofyROM = false, Version versionAdded = default, AssetOptions.Options options = null) {
+            public DefaultParams(int pointer, NameInfo nameInfo, int? size = null, bool extractFromNecrofyROM = false, Version versionAdded = default, AssetOptions.Options options = null, bool reserved = false) {
                 this.pointer = pointer;
                 this.nameInfo = nameInfo;
                 this.size = size;
@@ -547,6 +591,7 @@ namespace Necrofy
                     this.versionAdded = versionAdded;
                 }
                 this.options = options;
+                this.reserved = reserved;
             }
         }
     }

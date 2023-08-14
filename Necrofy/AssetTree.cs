@@ -7,11 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Necrofy
 {
     class AssetTree
     {
+        private const string ClipboardDropEffect = "Preferred DropEffect";
+
         private readonly Project project;
         private readonly FileSystemWatcher watcher;
         
@@ -71,6 +74,90 @@ namespace Necrofy
             } else if (node is AssetEntry asset) {
                 string newFilename = asset.Asset.GetFilename(project.path, replacementName: newName);
                 File.Move(oldFilename, newFilename);
+            }
+        }
+
+        public void Delete(Node node) {
+            if (node is Folder folder) {
+                Directory.Delete(folder.GetFilename(project.path), true);
+            } else if (node is AssetEntry asset) {
+                File.Delete(asset.GetFilename(project.path));
+            }
+        }
+
+        public void Cut(Node node) {
+            DataObject clipboardData = new DataObject();
+            clipboardData.SetFileDropList(new System.Collections.Specialized.StringCollection() { node.GetFilename(project.path) });
+            clipboardData.SetData(ClipboardDropEffect, new MemoryStream(BitConverter.GetBytes((int)DragDropEffects.Move)));
+            Clipboard.SetDataObject(clipboardData);
+        }
+
+        public void Copy(Node node) {
+            DataObject clipboardData = new DataObject();
+            clipboardData.SetFileDropList(new System.Collections.Specialized.StringCollection() { node.GetFilename(project.path) });
+            Clipboard.SetDataObject(clipboardData);
+        }
+
+        public void Paste(Node target) {
+            if (target is AssetEntry asset) {
+                target = target.Parent;
+            }
+            string destinationFolder = target.GetFilename(project.path);
+
+            bool doMove = false;
+            MemoryStream dropEffect = Clipboard.GetData(ClipboardDropEffect) as MemoryStream;
+            if (dropEffect != null) {
+                DragDropEffects effectType = (DragDropEffects)dropEffect.ReadByte();
+                doMove = effectType.HasFlag(DragDropEffects.Move);
+            }
+
+            foreach (string file in Clipboard.GetFileDropList()) {
+                string destinationFile = Path.Combine(destinationFolder, Path.GetFileName(file));
+                if (Directory.Exists(file)) {
+                    destinationFile = GetUniqueFilename(destinationFile, true);
+                    if (doMove) {
+                        Directory.Move(file, destinationFile);
+                    } else {
+                        CopyDirectory(file, destinationFile);
+                    }
+                } else {
+                    destinationFile = GetUniqueFilename(destinationFile, false);
+                    if (doMove) {
+                        File.Move(file, destinationFile);
+                    } else {
+                        File.Copy(file, destinationFile);
+                    }
+                }
+            }
+        }
+
+        private static string GetUniqueFilename(string baseFilename, bool isDirectory) {
+            string newFilename = baseFilename;
+            int num = 1;
+            if (isDirectory) {
+                while (Directory.Exists(newFilename)) {
+                    num += 1;
+                    newFilename = baseFilename + num.ToString();
+                }
+            } else {
+                Asset.PathParts pathParts = Asset.PathParts.Parse(baseFilename);
+                string baseName = pathParts.name;
+                while (File.Exists(newFilename)) {
+                    num += 1;
+                    pathParts.name = baseName + num.ToString();
+                    newFilename = pathParts.GetFilename("");
+                }
+            }
+            return newFilename;
+        }
+
+        private static void CopyDirectory(string sourceDirectory, string destDirectory) {
+            Directory.CreateDirectory(destDirectory);
+            foreach (string subDir in Directory.GetDirectories(sourceDirectory)) {
+                CopyDirectory(subDir, Path.Combine(destDirectory, Path.GetFileName(subDir)));
+            }
+            foreach (string file in Directory.GetFiles(sourceDirectory)) {
+                File.Copy(file, Path.Combine(destDirectory, Path.GetFileName(file)));
             }
         }
 
