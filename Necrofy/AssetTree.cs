@@ -72,6 +72,9 @@ namespace Necrofy
                 string newFilename = Path.Combine(Path.GetDirectoryName(oldFilename), newName);
                 Directory.Move(oldFilename, newFilename);
             } else if (node is AssetEntry asset) {
+                if (!asset.Asset.CanBeRenamedTo(ref newName)) {
+                    throw new Exception($"Name '{newName}' is not valid.");
+                }
                 string newFilename = asset.Asset.GetFilename(project.path, replacementName: newName);
                 File.Move(oldFilename, newFilename);
             }

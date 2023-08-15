@@ -124,7 +124,7 @@ namespace Necrofy
             }
             public DemoNameInfo(int slot) : this(new PathParts(Folder, FilenamePrefix + slot.ToString(), Extension, null, false), slot) { }
 
-            public override string DisplayName => "Demo " + slot.ToString();
+            public override string DisplayName => "Demo" + slot.ToString();
             public override AssetCategory Category => AssetCat;
 
             protected override void RenamedTo(NameInfo newNameInfo) {

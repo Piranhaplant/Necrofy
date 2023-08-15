@@ -189,21 +189,26 @@ namespace Necrofy
 
         private void contextRename_Click(object sender, EventArgs e) {
             tree.LabelEdit = true;
+            AssetTree.Node node = (AssetTree.Node)tree.SelectedNode.Tag;
+            if (node is AssetTree.AssetEntry asset) {
+                tree.SelectedNode.Text = asset.Asset.Parts.name;
+            }
             tree.SelectedNode.BeginEdit();
         }
 
         private void tree_AfterLabelEdit(object sender, NodeLabelEditEventArgs e) {
-            if (e.Label == null || e.Label.Length == 0) {
-                e.CancelEdit = true;
-            } else {
+            AssetTree.Node node = (AssetTree.Node)e.Node.Tag;
+            e.CancelEdit = true;
+            if (e.Label != null && e.Label.Length > 0) {
                 try {
-                    project.Assets.Rename((AssetTree.Node)e.Node.Tag, e.Label);
+                    project.Assets.Rename(node, e.Label);
                 } catch (Exception ex) {
                     e.CancelEdit = true;
                     Console.WriteLine(ex.StackTrace);
                     MessageBox.Show($"Error renaming file: {Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+            e.Node.Text = node.DisplayName;
             tree.LabelEdit = false;
         }
 

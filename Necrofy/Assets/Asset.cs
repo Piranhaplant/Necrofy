@@ -321,6 +321,11 @@ namespace Necrofy
             /// <summary>Called when the file contents located at this name have changed</summary>
             public virtual void Refresh() { }
 
+            /// <summary>Gets whether this asset can be renamed to the given name, and updates the new name if necessary</summary>
+            /// <param name="newName">The name to rename to. Updated to be simplified, if necessary</param>
+            /// <returns>Whether or not the new name is valid</returns>
+            public virtual bool CanBeRenamedTo(ref string newName) { return true; }
+
             /// <summary>Attempts to rename the NameInfo to the given name</summary>
             /// <param name="project">The project</param>
             /// <param name="newRelativeFilename">The new filename of the asset, relative to the project</param>

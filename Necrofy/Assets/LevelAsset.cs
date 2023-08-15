@@ -167,6 +167,14 @@ namespace Necrofy
                 displayName = displayNameGetter(this);
             }
 
+            public override bool CanBeRenamedTo(ref string newName) {
+                if (int.TryParse(newName, out int num) && num >= 0) {
+                    newName = num.ToString();
+                    return true;
+                }
+                return false;
+            }
+
             protected override void RenamedTo(NameInfo newNameInfo) {
                 LevelNameInfo levelNameInfo = (LevelNameInfo)newNameInfo;
                 levelNum = levelNameInfo.levelNum;
@@ -178,7 +186,7 @@ namespace Necrofy
                 if (parts.fileExtension != Extension) return null;
                 if (parts.pointer != null) return null;
                 if (parts.compressed) return null;
-                if (!int.TryParse(parts.name, out int levelNum)) return null;
+                if (!int.TryParse(parts.name, out int levelNum) || levelNum < 0) return null;
                 return new LevelNameInfo(parts, levelNum, displayNameGetter);
             }
         }
