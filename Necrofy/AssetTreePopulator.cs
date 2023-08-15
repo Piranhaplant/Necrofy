@@ -32,7 +32,7 @@ namespace Necrofy
         };
 
         private readonly AssetTree tree;
-        protected readonly NC root;
+        protected NC root;
 
         private readonly ImageList treeImages = new ImageList();
         private readonly Dictionary<AssetCategory, int> displayImageIndexes = new Dictionary<AssetCategory, int>();
@@ -48,6 +48,11 @@ namespace Necrofy
 
         protected void Load() {
             SetImageList(treeImages);
+            if (!string.IsNullOrEmpty(RootFolderName)) {
+                N node = CreateChild(root, tree.Root, true, FolderImageIndex, true);
+                SetText(node, RootFolderName);
+                root = GetChildren(node);
+            }
             PopulateTree(root, tree.Root);
             tree.AssetChanged += AssetChanged;
             tree.AssetAdded += AssetAdded;
@@ -74,7 +79,7 @@ namespace Necrofy
         }
 
         private void PopulateFolder(NC parent, AssetTree.Folder subFolder, bool atEnd) {
-            N child = CreateChild(parent, subFolder, subFolder, true, FolderImageIndex, atEnd);
+            N child = CreateChild(parent, subFolder, true, FolderImageIndex, atEnd);
 
             PopulateTree(GetChildren(child), subFolder);
             if (IsEmpty(child)) {
@@ -84,7 +89,7 @@ namespace Necrofy
 
         private void PopulateAsset(NC parent, AssetTree.AssetEntry entry, bool atEnd) {
             if (IncludeAsset(entry)) {
-                N child = CreateChild(parent, entry, entry, false, GetImageIndex(entry.Asset.Category), atEnd);
+                N child = CreateChild(parent, entry, false, GetImageIndex(entry.Asset.Category), atEnd);
 
                 if (!entry.Asset.Editable) {
                     SetColor(child, SystemColors.GrayText);
@@ -94,14 +99,14 @@ namespace Necrofy
             }
         }
 
-        private N CreateChild(NC parent, AssetTree.Node assetTreeNode, object tag, bool isFolder, int imageIndex, bool atEnd) {
+        private N CreateChild(NC parent, AssetTree.Node assetTreeNode, bool isFolder, int imageIndex, bool atEnd) {
             int index;
             if (atEnd) {
                 index = GetAssetTreeNodes(parent).Count;
             } else {
                 index = GetInsertionPoint(parent, assetTreeNode);
             }
-            N child = CreateChild(assetTreeNode.DisplayName, tag, isFolder, imageIndex);
+            N child = CreateNode(assetTreeNode.DisplayName, assetTreeNode, isFolder, imageIndex);
             Insert(parent, child, index);
             return child;
         }
@@ -186,7 +191,7 @@ namespace Necrofy
         }
 
         protected abstract void SetImageList(ImageList imageList);
-        protected abstract N CreateChild(string text, object tag, bool isFolder, int imageIndex);
+        protected abstract N CreateNode(string text, object tag, bool isFolder, int imageIndex);
         protected abstract List<AssetTree.Node> GetAssetTreeNodes(NC parent);
         protected abstract NC GetChildren(N node);
         protected abstract N GetParent(N node);
@@ -200,5 +205,6 @@ namespace Necrofy
         protected virtual bool IncludeAsset(AssetTree.AssetEntry entry) {
             return true;
         }
+        protected virtual string RootFolderName => "";
     }
 }

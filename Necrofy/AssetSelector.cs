@@ -78,7 +78,7 @@ namespace Necrofy
 
             protected override void SetImageList(ImageList imageList) => comboBox.Images = imageList;
 
-            protected override ComboTreeNode CreateChild(string text, object tag, bool isFolder, int imageIndex) {
+            protected override ComboTreeNode CreateNode(string text, object tag, bool isFolder, int imageIndex) {
                 ComboTreeNode node = new ComboTreeNode(text);
                 node.Name = text;
                 node.Tag = tag;

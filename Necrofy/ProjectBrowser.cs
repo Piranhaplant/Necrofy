@@ -31,30 +31,31 @@ namespace Necrofy
             tree.Nodes.Clear();
 
             if (project != null) {
-                treePopulator = new TreeViewAssetTreePopulator(project.Assets, tree);
+                treePopulator = new TreeViewAssetTreePopulator(project.Assets, tree, Path.GetFileName(Path.GetDirectoryName(project.path)));
+                tree.Nodes[0].Expand(); // Expand root folder
                 if (project.userSettings.FolderStates != null) {
-                    LoadFolderStates(tree.Nodes, project.userSettings.FolderStates);
+                    LoadFolderStates(tree.Nodes[0].Nodes, project.userSettings.FolderStates);
                 } else {
-                    tree.Nodes[LevelAsset.Folder]?.Expand();
+                    tree.Nodes[0].Nodes[LevelAsset.Folder]?.Expand();
                 }
-                if (tree.Nodes.Count > 0) {
-                    tree.SelectedNode = tree.Nodes[0]; // Scroll to the top regardless of what folders were opened
-                }
+                tree.SelectedNode = tree.Nodes[0]; // Scroll to the top regardless of what folders were opened
             }
         }
 
         private class TreeViewAssetTreePopulator : AssetTreePopulator<TreeNodeCollection, TreeNode>
         {
             private readonly TreeView treeView;
+            private readonly string projectName;
 
-            public TreeViewAssetTreePopulator(AssetTree tree, TreeView treeView) : base(tree, treeView.Nodes) {
+            public TreeViewAssetTreePopulator(AssetTree tree, TreeView treeView, string projectName) : base(tree, treeView.Nodes) {
                 this.treeView = treeView;
+                this.projectName = projectName;
                 Load();
             }
 
             protected override void SetImageList(ImageList imageList) => treeView.ImageList = imageList;
 
-            protected override TreeNode CreateChild(string text, object tag, bool isFolder, int imageIndex) {
+            protected override TreeNode CreateNode(string text, object tag, bool isFolder, int imageIndex) {
                 TreeNode node = new TreeNode(text);
                 node.Name = text;
                 node.Tag = tag;
@@ -91,6 +92,7 @@ namespace Necrofy
                 node.Name = text;
             }
             protected override TreeNode SelectedNode { get => treeView.SelectedNode; set => treeView.SelectedNode = value; }
+            protected override string RootFolderName => projectName;
         }
         
         private void LoadFolderStates(TreeNodeCollection parent, List<ProjectUserSettings.FolderState> folderStates) {
@@ -109,7 +111,7 @@ namespace Necrofy
 
         public void SaveFolderStates() {
             project.userSettings.FolderStates = new List<ProjectUserSettings.FolderState>();
-            SaveFolderStates(tree.Nodes, project.userSettings.FolderStates);
+            SaveFolderStates(tree.Nodes[0].Nodes, project.userSettings.FolderStates);
         }
 
         private void SaveFolderStates(TreeNodeCollection parent, List<ProjectUserSettings.FolderState> folderStates) {
@@ -152,7 +154,9 @@ namespace Necrofy
         }
 
         private bool IsReserved(AssetTree.Node node) {
-            if (node is AssetTree.Folder folder) {
+            if (node.Parent == null) {
+                return true;
+            } else if (node is AssetTree.Folder folder) {
                 return Asset.IsFolderReserved(folder.GetFilename("").Replace(Path.DirectorySeparatorChar, Asset.FolderSeparator));
             } else if (node is AssetTree.AssetEntry asset) {
                 return Asset.IsAssetReserved(asset.Asset);
