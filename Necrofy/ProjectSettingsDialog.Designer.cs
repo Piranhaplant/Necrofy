@@ -53,7 +53,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(520, 258);
+            this.tabControl1.Size = new System.Drawing.Size(520, 264);
             this.tabControl1.TabIndex = 0;
             // 
             // generalTab
@@ -114,12 +114,12 @@
             // 
             // patchesTab
             // 
-            this.patchesTab.Controls.Add(this.patchDescriptionText);
             this.patchesTab.Controls.Add(this.patchesList);
+            this.patchesTab.Controls.Add(this.patchDescriptionText);
             this.patchesTab.Location = new System.Drawing.Point(4, 22);
             this.patchesTab.Name = "patchesTab";
             this.patchesTab.Padding = new System.Windows.Forms.Padding(3);
-            this.patchesTab.Size = new System.Drawing.Size(512, 232);
+            this.patchesTab.Size = new System.Drawing.Size(512, 238);
             this.patchesTab.TabIndex = 0;
             this.patchesTab.Text = "Patches";
             this.patchesTab.UseVisualStyleBackColor = true;
@@ -127,7 +127,7 @@
             // patchDescriptionText
             // 
             this.patchDescriptionText.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.patchDescriptionText.Location = new System.Drawing.Point(3, 136);
+            this.patchDescriptionText.Location = new System.Drawing.Point(3, 142);
             this.patchDescriptionText.Multiline = true;
             this.patchDescriptionText.Name = "patchDescriptionText";
             this.patchDescriptionText.ReadOnly = true;
@@ -138,9 +138,10 @@
             // 
             this.patchesList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.patchesList.FormattingEnabled = true;
+            this.patchesList.IntegralHeight = false;
             this.patchesList.Location = new System.Drawing.Point(3, 3);
             this.patchesList.Name = "patchesList";
-            this.patchesList.Size = new System.Drawing.Size(506, 226);
+            this.patchesList.Size = new System.Drawing.Size(506, 139);
             this.patchesList.TabIndex = 1;
             this.patchesList.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.patchesList_ItemCheck);
             this.patchesList.SelectedIndexChanged += new System.EventHandler(this.patchesList_SelectedIndexChanged);
@@ -151,7 +152,7 @@
             this.buttonPanel.Controls.Add(this.okButton);
             this.buttonPanel.Controls.Add(this.cancelButton);
             this.buttonPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.buttonPanel.Location = new System.Drawing.Point(0, 258);
+            this.buttonPanel.Location = new System.Drawing.Point(0, 264);
             this.buttonPanel.Name = "buttonPanel";
             this.buttonPanel.Size = new System.Drawing.Size(520, 44);
             this.buttonPanel.TabIndex = 1;
@@ -185,7 +186,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(520, 302);
+            this.ClientSize = new System.Drawing.Size(520, 308);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.buttonPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;

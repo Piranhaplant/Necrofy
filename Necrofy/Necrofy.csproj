@@ -748,6 +748,9 @@
     <None Include="Icons\cross-script.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ProjectFiles\Patches\TrampolineFix.asm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\logo.png" />
     <None Include="Resources\crosshairs.png" />
     <None Include="Resources\colorArrow.png" />
