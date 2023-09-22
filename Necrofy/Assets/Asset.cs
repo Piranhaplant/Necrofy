@@ -39,6 +39,7 @@ namespace Necrofy
         public const string TilesetFolder = "Tilesets";
         public const string MiscFolder = "Misc";
         public const string ScratchPadFolder = "Scratch Pad";
+        public const string HUDFolder = "HUD";
 
         protected const string Castle = "Castle";
         protected const string Grass = "Grass";

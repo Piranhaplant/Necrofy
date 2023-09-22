@@ -123,7 +123,7 @@ namespace Necrofy
             if (!dict.ContainsKey(k1)) {
                 dict[k1] = new Dictionary<K2, V>();
             }
-            dict[k1].Add(k2, v);
+            dict[k1][k2] = v;
         }
     }
 }

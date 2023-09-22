@@ -77,8 +77,9 @@ namespace Necrofy
                     new DefaultParams(0xf0f76, new PaletteNameInfo(SpritesFolder, DefaultSpritePaletteName, 0xf0f76), extractFromNecrofyROM: true, reserved: true),
                     new DefaultParams(0x1f08c, new PaletteNameInfo(LevelTitleFolder, DefaultName, 0x1f08c), extractFromNecrofyROM: true, reserved: true),
                     new DefaultParams(0x1f28c, new PaletteNameInfo(TitleScreenFolder, DefaultName, 0x1f28c), extractFromNecrofyROM: true),
+                    new DefaultParams(0xf0e76, new PaletteNameInfo(HUDFolder, DefaultName, 0xf0e76), extractFromNecrofyROM: true),
 
-                    new DefaultParams(0xf0e76, new PaletteNameInfo(GetTilesetFolder(Grass), "Normal", 0xf0e76), extractFromNecrofyROM: true),
+                    new DefaultParams(0xf0e76, new PaletteNameInfo(GetTilesetFolder(Grass), "Normal")),
                     new DefaultParams(0xf1076, new PaletteNameInfo(GetTilesetFolder(Grass), "Autumn")),
                     new DefaultParams(0xf1176, new PaletteNameInfo(GetTilesetFolder(Grass), "Winter")),
                     new DefaultParams(0xf1276, new PaletteNameInfo(GetTilesetFolder(Grass), "Night")),
