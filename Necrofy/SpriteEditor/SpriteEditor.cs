@@ -208,6 +208,17 @@ namespace Necrofy
                 case ToolStripGrouper.ItemType.FlipVertically:
                     undoManager.Do(new FlipSpriteTilesVerticallyAction(currentSprite, selectedObjects));
                     break;
+                case ToolStripGrouper.ItemType.SpriteSaveAsImage:
+                    SaveSpriteAsImage();
+                    break;
+            }
+        }
+
+        private void SaveSpriteAsImage() {
+            if (saveSpriteImageDialog.ShowDialog() == DialogResult.OK) {
+                UpdateSpritePreviews();
+                Bitmap image = loadedSprites.spriteImages[browserContents.SelectedIndex];
+                image.Save(saveSpriteImageDialog.FileName);
             }
         }
 
@@ -275,6 +286,7 @@ namespace Necrofy
             if (currentSprite == s) {
                 return;
             }
+            mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.SpriteSaveAsImage).Enabled = true;
             currentSprite = s;
             objectSelector.SelectNone();
             UpdateSpritePreviews();
@@ -426,9 +438,8 @@ namespace Necrofy
             WrappedSpriteTile tile = GetCreationObject(x, y);
             if (tile != null) {
                 undoManager.Do(new AddSpriteTileAction(currentSprite, new[] { tile }));
-                return tile;
             }
-            return null;
+            return tile;
         }
 
         private WrappedSpriteTile GetCreationObject(int x, int y) {

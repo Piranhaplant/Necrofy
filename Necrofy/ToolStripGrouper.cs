@@ -281,6 +281,8 @@ namespace Necrofy
             SpritesPlayers,
             SpritesAll,
 
+            SpriteSaveAsImage,
+
             FlipHorizontally,
             FlipVertically,
             CenterHorizontally,

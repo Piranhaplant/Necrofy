@@ -33,6 +33,7 @@
             this.graphicsPanel = new System.Windows.Forms.Panel();
             this.showAllGraphics = new System.Windows.Forms.CheckBox();
             this.paletteSelector = new Necrofy.AssetSelector();
+            this.saveSpriteImageDialog = new System.Windows.Forms.SaveFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -151,6 +152,10 @@
             this.paletteSelector.TabIndex = 7;
             this.paletteSelector.SelectedItemChanged += new System.EventHandler(this.paletteSelector_SelectedItemChanged);
             // 
+            // saveSpriteImageDialog
+            // 
+            this.saveSpriteImageDialog.Filter = "PNG Images (*.png)|*.png|All Files (*.*)|*.*";
+            // 
             // SpriteEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -180,5 +185,6 @@
         private System.Windows.Forms.Panel graphicsPanel;
         private System.Windows.Forms.CheckBox showAllGraphics;
         private AssetSelector paletteSelector;
+        private System.Windows.Forms.SaveFileDialog saveSpriteImageDialog;
     }
 }
