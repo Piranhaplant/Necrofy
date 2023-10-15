@@ -9,7 +9,18 @@ namespace Necrofy
 {
     class TilemapAsset : Asset
     {
+        public enum Type
+        {
+            Normal,
+            Sized,
+        }
+
         public const string DefaultName = "Tilemap";
+        public static readonly Dictionary<string, Type> Extensions = new Dictionary<string, Type>() {
+            {"tlm", Type.Normal },
+            {"tlms", Type.Sized },
+        };
+        public static readonly Dictionary<Type, string> TypeToExtension = Extensions.Reverse();
 
         private const AssetCategory AssetCat = AssetCategory.Tilemap;
 
@@ -21,20 +32,25 @@ namespace Necrofy
             return GetAssetName(romStream, romInfo, new TilemapCreator(), AssetCat, pointer);
         }
 
+        private readonly TilemapNameInfo tilemapNameInfo;
         public byte[] data;
 
-        public static TilemapAsset FromProject(Project project, string fullName) {
+        public static TilemapAsset FromProject(Project project, string fullName, Type type) {
             ParsedName parsedName = new ParsedName(fullName);
-            return new TilemapCreator().FromProject(project, parsedName.Folder, parsedName.FinalName);
+            return new TilemapCreator().FromProject(project, parsedName.Folder, parsedName.FinalName, type);
         }
 
         private TilemapAsset(TilemapNameInfo nameInfo, byte[] data) : base(nameInfo) {
+            this.tilemapNameInfo = nameInfo;
             this.data = data;
         }
 
         private TilemapAsset(TilemapNameInfo nameInfo, string filename) : base(nameInfo) {
+            this.tilemapNameInfo = nameInfo;
             Reload(filename);
         }
+
+        public Type TilemapType => tilemapNameInfo.type;
 
         protected override void Reload(string filename) {
             data = File.ReadAllBytes(filename);
@@ -54,8 +70,8 @@ namespace Necrofy
         
         class TilemapCreator : Creator
         {
-            public TilemapAsset FromProject(Project project, string folder, string tilemapName) {
-                NameInfo nameInfo = new TilemapNameInfo(folder, tilemapName, null);
+            public TilemapAsset FromProject(Project project, string folder, string tilemapName, Type type) {
+                NameInfo nameInfo = new TilemapNameInfo(folder, tilemapName, type: type);
                 return project.GetCachedAsset(nameInfo, () => {
                     string filename = nameInfo.FindFilename(project.path);
                     return (TilemapAsset)FromFile(nameInfo, filename);
@@ -101,6 +117,12 @@ namespace Necrofy
                     }
                     return new TilemapAsset(tilemapNameInfo, ZAMNCompress.Decompress(romStream));
                 } else {
+                    if (tilemapNameInfo.type == Type.Sized) {
+                        ushort width = romStream.ReadInt16();
+                        ushort height = romStream.ReadInt16();
+                        romStream.Seek(-4, SeekOrigin.Current);
+                        size = width * height * 2 + 4;
+                    }
                     return new TilemapAsset(tilemapNameInfo, romStream.ReadBytes((int)size));
                 }
             }
@@ -110,8 +132,9 @@ namespace Necrofy
             }
 
             public override NameInfo GetNameInfoForExtraction(ExtractionPreset preset) {
-                if (preset.Type == ExtractionPreset.AssetType.Tilemap) {
-                    return new TilemapNameInfo(preset.Category, preset.Filename, preset.Address, preset.Compressed);
+                if (preset.Type == ExtractionPreset.AssetType.Tilemap || preset.Type == ExtractionPreset.AssetType.TilemapSized) {
+                    Type tilemapType = preset.Type == ExtractionPreset.AssetType.Tilemap ? Type.Normal : Type.Sized;
+                    return new TilemapNameInfo(preset.Category, preset.Filename, preset.Address, tilemapType, preset.Compressed);
                 }
                 return null;
             }
@@ -119,21 +142,24 @@ namespace Necrofy
 
         class TilemapNameInfo : NameInfo
         {
-            private const string Extension = "tlm";
-            
-            private TilemapNameInfo(PathParts parts) : base(parts) { }
-            public TilemapNameInfo(string folder, string name, int? pointer = null, bool compressed = false, bool skipped = false) : this(new PathParts(folder, name, Extension, pointer, compressed, skipped)) { }
+            public Type type { get; private set; }
+
+            private TilemapNameInfo(PathParts parts) : base(parts) {
+                type = Extensions[parts.fileExtension];
+            }
+            public TilemapNameInfo(string folder, string name, int? pointer = null, Type type = Type.Normal, bool compressed = false, bool skipped = false)
+                : this(new PathParts(folder, name, TypeToExtension[type], pointer, compressed, skipped)) { }
             
             public override AssetCategory Category => AssetCat;
 
             public override bool Editable => true;
             public override bool CanRename => true;
             public override EditorWindow GetEditor(Project project) {
-                return new TilemapEditor(new LoadedTilemap(project, Name), project);
+                return new TilemapEditor(new LoadedTilemap(project, Name, type), project);
             }
 
             public static TilemapNameInfo FromPath(PathParts parts) {
-                if (parts.fileExtension != Extension) return null;
+                if (parts.fileExtension == null || !Extensions.ContainsKey(parts.fileExtension)) return null;
                 return new TilemapNameInfo(parts);
             }
         }

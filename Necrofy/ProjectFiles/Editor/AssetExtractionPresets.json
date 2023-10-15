@@ -374,6 +374,562 @@
 			"Length": 32,
 			"Compressed": false,
 			"Type": "Palette"
+		},
+		{
+			"Description": "UFO Palette",
+			"Filename": "Palette",
+			"Category": "UFO",
+			"Address": 688043,
+			"Length": 32,
+			"Compressed": false,
+			"Type": "Palette"
+		},
+		{
+			"Description": "UFO Graphics",
+			"Filename": "Graphics",
+			"Category": "UFO",
+			"Address": 632352,
+			"Length": 9472,
+			"Compressed": false,
+			"Type": "Graphics",
+			"Options": {
+				"width": 16,
+				"transparency": true,
+				"largeTiles": false
+			}
+		},
+		{
+			"Description": "UFO Tilemap",
+			"Filename": "Tilemap",
+			"Category": "UFO",
+			"Address": 784737,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Snakeoid Palette",
+			"Filename": "Palette",
+			"Category": "Snakeoid",
+			"Address": 129724,
+			"Length": 32,
+			"Compressed": false,
+			"Type": "Palette"
+		},
+		{
+			"Description": "Snakeoid Graphics",
+			"Filename": "Graphics",
+			"Category": "Snakeoid",
+			"Address": 672907,
+			"Length": 7968,
+			"Compressed": false,
+			"Type": "Graphics",
+			"Options": {
+				"width": 16,
+				"transparency": true,
+				"largeTiles": false
+			}
+		},
+		{
+			"Description": "Snakeoid Tilemap 1",
+			"Filename": "Tilemap1",
+			"Category": "Snakeoid",
+			"Address": 123228,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Snakeoid Tilemap 2",
+			"Filename": "Tilemap2",
+			"Category": "Snakeoid",
+			"Address": 123652,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Snakeoid Tilemap 3",
+			"Filename": "Tilemap3",
+			"Category": "Snakeoid",
+			"Address": 124076,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Snakeoid Tilemap 4",
+			"Filename": "Tilemap4",
+			"Category": "Snakeoid",
+			"Address": 124500,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Snakeoid Tilemap 5",
+			"Filename": "Tilemap5",
+			"Category": "Snakeoid",
+			"Address": 124924,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Snakeoid Tilemap 6",
+			"Filename": "Tilemap6",
+			"Category": "Snakeoid",
+			"Address": 125348,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Giant Spider Palette",
+			"Filename": "Palette",
+			"Category": "Giant Spider",
+			"Address": 129788,
+			"Length": 32,
+			"Compressed": false,
+			"Type": "Palette"
+		},
+		{
+			"Description": "Giant Spider Graphics",
+			"Filename": "Graphics",
+			"Category": "Giant Spider",
+			"Address": 600064,
+			"Length": 10112,
+			"Compressed": false,
+			"Type": "Graphics",
+			"Options": {
+				"width": 16,
+				"transparency": true,
+				"largeTiles": false
+			}
+		},
+		{
+			"Description": "Giant Spider Tilemap 1",
+			"Filename": "Tilemap1",
+			"Category": "Giant Spider",
+			"Address": 1014596,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Giant Spider Tilemap 2",
+			"Filename": "Tilemap2",
+			"Category": "Giant Spider",
+			"Address": 118784,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Giant Spider Tilemap 3",
+			"Filename": "Tilemap3",
+			"Category": "Giant Spider",
+			"Address": 119472,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Giant Spider Tilemap 4",
+			"Filename": "Tilemap4",
+			"Category": "Giant Spider",
+			"Address": 120160,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Giant Spider Tilemap 5",
+			"Filename": "Tilemap5",
+			"Category": "Giant Spider",
+			"Address": 120848,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Giant Baby/Dr. Tongue Giant Head Palette",
+			"Filename": "Palette",
+			"Category": "Giant Baby+Dr. Tongue",
+			"Address": 622545,
+			"Length": 32,
+			"Compressed": false,
+			"Type": "Palette"
+		},
+		{
+			"Description": "Giant Baby Graphics",
+			"Filename": "Giant Baby",
+			"Category": "Giant Baby+Dr. Tongue",
+			"Address": 622592,
+			"Length": 9760,
+			"Compressed": false,
+			"Type": "Graphics",
+			"Options": {
+				"width": 16,
+				"transparency": true,
+				"largeTiles": false
+			}
+		},
+		{
+			"Description": "Giant Baby Tilemap 1",
+			"Filename": "Giant Baby Tilemap1",
+			"Category": "Giant Baby+Dr. Tongue",
+			"Address": 785821,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Giant Baby Tilemap 2",
+			"Filename": "Giant Baby Tilemap2",
+			"Category": "Giant Baby+Dr. Tongue",
+			"Address": 121536,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Giant Baby Tilemap 3",
+			"Filename": "Giant Baby Tilemap3",
+			"Category": "Giant Baby+Dr. Tongue",
+			"Address": 122100,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Giant Baby Tilemap 4",
+			"Filename": "Giant Baby Tilemap4",
+			"Category": "Giant Baby+Dr. Tongue",
+			"Address": 122664,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Dr. Tongue Giant Head Graphics",
+			"Filename": "Dr. Tongue",
+			"Category": "Giant Baby+Dr. Tongue",
+			"Address": 655360,
+			"Length": 8960,
+			"Compressed": false,
+			"Type": "Graphics",
+			"Options": {
+				"width": 16,
+				"transparency": true,
+				"largeTiles": false
+			}
+		},
+		{
+			"Description": "Dr. Tongue Giant Head Grow Tilemap 1",
+			"Filename": "Dr. Tongue Grow1",
+			"Category": "Giant Baby+Dr. Tongue",
+			"Address": 655190,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Dr. Tongue Giant Head Grow Tilemap 2",
+			"Filename": "Dr. Tongue Grow2",
+			"Category": "Giant Baby+Dr. Tongue",
+			"Address": 720687,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Dr. Tongue Giant Head Phase 1 Front Tilemap",
+			"Filename": "Dr. Tongue Phase1 Front",
+			"Category": "Giant Baby+Dr. Tongue",
+			"Address": 127884,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Dr. Tongue Giant Head Phase 2 Front Tilemap",
+			"Filename": "Dr. Tongue Phase2 Front",
+			"Category": "Giant Baby+Dr. Tongue",
+			"Address": 128032,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Dr. Tongue Giant Head Phase 3 Front Tilemap",
+			"Filename": "Dr. Tongue Phase3 Front",
+			"Category": "Giant Baby+Dr. Tongue",
+			"Address": 128180,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Dr. Tongue Giant Head Phase 4 Front Tilemap",
+			"Filename": "Dr. Tongue Phase4 Front",
+			"Category": "Giant Baby+Dr. Tongue",
+			"Address": 128328,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Dr. Tongue Giant Head Phase 1 Side Tilemap",
+			"Filename": "Dr. Tongue Phase1 Side",
+			"Category": "Giant Baby+Dr. Tongue",
+			"Address": 128476,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Dr. Tongue Giant Head Phase 2 Side Tilemap",
+			"Filename": "Dr. Tongue Phase2 Side",
+			"Category": "Giant Baby+Dr. Tongue",
+			"Address": 128624,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Dr. Tongue Giant Head Phase 3 Side Tilemap",
+			"Filename": "Dr. Tongue Phase3 Side",
+			"Category": "Giant Baby+Dr. Tongue",
+			"Address": 128772,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Dr. Tongue Giant Head Phase 4 Side Tilemap",
+			"Filename": "Dr. Tongue Phase4 Side",
+			"Category": "Giant Baby+Dr. Tongue",
+			"Address": 128920,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Dr. Tongue Giant Head Phase 1 Front Mouth Open Tilemap",
+			"Filename": "Dr. Tongue Phase1 Front Mounth Open",
+			"Category": "Giant Baby+Dr. Tongue",
+			"Address": 129068,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Dr. Tongue Giant Head Phase 2 Front Mouth Open Tilemap",
+			"Filename": "Dr. Tongue Phase2 Front Mouth Open",
+			"Category": "Giant Baby+Dr. Tongue",
+			"Address": 129216,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Dr. Tongue Giant Head Phase 1 Side Mouth Open Tilemap",
+			"Filename": "Dr. Tongue Phase1 Side Mouth Open",
+			"Category": "Giant Baby+Dr. Tongue",
+			"Address": 129364,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Dr. Tongue Giant Head Phase 2 Side Mouth Open Tilemap",
+			"Filename": "Dr. Tongue Phase2 Side Mouth Open",
+			"Category": "Giant Baby+Dr. Tongue",
+			"Address": 129512,
+			"Length": 0,
+			"Compressed": false,
+			"Type": "TilemapSized",
+			"Options": {
+				"width": 32,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
 		}
 	]
 }

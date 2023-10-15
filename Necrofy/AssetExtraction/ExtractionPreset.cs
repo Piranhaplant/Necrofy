@@ -16,6 +16,7 @@ namespace Necrofy
             Graphics2BPP,
             Palette,
             Tilemap,
+            TilemapSized,
         }
 
         public string Description { get; set; }

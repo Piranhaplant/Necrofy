@@ -9,20 +9,24 @@ namespace Necrofy
     class LoadedTilemap
     {
         public readonly TilemapAsset asset;
-        public Tile[] tiles;
         public readonly string tilemapName;
+        public Tile[] tiles;
+        public ushort width;
+        public ushort height;
 
         public event EventHandler Updated;
-
         private int updating = 0;
 
-        public LoadedTilemap(Project project, string tilemapName) {
+        public LoadedTilemap(Project project, string tilemapName, TilemapAsset.Type type) {
             this.tilemapName = tilemapName;
-            asset = TilemapAsset.FromProject(project, tilemapName);
+            asset = TilemapAsset.FromProject(project, tilemapName, type);
             asset.Updated += Asset_Updated;
 
             ReadTiles();
         }
+
+        public TilemapAsset.Type TilemapType => asset.TilemapType;
+        public bool IsSized => TilemapType == TilemapAsset.Type.Sized;
 
         private void Asset_Updated(object sender, EventArgs e) {
             if (updating == 0) {
@@ -32,17 +36,33 @@ namespace Necrofy
         }
 
         private void ReadTiles() {
-            tiles = new Tile[asset.data.Length / 2];
+            int tilesStart = 0;
+            if (IsSized) {
+                tilesStart = 4;
+                width = (ushort)(asset.data[0] | asset.data[1] << 8);
+                height = (ushort)(asset.data[2] | asset.data[3] << 8);
+            }
+
+            tiles = new Tile[(asset.data.Length - tilesStart) / 2];
             for (int i = 0; i < tiles.Length; i++) {
-                tiles[i] = new Tile(asset.data[i * 2], asset.data[i * 2 + 1]);
+                tiles[i] = new Tile(asset.data[i * 2 + tilesStart], asset.data[i * 2 + 1 + tilesStart]);
             }
         }
 
         public void Save(Project project) {
+            int tilesStart = 0;
+            if (IsSized) {
+                tilesStart = 4;
+                asset.data[0] = (byte)(width & 0xff);
+                asset.data[1] = (byte)((width >> 8) & 0xff);
+                asset.data[2] = (byte)(height & 0xff);
+                asset.data[3] = (byte)((height >> 8) & 0xff);
+            }
+
             for (int i = 0; i < tiles.Length; i++) {
                 ushort value = tiles[i].ToUshort();
-                asset.data[i * 2] = (byte)(value & 0xff);
-                asset.data[i * 2 + 1] = (byte)((value >> 8) & 0xff);
+                asset.data[i * 2 + tilesStart] = (byte)(value & 0xff);
+                asset.data[i * 2 + 1 + tilesStart] = (byte)((value >> 8) & 0xff);
             }
             updating++;
             asset.Save(project);

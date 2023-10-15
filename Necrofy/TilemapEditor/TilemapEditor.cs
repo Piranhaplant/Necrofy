@@ -87,6 +87,10 @@ namespace Necrofy
                 largeTiles = options.largeTiles;
                 hintingType = options.hinting;
             }
+
+            if (loadedTilemap.IsSized) {
+                tileWidth = loadedTilemap.width;
+            }
         }
 
         private void TilemapEditor_Disposed(object sender, EventArgs e) {
@@ -168,6 +172,10 @@ namespace Necrofy
             paletteSelector.LoadProject(project, AssetCategory.Palette, loadedTilemap.tilemapName);
             graphicsSelector.LoadProject(project, AssetCategory.Graphics, loadedTilemap.tilemapName);
             tilePicker.SelectedTile = 0;
+            // Default to palette 7 if the file only has one palette (for boss monster tilemaps)
+            if (Colors != null && Colors.Length == 16) {
+                tilePicker.Palette = 7;
+            }
 
             undoManager = new UndoManager<TilemapEditor>(mainWindow.UndoButton, mainWindow.RedoButton, this);
             return undoManager;
@@ -181,8 +189,13 @@ namespace Necrofy
             int minWidth = 1;
             int maxWidth = tilemap.Length;
             tileWidth = Math.Max(minWidth, Math.Min(maxWidth, newTileWidth));
-            mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewDecreaseWidth).Enabled = tileWidth > minWidth;
-            mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewIncreaseWidth).Enabled = tileWidth < maxWidth;
+            if (loadedTilemap.IsSized) {
+                mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewDecreaseWidth).Enabled = false;
+                mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewIncreaseWidth).Enabled = false;
+            } else {
+                mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewDecreaseWidth).Enabled = tileWidth > minWidth;
+                mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.ViewIncreaseWidth).Enabled = tileWidth < maxWidth;
+            }
             mainWindow.GetToolStripItem(ToolStripGrouper.ItemType.WidthLabel).Text = tileWidth.ToString();
 
             TileSize = largeTiles ? 16 : 8;

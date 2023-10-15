@@ -154,6 +154,7 @@ namespace Necrofy
                 { ExtractionPreset.AssetType.Graphics, () => new GraphicsOptions() },
                 { ExtractionPreset.AssetType.Graphics2BPP, () => new GraphicsOptions() },
                 { ExtractionPreset.AssetType.Tilemap, () => new TilemapOptions() },
+                { ExtractionPreset.AssetType.TilemapSized, () => new TilemapOptions() },
             };
 
             public override bool CanConvert(Type objectType) {

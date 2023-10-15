@@ -15,7 +15,7 @@ namespace Necrofy
     {
         private readonly LoadedPalette palette;
         private readonly Color[] colors;
-        private UndoManager<PaletteEditor> undoManager;
+        private new UndoManager<PaletteEditor> undoManager;
 
         private int uiUpdate;
         private bool colorSelectorFocused = false;

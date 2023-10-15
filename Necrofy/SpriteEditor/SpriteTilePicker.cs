@@ -118,7 +118,7 @@ namespace Necrofy
 
         private void SpriteTilePicker_Disposed(object sender, EventArgs e) {
             selectionPenCancel.Cancel();
-            dashPen.Dispose();
+            dashPen?.Dispose();
         }
 
         public void Repaint() {

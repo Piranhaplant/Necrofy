@@ -9,7 +9,7 @@ namespace Necrofy
     {
         public new TileBlock[] tiles;
 
-        public LoadedTilesetTilemap(Project project, string tilesetTilemapName) : base(project, tilesetTilemapName) {
+        public LoadedTilesetTilemap(Project project, string tilesetTilemapName) : base(project, tilesetTilemapName, TilemapAsset.Type.Normal) {
             tiles = new TileBlock[0x100];
             for (int i = 0; i < tiles.Length; i++) {
                 tiles[i] = new TileBlock(this, i);
