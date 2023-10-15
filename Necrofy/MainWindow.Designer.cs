@@ -163,6 +163,7 @@
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.levelSaveAsImage = new System.Windows.Forms.ToolStripMenuItem();
             this.spriteMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.spriteSaveAsImage = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsPaintbrush = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsTileSuggest = new System.Windows.Forms.ToolStripMenuItem();
@@ -210,7 +211,8 @@
             this.infoLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.infoLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.buildStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.saveAsImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tilemapMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.tilemapSaveAsImage = new System.Windows.Forms.ToolStripMenuItem();
             this.spritesButton = new Necrofy.CheckableToolStripSplitButton();
             this.spritesItems = new Necrofy.SeparateCheckToolStripMenuItem();
             this.spritesVictims = new Necrofy.SeparateCheckToolStripMenuItem();
@@ -904,6 +906,7 @@
             this.viewMenu,
             this.levelMenu,
             this.spriteMenu,
+            this.tilemapMenu,
             this.toolsMenu,
             this.arrangeMenu,
             this.passwordsMenu,
@@ -1569,11 +1572,19 @@
             // spriteMenu
             // 
             this.spriteMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.saveAsImageToolStripMenuItem});
+            this.spriteSaveAsImage});
             this.toolStripGrouper.SetItemSet(this.spriteMenu, Necrofy.ToolStripGrouper.ItemSet.SpriteEditor);
             this.spriteMenu.Name = "spriteMenu";
             this.spriteMenu.Size = new System.Drawing.Size(49, 20);
             this.spriteMenu.Text = "&Sprite";
+            // 
+            // spriteSaveAsImage
+            // 
+            this.spriteSaveAsImage.Enabled = false;
+            this.toolStripGrouper.SetItemType(this.spriteSaveAsImage, Necrofy.ToolStripGrouper.ItemType.SpriteSaveAsImage);
+            this.spriteSaveAsImage.Name = "spriteSaveAsImage";
+            this.spriteSaveAsImage.Size = new System.Drawing.Size(159, 22);
+            this.spriteSaveAsImage.Text = "Save As &Image...";
             // 
             // toolsMenu
             // 
@@ -2047,13 +2058,21 @@
             this.buildStatusLabel.Text = "Build Status";
             this.buildStatusLabel.Visible = false;
             // 
-            // saveAsImageToolStripMenuItem
+            // tilemapMenu
             // 
-            this.saveAsImageToolStripMenuItem.Enabled = false;
-            this.toolStripGrouper.SetItemType(this.saveAsImageToolStripMenuItem, Necrofy.ToolStripGrouper.ItemType.SpriteSaveAsImage);
-            this.saveAsImageToolStripMenuItem.Name = "saveAsImageToolStripMenuItem";
-            this.saveAsImageToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.saveAsImageToolStripMenuItem.Text = "Save As &Image...";
+            this.tilemapMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tilemapSaveAsImage});
+            this.toolStripGrouper.SetItemSet(this.tilemapMenu, Necrofy.ToolStripGrouper.ItemSet.Tilemap);
+            this.tilemapMenu.Name = "tilemapMenu";
+            this.tilemapMenu.Size = new System.Drawing.Size(61, 20);
+            this.tilemapMenu.Text = "Tile&map";
+            // 
+            // tilemapSaveAsImage
+            // 
+            this.toolStripGrouper.SetItemType(this.tilemapSaveAsImage, Necrofy.ToolStripGrouper.ItemType.TilemapSaveAsImage);
+            this.tilemapSaveAsImage.Name = "tilemapSaveAsImage";
+            this.tilemapSaveAsImage.Size = new System.Drawing.Size(180, 22);
+            this.tilemapSaveAsImage.Text = "Save as &Image...";
             // 
             // spritesButton
             // 
@@ -2399,7 +2418,9 @@
         private System.Windows.Forms.ToolStripMenuItem editMoveSelection;
         private System.Windows.Forms.ToolStripButton moveSelectionButton;
         private System.Windows.Forms.ToolStripMenuItem spriteMenu;
-        private System.Windows.Forms.ToolStripMenuItem saveAsImageToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem spriteSaveAsImage;
+        private System.Windows.Forms.ToolStripMenuItem tilemapMenu;
+        private System.Windows.Forms.ToolStripMenuItem tilemapSaveAsImage;
     }
 }
 

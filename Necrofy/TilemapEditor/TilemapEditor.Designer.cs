@@ -45,6 +45,7 @@
             this.vScroll = new System.Windows.Forms.VScrollBar();
             this.hScroll = new System.Windows.Forms.HScrollBar();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.saveTilemapImageDialog = new System.Windows.Forms.SaveFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -293,6 +294,10 @@
             this.hScroll.SmallChange = 16;
             this.hScroll.TabIndex = 7;
             // 
+            // saveTilemapImageDialog
+            // 
+            this.saveTilemapImageDialog.Filter = "PNG Images (*.png)|*.png|All Files (*.*)|*.*";
+            // 
             // TilemapEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -332,5 +337,6 @@
         private System.Windows.Forms.CheckBox lockPriority;
         private System.Windows.Forms.Label priorityLabel;
         private System.Windows.Forms.CheckBox priority;
+        private System.Windows.Forms.SaveFileDialog saveTilemapImageDialog;
     }
 }

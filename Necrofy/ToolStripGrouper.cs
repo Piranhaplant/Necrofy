@@ -282,6 +282,7 @@ namespace Necrofy
             SpritesAll,
 
             SpriteSaveAsImage,
+            TilemapSaveAsImage,
 
             FlipHorizontally,
             FlipVertically,

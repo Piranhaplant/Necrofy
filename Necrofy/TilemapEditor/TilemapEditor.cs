@@ -234,6 +234,17 @@ namespace Necrofy
             }
         }
 
+        private void SaveAsImage() {
+            if (saveTilemapImageDialog.ShowDialog() == DialogResult.OK) {
+                using (Bitmap image = new Bitmap(MapWidth * TileSize, MapHeight * TileSize)) {
+                    using (Graphics g = Graphics.FromImage(image)) {
+                        PaintTilemap(g, new RectangleF(PointF.Empty, image.Size));
+                    }
+                    image.Save(saveTilemapImageDialog.FileName);
+                }
+            }
+        }
+
         protected override void PaintMap(Graphics g) {
             if (tiles == null || Colors == null) {
                 return;
@@ -245,13 +256,7 @@ namespace Necrofy
                 SNESGraphics.DrawTransparencyGrid(g, clipRect, Zoom);
             }
 
-            for (int i = 0; i < tilemap.Length; i++) {
-                LoadedTilemap.Tile t = tilemap[i];
-                GetTileLocation(i, out int x, out int y);
-                if (t.tileNum < tiles.Length && clipRect.IntersectsWith(new RectangleF(x * TileSize, y * TileSize, TileSize, TileSize))) {
-                    RenderTile(g, t, x * TileSize, y * TileSize);
-                }
-            }
+            PaintTilemap(g, clipRect);
 
             if (showGrid) {
                 using (Pen pen = new Pen(Color.FromArgb(150, Color.White), 1 / Zoom)) {
@@ -262,6 +267,16 @@ namespace Necrofy
             g.ResetClip();
 
             hinting.Render(g, clipRect, Zoom);
+        }
+
+        private void PaintTilemap(Graphics g, RectangleF clipRect) {
+            for (int i = 0; i < tilemap.Length; i++) {
+                LoadedTilemap.Tile t = tilemap[i];
+                GetTileLocation(i, out int x, out int y);
+                if (t.tileNum < tiles.Length && clipRect.IntersectsWith(new RectangleF(x * TileSize, y * TileSize, TileSize, TileSize))) {
+                    RenderTile(g, t, x * TileSize, y * TileSize);
+                }
+            }
         }
 
         public void RenderTile(Graphics g, LoadedTilemap.Tile t, int x, int y) {
@@ -385,6 +400,8 @@ namespace Necrofy
                 CurrentTool?.Flip(false);
             } else if (item == ToolStripGrouper.ItemType.EditMoveSelection) {
                 CurrentTool.FloatSelection();
+            } else if (item == ToolStripGrouper.ItemType.TilemapSaveAsImage) {
+                SaveAsImage();
             } else if (hintingItems.ContainsValue(item)) {
                 hintingType = hintingItems.Where(pair => pair.Value == item).Select(pair => pair.Key).FirstOrDefault();
                 UpdateHinting();
