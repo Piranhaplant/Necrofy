@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using WeifenLuo.WinFormsUI.Docking;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Diagnostics;
 
 namespace Necrofy
 {
@@ -738,6 +739,10 @@ namespace Necrofy
             if (MessageBox.Show("Are you sure you want to revert to the default window layout?", "Restore default layout", MessageBoxButtons.YesNo) == DialogResult.Yes) {
                 UseDefaultDockLayout();
             }
+        }
+
+        private void helpWiki_Click(object sender, EventArgs e) {
+            Process.Start("https://wiki.zamnhacking.net/");
         }
 
         private void helpAbout_Click(object sender, EventArgs e) {
