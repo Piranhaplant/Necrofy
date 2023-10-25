@@ -41,12 +41,14 @@ namespace Necrofy
         private void TilesetPaletteSelector_SelectedIndexChanged(object sender, EventArgs e) {
             if (tilesetPaletteSelector.SelectedIndex > -1) {
                 paletteFade.bgPal = tilesetPaletteSelector.SelectedName;
+                RaiseDataChanged();
             }
         }
 
         private void SpritePaletteSelector_SelectedIndexChanged(object sender, EventArgs e) {
             if (spritePaletteSelector.SelectedIndex > -1) {
                 paletteFade.spritePal = spritePaletteSelector.SelectedName;
+                RaiseDataChanged();
             }
         }
     }

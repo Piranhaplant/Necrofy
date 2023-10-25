@@ -17,6 +17,7 @@ namespace Necrofy
         public LevelMonster Monster { get; private set; }
 
         public event EventHandler WasSelected;
+        public event EventHandler DataChanged;
 
         private bool selected = false;
         public bool Selected {
@@ -68,6 +69,10 @@ namespace Necrofy
                     row.Selected = false;
                 }
             }
+        }
+
+        protected void RaiseDataChanged() {
+            DataChanged?.Invoke(this, EventArgs.Empty);
         }
 
         // Included so sub-classes will work in the designer

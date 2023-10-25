@@ -68,7 +68,6 @@
             this.customizeButton.TabIndex = 7;
             this.customizeButton.Text = "Edit...";
             this.customizeButton.UseVisualStyleBackColor = true;
-            this.customizeButton.Visible = false;
             this.customizeButton.Click += new System.EventHandler(this.customizeButton_Click);
             // 
             // customizeLbl

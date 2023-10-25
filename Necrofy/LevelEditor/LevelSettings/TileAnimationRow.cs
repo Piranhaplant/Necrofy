@@ -30,11 +30,12 @@ namespace Necrofy
         private void PresetSelector_SelectedIndexChanged(object sender, EventArgs e) {
             if (presetSelector.SelectedIndex > -1) {
                 tileAnim.entries = ((LevelSettingsPresets.Preset<List<TileAnimLevelMonster.Entry>>)presetSelector.SelectedItem).value;
+                RaiseDataChanged();
             }
         }
 
         private void customizeButton_Click(object sender, EventArgs e) {
-            // TODO
+            
         }
     }
 }

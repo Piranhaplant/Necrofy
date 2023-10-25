@@ -18,6 +18,7 @@ namespace Necrofy
     partial class LevelEditor : MapEditor<LevelEditorTool> {
         public readonly LoadedLevel level;
         private TitleEditor titleEditor = null;
+        private LevelSettingsDialog levelSettings = null;
 
         public readonly TilesetObjectBrowserContents tilesetObjectBrowserContents;
         public readonly SpriteObjectBrowserContents spriteObjectBrowserContents;
@@ -60,14 +61,19 @@ namespace Necrofy
         }
 
         protected override void CloseChildren(FormClosingEventArgs e) {
-            if (titleEditor != null) {
-                titleEditor.Close();
-                if (titleEditor != null && titleEditor.Visible) {
+            CloseChild(titleEditor, e);
+            CloseChild(levelSettings, e);
+        }
+
+        private static void CloseChild(EditorWindow child, FormClosingEventArgs e) {
+            if (!e.Cancel && child != null) {
+                child.Close();
+                if (child.Visible) {
                     e.Cancel = true;
                 }
             }
         }
-        
+
         private void LevelEditor_Disposed(object sender, EventArgs e) {
             level.Dispose();
         }
@@ -334,7 +340,13 @@ namespace Necrofy
                 }
             } else if (item == ToolStripGrouper.ItemType.LevelSettings) {
                 try {
-                    new LevelSettingsDialog(project, this).ShowDialog();
+                    if (levelSettings == null) {
+                        levelSettings = new LevelSettingsDialog(this);
+                        levelSettings.FormClosed += LevelSettings_FormClosed;
+                        mainWindow.ShowEditor(levelSettings, assetInfo: null);
+                    } else {
+                        levelSettings.Activate();
+                    }
                 } catch (Exception ex) {
                     MessageBox.Show($"Error opening level settings: {Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -353,6 +365,10 @@ namespace Necrofy
 
         private void TitleEditor_FormClosed(object sender, FormClosedEventArgs e) {
             titleEditor = null;
+        }
+
+        private void LevelSettings_FormClosed(object sender, FormClosedEventArgs e) {
+            levelSettings = null;
         }
 
         private readonly Dictionary<ToolStripGrouper.ItemType, SpriteDisplay.Category> spriteCategoryForMenuItem =

@@ -9,24 +9,26 @@ using System.Windows.Forms;
 
 namespace Necrofy
 {
-    partial class LevelSettingsDialog : Form
+    partial class LevelSettingsDialog : EditorWindow
     {
         private const ushort DefaultVisibleTilesEnd = 0x1ff;
 
         public event EventHandler TilesetPalettesChanged;
 
-        public readonly Project project;
         public readonly LevelEditor levelEditor;
-        public readonly LevelSettingsPresets presets;
+        public LevelSettingsPresets presets;
+        private new UndoManager<LevelSettingsDialog> undoManager;
 
         private readonly List<LevelMonster> levelMonsters = new List<LevelMonster>();
 
-        public LevelSettingsDialog(Project project, LevelEditor levelEditor) {
+        public LevelSettingsDialog(LevelEditor levelEditor) {
             InitializeComponent();
-            this.project = project;
             this.levelEditor = levelEditor;
-            LoadedLevel level = levelEditor.level;
+        }
 
+        protected override UndoManager Setup() {
+            LoadedLevel level = levelEditor.level;
+            Title = "[Settings] " + level.Level.displayName;
             presets = EditorAsset<LevelSettingsPresets>.FromProject(project, "LevelSettingsPresets").data;
 
             tilesSelector.Add(project.GetAssetsInCategory(AssetCategory.Tilemap).Where(a => a.ParsedName.Tileset != null), TilemapAsset.DefaultName);
@@ -52,7 +54,6 @@ namespace Necrofy
 
             prioritySelector.Value = level.Level.priorityTileCount;
             SetupAutoCheckBox(priorityAuto, prioritySelector, level.Level.priorityTileCount == level.TilesetSuggestions.PriorityTileCount, level.TilesetSuggestions.PriorityTileCount > 0);
-
             visibleEndSelector.Value = level.Level.visibleTilesEnd;
             SetupAutoCheckBox(visibleEndAuto, visibleEndSelector, level.Level.visibleTilesEnd == DefaultVisibleTilesEnd, true);
 
@@ -86,7 +87,7 @@ namespace Necrofy
             }
 
             bonusLevelSelector.Value = level.Level.bonusLevelNumber;
-            
+
             foreach (LevelMonster monster in level.Level.levelMonsters) {
                 if (monster is PaletteFadeLevelMonster paletteFadeLevelMonster) {
                     PaletteFadeLevelMonster clone = paletteFadeLevelMonster.JsonClone();
@@ -100,11 +101,17 @@ namespace Necrofy
                     levelMonsters.Add(monster);
                 }
             }
+
+            undoManager = new UndoManager<LevelSettingsDialog>(mainWindow.UndoButton, mainWindow.RedoButton, this);
+            return undoManager;
         }
-        
+
         private void SetupAutoCheckBox(CheckBox autoCheckBox, Control manualControl, bool check, bool enabled) {
             autoCheckBox.CheckedChanged += (sender, e) => {
                 manualControl.Visible = !autoCheckBox.Checked;
+                if (autoCheckBox.Checked) {
+                    valueChanged(sender, e);
+                }
             };
             autoCheckBox.Checked = check && enabled;
             autoCheckBox.Enabled = enabled;
@@ -117,6 +124,7 @@ namespace Necrofy
                 tilesetPaletteSelector.SelectedIndex = 0;
                 prevTilesSelectorSelectedIndex = tilesSelector.SelectedIndex;
                 TilesetPalettesChanged?.Invoke(this, EventArgs.Empty);
+                valueChanged(sender, e);
             }
         }
         
@@ -147,6 +155,7 @@ namespace Necrofy
             levelMonsters.Add(paletteFade);
             levelMonsterList.AddRow(new PaletteFadeRow(paletteFade, this));
             levelMonsterList.ScrollToBottom();
+            valueChanged(sender, e);
         }
 
         private void addTileAnimation_Click(object sender, EventArgs e) {
@@ -154,6 +163,7 @@ namespace Necrofy
             levelMonsters.Add(tileAnim);
             levelMonsterList.AddRow(new TileAnimationRow(tileAnim, this));
             levelMonsterList.ScrollToBottom();
+            valueChanged(sender, e);
         }
 
         private void levelMonsterList_SelectedRowChanged(object sender, EventArgs e) {
@@ -164,23 +174,20 @@ namespace Necrofy
             if (levelMonsterList.SelectedRow != null) {
                 levelMonsters.Remove(levelMonsterList.SelectedRow.Monster);
                 levelMonsterList.RemoveRow(levelMonsterList.SelectedRow);
+                valueChanged(sender, e);
             }
         }
 
         private void secretBonusTypeSelector_SelectedIndexChanged(object sender, EventArgs e) {
             bonusLevelSelector.Enabled = ((LevelSettingsPresets.Preset<HashSet<ushort>>)secretBonusTypeSelector.SelectedItem).name == "Bonus level";
+            valueChanged(sender, e);
         }
 
-        private void applyButton_Click(object sender, EventArgs e) {
-            Save();
+        private void valueChanged(object sender, EventArgs e) {
+            undoManager?.ForceDirty();
         }
 
-        private void okButton_Click(object sender, EventArgs e) {
-            Save();
-            Close();
-        }
-
-        private void Save() {
+        protected override void DoSave(Project project) {
             LoadedLevel level = levelEditor.level;
             bool reloadTileset = false;
 

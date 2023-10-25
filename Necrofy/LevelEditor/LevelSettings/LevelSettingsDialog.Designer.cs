@@ -28,9 +28,6 @@
             this.components = new System.ComponentModel.Container();
             this.tilesLabel = new System.Windows.Forms.Label();
             this.tilesSelector = new Necrofy.AssetComboBox();
-            this.okButton = new System.Windows.Forms.Button();
-            this.applyButton = new System.Windows.Forms.Button();
-            this.cancelButton = new System.Windows.Forms.Button();
             this.tilesetPaletteSelector = new Necrofy.AssetComboBox();
             this.tilesetPaletteLabel = new System.Windows.Forms.Label();
             this.graphicsAuto = new System.Windows.Forms.CheckBox();
@@ -101,39 +98,6 @@
             this.tilesSelector.TabIndex = 1;
             this.tilesSelector.SelectedIndexChanged += new System.EventHandler(this.tilesSelector_SelectedIndexChanged);
             // 
-            // okButton
-            // 
-            this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.okButton.Location = new System.Drawing.Point(423, 490);
-            this.okButton.Name = "okButton";
-            this.okButton.Size = new System.Drawing.Size(75, 23);
-            this.okButton.TabIndex = 2;
-            this.okButton.Text = "OK";
-            this.okButton.UseVisualStyleBackColor = true;
-            this.okButton.Click += new System.EventHandler(this.okButton_Click);
-            // 
-            // applyButton
-            // 
-            this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.applyButton.Location = new System.Drawing.Point(342, 490);
-            this.applyButton.Name = "applyButton";
-            this.applyButton.Size = new System.Drawing.Size(75, 23);
-            this.applyButton.TabIndex = 3;
-            this.applyButton.Text = "Apply";
-            this.applyButton.UseVisualStyleBackColor = true;
-            this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
-            // 
-            // cancelButton
-            // 
-            this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(261, 490);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(75, 23);
-            this.cancelButton.TabIndex = 4;
-            this.cancelButton.Text = "Cancel";
-            this.cancelButton.UseVisualStyleBackColor = true;
-            // 
             // tilesetPaletteSelector
             // 
             this.tilesetPaletteSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -144,6 +108,7 @@
             this.tilesetPaletteSelector.SelectedName = null;
             this.tilesetPaletteSelector.Size = new System.Drawing.Size(165, 21);
             this.tilesetPaletteSelector.TabIndex = 6;
+            this.tilesetPaletteSelector.SelectedIndexChanged += new System.EventHandler(this.valueChanged);
             // 
             // tilesetPaletteLabel
             // 
@@ -204,6 +169,7 @@
             this.visibleEndSelector.Name = "visibleEndSelector";
             this.visibleEndSelector.Size = new System.Drawing.Size(111, 20);
             this.visibleEndSelector.TabIndex = 25;
+            this.visibleEndSelector.ValueChanged += new System.EventHandler(this.valueChanged);
             // 
             // prioritySelector
             // 
@@ -217,6 +183,7 @@
             this.prioritySelector.Name = "prioritySelector";
             this.prioritySelector.Size = new System.Drawing.Size(111, 20);
             this.prioritySelector.TabIndex = 16;
+            this.prioritySelector.ValueChanged += new System.EventHandler(this.valueChanged);
             // 
             // visibleEndAuto
             // 
@@ -246,6 +213,7 @@
             this.paletteAnimationSelector.Name = "paletteAnimationSelector";
             this.paletteAnimationSelector.Size = new System.Drawing.Size(165, 21);
             this.paletteAnimationSelector.TabIndex = 18;
+            this.paletteAnimationSelector.SelectedIndexChanged += new System.EventHandler(this.valueChanged);
             // 
             // paletteAnimationLabel
             // 
@@ -285,6 +253,7 @@
             this.collisionSelector.SelectedName = null;
             this.collisionSelector.Size = new System.Drawing.Size(111, 21);
             this.collisionSelector.TabIndex = 12;
+            this.collisionSelector.SelectedIndexChanged += new System.EventHandler(this.valueChanged);
             // 
             // priorityLabel
             // 
@@ -314,6 +283,7 @@
             this.graphicsSelector.SelectedName = null;
             this.graphicsSelector.Size = new System.Drawing.Size(111, 21);
             this.graphicsSelector.TabIndex = 9;
+            this.graphicsSelector.SelectedIndexChanged += new System.EventHandler(this.valueChanged);
             // 
             // graphicsLabel
             // 
@@ -345,6 +315,7 @@
             this.soundsSelector.Name = "soundsSelector";
             this.soundsSelector.Size = new System.Drawing.Size(165, 21);
             this.soundsSelector.TabIndex = 22;
+            this.soundsSelector.SelectedIndexChanged += new System.EventHandler(this.valueChanged);
             // 
             // soundsLabel
             // 
@@ -363,6 +334,7 @@
             this.musicSelector.Name = "musicSelector";
             this.musicSelector.Size = new System.Drawing.Size(165, 21);
             this.musicSelector.TabIndex = 20;
+            this.musicSelector.SelectedIndexChanged += new System.EventHandler(this.valueChanged);
             // 
             // musicLabel
             // 
@@ -403,11 +375,10 @@
             this.spritePaletteSelector.SelectedName = null;
             this.spritePaletteSelector.Size = new System.Drawing.Size(165, 21);
             this.spritePaletteSelector.TabIndex = 27;
+            this.spritePaletteSelector.SelectedIndexChanged += new System.EventHandler(this.valueChanged);
             // 
             // bonusesGroup
             // 
-            this.bonusesGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.bonusesGroup.Controls.Add(this.bonusLevelSelector);
             this.bonusesGroup.Controls.Add(this.secretBonusTypeSelector);
             this.bonusesGroup.Controls.Add(this.bonusLevelLabel);
@@ -431,6 +402,7 @@
             this.bonusLevelSelector.Name = "bonusLevelSelector";
             this.bonusLevelSelector.Size = new System.Drawing.Size(90, 20);
             this.bonusLevelSelector.TabIndex = 23;
+            this.bonusLevelSelector.ValueChanged += new System.EventHandler(this.valueChanged);
             // 
             // secretBonusTypeSelector
             // 
@@ -471,12 +443,10 @@
             this.bonusList.Name = "bonusList";
             this.bonusList.Size = new System.Drawing.Size(171, 274);
             this.bonusList.TabIndex = 12;
+            this.bonusList.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.valueChanged);
             // 
             // levelEffectsGroup
             // 
-            this.levelEffectsGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.levelEffectsGroup.Controls.Add(this.levelMonsterList);
             this.levelEffectsGroup.Location = new System.Drawing.Point(12, 393);
             this.levelEffectsGroup.Name = "levelEffectsGroup";
@@ -493,6 +463,7 @@
             this.levelMonsterList.Size = new System.Drawing.Size(473, 65);
             this.levelMonsterList.TabIndex = 33;
             this.levelMonsterList.SelectedRowChanged += new System.EventHandler(this.levelMonsterList_SelectedRowChanged);
+            this.levelMonsterList.DataChanged += new System.EventHandler(this.valueChanged);
             // 
             // addLevelEffect
             // 
@@ -539,11 +510,9 @@
             // 
             // LevelSettingsDialog
             // 
-            this.AcceptButton = this.okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(510, 525);
+            this.ClientSize = new System.Drawing.Size(510, 493);
             this.Controls.Add(this.removeLevelEffect);
             this.Controls.Add(this.addLevelEffect);
             this.Controls.Add(this.levelEffectsGroup);
@@ -551,9 +520,6 @@
             this.Controls.Add(this.spritesGroup);
             this.Controls.Add(this.audioGroup);
             this.Controls.Add(this.tilesetGroup);
-            this.Controls.Add(this.cancelButton);
-            this.Controls.Add(this.applyButton);
-            this.Controls.Add(this.okButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -580,9 +546,6 @@
 
         private System.Windows.Forms.Label tilesLabel;
         private AssetComboBox tilesSelector;
-        private System.Windows.Forms.Button okButton;
-        private System.Windows.Forms.Button applyButton;
-        private System.Windows.Forms.Button cancelButton;
         private AssetComboBox tilesetPaletteSelector;
         private System.Windows.Forms.Label tilesetPaletteLabel;
         private System.Windows.Forms.CheckBox graphicsAuto;

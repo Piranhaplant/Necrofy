@@ -13,6 +13,7 @@ namespace Necrofy
         private readonly List<LevelMonsterRow> rows = new List<LevelMonsterRow>();
 
         public event EventHandler SelectedRowChanged;
+        public event EventHandler DataChanged;
 
         private LevelMonsterRow selectedRow = null;
         public LevelMonsterRow SelectedRow {
@@ -38,6 +39,7 @@ namespace Necrofy
             }
             rows.Add(row);
             row.WasSelected += Row_WasSelected;
+            row.DataChanged += Row_DataChanged;
         }
 
         public void RemoveRow(LevelMonsterRow row) {
@@ -59,6 +61,10 @@ namespace Necrofy
 
         private void Row_WasSelected(object sender, EventArgs e) {
             SelectedRow = sender as LevelMonsterRow;
+        }
+
+        private void Row_DataChanged(object sender, EventArgs e) {
+            DataChanged?.Invoke(sender, e);
         }
 
         public void ScrollToBottom() {
