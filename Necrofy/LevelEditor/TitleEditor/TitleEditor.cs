@@ -327,9 +327,13 @@ namespace Necrofy
             int y = screenBounds.Location.Y;
             if (screenBounds.Width < mainPanel.Width) {
                 x = (mainPanel.Width - screenBounds.Width) / 2;
+            } else {
+                x = 0;
             }
             if (screenBounds.Height < mainPanel.Height) {
                 y = (mainPanel.Height - screenBounds.Height) / 2;
+            } else {
+                y = 0;
             }
             screenBounds.Location = new Point(x, y);
         }
