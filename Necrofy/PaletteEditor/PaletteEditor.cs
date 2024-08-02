@@ -20,7 +20,7 @@ namespace Necrofy
         private int uiUpdate;
         private bool colorSelectorFocused = false;
         
-        private Color SelectedColor => colorSelector.SelectionExists ? colorSelector.Colors[colorSelector.SelectionStartIndex] : Color.Black;
+        private Color SelectedColor => colorSelector.SelectionExists && colorSelector.Colors.Length > 0 ? colorSelector.Colors[colorSelector.SelectionStartIndex] : Color.Black;
 
         public PaletteEditor(LoadedPalette palette) {
             InitializeComponent();
