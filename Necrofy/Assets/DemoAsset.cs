@@ -137,7 +137,7 @@ namespace Necrofy
                 if (parts.pointer != null) return null;
                 if (parts.compressed) return null;
                 if (!parts.name.StartsWith(FilenamePrefix)) return null;
-                if (!int.TryParse(parts.name.Substring(FilenamePrefix.Length), out int slot)) return null;
+                if (!int.TryParse(parts.name.Substring(FilenamePrefix.Length), out int slot) || slot < 0) return null;
                 return new DemoNameInfo(parts, slot);
             }
         }
