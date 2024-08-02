@@ -58,11 +58,7 @@ namespace Necrofy
 
         private void DisposeTiles() {
             loadedTileset?.Dispose();
-            if (tiles != null) {
-                foreach (Bitmap tile in tiles) {
-                    tile.Dispose();
-                }
-            }
+            SNESGraphics.DisposeAll(tiles);
         }
 
         protected override UndoManager Setup() {

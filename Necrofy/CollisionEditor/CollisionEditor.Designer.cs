@@ -85,12 +85,14 @@
             // 
             // tilePicker
             // 
+            this.tilePicker.ColorsPerPalette = 16;
             this.tilePicker.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tilePicker.FlipX = false;
             this.tilePicker.FlipY = false;
             this.tilePicker.Location = new System.Drawing.Point(0, 63);
             this.tilePicker.Name = "tilePicker";
             this.tilePicker.Palette = 0;
+            this.tilePicker.PalettePerTile = null;
             this.tilePicker.SelectedTile = -1;
             this.tilePicker.Size = new System.Drawing.Size(273, 776);
             this.tilePicker.TabIndex = 0;
@@ -232,7 +234,7 @@
             this.checkBoxM.Name = "checkBoxM";
             this.checkBoxM.Size = new System.Drawing.Size(325, 17);
             this.checkBoxM.TabIndex = 14;
-            this.checkBoxM.Text = "m. Allow snakeoids to traverse";
+            this.checkBoxM.Text = "m. Allow snakeoids, werewolf jumps, and vampires landing";
             this.checkBoxM.UseVisualStyleBackColor = true;
             this.checkBoxM.CheckStateChanged += new System.EventHandler(this.checkBox_CheckedChanged);
             // 
