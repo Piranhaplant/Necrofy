@@ -55,7 +55,7 @@ namespace Necrofy
             s.Seek(ROMPointers.LevelPointers);
             int levelCount = s.ReadInt16();
             EndGameLevel = levelCount - 1;
-            NecrofyROM = s.PeekPointer() > 0;
+            DetermineIfNecrofyROM(s);
 
             if (NecrofyROM) {
                 ReadProperties(s);
@@ -66,7 +66,10 @@ namespace Necrofy
             for (int i = 0; i <= levelCount; i++) {
                 Level level;
                 if (NecrofyROM) {
-                    s.GoToPointerPush();
+                    if (!s.TryGoToPointerPush()) {
+                        Console.WriteLine($"Invalid level pointer for level {i} at 0x{s.Position - 4:X}");
+                        continue;
+                    }
                     level = new Level(this, s);
                 } else {
                     s.PushPosition();
@@ -76,7 +79,10 @@ namespace Necrofy
                     ushort bonusLevelNum = s.ReadInt16();
                     s.PopPosition();
 
-                    s.GoToRelativePointerPush();
+                    if (!s.TryGoToRelativePointerPush()) {
+                        Console.WriteLine($"Invalid level pointer for level {i} at 0x{s.Position - 2:X}");
+                        continue;
+                    }
                     level = new Level(this, s, secretBonusCodePointer, bonusLevelNum);
                 }
                 assets.Add(new LevelAsset(i, level));
@@ -95,17 +101,20 @@ namespace Necrofy
         /// <param name="originalProjectVersion">The project version to upgrade from</param>
         public ROMInfo(NStream s, Version originalProjectVersion) {
             Freespace = new Freespace((int)s.Length);
-
-            s.Seek(ROMPointers.LevelPointers);
-            s.ReadInt16(); // Skip past level count
-            NecrofyROM = s.PeekPointer() > 0;
-
+            DetermineIfNecrofyROM(s);
             Asset.AddAllDefaults(s, this, originalProjectVersion);
         }
 
         /// <summary>Creates an empty ROMInfo to use for extracting single assets</summary>
         public ROMInfo() {
             Freespace = new Freespace(0x100000);
+        }
+
+        private void DetermineIfNecrofyROM(NStream s) {
+            s.PushPosition();
+            s.Seek(ROMPointers.LevelPointers + 6); // Skip past level count and level 0 pointer
+            NecrofyROM = s.PeekPointer() > 0;
+            s.PopPosition();
         }
 
         private void ReadProperties(NStream s) {

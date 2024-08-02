@@ -101,6 +101,19 @@ namespace Necrofy
             s.Seek(pointer);
         }
 
+        /// <summary>Attempts to move the stream position to the address specified in the 4-byte SNES LoROM pointer at the current position and pushes the position after the pointer.
+        /// The stream is advanced 4 bytes even if there is not a valid pointer at the current position.</summary>
+        /// <param name="s">The stream</param>
+        /// <returns>Whether or not there was a valid pointer</returns>
+        public static bool TryGoToPointerPush(this NStream s) {
+            int pointer = s.ReadPointer();
+            if (pointer < 0)
+                return false;
+            s.PushPosition();
+            s.Seek(pointer);
+            return true;
+        }
+
         /// <summary>Moves the stream position to the address specified in the 2-byte SNES LoROM pointer relative to the given bank and pushes the position after the pointer.</summary>
         /// <param name="s">The stream</param>
         /// <param name="bank">The LoROM bank of the pointer. This should be between 0x80 and 0xff.</param>
@@ -117,6 +130,27 @@ namespace Necrofy
         public static void GoToRelativePointerPush(this NStream s) {
             byte bank = (byte)(s.Position / 0x8000 + 0x80);
             s.GoToRelativePointerPush(bank);
+        }
+
+        /// <summary>Attempts to move the stream position to the address specified in the 2-byte SNES LoROM pointer relative to the given bank and pushes the position after the pointer.
+        /// The stream is advanced 2 bytes even if there is not a valid pointer at the current position.</summary>
+        /// <param name="s">The stream</param>
+        /// <param name="bank">The LoROM bank of the pointer. This should be between 0x80 and 0xff.</param>
+        public static bool TryGoToRelativePointerPush(this NStream s, byte bank) {
+            int pointer = s.ReadRelativePointer(bank);
+            if (pointer < 0)
+                return false;
+            s.PushPosition();
+            s.Seek(pointer);
+            return true;
+        }
+
+        /// <summary>Attempts to move the stream position to the address specified in the 2-byte SNES LoROM pointer relative to the bank the stream is positioned in and pushes the position after the pointer.
+        /// The stream is advanced 2 bytes even if there is not a valid pointer at the current position.</summary>
+        /// <param name="s">The stream</param>
+        public static bool TryGoToRelativePointerPush(this NStream s) {
+            byte bank = (byte)(s.Position / 0x8000 + 0x80);
+            return s.TryGoToRelativePointerPush(bank);
         }
 
         /// <summary>Adds a 4-byte SNES LoROM pointer to the list.</summary>
