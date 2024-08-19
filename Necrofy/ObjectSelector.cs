@@ -95,6 +95,9 @@ namespace Necrofy
 
         public void UpdateSelection() {
             selectedObjects = new HashSet<T>(selectedObjects.Intersect(SelectableObjects));
+            if (selectedObjects.Count == 0) {
+                MovingObjects = false;
+            }
             host.SelectionChanged();
         }
 
