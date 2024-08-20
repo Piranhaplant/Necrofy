@@ -157,7 +157,7 @@ namespace Necrofy
                     foreach (KeyValuePair<string, string> names in category.Value) {
                         if (cache.TryGetValue(names.Key, out WeakReference<Asset> asset)) {
                             cache.Remove(names.Key);
-                            cache.Add(names.Value, asset);
+                            cache[names.Value] = asset;
                         }
                     }
                 }
