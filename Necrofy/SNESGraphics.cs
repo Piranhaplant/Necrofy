@@ -203,5 +203,13 @@ namespace Necrofy
             }
             return tiles;
         }
+
+        public static void DisposeAll(IEnumerable<Bitmap> images) {
+            if (images != null) {
+                foreach (Bitmap image in images) {
+                    image.Dispose();
+                }
+            }
+        }
     }
 }

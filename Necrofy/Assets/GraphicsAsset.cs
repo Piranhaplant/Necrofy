@@ -68,39 +68,66 @@ namespace Necrofy
             File.WriteAllBytes(filename, data);
         }
 
+        private byte[] trimmedData; // Data with empty sprite graphics tiles removed
+
         public override void ReserveSpace(ROMInfo romInfo) {
-            if (nameInfo.Parts.folder == SpritesFolder && nameInfo.Parts.name == DefaultName) {
+            if (nameInfo.Name == SpriteGraphics) {
                 romInfo.ExtraSpriteGraphicsStartIndex = data.Length / 0x80;
             } else if (graphicsNameInfo.type == Type.Sprite) {
-                romInfo.ExtraSpriteGraphicsSize += data.Length;
-                romInfo.ExtraSpriteGraphicsBasePointer = 0; // Clear this value so it can be reset when the graphics are inserted
                 if (nameInfo.Name == ExtraSpriteGraphics) {
                     romInfo.ExtraSpriteGraphicsFirstSize = data.Length;
+                    trimmedData = data;
+                } else {
+                    trimmedData = trimData(data, out Dictionary<ushort, ushort> tileMapping);
+                    romInfo.ExtraSpriteGraphicsTileMappings[nameInfo.Name] = tileMapping;
                 }
+                romInfo.ExtraSpriteGraphicsSize += trimmedData.Length;
+                romInfo.ExtraSpriteGraphicsBasePointer = 0; // Clear this value so it can be reset when the graphics are inserted
             }
         }
 
         public override void Insert(NStream rom, ROMInfo romInfo, Project project) {
             if (graphicsNameInfo.type == Type.Sprite) {
                 if (romInfo.ExtraSpriteGraphicsBasePointer == 0) {
-                    // TODO: Extra sprite graphics could exceed one bank
                     romInfo.ExtraSpriteGraphicsBasePointer = romInfo.Freespace.Claim(romInfo.ExtraSpriteGraphicsSize, alignment: 0x80);
-                    romInfo.ExtraSpriteGraphicsCurrentPointer = romInfo.ExtraSpriteGraphicsBasePointer;
-                    if (romInfo.ExtraSpriteGraphicsFirstSize > 0) {
-                        romInfo.ExtraSpriteGraphicsCurrentPointer += romInfo.ExtraSpriteGraphicsFirstSize;
-                    }
+                    romInfo.ExtraSpriteGraphicsCurrentPointer = romInfo.ExtraSpriteGraphicsBasePointer + romInfo.ExtraSpriteGraphicsFirstSize;
                 }
                 if (nameInfo.Name == ExtraSpriteGraphics) {
-                    InsertByteArray(rom, romInfo, data, romInfo.ExtraSpriteGraphicsBasePointer);
+                    InsertByteArray(rom, romInfo, trimmedData, romInfo.ExtraSpriteGraphicsBasePointer);
                 } else {
-                    InsertByteArray(rom, romInfo, data, romInfo.ExtraSpriteGraphicsCurrentPointer);
-                    romInfo.ExtraSpriteGraphicsCurrentPointer += data.Length;
+                    InsertByteArray(rom, romInfo, trimmedData, romInfo.ExtraSpriteGraphicsCurrentPointer);
+                    romInfo.ExtraSpriteGraphicsCurrentPointer += trimmedData.Length;
                 }
             } else if (nameInfo.Parts.compressed) {
                 InsertCompressedByteArray(rom, romInfo, data, nameInfo.GetFilename(project.path), nameInfo.Parts.pointer);
             } else {
                 InsertByteArray(rom, romInfo, data, nameInfo.Parts.pointer);
             }
+        }
+
+        private static byte[] trimData(byte[] data, out Dictionary<ushort, ushort> tileMapping) {
+            tileMapping = new Dictionary<ushort, ushort>();
+            ushort newTileNum = 0;
+
+            byte[] newData = new byte[data.Length];
+            int newDataSize = 0;
+
+            for (int i = 0; i < data.Length; i += 0x80) {
+                for (int j = i; j < i + 0x80 && j < data.Length; j++) {
+                    if (data[j] != 0) {
+                        int chunkSize = Math.Min(0x80, data.Length - i);
+                        Array.Copy(data, i, newData, newDataSize, chunkSize);
+                        newDataSize += chunkSize;
+
+                        tileMapping[(ushort)(i / 0x80)] = newTileNum;
+                        newTileNum += 1;
+                        break;
+                    }
+                }
+            }
+
+            Array.Resize(ref newData, newDataSize);
+            return newData;
         }
         
         class GraphicsCreator : Creator

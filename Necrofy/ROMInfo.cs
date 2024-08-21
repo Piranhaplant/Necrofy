@@ -43,6 +43,8 @@ namespace Necrofy
         /// <summary>Size of the extra sprite graphics that needs to be inserted at the beginning of the extra graphics block.
         /// This is used for projects that were created from a Necrofy ROM that already contained extra sprite graphics.</summary>
         public int ExtraSpriteGraphicsFirstSize { get; set; }
+        /// <summary>Mapping from original tile number to new tile number for each sprite graphics asset after removing empty tiles</summary>
+        public readonly Dictionary<string, Dictionary<ushort, ushort>> ExtraSpriteGraphicsTileMappings = new Dictionary<string, Dictionary<ushort, ushort>>();
 
         /// <summary>Loads the ROMInfo data from an already opened stream.</summary>
         /// <param name="s">A stream to a ROM file</param>
@@ -224,7 +226,7 @@ namespace Necrofy
         public void WriteToBuild(NStream s, BuildResults results) {
             WriteProperties(s);
 
-            if (ExtraSpriteGraphicsStartIndex + (ExtraSpriteGraphicsCurrentPointer - ExtraSpriteGraphicsBasePointer + ExtraSpriteGraphicsSize) / 0x80 > 0x1000) {
+            if (ExtraSpriteGraphicsStartIndex + ExtraSpriteGraphicsSize / 0x80 > 0x1000) {
                 results.AddEntry(new BuildResults.Entry(BuildResults.Entry.Level.ERROR, "", "Number of sprite tiles has exceeded the 0x1000 tile limit"));
             }
         }

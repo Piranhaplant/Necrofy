@@ -75,7 +75,7 @@ namespace Necrofy
         public int Claim(int size, int alignment = 1) {
             if (size > BankSize) {
                 // Add space at the end of the ROM for chunks larger than a single bank (used for custom sprite graphics)
-                if (romSize + size >= BankSize * 0x80) {
+                if (romSize + size > BankSize * 0x80) {
                     throw new Exception("Data has exceeded maximum ROM size");
                 }
                 int address = romSize;

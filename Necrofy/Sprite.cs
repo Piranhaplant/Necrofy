@@ -60,13 +60,7 @@ namespace Necrofy
 
         public Bitmap Render(List<Graphics> graphics, Color[] colors, int? overridePalette, out int anchorX, out int anchorY) {
             Rectangle bounds = GetBounds();
-
-            Bitmap image;
-            if (bounds.Width > 0) {
-                image = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format8bppIndexed);
-            } else {
-                image = new Bitmap(1, 1, PixelFormat.Format8bppIndexed);
-            }
+            Bitmap image = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format8bppIndexed);
             SNESGraphics.FillPalette(image, colors);
             BitmapData bitmapData = image.LockBits(new Rectangle(Point.Empty, image.Size), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
 
@@ -78,31 +72,17 @@ namespace Necrofy
             foreach (Tile t in tiles) {
                 if (t.graphicsIndex < graphics.Count && t.tileNum < totalGraphicsLengths[t.graphicsIndex]) {
                     int palette = overridePalette ?? t.palette;
+                    graphics[t.graphicsIndex].GetGraphicsAndRelativeTileNum(t.tileNum, out LoadedGraphics.LinearGraphics curGraphics, out int relativeTileNum);
 
-                    GetGraphicsAndTileNum(t.tileNum, graphics[t.graphicsIndex], out int curTile, out int graphicsNum);
-                    LoadedGraphics.LinearGraphics curGraphics = graphics[t.graphicsIndex].loadedGraphics[graphicsNum].linearGraphics;
-
-                    SNESGraphics.DrawTile(bitmapData, anchorX + t.xOffset + (t.xFlip ? 8 : 0), anchorY + t.yOffset + 1 + (t.yFlip ? 8 : 0), curGraphics[curTile * 4 + 0], palette * 0x10, t.xFlip, t.yFlip);
-                    SNESGraphics.DrawTile(bitmapData, anchorX + t.xOffset + (t.xFlip ? 0 : 8), anchorY + t.yOffset + 1 + (t.yFlip ? 8 : 0), curGraphics[curTile * 4 + 1], palette * 0x10, t.xFlip, t.yFlip);
-                    SNESGraphics.DrawTile(bitmapData, anchorX + t.xOffset + (t.xFlip ? 8 : 0), anchorY + t.yOffset + 1 + (t.yFlip ? 0 : 8), curGraphics[curTile * 4 + 2], palette * 0x10, t.xFlip, t.yFlip);
-                    SNESGraphics.DrawTile(bitmapData, anchorX + t.xOffset + (t.xFlip ? 0 : 8), anchorY + t.yOffset + 1 + (t.yFlip ? 0 : 8), curGraphics[curTile * 4 + 3], palette * 0x10, t.xFlip, t.yFlip);
+                    SNESGraphics.DrawTile(bitmapData, anchorX + t.xOffset + (t.xFlip ? 8 : 0), anchorY + t.yOffset + 1 + (t.yFlip ? 8 : 0), curGraphics[relativeTileNum * 4 + 0], palette * 0x10, t.xFlip, t.yFlip);
+                    SNESGraphics.DrawTile(bitmapData, anchorX + t.xOffset + (t.xFlip ? 0 : 8), anchorY + t.yOffset + 1 + (t.yFlip ? 8 : 0), curGraphics[relativeTileNum * 4 + 1], palette * 0x10, t.xFlip, t.yFlip);
+                    SNESGraphics.DrawTile(bitmapData, anchorX + t.xOffset + (t.xFlip ? 8 : 0), anchorY + t.yOffset + 1 + (t.yFlip ? 0 : 8), curGraphics[relativeTileNum * 4 + 2], palette * 0x10, t.xFlip, t.yFlip);
+                    SNESGraphics.DrawTile(bitmapData, anchorX + t.xOffset + (t.xFlip ? 0 : 8), anchorY + t.yOffset + 1 + (t.yFlip ? 0 : 8), curGraphics[relativeTileNum * 4 + 3], palette * 0x10, t.xFlip, t.yFlip);
                 }
             }
 
             image.UnlockBits(bitmapData);
             return image;
-        }
-
-        private static void GetGraphicsAndTileNum(int fullTileNum, Graphics graphics, out int tileNum, out int graphicsNum) {
-            graphicsNum = 0;
-            tileNum = fullTileNum;
-            foreach (LoadedGraphics g in graphics.loadedGraphics) {
-                if (tileNum < g.linearGraphics.Length / 4) {
-                    break;
-                }
-                tileNum -= g.linearGraphics.Length / 4;
-                graphicsNum++;
-            }
         }
 
         public static void AddFromROM(List<Sprite> sprites, NStream romStream, int address, ROMInfo romInfo) {
@@ -161,6 +141,11 @@ namespace Necrofy
         public static void WriteToROM(SpriteFile sprites, Stream romStream, ROMInfo romInfo, string folder) {
             List<PointerAndSize> graphics = sprites.graphicsAssets.Select(asset => romInfo.GetAssetPointerAndSize(AssetCategory.Graphics, folder + Asset.FolderSeparator + asset)).ToList();
 
+            List<Dictionary<ushort, ushort>> tileMappings = sprites.graphicsAssets.Select(asset => romInfo.ExtraSpriteGraphicsTileMappings[folder + Asset.FolderSeparator + asset]).ToList();
+            foreach (Sprite s in sprites.sprites) {
+                RemoveEmptyTiles(s, tileMappings);
+            }
+
             int customSpritePointer = romInfo.Freespace.Claim(sprites.sprites.Where(s => s.pointer == null).Sum(s => BytesForTiles(s.tiles.Count)));
 
             foreach (Sprite s in sprites.sprites) {
@@ -218,6 +203,20 @@ namespace Necrofy
             return tileCount * 8 + 1;
         }
 
+        private static void RemoveEmptyTiles(Sprite s, List<Dictionary<ushort, ushort>> tileMappings) {
+            for (int i = s.tiles.Count - 1; i >= 0; i--) {
+                Tile t = s.tiles[i];
+                if (t.graphicsIndex > 0) {
+                    Dictionary<ushort, ushort> mapping = tileMappings[t.graphicsIndex - 1];
+                    if (mapping.TryGetValue(t.tileNum, out ushort newTileNum)) {
+                        t.tileNum = newTileNum;
+                    } else {
+                        s.tiles.RemoveAt(i);
+                    }
+                }
+            }
+        }
+
         private static ushort GetActualTileNum(int graphicsIndex, ushort tileNum, List<PointerAndSize> graphics, int extraGraphicsPointer, int extraGraphicsStartNum) {
             if (graphicsIndex == 0) {
                 return tileNum;
@@ -266,10 +265,20 @@ namespace Necrofy
                 }
             }
 
-            public void Dispose() {
-                foreach (Bitmap image in images) {
-                    image.Dispose();
+            public void GetGraphicsAndRelativeTileNum(int fullTileNum, out LoadedGraphics.LinearGraphics linearGraphics, out int tileNum) {
+                tileNum = fullTileNum;
+                foreach (LoadedGraphics g in loadedGraphics) {
+                    if (tileNum < g.linearGraphics.Length / 4) {
+                        linearGraphics = g.linearGraphics;
+                        return;
+                    }
+                    tileNum -= g.linearGraphics.Length / 4;
                 }
+                throw new Exception("Tile number out of range");
+            }
+
+            public void Dispose() {
+                SNESGraphics.DisposeAll(images);
                 images.Clear();
             }
         }

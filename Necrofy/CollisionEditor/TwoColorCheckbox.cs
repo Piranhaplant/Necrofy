@@ -57,8 +57,6 @@ namespace Necrofy
             DrawText(pevent.Graphics, ref x, text2, foreColor2);
         }
 
-        StringFormat format = new StringFormat() { LineAlignment = StringAlignment.Center };
-
         private void DrawText(Graphics g, ref int x, string s, Color color) {
             Rectangle rect = new Rectangle(x, 0, Width - x, Height);
             TextRenderer.DrawText(g, s, Font, rect, color, TextFormatFlags.VerticalCenter);
