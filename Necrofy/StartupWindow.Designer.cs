@@ -30,7 +30,6 @@
             // 
             // webBrowser
             // 
-            this.webBrowser.AllowNavigation = false;
             this.webBrowser.AllowWebBrowserDrop = false;
             this.webBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
             this.webBrowser.IsWebBrowserContextMenuEnabled = false;
@@ -41,6 +40,7 @@
             this.webBrowser.Size = new System.Drawing.Size(800, 450);
             this.webBrowser.TabIndex = 0;
             this.webBrowser.WebBrowserShortcutsEnabled = false;
+            this.webBrowser.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webBrowser_Navigating);
             // 
             // StartupWindow
             // 

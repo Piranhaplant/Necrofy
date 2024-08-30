@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,13 @@ namespace Necrofy
 
             webBrowser.DocumentText = Properties.Resources.StartPage;
             Status = statusText;
+        }
+
+        private void webBrowser_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
+            if (e.Url.ToString().StartsWith("http")) {
+                e.Cancel = true;
+                Process.Start(e.Url.ToString());
+            }
         }
     }
 }
