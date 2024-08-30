@@ -512,6 +512,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(510, 493);
             this.Controls.Add(this.removeLevelEffect);
             this.Controls.Add(this.addLevelEffect);
@@ -520,7 +521,7 @@
             this.Controls.Add(this.spritesGroup);
             this.Controls.Add(this.audioGroup);
             this.Controls.Add(this.tilesetGroup);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "LevelSettingsDialog";
