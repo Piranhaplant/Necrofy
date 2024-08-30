@@ -92,7 +92,6 @@
             this.tilePicker.Location = new System.Drawing.Point(0, 63);
             this.tilePicker.Name = "tilePicker";
             this.tilePicker.Palette = 0;
-            this.tilePicker.PalettePerTile = null;
             this.tilePicker.SelectedTile = -1;
             this.tilePicker.Size = new System.Drawing.Size(273, 776);
             this.tilePicker.TabIndex = 0;
