@@ -82,7 +82,7 @@ namespace Necrofy
             public Tile(ushort value) : this((byte)(value & 0xff), (byte)((value >> 8) & 0xff)) { }
 
             public Tile(byte lowByte, byte highByte) {
-                tileNum = lowByte + ((highByte & 1) << 8);
+                tileNum = lowByte + ((highByte & 3) << 8);
                 palette = (highByte >> 2) & 7;
                 priority = ((highByte >> 5) & 1) > 0;
                 xFlip = ((highByte >> 6) & 1) > 0;
@@ -107,7 +107,7 @@ namespace Necrofy
 
             public ushort ToUshort() {
                 return (ushort)(
-                    (tileNum & 0x1ff) |
+                    (tileNum & 0x3ff) |
                     ((palette & 7) << 10) |
                     ((priority ? 1 : 0) << 13) |
                     ((xFlip ? 1 : 0) << 14) |
