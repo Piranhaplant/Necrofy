@@ -12,7 +12,7 @@ namespace Necrofy
 {
     class ScrollWrapper
     {
-        private readonly Control control;
+        private readonly Canvas control;
         
         public event EventHandler Scrolled;
 
@@ -53,7 +53,21 @@ namespace Necrofy
             }
         }
 
-        public ScrollWrapper(Control control, HScrollBar hscroll, VScrollBar vscroll, bool autoSize = true) {
+        private bool centerContents = true;
+        public bool CenterContents {
+            get {
+                return centerContents;
+            }
+            set {
+                if (value != centerContents) {
+                    centerContents = value;
+                    xDimension.SetCenterContents(centerContents);
+                    yDimension.SetCenterContents(centerContents);
+                }
+            }
+        }
+
+        public ScrollWrapper(Canvas control, HScrollBar hscroll, VScrollBar vscroll, bool autoSize = true) {
             this.control = control;
 
             xDimension = new Dimension(hscroll, () => Math.Max(0, control.Width));
@@ -72,6 +86,7 @@ namespace Necrofy
 
         private void Dimension_Scrolled(object sender, EventArgs e) {
             Scrolled?.Invoke(this, e);
+            control.GenerateMouseMove();
         }
 
         private class Dimension
@@ -81,6 +96,7 @@ namespace Necrofy
 
             private int clientSize;
             private float zoom = 1.0f;
+            private bool centerContents = true;
 
             private int scaledClientSize;
             private int clientPosition;
@@ -113,6 +129,11 @@ namespace Necrofy
                 SetScrollBarValue((int)(center * zoom) - controlSize() / 2);
             }
 
+            public void SetCenterContents(bool centerContents) {
+                this.centerContents = centerContents;
+                UpdateSize();
+            }
+
             public void ScrollToPoint(int point) {
                 if (scrollBar.Enabled) {
                     SetScrollBarValue((int)(point * zoom) - controlSize() / 2);
@@ -125,7 +146,11 @@ namespace Necrofy
 
             public void UpdateSize() {
                 scaledClientSize = (int)(clientSize * zoom - 1);
-                clientPosition = Math.Max(0, (controlSize() - scaledClientSize) / 2);
+                if (centerContents) {
+                    clientPosition = Math.Max(0, (controlSize() - scaledClientSize) / 2);
+                } else {
+                    clientPosition = 0;
+                }
 
                 scrollBar.Minimum = 0;
                 scrollBar.Maximum = Math.Max(controlSize() - 1, scaledClientSize);

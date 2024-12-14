@@ -240,7 +240,6 @@ namespace Necrofy
         }
 
         private void ScrollWrapper_Scrolled(object sender, EventArgs e) {
-            GenerateMouseMove();
             Repaint();
         }
 

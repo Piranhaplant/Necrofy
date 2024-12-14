@@ -297,7 +297,6 @@ namespace Necrofy
         }
         
         private void scrollWrapper_Scrolled(object sender, EventArgs e) {
-            canvas.GenerateMouseMove();
             Repaint();
         }
 
