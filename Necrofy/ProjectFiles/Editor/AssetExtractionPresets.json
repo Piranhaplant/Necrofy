@@ -930,6 +930,44 @@
 				"largeTiles": false,
 				"hinting": 0
 			}
+		},
+		{
+			"Description": "Text Entry Graphics",
+			"Filename": "Graphics",
+			"Category": "Text Entry",
+			"Address": 726659,
+			"Length": 5664,
+			"Compressed": false,
+			"Type": "Graphics",
+			"Options": {
+				"width": 16,
+				"transparency": true,
+				"largeTiles": false
+			}
+		},
+		{
+			"Description": "Text Entry Tilemap",
+			"Filename": "Tilemap",
+			"Category": "Text Entry",
+			"Address": 1015284,
+			"Length": 512,
+			"Compressed": false,
+			"Type": "Tilemap",
+			"Options": {
+				"width": 128,
+				"transparency": true,
+				"largeTiles": false,
+				"hinting": 0
+			}
+		},
+		{
+			"Description": "Text Entry Palette",
+			"Filename": "Palette",
+			"Category": "Text Entry",
+			"Address": 127404,
+			"Length": 32,
+			"Compressed": false,
+			"Type": "Palette"
 		}
 	]
 }
