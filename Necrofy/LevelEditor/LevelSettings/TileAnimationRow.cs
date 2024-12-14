@@ -35,7 +35,7 @@ namespace Necrofy
         }
 
         private void customizeButton_Click(object sender, EventArgs e) {
-            
+            levelSettings.ShowTileAnimationEditor(tileAnim);
         }
     }
 }

@@ -15,6 +15,8 @@ namespace Necrofy
     {
         private IReadOnlyList<Bitmap> tiles = null;
         private Color[] colors = null;
+        private int[] palettePerTile = null;
+
         private readonly ScrollWrapper scrollWrapper;
         private readonly RadioButton[] paletteButtons;
         private Pen dashPen;
@@ -49,6 +51,17 @@ namespace Necrofy
                         }
                     }
                 }
+            }
+        }
+
+        public int[] PalettePerTile {
+            get {
+                return palettePerTile;
+            }
+            set {
+                palettePerTile = value;
+                palettePanel.Visible = palettePerTile == null;
+                Repaint();
             }
         }
 
@@ -166,7 +179,11 @@ namespace Necrofy
                 int x = (i % tilesPerRow) * tileSize;
                 int y = (i / tilesPerRow) * tileSize;
                 if (y > topLeft.Y - tileSize && y < bottomRight.Y) {
-                    SNESGraphics.DrawWithPlt(e.Graphics, x, y, tiles[i], colors, displayPalette * colorsPerPalette, colorsPerPalette, flipX, flipY);
+                    int palette = displayPalette;
+                    if (palettePerTile != null && i < palettePerTile.Length) {
+                        palette = palettePerTile[i];
+                    }
+                    SNESGraphics.DrawWithPlt(e.Graphics, x, y, tiles[i], colors, palette * colorsPerPalette, colorsPerPalette, flipX, flipY);
                 }
             }
             if (SelectedTile >= 0) {

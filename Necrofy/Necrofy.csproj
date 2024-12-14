@@ -184,6 +184,7 @@
     <Compile Include="GraphicsEditor\GraphicsTileList.cs" />
     <Compile Include="GraphicsEditor\GraphicsTool.cs" />
     <Compile Include="GraphicsEditor\GraphicsSelectTool.cs" />
+    <Compile Include="LevelEditor\LevelSettings\WrappedAnimationTile.cs" />
     <Compile Include="LevelEditor\LoadedLevel\LoadedTileset.cs" />
     <Compile Include="MapEditor\MapBrushTool.cs" />
     <Compile Include="MapEditor\MapEditorDesigner.cs">
@@ -355,6 +356,12 @@
     </Compile>
     <Compile Include="TextDisplayForm.Designer.cs">
       <DependentUpon>TextDisplayForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LevelEditor\LevelSettings\TileAnimationEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LevelEditor\LevelSettings\TileAnimationEditor.Designer.cs">
+      <DependentUpon>TileAnimationEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="TilemapEditor\Hinting.cs" />
     <Compile Include="TilemapEditor\TilemapBrushTool.cs" />
@@ -589,6 +596,9 @@
     <EmbeddedResource Include="TextDisplayForm.resx">
       <DependentUpon>TextDisplayForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="LevelEditor\LevelSettings\TileAnimationEditor.resx">
+      <DependentUpon>TileAnimationEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="TilemapEditor\TilemapEditor.resx">
       <DependentUpon>TilemapEditor.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -781,6 +791,10 @@
     <None Include="Icons\color-swatch.png" />
     <None Include="Icons\color-swatch-lock.png" />
     <None Include="Icons\arrow-move.png" />
+    <None Include="Icons\control-skip-180.png" />
+    <None Include="Icons\control-pause.png" />
+    <None Include="Icons\control-stop.png" />
+    <None Include="Icons\control-stop-square.png" />
     <Content Include="ProjectFiles\Patches\Debug.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

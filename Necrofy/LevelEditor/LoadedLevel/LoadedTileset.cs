@@ -26,6 +26,7 @@ namespace Necrofy
         public Bitmap[] solidOnlyTiles;
 
         public event EventHandler TilesChanged;
+        public event EventHandler Animated;
 
         public LoadedTileset(Project project, string paletteName, string graphicsName, string tilemapName, string collisionName, int visibleTilesEnd, int priorityTileCount, TileAnimLevelMonster tileAnimLevelMonster) {
             this.visibleTilesEnd = visibleTilesEnd;
@@ -55,7 +56,7 @@ namespace Necrofy
             SNESGraphics.DisposeAll(tiles);
             SNESGraphics.DisposeAll(priorityTiles);
             SNESGraphics.DisposeAll(solidOnlyTiles);
-                }
+        }
 
         private void Load() {
             Dispose();
@@ -112,7 +113,36 @@ namespace Necrofy
         }
 
         private void TileAnimator_Animated(object sender, EventArgs e) {
-            TilesChanged?.Invoke(this, EventArgs.Empty);
+            Animated?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>Gets the palette that is used most often for each graphics tile</summary>
+        /// <returns>The prefered palette for each graphics tile</returns>
+        public int[] GetPreferedPalettes() {
+            int[,] usedCount = new int[0x200, 8];
+            for (int i = 0; i < tilemap.tiles.Length; i++) {
+                for (int y = 0; y < 8; y++) {
+                    for (int x = 0; x < 8; x++) {
+                        LoadedTilemap.Tile tile = tilemap.tiles[i][x, y];
+                        usedCount[tile.tileNum, tile.palette]++;
+                    }
+                }
+            }
+
+            int[] palettes = new int[0x200];
+            for (int i = 0; i < palettes.Length; i++) {
+                int bestPalette = 0;
+                int bestCount = 0;
+                for (int p = 0; p < 8; p++) {
+                    if (usedCount[i, p] > bestCount) {
+                        bestPalette = p;
+                        bestCount = usedCount[i, p];
+                    }
+                }
+                palettes[i] = bestPalette;
+            }
+
+            return palettes;
         }
     }
 }

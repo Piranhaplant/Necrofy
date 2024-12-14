@@ -187,6 +187,28 @@ namespace Necrofy
             undoManager?.ForceDirty();
         }
 
+        public void ShowTileAnimationEditor(TileAnimLevelMonster tileAnim) {
+            settingsPanel.Visible = false;
+            TileAnimationEditor tileAnimationEditor = new TileAnimationEditor(this, tileAnim, project, tilesetPaletteSelector.SelectedName, GetGraphicsName(), tilesSelector.SelectedName, GetCollisionName(), GetVisibleEndValue(), GetPriorityValue());
+            tileAnimationEditor.Dock = DockStyle.Fill;
+            Controls.Add(tileAnimationEditor);
+        }
+
+        public void HideTileAnimationEditor(TileAnimationEditor editor) {
+            Controls.Remove(editor);
+            settingsPanel.Visible = true;
+            BrowserContents = null;
+            Info1 = "";
+        }
+
+        public void SetObjectBrowserContents(ObjectBrowserContents contents) {
+            BrowserContents = contents;
+        }
+
+        public void SetInfo1(string info) {
+            Info1 = info;
+        }
+
         protected override void DoSave(Project project) {
             LoadedLevel level = levelEditor.level;
             bool reloadTileset = false;
@@ -206,29 +228,19 @@ namespace Necrofy
                 level.Level.paletteAnimationPtr = ((LevelSettingsPresets.Preset<int>)paletteAnimationSelector.SelectedItem).value;
             }
 
-            if (graphicsAuto.Checked) {
-                string graphicsName = GetDefaultName(level.Level.tilesetTilemapName, GraphicsAsset.DefaultName);
-                reloadTileset |= level.Level.tilesetGraphicsName != graphicsName;
-                level.Level.tilesetGraphicsName = graphicsName;
-            } else if (graphicsSelector.SelectedIndex > -1 && level.Level.tilesetGraphicsName != graphicsSelector.SelectedName) {
-                level.Level.tilesetGraphicsName = graphicsSelector.SelectedName;
-                reloadTileset = true;
-            }
+            string graphicsName = GetGraphicsName();
+            reloadTileset |= level.Level.tilesetGraphicsName != graphicsName;
+            level.Level.tilesetGraphicsName = graphicsName;
 
-            if (collisionAuto.Checked) {
-                string collisionName = GetDefaultName(level.Level.tilesetTilemapName, CollisionAsset.DefaultName);
-                reloadTileset |= level.Level.tilesetCollisionName != collisionName;
-                level.Level.tilesetCollisionName = collisionName;
-            } else if (collisionSelector.SelectedIndex > -1 && level.Level.tilesetCollisionName != collisionSelector.SelectedName) {
-                level.Level.tilesetCollisionName = collisionSelector.SelectedName;
-                reloadTileset = true;
-            }
+            string collisionName = GetCollisionName();
+            reloadTileset |= level.Level.tilesetCollisionName != collisionName;
+            level.Level.tilesetCollisionName = collisionName;
 
-            ushort priorityValue = priorityAuto.Checked ? level.TilesetSuggestions.PriorityTileCount : (ushort)prioritySelector.Value;
+            ushort priorityValue = GetPriorityValue();
             reloadTileset |= level.Level.priorityTileCount != priorityValue;
             level.Level.priorityTileCount = priorityValue;
 
-            ushort visibleEndValue = visibleEndAuto.Checked ? DefaultVisibleTilesEnd : (ushort)visibleEndSelector.Value;
+            ushort visibleEndValue = GetVisibleEndValue();
             reloadTileset |= level.Level.visibleTilesEnd != visibleEndValue;
             level.Level.visibleTilesEnd = visibleEndValue;
 
@@ -270,6 +282,32 @@ namespace Necrofy
             }
 
             levelEditor.undoManager.ForceDirty();
+        }
+
+        private string GetGraphicsName() {
+            if (graphicsAuto.Checked) {
+                return GetDefaultName(levelEditor.level.Level.tilesetTilemapName, GraphicsAsset.DefaultName);
+            } else if (graphicsSelector.SelectedIndex > -1) {
+                return graphicsSelector.SelectedName;
+            }
+            return null;
+        }
+
+        private string GetCollisionName() {
+            if (collisionAuto.Checked) {
+                return GetDefaultName(levelEditor.level.Level.tilesetTilemapName, CollisionAsset.DefaultName);
+            } else if (collisionSelector.SelectedIndex > -1) {
+                return collisionSelector.SelectedName;
+            }
+            return null;
+        }
+
+        private ushort GetPriorityValue() {
+            return priorityAuto.Checked ? levelEditor.level.TilesetSuggestions.PriorityTileCount : (ushort)prioritySelector.Value;
+        }
+
+        private ushort GetVisibleEndValue() {
+            return visibleEndAuto.Checked ? DefaultVisibleTilesEnd : (ushort)visibleEndSelector.Value;
         }
 
         private static bool TileAnimationsEqual(List<LevelMonster> list1, List<LevelMonster> list2) {

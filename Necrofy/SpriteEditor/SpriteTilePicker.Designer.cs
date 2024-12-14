@@ -45,7 +45,7 @@
             // 
             this.vScrollBar.Dock = System.Windows.Forms.DockStyle.Right;
             this.vScrollBar.LargeChange = 100;
-            this.vScrollBar.Location = new System.Drawing.Point(260, 29);
+            this.vScrollBar.Location = new System.Drawing.Point(256, 29);
             this.vScrollBar.Name = "vScrollBar";
             this.vScrollBar.Size = new System.Drawing.Size(17, 442);
             this.vScrollBar.SmallChange = 32;
@@ -56,7 +56,7 @@
             this.hScrollBar.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.hScrollBar.Location = new System.Drawing.Point(0, 471);
             this.hScrollBar.Name = "hScrollBar";
-            this.hScrollBar.Size = new System.Drawing.Size(277, 17);
+            this.hScrollBar.Size = new System.Drawing.Size(273, 17);
             this.hScrollBar.TabIndex = 5;
             this.hScrollBar.Visible = false;
             // 
@@ -67,7 +67,7 @@
             this.canvas.IsMouseDown = false;
             this.canvas.Location = new System.Drawing.Point(0, 29);
             this.canvas.Name = "canvas";
-            this.canvas.Size = new System.Drawing.Size(260, 442);
+            this.canvas.Size = new System.Drawing.Size(256, 442);
             this.canvas.TabIndex = 4;
             this.canvas.MouseDown += new System.Windows.Forms.MouseEventHandler(this.canvas_MouseDown);
             this.canvas.SizeChanged += new System.EventHandler(this.canvas_SizeChanged);
@@ -88,13 +88,14 @@
             this.palettePanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.palettePanel.Location = new System.Drawing.Point(0, 0);
             this.palettePanel.Name = "palettePanel";
-            this.palettePanel.Size = new System.Drawing.Size(277, 29);
+            this.palettePanel.Size = new System.Drawing.Size(273, 29);
             this.palettePanel.TabIndex = 9;
             // 
             // palette7Button
             // 
             this.palette7Button.Appearance = System.Windows.Forms.Appearance.Button;
             this.palette7Button.AutoSize = true;
+            this.palette7Button.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
             this.palette7Button.Location = new System.Drawing.Point(248, 3);
             this.palette7Button.Name = "palette7Button";
             this.palette7Button.Size = new System.Drawing.Size(23, 23);
@@ -108,6 +109,7 @@
             // 
             this.palette6Button.Appearance = System.Windows.Forms.Appearance.Button;
             this.palette6Button.AutoSize = true;
+            this.palette6Button.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
             this.palette6Button.Location = new System.Drawing.Point(219, 3);
             this.palette6Button.Name = "palette6Button";
             this.palette6Button.Size = new System.Drawing.Size(23, 23);
@@ -121,6 +123,7 @@
             // 
             this.palette5Button.Appearance = System.Windows.Forms.Appearance.Button;
             this.palette5Button.AutoSize = true;
+            this.palette5Button.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
             this.palette5Button.Location = new System.Drawing.Point(190, 3);
             this.palette5Button.Name = "palette5Button";
             this.palette5Button.Size = new System.Drawing.Size(23, 23);
@@ -134,6 +137,7 @@
             // 
             this.palette4Button.Appearance = System.Windows.Forms.Appearance.Button;
             this.palette4Button.AutoSize = true;
+            this.palette4Button.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
             this.palette4Button.Location = new System.Drawing.Point(161, 3);
             this.palette4Button.Name = "palette4Button";
             this.palette4Button.Size = new System.Drawing.Size(23, 23);
@@ -147,6 +151,7 @@
             // 
             this.palette3Button.Appearance = System.Windows.Forms.Appearance.Button;
             this.palette3Button.AutoSize = true;
+            this.palette3Button.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
             this.palette3Button.Location = new System.Drawing.Point(132, 3);
             this.palette3Button.Name = "palette3Button";
             this.palette3Button.Size = new System.Drawing.Size(23, 23);
@@ -160,6 +165,7 @@
             // 
             this.palette2Button.Appearance = System.Windows.Forms.Appearance.Button;
             this.palette2Button.AutoSize = true;
+            this.palette2Button.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
             this.palette2Button.Location = new System.Drawing.Point(103, 3);
             this.palette2Button.Name = "palette2Button";
             this.palette2Button.Size = new System.Drawing.Size(23, 23);
@@ -173,6 +179,7 @@
             // 
             this.palette1Button.Appearance = System.Windows.Forms.Appearance.Button;
             this.palette1Button.AutoSize = true;
+            this.palette1Button.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
             this.palette1Button.Location = new System.Drawing.Point(74, 3);
             this.palette1Button.Name = "palette1Button";
             this.palette1Button.Size = new System.Drawing.Size(23, 23);
@@ -187,6 +194,7 @@
             this.palette0Button.Appearance = System.Windows.Forms.Appearance.Button;
             this.palette0Button.AutoSize = true;
             this.palette0Button.Checked = true;
+            this.palette0Button.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
             this.palette0Button.Location = new System.Drawing.Point(45, 3);
             this.palette0Button.Name = "palette0Button";
             this.palette0Button.Size = new System.Drawing.Size(23, 23);
@@ -200,6 +208,7 @@
             // paletteLabel
             // 
             this.paletteLabel.AutoSize = true;
+            this.paletteLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
             this.paletteLabel.Location = new System.Drawing.Point(1, 8);
             this.paletteLabel.Name = "paletteLabel";
             this.paletteLabel.Size = new System.Drawing.Size(43, 13);
@@ -215,7 +224,7 @@
             this.Controls.Add(this.hScrollBar);
             this.Controls.Add(this.palettePanel);
             this.Name = "SpriteTilePicker";
-            this.Size = new System.Drawing.Size(277, 488);
+            this.Size = new System.Drawing.Size(273, 488);
             this.palettePanel.ResumeLayout(false);
             this.palettePanel.PerformLayout();
             this.ResumeLayout(false);

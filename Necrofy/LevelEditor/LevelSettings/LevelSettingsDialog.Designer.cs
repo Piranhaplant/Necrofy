@@ -66,6 +66,7 @@
             this.addPaletteFade = new System.Windows.Forms.ToolStripMenuItem();
             this.addTileAnimation = new System.Windows.Forms.ToolStripMenuItem();
             this.removeLevelEffect = new System.Windows.Forms.Button();
+            this.settingsPanel = new System.Windows.Forms.Panel();
             this.tilesetGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.visibleEndSelector)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.prioritySelector)).BeginInit();
@@ -75,6 +76,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.bonusLevelSelector)).BeginInit();
             this.levelEffectsGroup.SuspendLayout();
             this.addLevelEffectMenu.SuspendLayout();
+            this.settingsPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // tilesLabel
@@ -508,19 +510,28 @@
             this.removeLevelEffect.UseVisualStyleBackColor = true;
             this.removeLevelEffect.Click += new System.EventHandler(this.removeLevelEffect_Click);
             // 
+            // settingsPanel
+            // 
+            this.settingsPanel.AutoScroll = true;
+            this.settingsPanel.Controls.Add(this.tilesetGroup);
+            this.settingsPanel.Controls.Add(this.audioGroup);
+            this.settingsPanel.Controls.Add(this.removeLevelEffect);
+            this.settingsPanel.Controls.Add(this.spritesGroup);
+            this.settingsPanel.Controls.Add(this.addLevelEffect);
+            this.settingsPanel.Controls.Add(this.bonusesGroup);
+            this.settingsPanel.Controls.Add(this.levelEffectsGroup);
+            this.settingsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.settingsPanel.Location = new System.Drawing.Point(0, 0);
+            this.settingsPanel.Name = "settingsPanel";
+            this.settingsPanel.Size = new System.Drawing.Size(511, 495);
+            this.settingsPanel.TabIndex = 35;
+            // 
             // LevelSettingsDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(510, 493);
-            this.Controls.Add(this.removeLevelEffect);
-            this.Controls.Add(this.addLevelEffect);
-            this.Controls.Add(this.levelEffectsGroup);
-            this.Controls.Add(this.bonusesGroup);
-            this.Controls.Add(this.spritesGroup);
-            this.Controls.Add(this.audioGroup);
-            this.Controls.Add(this.tilesetGroup);
+            this.ClientSize = new System.Drawing.Size(511, 495);
+            this.Controls.Add(this.settingsPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -539,6 +550,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.bonusLevelSelector)).EndInit();
             this.levelEffectsGroup.ResumeLayout(false);
             this.addLevelEffectMenu.ResumeLayout(false);
+            this.settingsPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -585,5 +597,6 @@
         private System.Windows.Forms.ComboBox secretBonusTypeSelector;
         private System.Windows.Forms.Label bonusLevelLabel;
         private System.Windows.Forms.Label secretBonusTypeLabel;
+        private System.Windows.Forms.Panel settingsPanel;
     }
 }

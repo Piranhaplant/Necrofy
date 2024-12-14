@@ -537,7 +537,53 @@ namespace Necrofy
             }
         }
 
+        private List<List<int>> spriteSheet = new List<List<int>>();
+
         private void canvas_KeyDown(object sender, KeyEventArgs e) {
+            if (e.KeyData == (Keys.Control | Keys.R) || e.KeyData == (Keys.Control | Keys.Shift | Keys.R)) {
+                int spriteCount = tilePicker.Palette;
+                if (spriteCount == 0) {
+                    spriteCount = 8;
+                }
+                if (e.KeyData.HasFlag(Keys.Shift)) {
+                    spriteCount += 8;
+                }
+
+                List<int> row = new List<int>();
+                for (int i = 0; i < spriteCount; i++) {
+                    row.Add(browserContents.SelectedIndex + i);
+                }
+                spriteSheet.Add(row);
+            } else if (e.KeyData == (Keys.Control | Keys.Q)) {
+                int width = spriteSheet.Max(l => l.Count);
+                int height = spriteSheet.Count;
+
+                int minX = spriteSheet.SelectMany(l => l).Min(i => loadedSprites.Sprites[i].GetBounds().Left);
+                int maxX = spriteSheet.SelectMany(l => l).Max(i => loadedSprites.Sprites[i].GetBounds().Right);
+                int minY = spriteSheet.SelectMany(l => l).Min(i => loadedSprites.Sprites[i].GetBounds().Top);
+                int maxY = spriteSheet.SelectMany(l => l).Max(i => loadedSprites.Sprites[i].GetBounds().Bottom);
+                int spriteWidth = maxX - minX;
+                int spriteHeight = maxY - minY;
+
+                using (Bitmap b = new Bitmap(width * spriteWidth, height * spriteHeight))
+                using (Graphics g = Graphics.FromImage(b)) {
+                    for (int y = 0; y < spriteSheet.Count; y++) {
+                        List<int> row = spriteSheet[y];
+                        for (int x = 0; x < row.Count; x++) {
+                            using (Bitmap s = loadedSprites.Sprites[row[x]].Render(loadedSprites.graphics, loadedSprites.loadedPalette.colors, null, out int anchorX, out int anchorY)) {
+                                g.DrawImage(s, x * spriteWidth - minX - anchorX, y * spriteHeight - minY - anchorY);
+                            }
+                        }
+                    }
+                    SaveFileDialog dialog = new SaveFileDialog();
+                    dialog.Filter = "PNG images (*.png)|*.png";
+                    if (dialog.ShowDialog() == DialogResult.OK) {
+                        b.Save(dialog.FileName);
+                        spriteSheet = new List<List<int>>();
+                    }
+                }
+            }
+
             objectSelector.KeyDown(e.KeyData);
             tilePicker.OnKeyDown(e.KeyCode);
         }

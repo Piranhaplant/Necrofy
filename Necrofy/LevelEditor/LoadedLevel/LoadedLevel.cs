@@ -41,6 +41,7 @@ namespace Necrofy
         private void DisposeTiles() {
             if (tileset != null) {
                 tileset.TilesChanged -= Tileset_TilesChanged;
+                tileset.Animated -= Tileset_TilesChanged;
                 tileset.Dispose();
             }
         }
@@ -85,6 +86,7 @@ namespace Necrofy
 
             tileset = new LoadedTileset(project, Level.paletteName, Level.tilesetGraphicsName, Level.tilesetTilemapName, Level.tilesetCollisionName, Level.visibleTilesEnd, Level.priorityTileCount, tileAnimLevelMonster);
             tileset.TilesChanged += Tileset_TilesChanged;
+            tileset.Animated += Tileset_TilesChanged;
 
             if (animationRunning) {
                 tileset.tileAnimator.Run();
