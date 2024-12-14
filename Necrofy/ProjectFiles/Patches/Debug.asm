@@ -254,6 +254,7 @@ dw text_give_secret_bonus,give_secret_bonus
 dw text_save_victims,save_victims
 dw text_kill_victims,kill_victims
 dw text_kill_player,kill_player
+dw text_zombify,zombify
 dw $0000
 
 text_get_10000_points:
@@ -384,6 +385,37 @@ LDX !controller_num
 STZ $1CB8,X ; Set health to 0
 STZ $1D4C,X ; Set lives to 0
 RTS
+
+text_zombify:
+db "ZOMBIFY",$00
+zombify:
+LDX !controller_num
+LDY $00D2,X ; Get player sprite
+LDX $000C,Y ; Get entity ID
+LDA $11B0,X ; Get stack pointer
+; Insert a call to the code to zombify the player
+PHA
+DEC A
+DEC A
+DEC A
+STA $11B0,X
+PLX
+TAY
+LDA $0000,X
+STA $0000,Y
+LDA $0002,X
+STA $0002,Y
+LDA $0004,X
+STA $0004,Y
+LDA #$0080
+XBA	
+STA $0006,Y
+LDA #$EE40
+DEC A
+STA $0005,Y
+RTS
+
+; --- Other code modifications ---
 
 freecode $33
 
