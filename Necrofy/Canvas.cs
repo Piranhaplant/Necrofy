@@ -18,7 +18,7 @@ namespace Necrofy
         public new event MouseEventHandler MouseUp;
 
         public bool IsMouseDown { get; set; } = false;
-        private Point prevMousePosition = Point.Empty;
+        private Point prevMousePosition = new Point(int.MinValue, int.MinValue);
 
         public Canvas() {
             InitializeComponent();

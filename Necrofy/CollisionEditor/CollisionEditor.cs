@@ -127,13 +127,13 @@ namespace Necrofy
         }
 
         private void ObjectBrowserContents_SelectedIndexChanged(object sender, EventArgs e) {
-            tilesetPreview.Invalidate();
-            tilesetPreviewCollision.Invalidate();
+            tilesetPreview.Repaint();
+            tilesetPreviewCollision.Repaint();
         }
 
         private void tilePicker_SelectedTileChanged(object sender, EventArgs e) {
-            tilesetPreview.Refresh();
-            tilesetPreviewCollision.Refresh();
+            tilesetPreview.Repaint();
+            tilesetPreviewCollision.Repaint();
 
             if (tilePicker.SelectedTile >= 0) {
                 undoManager?.ForceNoMerge();

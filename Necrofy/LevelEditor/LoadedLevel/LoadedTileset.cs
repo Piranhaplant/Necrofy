@@ -52,12 +52,10 @@ namespace Necrofy
         public void Dispose() {
             tileAnimator.Pause();
             tileAnimator.Animated -= TileAnimator_Animated;
-            if (tiles != null) {
-                foreach (Bitmap b in tiles.Union(priorityTiles).Union(solidOnlyTiles)) {
-                    b.Dispose();
+            SNESGraphics.DisposeAll(tiles);
+            SNESGraphics.DisposeAll(priorityTiles);
+            SNESGraphics.DisposeAll(solidOnlyTiles);
                 }
-            }
-        }
 
         private void Load() {
             Dispose();

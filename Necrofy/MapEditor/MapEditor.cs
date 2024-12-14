@@ -214,7 +214,7 @@ namespace Necrofy
         }
 
         private bool TransformMouseArgs(MouseEventArgs e, out MapMouseEventArgs ret) {
-            if (e.Button == MouseButtons.Left || !canvas.IsMouseDown) {
+            if (toolManager.currentTool != null && (e.Button == MouseButtons.Left || !canvas.IsMouseDown)) {
                 Point transformed = scrollWrapper.TransformPoint(e.Location);
                 ret = new MapMouseEventArgs(e.Button, e.Clicks, transformed.X, transformed.Y, e.Delta, tileSize, width, height, canvas.IsMouseDown);
                 return true;

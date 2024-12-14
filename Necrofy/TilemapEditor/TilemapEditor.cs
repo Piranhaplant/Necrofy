@@ -94,7 +94,7 @@ namespace Necrofy
         }
 
         private void TilemapEditor_Disposed(object sender, EventArgs e) {
-            DisposeTiles();
+            SNESGraphics.DisposeAll(tiles);
             if (palette != null) {
                 palette.Updated -= Palette_Updated;
             }
@@ -366,16 +366,8 @@ namespace Necrofy
             LoadGraphics();
         }
 
-        private void DisposeTiles() {
-            if (tiles != null) {
-                foreach (Bitmap tile in tiles) {
-                    tile.Dispose();
-                }
-            }
-        }
-
         private void LoadGraphics() {
-            DisposeTiles();
+            SNESGraphics.DisposeAll(tiles);
             tiles = SNESGraphics.RenderAllTiles(graphics);
             colorsPerPalette = graphics.Is2BPP ? 4 : 16;
             LoadPalette(); // Reload palette, since graphics may have changed between 2bpp and 4bpp
