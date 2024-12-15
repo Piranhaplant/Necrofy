@@ -932,9 +932,9 @@
 			}
 		},
 		{
-			"Description": "Text Entry Graphics",
+			"Description": "Medium Text Graphics",
 			"Filename": "Graphics",
-			"Category": "Text Entry",
+			"Category": "Medium Text",
 			"Address": 726659,
 			"Length": 5664,
 			"Compressed": false,
@@ -946,9 +946,9 @@
 			}
 		},
 		{
-			"Description": "Text Entry Tilemap",
+			"Description": "Medium Text Tilemap",
 			"Filename": "Tilemap",
-			"Category": "Text Entry",
+			"Category": "Medium Text",
 			"Address": 1015284,
 			"Length": 512,
 			"Compressed": false,
@@ -961,11 +961,11 @@
 			}
 		},
 		{
-			"Description": "Text Entry Palette",
+			"Description": "Medium Text Palette",
 			"Filename": "Palette",
-			"Category": "Text Entry",
-			"Address": 127404,
-			"Length": 32,
+			"Category": "Medium Text",
+			"Address": 127372,
+			"Length": 256,
 			"Compressed": false,
 			"Type": "Palette"
 		}
