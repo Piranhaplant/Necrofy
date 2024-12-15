@@ -16,6 +16,8 @@ using System.Threading.Tasks;
 namespace Necrofy
 {
     partial class LevelEditor : MapEditor<LevelEditorTool> {
+        private static DockAlignment? levelSettingsAlignment = null;
+
         public readonly LoadedLevel level;
         private TitleEditor titleEditor = null;
         private LevelSettingsDialog levelSettings = null;
@@ -36,6 +38,10 @@ namespace Necrofy
         public LevelEditor(LoadedLevel level) : base(64) {
             InitializeComponent();
             Disposed += LevelEditor_Disposed;
+
+            if (Properties.Settings.Default.UseLevelSettingsAlignment) {
+                levelSettingsAlignment = Properties.Settings.Default.LevelSettingsAlignment;
+            }
 
             this.level = level;
             UpdateTitle();
@@ -343,7 +349,7 @@ namespace Necrofy
                     if (levelSettings == null) {
                         levelSettings = new LevelSettingsDialog(this);
                         levelSettings.FormClosed += LevelSettings_FormClosed;
-                        mainWindow.ShowEditor(levelSettings, assetInfo: null);
+                        mainWindow.ShowEditor(levelSettings, assetInfo: null, alignment: levelSettingsAlignment);
                     } else {
                         levelSettings.Activate();
                     }
@@ -368,6 +374,9 @@ namespace Necrofy
         }
 
         private void LevelSettings_FormClosed(object sender, FormClosedEventArgs e) {
+            levelSettingsAlignment = levelSettings.Alignment;
+            Properties.Settings.Default.UseLevelSettingsAlignment = levelSettingsAlignment != null;
+            Properties.Settings.Default.LevelSettingsAlignment = levelSettingsAlignment ?? DockAlignment.Left;
             levelSettings = null;
         }
 
@@ -399,7 +408,7 @@ namespace Necrofy
 
         public override void ToolStripItemCheckedChanged(ToolStripGrouper.ItemType item) {
             base.ToolStripItemCheckedChanged(item);
-            if (DockPanel.ActiveDocument == this && spriteCategoryForMenuItem.TryGetValue(item, out SpriteDisplay.Category category)) {
+            if (DockActive && spriteCategoryForMenuItem.TryGetValue(item, out SpriteDisplay.Category category)) {
                 UpdateSpriteCategory(category, mainWindow.GetToolStripItem(item).Checked);
             } else if (item == ToolStripGrouper.ItemType.ViewAnimate) {
                 UpdateAnimationState();

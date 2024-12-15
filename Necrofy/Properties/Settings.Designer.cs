@@ -226,5 +226,29 @@ namespace Necrofy.Properties {
                 this["ShowTilemapGrid"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Left")]
+        public global::WeifenLuo.WinFormsUI.Docking.DockAlignment LevelSettingsAlignment {
+            get {
+                return ((global::WeifenLuo.WinFormsUI.Docking.DockAlignment)(this["LevelSettingsAlignment"]));
+            }
+            set {
+                this["LevelSettingsAlignment"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseLevelSettingsAlignment {
+            get {
+                return ((bool)(this["UseLevelSettingsAlignment"]));
+            }
+            set {
+                this["UseLevelSettingsAlignment"] = value;
+            }
+        }
     }
 }

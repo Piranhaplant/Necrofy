@@ -53,5 +53,11 @@
     <Setting Name="ShowTilemapGrid" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="LevelSettingsAlignment" Type="WeifenLuo.WinFormsUI.Docking.DockAlignment" Scope="User">
+      <Value Profile="(Default)">Left</Value>
+    </Setting>
+    <Setting Name="UseLevelSettingsAlignment" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

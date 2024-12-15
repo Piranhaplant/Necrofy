@@ -236,10 +236,14 @@ namespace Necrofy
             }
         }
 
-        public void ShowEditor(EditorWindow editor, Asset.NameInfo assetInfo) {
+        public void ShowEditor(EditorWindow editor, Asset.NameInfo assetInfo, DockAlignment? alignment = null) {
             openEditors.Add(editor);
             editor.Setup(this, project, assetInfo);
-            editor.Show(dockPanel, DockState.Document);
+            if (alignment != null && activeEditor != null) {
+                editor.Show(activeEditor.Pane, (DockAlignment)alignment, 0.5);
+            } else {
+                editor.Show(dockPanel, DockState.Document);
+            }
             editor.DirtyChanged += Editor_DirtyChanged;
             editor.SelectionChanged += Editor_SelectionChanged;
             editor.TextChanged += Editor_TextChanged;

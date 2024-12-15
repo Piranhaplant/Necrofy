@@ -97,6 +97,28 @@ namespace Necrofy
             }
         }
 
+        public DockAlignment? Alignment {
+            get {
+                NestedDockingStatus status = Pane?.NestedDockingStatus;
+                if (status != null) {
+                    if (status.NestedPanes.Count <= 1) {
+                        return null;
+                    }
+                    switch (status.Alignment) {
+                         case DockAlignment.Left:
+                            return DockAlignment.Left;
+                        case DockAlignment.Right:
+                            return status.PreviousPane != null ? DockAlignment.Right : DockAlignment.Left;
+                        case DockAlignment.Top:
+                            return DockAlignment.Top;
+                        case DockAlignment.Bottom:
+                            return status.PreviousPane != null ? DockAlignment.Bottom : DockAlignment.Top;
+                    }
+                }
+                return null;
+            }
+        }
+
         public Asset.NameInfo AssetInfo { get; private set; }
 
         public event EventHandler DirtyChanged;
