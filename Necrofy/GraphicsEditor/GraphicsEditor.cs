@@ -57,6 +57,10 @@ namespace Necrofy
                 transparency = options.transparency;
                 largeTileMode = options.largeTiles;
                 tileSize = largeTileMode ? 2 : 1;
+            } else if (graphics.GraphicsType == GraphicsAsset.Type.Sprite) {
+                transparency = true;
+                largeTileMode = true;
+                tileSize = 2;
             }
         }
 
