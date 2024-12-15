@@ -396,7 +396,7 @@ namespace Necrofy
             if (project != null) {
                 try {
                     ProjectBrowser.SaveFolderStates();
-                    project.userSettings.OpenFiles = openEditors.Select(e => e.AssetInfo?.GetFilename("").Replace(Path.DirectorySeparatorChar, '/')).Where(e => e != null).ToList();
+                    project.userSettings.OpenFiles = openEditors.Select(e => e.AssetInfo?.GetFilename("")?.Replace(Path.DirectorySeparatorChar, '/')).Where(e => e != null).ToList();
                     project.WriteSettings();
                 } catch (Exception) { }
 

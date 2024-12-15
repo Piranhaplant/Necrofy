@@ -7,6 +7,7 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Windows.Forms;
+using System.Net.Configuration;
 
 namespace Necrofy
 {
@@ -123,6 +124,10 @@ namespace Necrofy
         }
 
         public void WriteSettings() {
+            // Remove asset options for assets that no longer exist
+            List<AssetOptions.Entry> keepEntries = Assets.Root.Enumerate().Select(a => settings.AssetOptions.GetEntry(a.Category, a.Name)).Where(e => e != null).ToList();
+            settings.AssetOptions.entries = keepEntries;
+
             File.WriteAllText(SettingsPath, JsonConvert.SerializeObject(settings, Formatting.Indented));
             File.WriteAllText(UserSettingsPath, JsonConvert.SerializeObject(userSettings, Formatting.Indented));
         }
@@ -153,6 +158,7 @@ namespace Necrofy
 
         private void Assets_RenameCompleted(object sender, RenameCompletedEventArgs e) {
             foreach (KeyValuePair<AssetCategory, Dictionary<string, string>> category in e.Results.renamedAssets) {
+                // Update cached asset names
                 if (assetCache.TryGetValue(category.Key, out Dictionary<string, WeakReference<Asset>> cache)) {
                     foreach (KeyValuePair<string, string> names in category.Value) {
                         if (cache.TryGetValue(names.Key, out WeakReference<Asset> asset)) {
@@ -160,6 +166,11 @@ namespace Necrofy
                             cache[names.Value] = asset;
                         }
                     }
+                }
+
+                // Update asset options names
+                foreach (KeyValuePair<string, string> names in category.Value) {
+                    settings.AssetOptions.SetOptions(category.Key, names.Value, settings.AssetOptions.GetOptions(category.Key, names.Key));
                 }
             }
         }

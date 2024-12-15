@@ -13,7 +13,7 @@ namespace Necrofy
     {
         public List<Entry> entries = new List<Entry>();
 
-        private Entry GetEntry(AssetCategory category, string name) {
+        public Entry GetEntry(AssetCategory category, string name) {
             foreach (Entry entry in entries) {
                 if (entry.category == category && entry.name == name) {
                     return entry;
