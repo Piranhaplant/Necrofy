@@ -262,7 +262,7 @@ namespace Necrofy
         }
 
         public Point TransformPoint(Point p) {
-            return new Point((int)xDimension.TransformPosition(p.X), (int)yDimension.TransformPosition(p.Y));
+            return new Point((int)Math.Floor(xDimension.TransformPosition(p.X)), (int)Math.Floor(yDimension.TransformPosition(p.Y)));
         }
 
         public PointF TransformPoint(PointF p) {

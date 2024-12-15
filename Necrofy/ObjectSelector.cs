@@ -9,11 +9,6 @@ namespace Necrofy
 {
     class ObjectSelector<T> where T : ISelectableObject
     {
-        private static readonly Pen selectionBorderDashPen = new Pen(Color.Black) {
-            DashOffset = 0,
-            DashPattern = new float[] { 4f, 4f },
-        };
-
         private readonly IHost host;
         private readonly int positionStep;
         private readonly int maxX;
@@ -169,7 +164,7 @@ namespace Necrofy
             if (makingSelectionRectangle) {
                 selectedObjects = new HashSet<T>(baseSelectedObjects);
 
-                selectionRectangle = new Rectangle(Math.Min(dragStartX, x), Math.Min(dragStartY, y), Math.Abs(x - dragStartX), Math.Abs(y - dragStartY));
+                selectionRectangle = new Rectangle(Math.Min(dragStartX, x), Math.Min(dragStartY, y), Math.Abs(x - dragStartX) + 1, Math.Abs(y - dragStartY) + 1);
                 foreach (T obj in SelectableObjects) {
                     if (selectionRectangle.IntersectsWith(obj.Bounds)) {
                         if (removeFromSelection) {
