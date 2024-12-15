@@ -71,7 +71,7 @@ namespace Necrofy
             FormClosed += TilemapEditor_FormClosed;
             checkboxKeys = new Dictionary<Keys, CheckBox>() {
                 { Keys.X, flipX }, { Keys.Y, flipY }, { Keys.P, priority },
-                { Keys.Q, lockTileNum }, { Keys.W, lockPalette }, { Keys.E, lockFlip }, { Keys.R, lockPriority },
+                { Keys.A, lockTileNum }, { Keys.S, lockPalette }, { Keys.D, lockFlip }, { Keys.F, lockPriority },
             };
 
             this.loadedTilemap = loadedTilemap;
@@ -175,6 +175,7 @@ namespace Necrofy
             // Default to palette 7 if the file only has one palette (for boss monster tilemaps)
             if (Colors != null && Colors.Length == 16) {
                 tilePicker.Palette = 7;
+                lockPalette.Checked = true;
             }
 
             undoManager = new UndoManager<TilemapEditor>(mainWindow.UndoButton, mainWindow.RedoButton, this);

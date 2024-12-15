@@ -147,7 +147,7 @@
             this.lockPriority.Name = "lockPriority";
             this.lockPriority.Size = new System.Drawing.Size(22, 22);
             this.lockPriority.TabIndex = 10;
-            this.toolTip1.SetToolTip(this.lockPriority, "Lock Priority (r)");
+            this.toolTip1.SetToolTip(this.lockPriority, "Lock Priority (f)");
             this.lockPriority.UseVisualStyleBackColor = true;
             this.lockPriority.CheckedChanged += new System.EventHandler(this.lock_CheckedChanged);
             // 
@@ -161,7 +161,7 @@
             this.lockFlip.Name = "lockFlip";
             this.lockFlip.Size = new System.Drawing.Size(22, 22);
             this.lockFlip.TabIndex = 9;
-            this.toolTip1.SetToolTip(this.lockFlip, "Lock Flip (e)");
+            this.toolTip1.SetToolTip(this.lockFlip, "Lock Flip (d)");
             this.lockFlip.UseVisualStyleBackColor = true;
             this.lockFlip.CheckedChanged += new System.EventHandler(this.lock_CheckedChanged);
             // 
@@ -175,7 +175,7 @@
             this.lockPalette.Name = "lockPalette";
             this.lockPalette.Size = new System.Drawing.Size(22, 22);
             this.lockPalette.TabIndex = 8;
-            this.toolTip1.SetToolTip(this.lockPalette, "Lock Palette (w)");
+            this.toolTip1.SetToolTip(this.lockPalette, "Lock Palette (s)");
             this.lockPalette.UseVisualStyleBackColor = true;
             this.lockPalette.CheckedChanged += new System.EventHandler(this.lock_CheckedChanged);
             // 
@@ -189,7 +189,7 @@
             this.lockTileNum.Name = "lockTileNum";
             this.lockTileNum.Size = new System.Drawing.Size(22, 22);
             this.lockTileNum.TabIndex = 7;
-            this.toolTip1.SetToolTip(this.lockTileNum, "Lock Tile Number (q)");
+            this.toolTip1.SetToolTip(this.lockTileNum, "Lock Tile Number (a)");
             this.lockTileNum.UseVisualStyleBackColor = true;
             this.lockTileNum.CheckedChanged += new System.EventHandler(this.lock_CheckedChanged);
             // 
